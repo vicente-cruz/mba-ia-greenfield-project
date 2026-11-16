@@ -31,19 +31,31 @@ describe('Database migrations (integration)', () => {
 
     await dataSource.initialize();
 
-    await Promise.all([
-      ...MANAGED_TABLES.map((table) =>
-        dataSource.query(`DROP TABLE IF EXISTS "${table}" CASCADE`),
-      ),
-      dataSource.query(`DROP TABLE IF EXISTS "migrations" CASCADE`),
-    ]);
+    // Remove as tabelas em sequência.
+    for (const table of MANAGED_TABLES) {
+      await dataSource.query(`DROP TABLE IF EXISTS "${table}" CASCADE`);
+    }
+
+    await dataSource.query('DROP TABLE IF EXISTS "migrations"');
+
+    // O enum é um objeto separado das tabelas.
+    await dataSource.query(
+      'DROP TYPE IF EXISTS "public"."verification_tokens_type_enum"',
+    );
   });
 
   afterAll(async () => {
-    // The second test undoes the last migration, leaving token tables missing.
-    // Re-apply so the shared DB is fully migrated when subsequent suites run.
-    await dataSource.runMigrations();
-    await dataSource.destroy();
+    if (!dataSource?.isInitialized) {
+      return;
+    }
+
+    try {
+      // Restaura as migrations para as próximas suítes.
+      await dataSource.runMigrations();
+    } finally {
+      // Fecha a conexão mesmo se a restauração falhar.
+      await dataSource.destroy();
+    }
   });
 
   it('should apply all migrations and create all four tables', async () => {
