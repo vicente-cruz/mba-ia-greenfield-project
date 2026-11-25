@@ -1,0 +1,247 @@
+{
+  "phases": {
+    "baseline": {
+      "start": "2027-01-15T08:00:00.000Z",
+      "end": "2027-01-15T08:11:40.000Z",
+      "seconds": 700,
+      "samples": 4550,
+      "ok": 4550,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": 5,
+      "p95": 5,
+      "p99": 5,
+      "max": 5,
+      "byInstance": {
+        "1": 350,
+        "2": 350,
+        "3": 350,
+        "4": 350,
+        "5": 350,
+        "6": 350,
+        "7": 350,
+        "8": 350,
+        "9": 350,
+        "10": 350,
+        "11": 350,
+        "12": 350,
+        "13": 350
+      }
+    },
+    "load": {
+      "intervals": [
+        {
+          "start": "2027-01-15T08:11:45.000Z",
+          "end": "2027-01-15T08:15:05.000Z",
+          "seconds": 200
+        },
+        {
+          "start": "2027-01-15T08:15:25.000Z",
+          "end": "2027-01-15T08:15:35.000Z",
+          "seconds": 10
+        },
+        {
+          "start": "2027-01-15T08:15:43.000Z",
+          "end": "2027-01-15T08:15:43.089Z",
+          "seconds": 0.089
+        }
+      ],
+      "seconds": 210.089,
+      "samples": 320,
+      "ok": 320,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": 800,
+      "p95": 800,
+      "p99": 800,
+      "max": 800,
+      "byInstance": {
+        "1": 24,
+        "2": 25,
+        "3": 25,
+        "4": 25,
+        "5": 25,
+        "6": 25,
+        "7": 25,
+        "8": 25,
+        "9": 25,
+        "10": 24,
+        "11": 24,
+        "12": 24,
+        "13": 24
+      }
+    },
+    "warmup": {
+      "samples": 0,
+      "ok": 0,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "max": null,
+      "byInstance": {}
+    },
+    "outside": {
+      "samples": 4,
+      "ok": 4,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": 10,
+      "p95": 10,
+      "p99": 10,
+      "max": 10,
+      "byInstance": {
+        "1": 1,
+        "10": 1,
+        "11": 1,
+        "12": 1
+      }
+    },
+    "all": {
+      "samples": 4874,
+      "ok": 4874,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": 5,
+      "p95": 800,
+      "p99": 800,
+      "max": 800,
+      "byInstance": {
+        "1": 375,
+        "2": 375,
+        "3": 375,
+        "4": 375,
+        "5": 375,
+        "6": 375,
+        "7": 375,
+        "8": 375,
+        "9": 375,
+        "10": 375,
+        "11": 375,
+        "12": 375,
+        "13": 374
+      }
+    }
+  },
+  "instances": 1,
+  "minPhaseSamples": 300,
+  "enoughSamples": true,
+  "clockUncertainty": {
+    "uncertaintyMs": 157,
+    "model": "cada amostra de borda pode estar dentro ou fora da carga, independentemente das outras (conservador)",
+    "certainLoadSamples": 320,
+    "borderSamples": [
+      {
+        "instance": "1",
+        "epochMs": 1800000704950,
+        "latencyMs": 10,
+        "outcome": "ok",
+        "nominalLoad": false,
+        "interval": 1,
+        "edge": "início",
+        "distanceMs": -50
+      },
+      {
+        "instance": "10",
+        "epochMs": 1800000905050,
+        "latencyMs": 10,
+        "outcome": "ok",
+        "nominalLoad": false,
+        "interval": 1,
+        "edge": "fim",
+        "distanceMs": 50
+      },
+      {
+        "instance": "11",
+        "epochMs": 1800000924950,
+        "latencyMs": 10,
+        "outcome": "ok",
+        "nominalLoad": false,
+        "interval": 2,
+        "edge": "início",
+        "distanceMs": -50
+      },
+      {
+        "instance": "12",
+        "epochMs": 1800000935050,
+        "latencyMs": 10,
+        "outcome": "ok",
+        "nominalLoad": false,
+        "interval": 2,
+        "edge": "fim",
+        "distanceMs": 50
+      }
+    ],
+    "possibleLoadSamples": {
+      "min": 320,
+      "max": 324
+    },
+    "p95Ms": {
+      "min": 800,
+      "max": 800
+    },
+    "p99Ms": {
+      "min": 800,
+      "max": 800
+    },
+    "possible": {
+      "a": [
+        "reprovado"
+      ],
+      "b": [
+        "reprovado"
+      ],
+      "enoughSamples": [
+        true
+      ]
+    },
+    "changes": {
+      "a": false,
+      "b": false,
+      "enoughSamples": false
+    }
+  },
+  "criteria": {
+    "a": {
+      "verdict": "reprovado",
+      "nominal": "reprovado",
+      "thresholdMs": 55,
+      "loadP95Ms": 800
+    },
+    "b": {
+      "verdict": "reprovado",
+      "nominal": "reprovado",
+      "loadP95Ms": 800,
+      "loadP99Ms": 800
+    },
+    "c": {
+      "verdict": "aprovado",
+      "samples": 4874,
+      "failures": 0,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0
+    }
+  },
+  "nominalLatency": "reprovado",
+  "latency": "reprovado",
+  "recalculatedInstances": 3
+}

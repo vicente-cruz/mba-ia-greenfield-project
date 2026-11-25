@@ -1,0 +1,3 @@
+intervalo 1 (start): 1795581912788 a 1795581920571 (7783 ms) ajustado para 1795581912904 a 1795581920455 (7551 ms); fecha em load_end
+intervalo 2 (resume): 1795581932708 a 1795581936289 (3581 ms) ajustado para 1795581932824 a 1795581936173 (3349 ms); fecha em load_end
+intervalo 3 (resume): 1795581944863 a 1795581944979 (116 ms) descartado: vazio depois do encolhimento de 116 ms de cada lado

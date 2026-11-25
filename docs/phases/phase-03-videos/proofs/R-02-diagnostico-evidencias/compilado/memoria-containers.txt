@@ -1,0 +1,10 @@
+nestjs-project-db-1 cpu 5.85% mem 35.34MiB / 7.645GiB
+nestjs-project-mailpit-1 cpu 3.69% mem 28.19MiB / 7.645GiB
+nestjs-project-nestjs-api-1 cpu 4.53% mem 290.9MiB / 7.645GiB
+nestjs-project-redis-1 cpu 0.22% mem 9.762MiB / 7.645GiB
+nestjs-project-storage-1 cpu 0.10% mem 123.5MiB / 7.645GiB
+nestjs-project-video-worker-1 cpu 0.73% mem 238.3MiB / 7.645GiB
+r02e-20261125015519-9477cd-probe-4 cpu 0.08% mem 13.75MiB / 7.645GiB
+r02e-20261125015519-9477cd-probe-1 cpu 0.10% mem 13.78MiB / 7.645GiB
+r02e-20261125015519-9477cd-probe-2 cpu 0.08% mem 13.73MiB / 7.645GiB
+r02e-20261125015519-9477cd-probe-3 cpu 0.09% mem 13.75MiB / 7.645GiB

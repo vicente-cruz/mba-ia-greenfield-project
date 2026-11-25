@@ -1,0 +1,1053 @@
+
+=== P-10GB repetição (prova) — runId 20261125142232-bc4b5d (14:22:32Z)
+arquivo de 10000000000 bytes; 13 instâncias da sonda com espaçamento de 154 ms; base de 600 s; interrupção a 0.5; intervalo antes da retomada: 5 s
+usuários de prova: p10gbr-20261125142232-bc4b5d-uploader@proofs.streamtube.test (upload) e p10gbr-20261125142232-bc4b5d-control@proofs.streamtube.test (dono do vídeo de controle)
+
+=== Estado do ambiente (14:22:32Z)
+$ docker compose ps --format {{.Service}} {{.State}} {{.Health}}
+db running healthy
+mailpit running healthy
+nestjs-api running 
+redis running healthy
+storage running healthy
+video-worker running 
+
+=== API parada antes do roteiro (14:22:33Z)
+$ api_stopped
+processos da API no nestjs-api antes do roteiro: 0 (o roteiro exige 0: ele faz o build e sobe a API)
+
+=== Espaço livre exigido na unidade C: (14:22:33Z)
+$ check_free_space
+livre na unidade C:: 39793729536 bytes; exigido: 29500000000 bytes
+
+=== Versões (14:22:33Z)
+$ versions
+sha256:c20d112390b9a9ce8c11b8af95ad35bcaa62f4759663c09c936cd8d2b511f329 ["pgsty/silo@sha256:c20d112390b9a9ce8c11b8af95ad35bcaa62f4759663c09c936cd8d2b511f329"]
+Docker Engine 29.8.2 (cliente 29.8.2)
+Docker Desktop; kernel 6.6.87.2-microsoft-standard-WSL2; 16 CPUs; 8208449536 bytes de memória na VM
+imagem do nestjs-api e do video-worker: sha256:6b5db062366a60972c02199bbd399758b27ff62ae4974ebd03ebe8b672d23b57 criada 2026-11-18T02:06:47.956302183Z
+Node do container: v25.6.0; Node do Windows: v22.17.0; tsc: Version 5.9.3; Nest CLI: 11.0.16
+docker.exe no Windows: Docker version 29.8.2, build 7fc2dff
+
+=== Espaço livre e VHDX antes da prova (14:22:35Z)
+$ host_disk
+host:    1B-blocks         Used       Avail Mounted on
+host: 510987681792 471194259456 39793422336 /mnt/c
+host: docker_data.vhdx do Docker Desktop: 40853569536 bytes
+disco de dados do Docker: Filesystem          1-blocks        Used     Available Capacity Mounted on
+disco de dados do Docker: /dev/sdf       1081101176832 19040641024 1007068180480       2% /data
+
+=== Retrato antes (só leitura) (14:22:35Z)
+$ snapshot_into <saída>/p10gbr-20261125142232-bc4b5d/snapshot-before.txt
+SNAPSHOT banco users=0 channels=0 videos=0 upload_sessions=0 upload_parts=0 refresh_tokens=0 verification_tokens=0 | bucket objetos=0 bytes=0 sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | fila video-processing wait=0 active=0 delayed=0 prioritized=0 waiting-children=0 completed=0 failed=0 jobs=0 | mailpit mensagens=8
+
+=== Temporários do Silo antes da prova (só leitura) (14:22:38Z)
+$ residue_into <saída>/p10gbr-20261125142232-bc4b5d/residue-before.txt
+temporários do Silo em .minio.sys/tmp: 5 diretórios, 327720 KiB
+65544 KiB 70731b75-f39b-4526-aedc-6fa12fad583bx1795548947967467323
+65544 KiB 80115752-ef5f-41e0-9f12-3feff2e419ecx1795548947731336221
+65544 KiB c07d02bb-16b7-4553-b833-f7653e7f8b1bx1795549731540036430
+65544 KiB d9462442-bfb8-4597-80c0-6491370b2508x1795549732611218187
+65544 KiB f963343c-ee2f-4f83-82bd-e0b61f0243d1x1795549105789409450
+
+=== Pastas de prova (14:22:38Z)
+$ prepare
+pastas: /tmp/p10gbr-20261125142232-bc4b5d (nestjs-api), pasta p10gbr-20261125142232-bc4b5d no temporário do Windows, <saída>/js-20261125142232-bc4b5d
+
+=== Build da API e JS do cliente e da sonda (14:22:39Z)
+$ build_and_compile
+--- build da API (npm run build = nest build; dist/ fora do Git)
+
+> nestjs-project@0.0.1 build
+> nest build
+
+--- cliente e sonda compilados para JS (tsc), uma vez
+JS: 3965b639fa7acd70 043e2b95a654c264 712670275c780413 
+pré-checagem da sonda compilada montada (uso inválido, esperado 64): 64
+
+=== Arquivo de prova no Windows, preparado antes da medição (14:22:47Z)
+$ generate_file
+ARQUIVO | source.bin | 10000000000 bytes | sha256 5f973ec9603367218fb71365e053516ede5f3e656af82d3417e3ce1539db6a46 | gerado em 86141.9 ms (110.7 MiB/s)
+
+=== Espaço livre com o arquivo de prova (14:24:14Z)
+$ host_disk
+host:    1B-blocks         Used       Avail Mounted on
+host: 510987681792 481193418752 29794263040 /mnt/c
+host: docker_data.vhdx do Docker Desktop: 40853569536 bytes
+disco de dados do Docker: Filesystem          1-blocks        Used     Available Capacity Mounted on
+disco de dados do Docker: /dev/sdf       1081101176832 19040534528 1007068286976       2% /data
+
+=== API sem watch (npm run start:prod) com os monitores (14:24:14Z)
+$ start_api
+API pronta em 3 s; processos: npm run start:prod;sh -c node dist/main;node dist/main;
+API pela porta publicada, do Windows: HTTP 200
+
+=== Contas de prova e vídeo de controle (14:24:17Z)
+$ accounts
+CONTA | p10gbr-20261125142232-bc4b5d-uploader@proofs.streamtube.test | register 201, confirm-email 204 (link do Mailpit), login 200 | credenciais em /tmp/p10gbr-20261125142232-bc4b5d/uploader.json (0600)
+CONTA | p10gbr-20261125142232-bc4b5d-control@proofs.streamtube.test | register 201, confirm-email 204 (link do Mailpit), login 200 | credenciais em /tmp/p10gbr-20261125142232-bc4b5d/control.json (0600)
+CONTROLE | vídeo FsHXHpacMj0 em draft, sessão 70cb1fd2-125b-4604-8656-7d774322c40c, nenhuma parte enviada
+vídeo de controle: FsHXHpacMj0 (dono: p10gbr-20261125142232-bc4b5d-control@proofs.streamtube.test; upload: p10gbr-20261125142232-bc4b5d-uploader@proofs.streamtube.test)
+
+=== Relógio antes da base (14:24:28Z)
+$ clock antes
+relógio (antes): VM − Windows = -15 ms, incerteza ± 107 ms (menor ida e volta entre 15 medidas)
+
+=== Lixeira do storage vazia antes da medição (14:24:32Z)
+$ wait_trash_empty 900
+lixeira do storage com 152 KiB depois de 0 s; uso (ms total bucket multipart tmp lixeira usado livre, em KiB): 1795616673032 328096 4 16 327880 152 18594484 983464912
+
+=== Amostrador de disco do storage (14:24:33Z)
+$ start_storage_sampler
+amostrador do storage: 7 amostras em 2 s
+
+=== Monitores (VM, PostgreSQL, docker stats e Windows) (14:24:35Z)
+$ start_monitors
+monitores iniciados: amostrador da VM, sonda do PostgreSQL, docker stats e monitor do Windows
+
+=== Sondas compiladas em containers próprios (14:24:38Z)
+$ start_probes
+instância 1: processo 1 = node /r02js/responsiveness-probe.js --public-id FsHXHpacMj0 ; fase do disparo (epoch_ms mod 2000) = 50 ms
+instância 2: processo 1 = node /r02js/responsiveness-probe.js --public-id FsHXHpacMj0 ; fase do disparo (epoch_ms mod 2000) = 545 ms
+instância 3: processo 1 = node /r02js/responsiveness-probe.js --public-id FsHXHpacMj0 ; fase do disparo (epoch_ms mod 2000) = 1051 ms
+instância 4: processo 1 = node /r02js/responsiveness-probe.js --public-id FsHXHpacMj0 ; fase do disparo (epoch_ms mod 2000) = 1291 ms
+instância 5: processo 1 = node /r02js/responsiveness-probe.js --public-id FsHXHpacMj0 ; fase do disparo (epoch_ms mod 2000) = 1961 ms
+instância 6: processo 1 = node /r02js/responsiveness-probe.js --public-id FsHXHpacMj0 ; fase do disparo (epoch_ms mod 2000) = 220 ms
+instância 7: processo 1 = node /r02js/responsiveness-probe.js --public-id FsHXHpacMj0 ; fase do disparo (epoch_ms mod 2000) = 674 ms
+instância 8: processo 1 = node /r02js/responsiveness-probe.js --public-id FsHXHpacMj0 ; fase do disparo (epoch_ms mod 2000) = 1015 ms
+instância 9: processo 1 = node /r02js/responsiveness-probe.js --public-id FsHXHpacMj0 ; fase do disparo (epoch_ms mod 2000) = 735 ms
+instância 10: processo 1 = node /r02js/responsiveness-probe.js --public-id FsHXHpacMj0 ; fase do disparo (epoch_ms mod 2000) = 1112 ms
+instância 11: processo 1 = node /r02js/responsiveness-probe.js --public-id FsHXHpacMj0 ; fase do disparo (epoch_ms mod 2000) = 1367 ms
+instância 12: processo 1 = node /r02js/responsiveness-probe.js --public-id FsHXHpacMj0 ; fase do disparo (epoch_ms mod 2000) = 1211 ms
+instância 13: processo 1 = node /r02js/responsiveness-probe.js --public-id FsHXHpacMj0 ; fase do disparo (epoch_ms mod 2000) = 1370 ms
+base: início em 1795616683900 ms (relógio dos containers), com 13 instâncias
+
+=== Memória com todas as sondas em execução (referência informativa de 4 GiB) (14:24:45Z)
+$ memory_snapshot
+sondas em execução na medição: 13 de 13
+nestjs-project-db-1 cpu 0.82% mem 36.13MiB / 7.645GiB
+nestjs-project-mailpit-1 cpu 0.00% mem 29.05MiB / 7.645GiB
+nestjs-project-nestjs-api-1 cpu 9.29% mem 337.8MiB / 7.645GiB
+nestjs-project-redis-1 cpu 0.12% mem 12.77MiB / 7.645GiB
+nestjs-project-storage-1 cpu 9.56% mem 126.8MiB / 7.645GiB
+nestjs-project-video-worker-1 cpu 0.81% mem 251.9MiB / 7.645GiB
+p10gbr-20261125142232-bc4b5d-probe-13 cpu 0.09% mem 13.59MiB / 7.645GiB
+p10gbr-20261125142232-bc4b5d-probe-12 cpu 0.10% mem 13.57MiB / 7.645GiB
+p10gbr-20261125142232-bc4b5d-probe-11 cpu 0.08% mem 13.57MiB / 7.645GiB
+p10gbr-20261125142232-bc4b5d-probe-10 cpu 0.09% mem 13.56MiB / 7.645GiB
+p10gbr-20261125142232-bc4b5d-probe-8 cpu 0.09% mem 13.64MiB / 7.645GiB
+p10gbr-20261125142232-bc4b5d-probe-9 cpu 0.10% mem 13.57MiB / 7.645GiB
+p10gbr-20261125142232-bc4b5d-probe-7 cpu 0.12% mem 13.57MiB / 7.645GiB
+p10gbr-20261125142232-bc4b5d-probe-6 cpu 0.00% mem 13.55MiB / 7.645GiB
+p10gbr-20261125142232-bc4b5d-probe-5 cpu 0.00% mem 13.54MiB / 7.645GiB
+p10gbr-20261125142232-bc4b5d-probe-4 cpu 0.07% mem 13.59MiB / 7.645GiB
+p10gbr-20261125142232-bc4b5d-probe-3 cpu 0.07% mem 13.6MiB / 7.645GiB
+p10gbr-20261125142232-bc4b5d-probe-2 cpu 0.00% mem 13.62MiB / 7.645GiB
+p10gbr-20261125142232-bc4b5d-probe-1 cpu 0.00% mem 13.59MiB / 7.645GiB
+MemTotal:        8016064 kB
+MemAvailable:    3859776 kB
+SwapTotal:       2097152 kB
+SwapFree:         654124 kB
+Windows (12 amostras): disponível mín 2138 MB, mediana 2151 MB (abaixo da referência informativa de 4.096 MiB); commit máx 24.51 de 33.05 GB; arquivo de paginação 15%; vmmem 4.71 GB
+
+=== Fase de base (14:25:02Z)
+$ baseline
+fase de base: 600 s sem upload, com as mesmas 13 instâncias
+amostras até aqui, com o aquecimento: 4035
+
+=== Upload no Windows interrompido por Ctrl+C real por volta de 0.5 (14:35:02Z)
+$ upload_with_interruption
+base: fim em 1795617302152 ms (antes de armar o envio do Ctrl+C e de lançar o cliente de upload)
+envio do Ctrl+C armado: 1795617303495 armado: esperando ctrl-c.trigger
+lançamento do cliente de upload em 1795617303750 ms (relógio dos containers)
+cliente iniciado no Windows; console 33656
+VIGIA | gatilho do Ctrl+C real criado em 1795617342185 (relógio do Windows) para o console 33656, com 75 de 150 partes com PUT concluído (limite: 75) | PUT concluído: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75] | registradas: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,74] | em andamento: [76,77,78,79]
+INÍCIO | vídeo ehRPjVzsXpY (draft) | sessão 74b0593a-80a5-4554-995f-8b9fdf48a1a7 | 10000000000 bytes em 150 partes de 67108864 (última com 779264) | SHA256
+CHECKSUM | parte 1 | 67108864 bytes | 132 ms | antes da assinatura
+CHECKSUM | parte 2 | 67108864 bytes | 223.3 ms | antes da assinatura
+CHECKSUM | parte 3 | 67108864 bytes | 178.3 ms | antes da assinatura
+CHECKSUM | parte 4 | 67108864 bytes | 164.4 ms | antes da assinatura
+CHECKSUM | parte 5 | 67108864 bytes | 155 ms | antes da assinatura
+CHECKSUM | parte 6 | 67108864 bytes | 140.5 ms | antes da assinatura
+CHECKSUM | parte 7 | 67108864 bytes | 133.9 ms | antes da assinatura
+CHECKSUM | parte 8 | 67108864 bytes | 322.6 ms | antes da assinatura
+PUT | parte 1 | 67108864 bytes | 1521.8 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 9 | 67108864 bytes | 552.6 ms | antes da assinatura
+CHECKSUM | parte 10 | 67108864 bytes | 570.1 ms | antes da assinatura
+PUT | parte 3 | 67108864 bytes | 1406.8 ms | HTTP 200 | tentativa 1
+PUT | parte 2 | 67108864 bytes | 1463.4 ms | HTTP 200 | tentativa 1
+PUT | parte 4 | 67108864 bytes | 1471.8 ms | HTTP 200 | tentativa 1
+PUT | parte 5 | 67108864 bytes | 1332.3 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 11 | 67108864 bytes | 1218.1 ms | antes da assinatura
+CHECKSUM | parte 12 | 67108864 bytes | 352.8 ms | antes da assinatura
+PUT | parte 8 | 67108864 bytes | 1666.9 ms | HTTP 200 | tentativa 1
+PUT | parte 6 | 67108864 bytes | 1975.4 ms | HTTP 200 | tentativa 1
+PUT | parte 9 | 67108864 bytes | 1273 ms | HTTP 200 | tentativa 1
+PUT | parte 7 | 67108864 bytes | 1976.2 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 13 | 67108864 bytes | 858.6 ms | antes da assinatura
+CHECKSUM | parte 14 | 67108864 bytes | 305.6 ms | antes da assinatura
+CHECKSUM | parte 15 | 67108864 bytes | 354.7 ms | antes da assinatura
+PUT | parte 12 | 67108864 bytes | 886 ms | HTTP 200 | tentativa 1
+PUT | parte 10 | 67108864 bytes | 1260.5 ms | HTTP 200 | tentativa 1
+PUT | parte 11 | 67108864 bytes | 1216.4 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 16 | 67108864 bytes | 669.3 ms | antes da assinatura
+CHECKSUM | parte 17 | 67108864 bytes | 292.5 ms | antes da assinatura
+CHECKSUM | parte 18 | 67108864 bytes | 378.8 ms | antes da assinatura
+PUT | parte 13 | 67108864 bytes | 1138.5 ms | HTTP 200 | tentativa 1
+PUT | parte 15 | 67108864 bytes | 1137.6 ms | HTTP 200 | tentativa 1
+PUT | parte 14 | 67108864 bytes | 1550.8 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 19 | 67108864 bytes | 674 ms | antes da assinatura
+CHECKSUM | parte 20 | 67108864 bytes | 506.7 ms | antes da assinatura
+PUT | parte 17 | 67108864 bytes | 1005.9 ms | HTTP 200 | tentativa 1
+PUT | parte 18 | 67108864 bytes | 1136.6 ms | HTTP 200 | tentativa 1
+PUT | parte 16 | 67108864 bytes | 1205.6 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 21 | 67108864 bytes | 316.6 ms | antes da assinatura
+CHECKSUM | parte 22 | 67108864 bytes | 148 ms | antes da assinatura
+CHECKSUM | parte 23 | 67108864 bytes | 170.8 ms | antes da assinatura
+CHECKSUM | parte 24 | 67108864 bytes | 169.7 ms | antes da assinatura
+CHECKSUM | parte 25 | 67108864 bytes | 204.3 ms | antes da assinatura
+CHECKSUM | parte 26 | 67108864 bytes | 479 ms | antes da assinatura
+PUT | parte 19 | 67108864 bytes | 1509.3 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 27 | 67108864 bytes | 743 ms | antes da assinatura
+PUT | parte 22 | 67108864 bytes | 1144.5 ms | HTTP 200 | tentativa 1
+PUT | parte 20 | 67108864 bytes | 1290 ms | HTTP 200 | tentativa 1
+PUT | parte 21 | 67108864 bytes | 1486.6 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 28 | 67108864 bytes | 477.4 ms | antes da assinatura
+CHECKSUM | parte 29 | 67108864 bytes | 359.8 ms | antes da assinatura
+PUT | parte 23 | 67108864 bytes | 1638.1 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 30 | 67108864 bytes | 477.4 ms | antes da assinatura
+PUT | parte 24 | 67108864 bytes | 1300 ms | HTTP 200 | tentativa 1
+PUT | parte 25 | 67108864 bytes | 1450.1 ms | HTTP 200 | tentativa 1
+PUT | parte 26 | 67108864 bytes | 1495.4 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 31 | 67108864 bytes | 702.2 ms | antes da assinatura
+CHECKSUM | parte 32 | 67108864 bytes | 413.7 ms | antes da assinatura
+CHECKSUM | parte 33 | 67108864 bytes | 225.2 ms | antes da assinatura
+PUT | parte 27 | 67108864 bytes | 1621.3 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 34 | 67108864 bytes | 261.8 ms | antes da assinatura
+CHECKSUM | parte 35 | 67108864 bytes | 250 ms | antes da assinatura
+PUT | parte 29 | 67108864 bytes | 1540.2 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 36 | 67108864 bytes | 265.6 ms | antes da assinatura
+PUT | parte 28 | 67108864 bytes | 1968.3 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 37 | 67108864 bytes | 280.6 ms | antes da assinatura
+PUT | parte 30 | 67108864 bytes | 1804.5 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 38 | 67108864 bytes | 452.6 ms | antes da assinatura
+CHECKSUM | parte 39 | 67108864 bytes | 233.1 ms | antes da assinatura
+CHECKSUM | parte 40 | 67108864 bytes | 209.3 ms | antes da assinatura
+PUT | parte 31 | 67108864 bytes | 1717.8 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 41 | 67108864 bytes | 254.6 ms | antes da assinatura
+PUT | parte 32 | 67108864 bytes | 1744.9 ms | HTTP 200 | tentativa 1
+PUT | parte 33 | 67108864 bytes | 1578.9 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 42 | 67108864 bytes | 365 ms | antes da assinatura
+CHECKSUM | parte 43 | 67108864 bytes | 285.6 ms | antes da assinatura
+PUT | parte 34 | 67108864 bytes | 1508.6 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 44 | 67108864 bytes | 346.3 ms | antes da assinatura
+PUT | parte 35 | 67108864 bytes | 1208.4 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 45 | 67108864 bytes | 321.8 ms | antes da assinatura
+CHECKSUM | parte 46 | 67108864 bytes | 238.4 ms | antes da assinatura
+PUT | parte 37 | 67108864 bytes | 1405.2 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 47 | 67108864 bytes | 296.7 ms | antes da assinatura
+PUT | parte 36 | 67108864 bytes | 1879.9 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 48 | 67108864 bytes | 250.3 ms | antes da assinatura
+CHECKSUM | parte 49 | 67108864 bytes | 220.5 ms | antes da assinatura
+PUT | parte 38 | 67108864 bytes | 1574.5 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 50 | 67108864 bytes | 364.5 ms | antes da assinatura
+PUT | parte 39 | 67108864 bytes | 1824.7 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 51 | 67108864 bytes | 367.4 ms | antes da assinatura
+CHECKSUM | parte 52 | 67108864 bytes | 309.2 ms | antes da assinatura
+CHECKSUM | parte 53 | 67108864 bytes | 334.4 ms | antes da assinatura
+PUT | parte 40 | 67108864 bytes | 2115.7 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 54 | 67108864 bytes | 351.3 ms | antes da assinatura
+PUT | parte 41 | 67108864 bytes | 2297.2 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 55 | 67108864 bytes | 2402.3 ms | antes da assinatura
+PUT | parte 42 | 67108864 bytes | 4384.4 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 56 | 67108864 bytes | 320.3 ms | antes da assinatura
+PUT | parte 43 | 67108864 bytes | 4064.4 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 57 | 67108864 bytes | 399 ms | antes da assinatura
+PUT | parte 44 | 67108864 bytes | 3450.4 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 58 | 67108864 bytes | 339.1 ms | antes da assinatura
+CHECKSUM | parte 59 | 67108864 bytes | 237.4 ms | antes da assinatura
+PUT | parte 45 | 67108864 bytes | 3716.4 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 60 | 67108864 bytes | 257.6 ms | antes da assinatura
+PUT | parte 46 | 67108864 bytes | 1582.7 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 61 | 67108864 bytes | 340.1 ms | antes da assinatura
+PUT | parte 47 | 67108864 bytes | 1492.3 ms | HTTP 200 | tentativa 1
+PUT | parte 48 | 67108864 bytes | 1393.3 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 62 | 67108864 bytes | 561.5 ms | antes da assinatura
+PUT | parte 49 | 67108864 bytes | 1345 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 63 | 67108864 bytes | 424.4 ms | antes da assinatura
+PUT | parte 50 | 67108864 bytes | 1167.6 ms | HTTP 200 | tentativa 1
+PUT | parte 51 | 67108864 bytes | 1392.5 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 64 | 67108864 bytes | 688.8 ms | antes da assinatura
+PUT | parte 52 | 67108864 bytes | 1538.5 ms | HTTP 200 | tentativa 1
+PUT | parte 53 | 67108864 bytes | 1258.8 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 65 | 67108864 bytes | 646.6 ms | antes da assinatura
+PUT | parte 54 | 67108864 bytes | 1319.4 ms | HTTP 200 | tentativa 1
+PUT | parte 55 | 67108864 bytes | 1394.4 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 66 | 67108864 bytes | 660.6 ms | antes da assinatura
+PUT | parte 56 | 67108864 bytes | 1317.3 ms | HTTP 200 | tentativa 1
+PUT | parte 57 | 67108864 bytes | 1545.6 ms | HTTP 200 | tentativa 1
+PUT | parte 58 | 67108864 bytes | 1240.5 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 67 | 67108864 bytes | 727.7 ms | antes da assinatura
+PUT | parte 59 | 67108864 bytes | 1300.3 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 68 | 67108864 bytes | 580.5 ms | antes da assinatura
+PUT | parte 60 | 67108864 bytes | 3251.3 ms | HTTP 200 | tentativa 1
+PUT | parte 61 | 67108864 bytes | 3361.7 ms | HTTP 200 | tentativa 1
+PUT | parte 62 | 67108864 bytes | 3366.1 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 69 | 67108864 bytes | 2755.9 ms | antes da assinatura
+PUT | parte 63 | 67108864 bytes | 3316 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 70 | 67108864 bytes | 558.5 ms | antes da assinatura
+PUT | parte 64 | 67108864 bytes | 1462 ms | HTTP 200 | tentativa 1
+PUT | parte 66 | 67108864 bytes | 1276.4 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 71 | 67108864 bytes | 795.7 ms | antes da assinatura
+PUT | parte 65 | 67108864 bytes | 1484.9 ms | HTTP 200 | tentativa 1
+PUT | parte 67 | 67108864 bytes | 1295 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 72 | 67108864 bytes | 332.1 ms | antes da assinatura
+CHECKSUM | parte 73 | 67108864 bytes | 145.2 ms | antes da assinatura
+CHECKSUM | parte 74 | 67108864 bytes | 167.4 ms | antes da assinatura
+CHECKSUM | parte 75 | 67108864 bytes | 148.3 ms | antes da assinatura
+CHECKSUM | parte 76 | 67108864 bytes | 218.6 ms | antes da assinatura
+PUT | parte 68 | 67108864 bytes | 1595 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 77 | 67108864 bytes | 577 ms | antes da assinatura
+PUT | parte 70 | 67108864 bytes | 1258 ms | HTTP 200 | tentativa 1
+PUT | parte 69 | 67108864 bytes | 1308.3 ms | HTTP 200 | tentativa 1
+PUT | parte 71 | 67108864 bytes | 1314.2 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 78 | 67108864 bytes | 790.7 ms | antes da assinatura
+PUT | parte 72 | 67108864 bytes | 1364.9 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 79 | 67108864 bytes | 513.3 ms | antes da assinatura
+CHECKSUM | parte 80 | 67108864 bytes | 465.9 ms | antes da assinatura
+PUT | parte 74 | 67108864 bytes | 1121.6 ms | HTTP 200 | tentativa 1
+PUT | parte 73 | 67108864 bytes | 1176.4 ms | HTTP 200 | tentativa 1
+PUT | parte 75 | 67108864 bytes | 1321.8 ms | HTTP 200 | tentativa 1
+INTERRUPÇÃO | SIGINT | PUT concluído: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75] | registradas: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,74] | em andamento: [76,77,78,79]
+PUT | parte 76 | abortado depois de 263.5 ms
+PUT | parte 77 | abortado depois de 253 ms
+PUT | parte 78 | abortado depois de 242.2 ms
+PUT | parte 79 | abortado depois de 217.1 ms
+CHECKSUM | parte 81 | 67108864 bytes | 575.9 ms | antes da assinatura
+FIM | interrompido por SIGINT
+ctrl-c.ps1: 1795617303495 armado: esperando ctrl-c.trigger
+ctrl-c.ps1: 1795617342199 gatilho visto
+ctrl-c.ps1: 1795617342302 AttachConsole(33656): True (187)
+ctrl-c.ps1: 1795617342354 GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0): True
+código do vigia: 0; código do envio do Ctrl+C: 0; código do cliente: 130 (esperado: 130, SIGINT tratado pelo cliente)
+
+=== Retrato das partes depois da interrupção (14:35:42Z)
+$ parts_snapshot parts-after-interruption
+PARTES | vídeo ehRPjVzsXpY draft | sessão active | 80 partes no registro da API, 73 com ETag | 75 partes no ListParts
+PARTE 1 | storage: ETag "f0fec8aade4e53c524081d22d6c3e60a", 67108864 bytes, LastModified 2026-11-25T14:35:07.364Z | registro: ETag "f0fec8aade4e53c524081d22d6c3e60a" desde 2026-11-25T14:35:08.565Z
+PARTE 2 | storage: ETag "f30878e633f29e7ee8fce143cf9c953b", 67108864 bytes, LastModified 2026-11-25T14:35:08.424Z | registro: ETag "f30878e633f29e7ee8fce143cf9c953b" desde 2026-11-25T14:35:08.565Z
+PARTE 3 | storage: ETag "4eb491197f45446636fb97bc8da739c8", 67108864 bytes, LastModified 2026-11-25T14:35:08.280Z | registro: ETag "4eb491197f45446636fb97bc8da739c8" desde 2026-11-25T14:35:08.565Z
+PARTE 4 | storage: ETag "990ac7f2514a7ce53fbe641e4b5588cf", 67108864 bytes, LastModified 2026-11-25T14:35:08.431Z | registro: ETag "990ac7f2514a7ce53fbe641e4b5588cf" desde 2026-11-25T14:35:08.565Z
+PARTE 5 | storage: ETag "5345e2e73a8dca2f4ed330a1e056003e", 67108864 bytes, LastModified 2026-11-25T14:35:08.755Z | registro: ETag "5345e2e73a8dca2f4ed330a1e056003e" desde 2026-11-25T14:35:10.479Z
+PARTE 6 | storage: ETag "1ea7e6a788025fbb4405fd67b5120c4a", 67108864 bytes, LastModified 2026-11-25T14:35:10.419Z | registro: ETag "1ea7e6a788025fbb4405fd67b5120c4a" desde 2026-11-25T14:35:10.479Z
+PARTE 7 | storage: ETag "ee9fd9b9ef3ed8526a681ec7af262578", 67108864 bytes, LastModified 2026-11-25T14:35:10.419Z | registro: ETag "ee9fd9b9ef3ed8526a681ec7af262578" desde 2026-11-25T14:35:11.716Z
+PARTE 8 | storage: ETag "b8cf69eee24c45509886bebeb0c219a1", 67108864 bytes, LastModified 2026-11-25T14:35:10.413Z | registro: ETag "b8cf69eee24c45509886bebeb0c219a1" desde 2026-11-25T14:35:10.479Z
+PARTE 9 | storage: ETag "6391466ee4b73e415ea038886ff06f54", 67108864 bytes, LastModified 2026-11-25T14:35:10.419Z | registro: ETag "6391466ee4b73e415ea038886ff06f54" desde 2026-11-25T14:35:11.716Z
+PARTE 10 | storage: ETag "80d0865828c556671595daa85fdaac03", 67108864 bytes, LastModified 2026-11-25T14:35:11.695Z | registro: ETag "80d0865828c556671595daa85fdaac03" desde 2026-11-25T14:35:12.814Z
+PARTE 11 | storage: ETag "c98e1c7c2dc3f38e0b1c703fc05f62cd", 67108864 bytes, LastModified 2026-11-25T14:35:11.700Z | registro: ETag "c98e1c7c2dc3f38e0b1c703fc05f62cd" desde 2026-11-25T14:35:12.814Z
+PARTE 12 | storage: ETag "1b768822ff0baac87454fc43af995b20", 67108864 bytes, LastModified 2026-11-25T14:35:11.412Z | registro: ETag "1b768822ff0baac87454fc43af995b20" desde 2026-11-25T14:35:11.716Z
+PARTE 13 | storage: ETag "2908aa11a2f9ef40c055ee10aa1dfcf8", 67108864 bytes, LastModified 2026-11-25T14:35:12.885Z | registro: ETag "2908aa11a2f9ef40c055ee10aa1dfcf8" desde 2026-11-25T14:35:13.916Z
+PARTE 14 | storage: ETag "36b3d56d9abe7bcb4fb3b3694be55ff1", 67108864 bytes, LastModified 2026-11-25T14:35:13.360Z | registro: ETag "36b3d56d9abe7bcb4fb3b3694be55ff1" desde 2026-11-25T14:35:13.916Z
+PARTE 15 | storage: ETag "70fd62b2a57359516be10db913ea9cf1", 67108864 bytes, LastModified 2026-11-25T14:35:12.893Z | registro: ETag "70fd62b2a57359516be10db913ea9cf1" desde 2026-11-25T14:35:13.916Z
+PARTE 16 | storage: ETag "dc36bf70407f0e38da4f47732015ed6d", 67108864 bytes, LastModified 2026-11-25T14:35:14.108Z | registro: ETag "dc36bf70407f0e38da4f47732015ed6d" desde 2026-11-25T14:35:15.020Z
+PARTE 17 | storage: ETag "16c3571301f893e41d4193600b7395bf", 67108864 bytes, LastModified 2026-11-25T14:35:13.965Z | registro: ETag "16c3571301f893e41d4193600b7395bf" desde 2026-11-25T14:35:15.020Z
+PARTE 18 | storage: ETag "5413e711dba19da46d3b5b0d6860926a", 67108864 bytes, LastModified 2026-11-25T14:35:13.972Z | registro: ETag "5413e711dba19da46d3b5b0d6860926a" desde 2026-11-25T14:35:15.020Z
+PARTE 19 | storage: ETag "bab14bf9ea6b01f1fe2c94757ca78a9f", 67108864 bytes, LastModified 2026-11-25T14:35:15.627Z | registro: ETag "bab14bf9ea6b01f1fe2c94757ca78a9f" desde 2026-11-25T14:35:16.592Z
+PARTE 20 | storage: ETag "d09964ee8840f8f6e46ecf36c7058538", 67108864 bytes, LastModified 2026-11-25T14:35:16.341Z | registro: ETag "d09964ee8840f8f6e46ecf36c7058538" desde 2026-11-25T14:35:16.592Z
+PARTE 21 | storage: ETag "dd7915e7bc54619bc7acefd47406dc95", 67108864 bytes, LastModified 2026-11-25T14:35:16.545Z | registro: ETag "dd7915e7bc54619bc7acefd47406dc95" desde 2026-11-25T14:35:16.592Z
+PARTE 22 | storage: ETag "4235d97194a9d00d050e11013e635a2c", 67108864 bytes, LastModified 2026-11-25T14:35:16.227Z | registro: ETag "4235d97194a9d00d050e11013e635a2c" desde 2026-11-25T14:35:16.592Z
+PARTE 23 | storage: ETag "3d0aba1d4094f4dd9d89011cbc296bfc", 67108864 bytes, LastModified 2026-11-25T14:35:17.312Z | registro: ETag "3d0aba1d4094f4dd9d89011cbc296bfc" desde 2026-11-25T14:35:17.742Z
+PARTE 24 | storage: ETag "740f35af14bdba837bfe171cd4feffff", 67108864 bytes, LastModified 2026-11-25T14:35:17.549Z | registro: ETag "740f35af14bdba837bfe171cd4feffff" desde 2026-11-25T14:35:17.742Z
+PARTE 25 | storage: ETag "299d79bd188e35a1cc9010bcdc37db97", 67108864 bytes, LastModified 2026-11-25T14:35:17.767Z | registro: ETag "299d79bd188e35a1cc9010bcdc37db97" desde 2026-11-25T14:35:19.124Z
+PARTE 26 | storage: ETag "be07d3f7470b96e1a955e738714969ef", 67108864 bytes, LastModified 2026-11-25T14:35:18.125Z | registro: ETag "be07d3f7470b96e1a955e738714969ef" desde 2026-11-25T14:35:19.124Z
+PARTE 27 | storage: ETag "17c72f82a99ff0bf581792fe954877ca", 67108864 bytes, LastModified 2026-11-25T14:35:18.986Z | registro: ETag "17c72f82a99ff0bf581792fe954877ca" desde 2026-11-25T14:35:19.124Z
+PARTE 28 | storage: ETag "9ace2dc818824c022bd6dc8073017e87", 67108864 bytes, LastModified 2026-11-25T14:35:19.692Z | registro: ETag "9ace2dc818824c022bd6dc8073017e87" desde 2026-11-25T14:35:20.243Z
+PARTE 29 | storage: ETag "67804000af8b4b3837b41ad5e114cb3f", 67108864 bytes, LastModified 2026-11-25T14:35:19.342Z | registro: ETag "67804000af8b4b3837b41ad5e114cb3f" desde 2026-11-25T14:35:20.243Z
+PARTE 30 | storage: ETag "3a74895ab7d5ea79a5d2a194d07df003", 67108864 bytes, LastModified 2026-11-25T14:35:19.977Z | registro: ETag "3a74895ab7d5ea79a5d2a194d07df003" desde 2026-11-25T14:35:20.243Z
+PARTE 31 | storage: ETag "4c971c11b3a355a63da9aa568e5c6aa0", 67108864 bytes, LastModified 2026-11-25T14:35:20.850Z | registro: ETag "4c971c11b3a355a63da9aa568e5c6aa0" desde 2026-11-25T14:35:21.886Z
+PARTE 32 | storage: ETag "d8e370b44a6e3648ab6d39836a692366", 67108864 bytes, LastModified 2026-11-25T14:35:21.150Z | registro: ETag "d8e370b44a6e3648ab6d39836a692366" desde 2026-11-25T14:35:21.886Z
+PARTE 33 | storage: ETag "6d21fa4bff545f8214b04e0efc705e57", 67108864 bytes, LastModified 2026-11-25T14:35:21.405Z | registro: ETag "6d21fa4bff545f8214b04e0efc705e57" desde 2026-11-25T14:35:21.886Z
+PARTE 34 | storage: ETag "369f87c0e9a066f41d4d8f6e1f63f350", 67108864 bytes, LastModified 2026-11-25T14:35:21.824Z | registro: ETag "369f87c0e9a066f41d4d8f6e1f63f350" desde 2026-11-25T14:35:21.886Z
+PARTE 35 | storage: ETag "9461c7c792f02cc5b9641d7ca08cb2e7", 67108864 bytes, LastModified 2026-11-25T14:35:22.217Z | registro: ETag "9461c7c792f02cc5b9641d7ca08cb2e7" desde 2026-11-25T14:35:23.688Z
+PARTE 36 | storage: ETag "d3bd22f35f4089fab5cb4015f8da5706", 67108864 bytes, LastModified 2026-11-25T14:35:23.093Z | registro: ETag "d3bd22f35f4089fab5cb4015f8da5706" desde 2026-11-25T14:35:23.688Z
+PARTE 37 | storage: ETag "b6001f586d44d527f4179dbc7f46c8a5", 67108864 bytes, LastModified 2026-11-25T14:35:22.780Z | registro: ETag "b6001f586d44d527f4179dbc7f46c8a5" desde 2026-11-25T14:35:23.688Z
+PARTE 38 | storage: ETag "f8a261f9165c5c0197dd73224593bc6b", 67108864 bytes, LastModified 2026-11-25T14:35:23.489Z | registro: ETag "f8a261f9165c5c0197dd73224593bc6b" desde 2026-11-25T14:35:23.688Z
+PARTE 39 | storage: ETag "7d4b8aef15a7ae2493fe23d1c332060a", 67108864 bytes, LastModified 2026-11-25T14:35:24.035Z | registro: ETag "7d4b8aef15a7ae2493fe23d1c332060a" desde 2026-11-25T14:35:24.959Z
+PARTE 40 | storage: ETag "bdcae4b10ba25e8e3a3c6bc2757c67ff", 67108864 bytes, LastModified 2026-11-25T14:35:24.905Z | registro: ETag "bdcae4b10ba25e8e3a3c6bc2757c67ff" desde 2026-11-25T14:35:28.329Z
+PARTE 41 | storage: ETag "a2758deb1fa6f00ca40e6c576f4f8176", 67108864 bytes, LastModified 2026-11-25T14:35:25.420Z | registro: ETag "a2758deb1fa6f00ca40e6c576f4f8176" desde 2026-11-25T14:35:28.329Z
+PARTE 42 | storage: ETag "e204dcc9ea221c165b595225effadc0a", 67108864 bytes, LastModified 2026-11-25T14:35:27.944Z | registro: ETag "e204dcc9ea221c165b595225effadc0a" desde 2026-11-25T14:35:28.329Z
+PARTE 43 | storage: ETag "6632f36376410550d68f7275a79f7f9a", 67108864 bytes, LastModified 2026-11-25T14:35:28.204Z | registro: ETag "6632f36376410550d68f7275a79f7f9a" desde 2026-11-25T14:35:28.329Z
+PARTE 44 | storage: ETag "fe797206e61f4ce1974ee9fe3fb70139", 67108864 bytes, LastModified 2026-11-25T14:35:28.643Z | registro: ETag "fe797206e61f4ce1974ee9fe3fb70139" desde 2026-11-25T14:35:29.843Z
+PARTE 45 | storage: ETag "5a43c7e1ca359e219879532c7eee75de", 67108864 bytes, LastModified 2026-11-25T14:35:29.206Z | registro: ETag "5a43c7e1ca359e219879532c7eee75de" desde 2026-11-25T14:35:29.843Z
+PARTE 46 | storage: ETag "ea5a27f712bc0998997c0b313c4ae4f3", 67108864 bytes, LastModified 2026-11-25T14:35:29.572Z | registro: ETag "ea5a27f712bc0998997c0b313c4ae4f3" desde 2026-11-25T14:35:29.843Z
+PARTE 47 | storage: ETag "d855e102436e5c3a6cacbfaab42dabcd", 67108864 bytes, LastModified 2026-11-25T14:35:29.756Z | registro: ETag "d855e102436e5c3a6cacbfaab42dabcd" desde 2026-11-25T14:35:29.843Z
+PARTE 48 | storage: ETag "0ee938726a7892bc4843b9617585cfbd", 67108864 bytes, LastModified 2026-11-25T14:35:30.087Z | registro: ETag "0ee938726a7892bc4843b9617585cfbd" desde 2026-11-25T14:35:30.950Z
+PARTE 49 | storage: ETag "6dd59855634635cc1aa4df0f8a868115", 67108864 bytes, LastModified 2026-11-25T14:35:30.668Z | registro: ETag "6dd59855634635cc1aa4df0f8a868115" desde 2026-11-25T14:35:30.950Z
+PARTE 50 | storage: ETag "ae1ee0bc79a31ffdbf0385035f028d54", 67108864 bytes, LastModified 2026-11-25T14:35:30.940Z | registro: ETag "ae1ee0bc79a31ffdbf0385035f028d54" desde 2026-11-25T14:35:32.056Z
+PARTE 51 | storage: ETag "67dbdd81c68671974f414bcd96b0db9e", 67108864 bytes, LastModified 2026-11-25T14:35:31.193Z | registro: ETag "67dbdd81c68671974f414bcd96b0db9e" desde 2026-11-25T14:35:32.056Z
+PARTE 52 | storage: ETag "6c7db84166b06206cc1b9d7a925f56f2", 67108864 bytes, LastModified 2026-11-25T14:35:31.668Z | registro: ETag "6c7db84166b06206cc1b9d7a925f56f2" desde 2026-11-25T14:35:32.056Z
+PARTE 53 | storage: ETag "03d62c7d9adc665f4fe8ec23be174f98", 67108864 bytes, LastModified 2026-11-25T14:35:31.946Z | registro: ETag "03d62c7d9adc665f4fe8ec23be174f98" desde 2026-11-25T14:35:32.056Z
+PARTE 54 | storage: ETag "16ecdd2a22c76ea349bce564e464a157", 67108864 bytes, LastModified 2026-11-25T14:35:32.322Z | registro: ETag "16ecdd2a22c76ea349bce564e464a157" desde 2026-11-25T14:35:33.622Z
+PARTE 55 | storage: ETag "8829d970844b7ce672774f888b3f4e23", 67108864 bytes, LastModified 2026-11-25T14:35:32.628Z | registro: ETag "8829d970844b7ce672774f888b3f4e23" desde 2026-11-25T14:35:33.622Z
+PARTE 56 | storage: ETag "42febe67bf505101b34c8e241eb7fe2c", 67108864 bytes, LastModified 2026-11-25T14:35:33.010Z | registro: ETag "42febe67bf505101b34c8e241eb7fe2c" desde 2026-11-25T14:35:33.622Z
+PARTE 57 | storage: ETag "08070f4ceac3badf0f92bbdb27fe924d", 67108864 bytes, LastModified 2026-11-25T14:35:33.546Z | registro: ETag "08070f4ceac3badf0f92bbdb27fe924d" desde 2026-11-25T14:35:33.622Z
+PARTE 58 | storage: ETag "910786a07bee1f0412b50ebb797ced45", 67108864 bytes, LastModified 2026-11-25T14:35:33.555Z | registro: ETag "910786a07bee1f0412b50ebb797ced45" desde 2026-11-25T14:35:36.400Z
+PARTE 59 | storage: ETag "d69d60b0c6d5285a146f1081a8bf13da", 67108864 bytes, LastModified 2026-11-25T14:35:33.984Z | registro: ETag "d69d60b0c6d5285a146f1081a8bf13da" desde 2026-11-25T14:35:36.400Z
+PARTE 60 | storage: ETag "29eef5755dc0803ffa139f07804099cf", 67108864 bytes, LastModified 2026-11-25T14:35:36.321Z | registro: ETag "29eef5755dc0803ffa139f07804099cf" desde 2026-11-25T14:35:36.400Z
+PARTE 61 | storage: ETag "49cd7f27b6c5c938e7cfc78ea380f7b7", 67108864 bytes, LastModified 2026-11-25T14:35:36.949Z | registro: ETag "49cd7f27b6c5c938e7cfc78ea380f7b7" desde 2026-11-25T14:35:38.325Z
+PARTE 62 | storage: ETag "568a40fa001b7521c19058e594c7c6e7", 67108864 bytes, LastModified 2026-11-25T14:35:36.960Z | registro: ETag "568a40fa001b7521c19058e594c7c6e7" desde 2026-11-25T14:35:38.325Z
+PARTE 63 | storage: ETag "11267f4df6b94d3c22bf8612180a78da", 67108864 bytes, LastModified 2026-11-25T14:35:37.319Z | registro: ETag "11267f4df6b94d3c22bf8612180a78da" desde 2026-11-25T14:35:38.325Z
+PARTE 64 | storage: ETag "bedaba21b359af01e4147098c4cb49fe", 67108864 bytes, LastModified 2026-11-25T14:35:38.095Z | registro: ETag "bedaba21b359af01e4147098c4cb49fe" desde 2026-11-25T14:35:38.325Z
+PARTE 65 | storage: ETag "07a36d2202b0fd0386bbdb3eda364177", 67108864 bytes, LastModified 2026-11-25T14:35:38.461Z | registro: ETag "07a36d2202b0fd0386bbdb3eda364177" desde 2026-11-25T14:35:39.422Z
+PARTE 66 | storage: ETag "64eadfb520c9511eb177765f9ecf81d5", 67108864 bytes, LastModified 2026-11-25T14:35:38.303Z | registro: ETag "64eadfb520c9511eb177765f9ecf81d5" desde 2026-11-25T14:35:39.422Z
+PARTE 67 | storage: ETag "f78d85b54779ec38f15913319b6a0c78", 67108864 bytes, LastModified 2026-11-25T14:35:38.708Z | registro: ETag "f78d85b54779ec38f15913319b6a0c78" desde 2026-11-25T14:35:39.422Z
+PARTE 68 | storage: ETag "630de80b1fe3240f4efc480a68175954", 67108864 bytes, LastModified 2026-11-25T14:35:39.881Z | registro: ETag "630de80b1fe3240f4efc480a68175954" desde 2026-11-25T14:35:40.837Z
+PARTE 69 | storage: ETag "356adb052f0d107e331b3c7542245722", 67108864 bytes, LastModified 2026-11-25T14:35:40.729Z | registro: ETag "356adb052f0d107e331b3c7542245722" desde 2026-11-25T14:35:40.837Z
+PARTE 70 | storage: ETag "fa3de9a0f4130347f307cc237cdda679", 67108864 bytes, LastModified 2026-11-25T14:35:40.505Z | registro: ETag "fa3de9a0f4130347f307cc237cdda679" desde 2026-11-25T14:35:40.837Z
+PARTE 71 | storage: ETag "d83613407b32abe732381989f9bc63b0", 67108864 bytes, LastModified 2026-11-25T14:35:40.735Z | registro: ETag "d83613407b32abe732381989f9bc63b0" desde 2026-11-25T14:35:40.837Z
+PARTE 72 | storage: ETag "59c39d89361a962c09fee65e97a61b70", 67108864 bytes, LastModified 2026-11-25T14:35:41.285Z | registro: ETag "59c39d89361a962c09fee65e97a61b70" desde 2026-11-25T14:35:41.954Z
+PARTE 73 | storage: ETag "c8f611cf3069710158d9b81d9b327dd6", 67108864 bytes, LastModified 2026-11-25T14:35:41.912Z | registro: sem ETag
+PARTE 74 | storage: ETag "f5ba75b59a14a034d242504c37aad235", 67108864 bytes, LastModified 2026-11-25T14:35:41.905Z | registro: ETag "f5ba75b59a14a034d242504c37aad235" desde 2026-11-25T14:35:41.954Z
+PARTE 75 | storage: ETag "8504d1a4a31056f38af9e7aa3ac40d7b", 67108864 bytes, LastModified 2026-11-25T14:35:42.093Z | registro: sem ETag
+
+=== Retomada no Windows, conferência das partes recebidas, completion e polling (14:35:46Z)
+$ resume_and_complete
+--- retrato das partes antes do completion
+PARTES | vídeo ehRPjVzsXpY draft | sessão active | 150 partes no registro da API, 150 com ETag | 150 partes no ListParts
+PARTE 1 | storage: ETag "f0fec8aade4e53c524081d22d6c3e60a", 67108864 bytes, LastModified 2026-11-25T14:35:07.364Z | registro: ETag "f0fec8aade4e53c524081d22d6c3e60a" desde 2026-11-25T14:35:08.565Z
+PARTE 2 | storage: ETag "f30878e633f29e7ee8fce143cf9c953b", 67108864 bytes, LastModified 2026-11-25T14:35:08.424Z | registro: ETag "f30878e633f29e7ee8fce143cf9c953b" desde 2026-11-25T14:35:08.565Z
+PARTE 3 | storage: ETag "4eb491197f45446636fb97bc8da739c8", 67108864 bytes, LastModified 2026-11-25T14:35:08.280Z | registro: ETag "4eb491197f45446636fb97bc8da739c8" desde 2026-11-25T14:35:08.565Z
+PARTE 4 | storage: ETag "990ac7f2514a7ce53fbe641e4b5588cf", 67108864 bytes, LastModified 2026-11-25T14:35:08.431Z | registro: ETag "990ac7f2514a7ce53fbe641e4b5588cf" desde 2026-11-25T14:35:08.565Z
+PARTE 5 | storage: ETag "5345e2e73a8dca2f4ed330a1e056003e", 67108864 bytes, LastModified 2026-11-25T14:35:08.755Z | registro: ETag "5345e2e73a8dca2f4ed330a1e056003e" desde 2026-11-25T14:35:10.479Z
+PARTE 6 | storage: ETag "1ea7e6a788025fbb4405fd67b5120c4a", 67108864 bytes, LastModified 2026-11-25T14:35:10.419Z | registro: ETag "1ea7e6a788025fbb4405fd67b5120c4a" desde 2026-11-25T14:35:10.479Z
+PARTE 7 | storage: ETag "ee9fd9b9ef3ed8526a681ec7af262578", 67108864 bytes, LastModified 2026-11-25T14:35:10.419Z | registro: ETag "ee9fd9b9ef3ed8526a681ec7af262578" desde 2026-11-25T14:35:11.716Z
+PARTE 8 | storage: ETag "b8cf69eee24c45509886bebeb0c219a1", 67108864 bytes, LastModified 2026-11-25T14:35:10.413Z | registro: ETag "b8cf69eee24c45509886bebeb0c219a1" desde 2026-11-25T14:35:10.479Z
+PARTE 9 | storage: ETag "6391466ee4b73e415ea038886ff06f54", 67108864 bytes, LastModified 2026-11-25T14:35:10.419Z | registro: ETag "6391466ee4b73e415ea038886ff06f54" desde 2026-11-25T14:35:11.716Z
+PARTE 10 | storage: ETag "80d0865828c556671595daa85fdaac03", 67108864 bytes, LastModified 2026-11-25T14:35:11.695Z | registro: ETag "80d0865828c556671595daa85fdaac03" desde 2026-11-25T14:35:12.814Z
+PARTE 11 | storage: ETag "c98e1c7c2dc3f38e0b1c703fc05f62cd", 67108864 bytes, LastModified 2026-11-25T14:35:11.700Z | registro: ETag "c98e1c7c2dc3f38e0b1c703fc05f62cd" desde 2026-11-25T14:35:12.814Z
+PARTE 12 | storage: ETag "1b768822ff0baac87454fc43af995b20", 67108864 bytes, LastModified 2026-11-25T14:35:11.412Z | registro: ETag "1b768822ff0baac87454fc43af995b20" desde 2026-11-25T14:35:11.716Z
+PARTE 13 | storage: ETag "2908aa11a2f9ef40c055ee10aa1dfcf8", 67108864 bytes, LastModified 2026-11-25T14:35:12.885Z | registro: ETag "2908aa11a2f9ef40c055ee10aa1dfcf8" desde 2026-11-25T14:35:13.916Z
+PARTE 14 | storage: ETag "36b3d56d9abe7bcb4fb3b3694be55ff1", 67108864 bytes, LastModified 2026-11-25T14:35:13.360Z | registro: ETag "36b3d56d9abe7bcb4fb3b3694be55ff1" desde 2026-11-25T14:35:13.916Z
+PARTE 15 | storage: ETag "70fd62b2a57359516be10db913ea9cf1", 67108864 bytes, LastModified 2026-11-25T14:35:12.893Z | registro: ETag "70fd62b2a57359516be10db913ea9cf1" desde 2026-11-25T14:35:13.916Z
+PARTE 16 | storage: ETag "dc36bf70407f0e38da4f47732015ed6d", 67108864 bytes, LastModified 2026-11-25T14:35:14.108Z | registro: ETag "dc36bf70407f0e38da4f47732015ed6d" desde 2026-11-25T14:35:15.020Z
+PARTE 17 | storage: ETag "16c3571301f893e41d4193600b7395bf", 67108864 bytes, LastModified 2026-11-25T14:35:13.965Z | registro: ETag "16c3571301f893e41d4193600b7395bf" desde 2026-11-25T14:35:15.020Z
+PARTE 18 | storage: ETag "5413e711dba19da46d3b5b0d6860926a", 67108864 bytes, LastModified 2026-11-25T14:35:13.972Z | registro: ETag "5413e711dba19da46d3b5b0d6860926a" desde 2026-11-25T14:35:15.020Z
+PARTE 19 | storage: ETag "bab14bf9ea6b01f1fe2c94757ca78a9f", 67108864 bytes, LastModified 2026-11-25T14:35:15.627Z | registro: ETag "bab14bf9ea6b01f1fe2c94757ca78a9f" desde 2026-11-25T14:35:16.592Z
+PARTE 20 | storage: ETag "d09964ee8840f8f6e46ecf36c7058538", 67108864 bytes, LastModified 2026-11-25T14:35:16.341Z | registro: ETag "d09964ee8840f8f6e46ecf36c7058538" desde 2026-11-25T14:35:16.592Z
+PARTE 21 | storage: ETag "dd7915e7bc54619bc7acefd47406dc95", 67108864 bytes, LastModified 2026-11-25T14:35:16.545Z | registro: ETag "dd7915e7bc54619bc7acefd47406dc95" desde 2026-11-25T14:35:16.592Z
+PARTE 22 | storage: ETag "4235d97194a9d00d050e11013e635a2c", 67108864 bytes, LastModified 2026-11-25T14:35:16.227Z | registro: ETag "4235d97194a9d00d050e11013e635a2c" desde 2026-11-25T14:35:16.592Z
+PARTE 23 | storage: ETag "3d0aba1d4094f4dd9d89011cbc296bfc", 67108864 bytes, LastModified 2026-11-25T14:35:17.312Z | registro: ETag "3d0aba1d4094f4dd9d89011cbc296bfc" desde 2026-11-25T14:35:17.742Z
+PARTE 24 | storage: ETag "740f35af14bdba837bfe171cd4feffff", 67108864 bytes, LastModified 2026-11-25T14:35:17.549Z | registro: ETag "740f35af14bdba837bfe171cd4feffff" desde 2026-11-25T14:35:17.742Z
+PARTE 25 | storage: ETag "299d79bd188e35a1cc9010bcdc37db97", 67108864 bytes, LastModified 2026-11-25T14:35:17.767Z | registro: ETag "299d79bd188e35a1cc9010bcdc37db97" desde 2026-11-25T14:35:19.124Z
+PARTE 26 | storage: ETag "be07d3f7470b96e1a955e738714969ef", 67108864 bytes, LastModified 2026-11-25T14:35:18.125Z | registro: ETag "be07d3f7470b96e1a955e738714969ef" desde 2026-11-25T14:35:19.124Z
+PARTE 27 | storage: ETag "17c72f82a99ff0bf581792fe954877ca", 67108864 bytes, LastModified 2026-11-25T14:35:18.986Z | registro: ETag "17c72f82a99ff0bf581792fe954877ca" desde 2026-11-25T14:35:19.124Z
+PARTE 28 | storage: ETag "9ace2dc818824c022bd6dc8073017e87", 67108864 bytes, LastModified 2026-11-25T14:35:19.692Z | registro: ETag "9ace2dc818824c022bd6dc8073017e87" desde 2026-11-25T14:35:20.243Z
+PARTE 29 | storage: ETag "67804000af8b4b3837b41ad5e114cb3f", 67108864 bytes, LastModified 2026-11-25T14:35:19.342Z | registro: ETag "67804000af8b4b3837b41ad5e114cb3f" desde 2026-11-25T14:35:20.243Z
+PARTE 30 | storage: ETag "3a74895ab7d5ea79a5d2a194d07df003", 67108864 bytes, LastModified 2026-11-25T14:35:19.977Z | registro: ETag "3a74895ab7d5ea79a5d2a194d07df003" desde 2026-11-25T14:35:20.243Z
+PARTE 31 | storage: ETag "4c971c11b3a355a63da9aa568e5c6aa0", 67108864 bytes, LastModified 2026-11-25T14:35:20.850Z | registro: ETag "4c971c11b3a355a63da9aa568e5c6aa0" desde 2026-11-25T14:35:21.886Z
+PARTE 32 | storage: ETag "d8e370b44a6e3648ab6d39836a692366", 67108864 bytes, LastModified 2026-11-25T14:35:21.150Z | registro: ETag "d8e370b44a6e3648ab6d39836a692366" desde 2026-11-25T14:35:21.886Z
+PARTE 33 | storage: ETag "6d21fa4bff545f8214b04e0efc705e57", 67108864 bytes, LastModified 2026-11-25T14:35:21.405Z | registro: ETag "6d21fa4bff545f8214b04e0efc705e57" desde 2026-11-25T14:35:21.886Z
+PARTE 34 | storage: ETag "369f87c0e9a066f41d4d8f6e1f63f350", 67108864 bytes, LastModified 2026-11-25T14:35:21.824Z | registro: ETag "369f87c0e9a066f41d4d8f6e1f63f350" desde 2026-11-25T14:35:21.886Z
+PARTE 35 | storage: ETag "9461c7c792f02cc5b9641d7ca08cb2e7", 67108864 bytes, LastModified 2026-11-25T14:35:22.217Z | registro: ETag "9461c7c792f02cc5b9641d7ca08cb2e7" desde 2026-11-25T14:35:23.688Z
+PARTE 36 | storage: ETag "d3bd22f35f4089fab5cb4015f8da5706", 67108864 bytes, LastModified 2026-11-25T14:35:23.093Z | registro: ETag "d3bd22f35f4089fab5cb4015f8da5706" desde 2026-11-25T14:35:23.688Z
+PARTE 37 | storage: ETag "b6001f586d44d527f4179dbc7f46c8a5", 67108864 bytes, LastModified 2026-11-25T14:35:22.780Z | registro: ETag "b6001f586d44d527f4179dbc7f46c8a5" desde 2026-11-25T14:35:23.688Z
+PARTE 38 | storage: ETag "f8a261f9165c5c0197dd73224593bc6b", 67108864 bytes, LastModified 2026-11-25T14:35:23.489Z | registro: ETag "f8a261f9165c5c0197dd73224593bc6b" desde 2026-11-25T14:35:23.688Z
+PARTE 39 | storage: ETag "7d4b8aef15a7ae2493fe23d1c332060a", 67108864 bytes, LastModified 2026-11-25T14:35:24.035Z | registro: ETag "7d4b8aef15a7ae2493fe23d1c332060a" desde 2026-11-25T14:35:24.959Z
+PARTE 40 | storage: ETag "bdcae4b10ba25e8e3a3c6bc2757c67ff", 67108864 bytes, LastModified 2026-11-25T14:35:24.905Z | registro: ETag "bdcae4b10ba25e8e3a3c6bc2757c67ff" desde 2026-11-25T14:35:28.329Z
+PARTE 41 | storage: ETag "a2758deb1fa6f00ca40e6c576f4f8176", 67108864 bytes, LastModified 2026-11-25T14:35:25.420Z | registro: ETag "a2758deb1fa6f00ca40e6c576f4f8176" desde 2026-11-25T14:35:28.329Z
+PARTE 42 | storage: ETag "e204dcc9ea221c165b595225effadc0a", 67108864 bytes, LastModified 2026-11-25T14:35:27.944Z | registro: ETag "e204dcc9ea221c165b595225effadc0a" desde 2026-11-25T14:35:28.329Z
+PARTE 43 | storage: ETag "6632f36376410550d68f7275a79f7f9a", 67108864 bytes, LastModified 2026-11-25T14:35:28.204Z | registro: ETag "6632f36376410550d68f7275a79f7f9a" desde 2026-11-25T14:35:28.329Z
+PARTE 44 | storage: ETag "fe797206e61f4ce1974ee9fe3fb70139", 67108864 bytes, LastModified 2026-11-25T14:35:28.643Z | registro: ETag "fe797206e61f4ce1974ee9fe3fb70139" desde 2026-11-25T14:35:29.843Z
+PARTE 45 | storage: ETag "5a43c7e1ca359e219879532c7eee75de", 67108864 bytes, LastModified 2026-11-25T14:35:29.206Z | registro: ETag "5a43c7e1ca359e219879532c7eee75de" desde 2026-11-25T14:35:29.843Z
+PARTE 46 | storage: ETag "ea5a27f712bc0998997c0b313c4ae4f3", 67108864 bytes, LastModified 2026-11-25T14:35:29.572Z | registro: ETag "ea5a27f712bc0998997c0b313c4ae4f3" desde 2026-11-25T14:35:29.843Z
+PARTE 47 | storage: ETag "d855e102436e5c3a6cacbfaab42dabcd", 67108864 bytes, LastModified 2026-11-25T14:35:29.756Z | registro: ETag "d855e102436e5c3a6cacbfaab42dabcd" desde 2026-11-25T14:35:29.843Z
+PARTE 48 | storage: ETag "0ee938726a7892bc4843b9617585cfbd", 67108864 bytes, LastModified 2026-11-25T14:35:30.087Z | registro: ETag "0ee938726a7892bc4843b9617585cfbd" desde 2026-11-25T14:35:30.950Z
+PARTE 49 | storage: ETag "6dd59855634635cc1aa4df0f8a868115", 67108864 bytes, LastModified 2026-11-25T14:35:30.668Z | registro: ETag "6dd59855634635cc1aa4df0f8a868115" desde 2026-11-25T14:35:30.950Z
+PARTE 50 | storage: ETag "ae1ee0bc79a31ffdbf0385035f028d54", 67108864 bytes, LastModified 2026-11-25T14:35:30.940Z | registro: ETag "ae1ee0bc79a31ffdbf0385035f028d54" desde 2026-11-25T14:35:32.056Z
+PARTE 51 | storage: ETag "67dbdd81c68671974f414bcd96b0db9e", 67108864 bytes, LastModified 2026-11-25T14:35:31.193Z | registro: ETag "67dbdd81c68671974f414bcd96b0db9e" desde 2026-11-25T14:35:32.056Z
+PARTE 52 | storage: ETag "6c7db84166b06206cc1b9d7a925f56f2", 67108864 bytes, LastModified 2026-11-25T14:35:31.668Z | registro: ETag "6c7db84166b06206cc1b9d7a925f56f2" desde 2026-11-25T14:35:32.056Z
+PARTE 53 | storage: ETag "03d62c7d9adc665f4fe8ec23be174f98", 67108864 bytes, LastModified 2026-11-25T14:35:31.946Z | registro: ETag "03d62c7d9adc665f4fe8ec23be174f98" desde 2026-11-25T14:35:32.056Z
+PARTE 54 | storage: ETag "16ecdd2a22c76ea349bce564e464a157", 67108864 bytes, LastModified 2026-11-25T14:35:32.322Z | registro: ETag "16ecdd2a22c76ea349bce564e464a157" desde 2026-11-25T14:35:33.622Z
+PARTE 55 | storage: ETag "8829d970844b7ce672774f888b3f4e23", 67108864 bytes, LastModified 2026-11-25T14:35:32.628Z | registro: ETag "8829d970844b7ce672774f888b3f4e23" desde 2026-11-25T14:35:33.622Z
+PARTE 56 | storage: ETag "42febe67bf505101b34c8e241eb7fe2c", 67108864 bytes, LastModified 2026-11-25T14:35:33.010Z | registro: ETag "42febe67bf505101b34c8e241eb7fe2c" desde 2026-11-25T14:35:33.622Z
+PARTE 57 | storage: ETag "08070f4ceac3badf0f92bbdb27fe924d", 67108864 bytes, LastModified 2026-11-25T14:35:33.546Z | registro: ETag "08070f4ceac3badf0f92bbdb27fe924d" desde 2026-11-25T14:35:33.622Z
+PARTE 58 | storage: ETag "910786a07bee1f0412b50ebb797ced45", 67108864 bytes, LastModified 2026-11-25T14:35:33.555Z | registro: ETag "910786a07bee1f0412b50ebb797ced45" desde 2026-11-25T14:35:36.400Z
+PARTE 59 | storage: ETag "d69d60b0c6d5285a146f1081a8bf13da", 67108864 bytes, LastModified 2026-11-25T14:35:33.984Z | registro: ETag "d69d60b0c6d5285a146f1081a8bf13da" desde 2026-11-25T14:35:36.400Z
+PARTE 60 | storage: ETag "29eef5755dc0803ffa139f07804099cf", 67108864 bytes, LastModified 2026-11-25T14:35:36.321Z | registro: ETag "29eef5755dc0803ffa139f07804099cf" desde 2026-11-25T14:35:36.400Z
+PARTE 61 | storage: ETag "49cd7f27b6c5c938e7cfc78ea380f7b7", 67108864 bytes, LastModified 2026-11-25T14:35:36.949Z | registro: ETag "49cd7f27b6c5c938e7cfc78ea380f7b7" desde 2026-11-25T14:35:38.325Z
+PARTE 62 | storage: ETag "568a40fa001b7521c19058e594c7c6e7", 67108864 bytes, LastModified 2026-11-25T14:35:36.960Z | registro: ETag "568a40fa001b7521c19058e594c7c6e7" desde 2026-11-25T14:35:38.325Z
+PARTE 63 | storage: ETag "11267f4df6b94d3c22bf8612180a78da", 67108864 bytes, LastModified 2026-11-25T14:35:37.319Z | registro: ETag "11267f4df6b94d3c22bf8612180a78da" desde 2026-11-25T14:35:38.325Z
+PARTE 64 | storage: ETag "bedaba21b359af01e4147098c4cb49fe", 67108864 bytes, LastModified 2026-11-25T14:35:38.095Z | registro: ETag "bedaba21b359af01e4147098c4cb49fe" desde 2026-11-25T14:35:38.325Z
+PARTE 65 | storage: ETag "07a36d2202b0fd0386bbdb3eda364177", 67108864 bytes, LastModified 2026-11-25T14:35:38.461Z | registro: ETag "07a36d2202b0fd0386bbdb3eda364177" desde 2026-11-25T14:35:39.422Z
+PARTE 66 | storage: ETag "64eadfb520c9511eb177765f9ecf81d5", 67108864 bytes, LastModified 2026-11-25T14:35:38.303Z | registro: ETag "64eadfb520c9511eb177765f9ecf81d5" desde 2026-11-25T14:35:39.422Z
+PARTE 67 | storage: ETag "f78d85b54779ec38f15913319b6a0c78", 67108864 bytes, LastModified 2026-11-25T14:35:38.708Z | registro: ETag "f78d85b54779ec38f15913319b6a0c78" desde 2026-11-25T14:35:39.422Z
+PARTE 68 | storage: ETag "630de80b1fe3240f4efc480a68175954", 67108864 bytes, LastModified 2026-11-25T14:35:39.881Z | registro: ETag "630de80b1fe3240f4efc480a68175954" desde 2026-11-25T14:35:40.837Z
+PARTE 69 | storage: ETag "356adb052f0d107e331b3c7542245722", 67108864 bytes, LastModified 2026-11-25T14:35:40.729Z | registro: ETag "356adb052f0d107e331b3c7542245722" desde 2026-11-25T14:35:40.837Z
+PARTE 70 | storage: ETag "fa3de9a0f4130347f307cc237cdda679", 67108864 bytes, LastModified 2026-11-25T14:35:40.505Z | registro: ETag "fa3de9a0f4130347f307cc237cdda679" desde 2026-11-25T14:35:40.837Z
+PARTE 71 | storage: ETag "d83613407b32abe732381989f9bc63b0", 67108864 bytes, LastModified 2026-11-25T14:35:40.735Z | registro: ETag "d83613407b32abe732381989f9bc63b0" desde 2026-11-25T14:35:40.837Z
+PARTE 72 | storage: ETag "59c39d89361a962c09fee65e97a61b70", 67108864 bytes, LastModified 2026-11-25T14:35:41.285Z | registro: ETag "59c39d89361a962c09fee65e97a61b70" desde 2026-11-25T14:35:41.954Z
+PARTE 73 | storage: ETag "c8f611cf3069710158d9b81d9b327dd6", 67108864 bytes, LastModified 2026-11-25T14:36:06.317Z | registro: ETag "c8f611cf3069710158d9b81d9b327dd6" desde 2026-11-25T14:36:09.420Z
+PARTE 74 | storage: ETag "f5ba75b59a14a034d242504c37aad235", 67108864 bytes, LastModified 2026-11-25T14:35:41.905Z | registro: ETag "f5ba75b59a14a034d242504c37aad235" desde 2026-11-25T14:35:41.954Z
+PARTE 75 | storage: ETag "8504d1a4a31056f38af9e7aa3ac40d7b", 67108864 bytes, LastModified 2026-11-25T14:36:05.785Z | registro: ETag "8504d1a4a31056f38af9e7aa3ac40d7b" desde 2026-11-25T14:36:06.038Z
+PARTE 76 | storage: ETag "da67bef66fe763c5ff61b4af4467ea3e", 67108864 bytes, LastModified 2026-11-25T14:36:09.376Z | registro: ETag "da67bef66fe763c5ff61b4af4467ea3e" desde 2026-11-25T14:36:10.519Z
+PARTE 77 | storage: ETag "d0a7165c9b9c6de8ffa89b1507440caa", 67108864 bytes, LastModified 2026-11-25T14:36:09.386Z | registro: ETag "d0a7165c9b9c6de8ffa89b1507440caa" desde 2026-11-25T14:36:10.519Z
+PARTE 78 | storage: ETag "68d19c853987970c7e332654d45518bc", 67108864 bytes, LastModified 2026-11-25T14:36:09.228Z | registro: ETag "68d19c853987970c7e332654d45518bc" desde 2026-11-25T14:36:09.420Z
+PARTE 79 | storage: ETag "bef305de691b77995be91cec1d2c3fda", 67108864 bytes, LastModified 2026-11-25T14:36:09.593Z | registro: ETag "bef305de691b77995be91cec1d2c3fda" desde 2026-11-25T14:36:10.519Z
+PARTE 80 | storage: ETag "4981bb0a1817640ac56cc2fb9b86dfd4", 67108864 bytes, LastModified 2026-11-25T14:36:11.002Z | registro: ETag "4981bb0a1817640ac56cc2fb9b86dfd4" desde 2026-11-25T14:36:11.697Z
+PARTE 81 | storage: ETag "7dbb0150acc23f4f5a958a0d1c3e2b6c", 67108864 bytes, LastModified 2026-11-25T14:36:10.789Z | registro: ETag "7dbb0150acc23f4f5a958a0d1c3e2b6c" desde 2026-11-25T14:36:11.697Z
+PARTE 82 | storage: ETag "fd95dca9f981e4fe684eeff75e662730", 67108864 bytes, LastModified 2026-11-25T14:36:11.564Z | registro: ETag "fd95dca9f981e4fe684eeff75e662730" desde 2026-11-25T14:36:11.697Z
+PARTE 83 | storage: ETag "7c231f39c31f16189efd97682b411d3b", 67108864 bytes, LastModified 2026-11-25T14:36:11.692Z | registro: ETag "7c231f39c31f16189efd97682b411d3b" desde 2026-11-25T14:36:12.731Z
+PARTE 84 | storage: ETag "7e990b8c068daeebda87c20d31cd11f5", 67108864 bytes, LastModified 2026-11-25T14:36:12.177Z | registro: ETag "7e990b8c068daeebda87c20d31cd11f5" desde 2026-11-25T14:36:12.731Z
+PARTE 85 | storage: ETag "9c6af76a3223c1996f7a62b394d14379", 67108864 bytes, LastModified 2026-11-25T14:36:12.009Z | registro: ETag "9c6af76a3223c1996f7a62b394d14379" desde 2026-11-25T14:36:12.731Z
+PARTE 86 | storage: ETag "eba98aa5c3d40fd9e85d87666204e668", 67108864 bytes, LastModified 2026-11-25T14:36:13.122Z | registro: ETag "eba98aa5c3d40fd9e85d87666204e668" desde 2026-11-25T14:36:13.840Z
+PARTE 87 | storage: ETag "d7205a8196d9ec0a29a7e671975fc5f8", 67108864 bytes, LastModified 2026-11-25T14:36:12.764Z | registro: ETag "d7205a8196d9ec0a29a7e671975fc5f8" desde 2026-11-25T14:36:13.840Z
+PARTE 88 | storage: ETag "c683b6c577efd9db27a2c7a37c004f26", 67108864 bytes, LastModified 2026-11-25T14:36:13.803Z | registro: ETag "c683b6c577efd9db27a2c7a37c004f26" desde 2026-11-25T14:36:13.840Z
+PARTE 89 | storage: ETag "7a3bec287b5d4731058333cc5ddbe599", 67108864 bytes, LastModified 2026-11-25T14:36:13.810Z | registro: ETag "7a3bec287b5d4731058333cc5ddbe599" desde 2026-11-25T14:36:14.943Z
+PARTE 90 | storage: ETag "35e29c4f561960ebac9a9845ded2b0fb", 67108864 bytes, LastModified 2026-11-25T14:36:13.992Z | registro: ETag "35e29c4f561960ebac9a9845ded2b0fb" desde 2026-11-25T14:36:14.943Z
+PARTE 91 | storage: ETag "f6bbaa279882e62c149c7e63db5e75c9", 67108864 bytes, LastModified 2026-11-25T14:36:15.220Z | registro: ETag "f6bbaa279882e62c149c7e63db5e75c9" desde 2026-11-25T14:36:16.419Z
+PARTE 92 | storage: ETag "dfeac0a3fbcd61fe28f67bd8a1a73499", 67108864 bytes, LastModified 2026-11-25T14:36:15.212Z | registro: ETag "dfeac0a3fbcd61fe28f67bd8a1a73499" desde 2026-11-25T14:36:16.419Z
+PARTE 93 | storage: ETag "a3492bcf57910df1515ee17a498b1626", 67108864 bytes, LastModified 2026-11-25T14:36:16.660Z | registro: ETag "a3492bcf57910df1515ee17a498b1626" desde 2026-11-25T14:36:17.523Z
+PARTE 94 | storage: ETag "bcc0875d7e59cb6b523a61ee12bb948d", 67108864 bytes, LastModified 2026-11-25T14:36:16.355Z | registro: ETag "bcc0875d7e59cb6b523a61ee12bb948d" desde 2026-11-25T14:36:16.419Z
+PARTE 95 | storage: ETag "f28b797472eb4982057a1d61e5dd9629", 67108864 bytes, LastModified 2026-11-25T14:36:16.355Z | registro: ETag "f28b797472eb4982057a1d61e5dd9629" desde 2026-11-25T14:36:16.419Z
+PARTE 96 | storage: ETag "f86c4668698e9bf9820e660a63ced247", 67108864 bytes, LastModified 2026-11-25T14:36:16.359Z | registro: ETag "f86c4668698e9bf9820e660a63ced247" desde 2026-11-25T14:36:17.523Z
+PARTE 97 | storage: ETag "dac6c0a34531807bd8d15fae710c1f65", 67108864 bytes, LastModified 2026-11-25T14:36:17.325Z | registro: ETag "dac6c0a34531807bd8d15fae710c1f65" desde 2026-11-25T14:36:17.523Z
+PARTE 98 | storage: ETag "f37340695689e9124250435aa2474900", 67108864 bytes, LastModified 2026-11-25T14:36:17.177Z | registro: ETag "f37340695689e9124250435aa2474900" desde 2026-11-25T14:36:17.523Z
+PARTE 99 | storage: ETag "3d76b1bd8ff3fd26229bdd958731f528", 67108864 bytes, LastModified 2026-11-25T14:36:17.625Z | registro: ETag "3d76b1bd8ff3fd26229bdd958731f528" desde 2026-11-25T14:36:18.627Z
+PARTE 100 | storage: ETag "1ca3e0123363aae9a3380db214c04e3d", 67108864 bytes, LastModified 2026-11-25T14:36:20.834Z | registro: ETag "1ca3e0123363aae9a3380db214c04e3d" desde 2026-11-25T14:36:21.199Z
+PARTE 101 | storage: ETag "3bfd8feac698e2551a3c4021a123d682", 67108864 bytes, LastModified 2026-11-25T14:36:20.987Z | registro: ETag "3bfd8feac698e2551a3c4021a123d682" desde 2026-11-25T14:36:21.199Z
+PARTE 102 | storage: ETag "fbf30dce8414d7b8ee59438c776c4926", 67108864 bytes, LastModified 2026-11-25T14:36:18.585Z | registro: ETag "fbf30dce8414d7b8ee59438c776c4926" desde 2026-11-25T14:36:18.627Z
+PARTE 103 | storage: ETag "d01caebd2abe6cd866225285470c9d41", 67108864 bytes, LastModified 2026-11-25T14:36:22.311Z | registro: ETag "d01caebd2abe6cd866225285470c9d41" desde 2026-11-25T14:36:23.446Z
+PARTE 104 | storage: ETag "033f7991f7cd34adfc937b1fb77fce98", 67108864 bytes, LastModified 2026-11-25T14:36:22.311Z | registro: ETag "033f7991f7cd34adfc937b1fb77fce98" desde 2026-11-25T14:36:23.446Z
+PARTE 105 | storage: ETag "d97c351698609e9dad0c36614490e3d3", 67108864 bytes, LastModified 2026-11-25T14:36:22.303Z | registro: ETag "d97c351698609e9dad0c36614490e3d3" desde 2026-11-25T14:36:22.346Z
+PARTE 106 | storage: ETag "e95df39240da2eab0fc6dfb8ff6290ed", 67108864 bytes, LastModified 2026-11-25T14:36:22.311Z | registro: ETag "e95df39240da2eab0fc6dfb8ff6290ed" desde 2026-11-25T14:36:23.446Z
+PARTE 107 | storage: ETag "05193b63d9f1f473157a03011f09a431", 67108864 bytes, LastModified 2026-11-25T14:36:23.791Z | registro: ETag "05193b63d9f1f473157a03011f09a431" desde 2026-11-25T14:36:24.819Z
+PARTE 108 | storage: ETag "90a971b7838e86806a496ae3e1e6f4c3", 67108864 bytes, LastModified 2026-11-25T14:36:24.745Z | registro: ETag "90a971b7838e86806a496ae3e1e6f4c3" desde 2026-11-25T14:36:24.819Z
+PARTE 109 | storage: ETag "4c706fa2d252b43e935df65a7d145277", 67108864 bytes, LastModified 2026-11-25T14:36:24.443Z | registro: ETag "4c706fa2d252b43e935df65a7d145277" desde 2026-11-25T14:36:24.819Z
+PARTE 110 | storage: ETag "fbc0abcc587441998b00345ffe964021", 67108864 bytes, LastModified 2026-11-25T14:36:24.745Z | registro: ETag "fbc0abcc587441998b00345ffe964021" desde 2026-11-25T14:36:24.819Z
+PARTE 111 | storage: ETag "09a5117310e84be31e8845eb9c15822f", 67108864 bytes, LastModified 2026-11-25T14:36:24.976Z | registro: ETag "09a5117310e84be31e8845eb9c15822f" desde 2026-11-25T14:36:25.920Z
+PARTE 112 | storage: ETag "413f6483ac53a75331109094667a7893", 67108864 bytes, LastModified 2026-11-25T14:36:26.147Z | registro: ETag "413f6483ac53a75331109094667a7893" desde 2026-11-25T14:36:27.022Z
+PARTE 113 | storage: ETag "9e8c314d5a4e975feb05118bf758755e", 67108864 bytes, LastModified 2026-11-25T14:36:26.326Z | registro: ETag "9e8c314d5a4e975feb05118bf758755e" desde 2026-11-25T14:36:27.022Z
+PARTE 114 | storage: ETag "24dfde833c6f7791c35a2fba4450847b", 67108864 bytes, LastModified 2026-11-25T14:36:25.693Z | registro: ETag "24dfde833c6f7791c35a2fba4450847b" desde 2026-11-25T14:36:25.920Z
+PARTE 115 | storage: ETag "fad916406d46a45208ba48fc654d0908", 67108864 bytes, LastModified 2026-11-25T14:36:26.155Z | registro: ETag "fad916406d46a45208ba48fc654d0908" desde 2026-11-25T14:36:27.022Z
+PARTE 116 | storage: ETag "0b95fce28049beb4c519173ecc4dcd5e", 67108864 bytes, LastModified 2026-11-25T14:36:26.951Z | registro: ETag "0b95fce28049beb4c519173ecc4dcd5e" desde 2026-11-25T14:36:27.022Z
+PARTE 117 | storage: ETag "d874a85f66a3c02c0d8d3c62990a1691", 67108864 bytes, LastModified 2026-11-25T14:36:27.284Z | registro: ETag "d874a85f66a3c02c0d8d3c62990a1691" desde 2026-11-25T14:36:28.191Z
+PARTE 118 | storage: ETag "dcc5356687b4ff6ab7e08fc0836c369f", 67108864 bytes, LastModified 2026-11-25T14:36:28.216Z | registro: ETag "dcc5356687b4ff6ab7e08fc0836c369f" desde 2026-11-25T14:36:29.231Z
+PARTE 119 | storage: ETag "be0866819a13fa50769b8a57e29a3988", 67108864 bytes, LastModified 2026-11-25T14:36:28.213Z | registro: ETag "be0866819a13fa50769b8a57e29a3988" desde 2026-11-25T14:36:29.231Z
+PARTE 120 | storage: ETag "4cab540e24fcb892369c65cb30b3c9ef", 67108864 bytes, LastModified 2026-11-25T14:36:27.885Z | registro: ETag "4cab540e24fcb892369c65cb30b3c9ef" desde 2026-11-25T14:36:28.191Z
+PARTE 121 | storage: ETag "10b7a7b2dbc954d22a9671fa249610dd", 67108864 bytes, LastModified 2026-11-25T14:36:29.247Z | registro: ETag "10b7a7b2dbc954d22a9671fa249610dd" desde 2026-11-25T14:36:30.339Z
+PARTE 122 | storage: ETag "912ef60c6865ce5ae115947301c17370", 67108864 bytes, LastModified 2026-11-25T14:36:29.261Z | registro: ETag "912ef60c6865ce5ae115947301c17370" desde 2026-11-25T14:36:30.339Z
+PARTE 123 | storage: ETag "04ab5b5ef670141179e4f3b048649700", 67108864 bytes, LastModified 2026-11-25T14:36:30.525Z | registro: ETag "04ab5b5ef670141179e4f3b048649700" desde 2026-11-25T14:36:31.443Z
+PARTE 124 | storage: ETag "87472631fa657f9a1a951ccd61f3014b", 67108864 bytes, LastModified 2026-11-25T14:36:30.177Z | registro: ETag "87472631fa657f9a1a951ccd61f3014b" desde 2026-11-25T14:36:30.339Z
+PARTE 125 | storage: ETag "5e4a372c78f2017d87496288ef3bd077", 67108864 bytes, LastModified 2026-11-25T14:36:30.353Z | registro: ETag "5e4a372c78f2017d87496288ef3bd077" desde 2026-11-25T14:36:31.443Z
+PARTE 126 | storage: ETag "d2a2fab22dd90a1db686171eb67a9753", 67108864 bytes, LastModified 2026-11-25T14:36:31.248Z | registro: ETag "d2a2fab22dd90a1db686171eb67a9753" desde 2026-11-25T14:36:31.443Z
+PARTE 127 | storage: ETag "ac377fadb2768a74a6e3af8e8830b245", 67108864 bytes, LastModified 2026-11-25T14:36:31.396Z | registro: ETag "ac377fadb2768a74a6e3af8e8830b245" desde 2026-11-25T14:36:31.443Z
+PARTE 128 | storage: ETag "3416cd1d3e5e0769b7889e0ded306d76", 67108864 bytes, LastModified 2026-11-25T14:36:31.632Z | registro: ETag "3416cd1d3e5e0769b7889e0ded306d76" desde 2026-11-25T14:36:34.388Z
+PARTE 129 | storage: ETag "8440e5d9c9bdca717c9cb8ad5301777a", 67108864 bytes, LastModified 2026-11-25T14:36:32.203Z | registro: ETag "8440e5d9c9bdca717c9cb8ad5301777a" desde 2026-11-25T14:36:34.388Z
+PARTE 130 | storage: ETag "5e11a0d0bc2dcf976268ab8c2f4bf5b2", 67108864 bytes, LastModified 2026-11-25T14:36:34.446Z | registro: ETag "5e11a0d0bc2dcf976268ab8c2f4bf5b2" desde 2026-11-25T14:36:34.519Z
+PARTE 131 | storage: ETag "e8e8a37da69ea7f947ccb8fb5af4f490", 67108864 bytes, LastModified 2026-11-25T14:36:34.674Z | registro: ETag "e8e8a37da69ea7f947ccb8fb5af4f490" desde 2026-11-25T14:36:35.619Z
+PARTE 132 | storage: ETag "d1e01be7a69fd2143eead78c37c13c1c", 67108864 bytes, LastModified 2026-11-25T14:36:35.536Z | registro: ETag "d1e01be7a69fd2143eead78c37c13c1c" desde 2026-11-25T14:36:35.619Z
+PARTE 133 | storage: ETag "bde340e438395797c0e7eb1fb39f2bc8", 67108864 bytes, LastModified 2026-11-25T14:36:35.344Z | registro: ETag "bde340e438395797c0e7eb1fb39f2bc8" desde 2026-11-25T14:36:35.619Z
+PARTE 134 | storage: ETag "186bce36cc683be7b4eb8e776ca8cf11", 67108864 bytes, LastModified 2026-11-25T14:36:35.910Z | registro: ETag "186bce36cc683be7b4eb8e776ca8cf11" desde 2026-11-25T14:36:36.720Z
+PARTE 135 | storage: ETag "eb967bef293729c1eb0dac10c3ed8160", 67108864 bytes, LastModified 2026-11-25T14:36:36.586Z | registro: ETag "eb967bef293729c1eb0dac10c3ed8160" desde 2026-11-25T14:36:36.720Z
+PARTE 136 | storage: ETag "a295434e85fa26deaa5dd9b151e629ef", 67108864 bytes, LastModified 2026-11-25T14:36:36.903Z | registro: ETag "a295434e85fa26deaa5dd9b151e629ef" desde 2026-11-25T14:36:37.819Z
+PARTE 137 | storage: ETag "2df3931c3dcf6dc804d11154d62b3d3e", 67108864 bytes, LastModified 2026-11-25T14:36:36.653Z | registro: ETag "2df3931c3dcf6dc804d11154d62b3d3e" desde 2026-11-25T14:36:36.720Z
+PARTE 138 | storage: ETag "63a3053ac2faa1610dc8d915ad199cf9", 67108864 bytes, LastModified 2026-11-25T14:36:37.815Z | registro: ETag "63a3053ac2faa1610dc8d915ad199cf9" desde 2026-11-25T14:36:38.923Z
+PARTE 139 | storage: ETag "e24ab3e7ac1653a1517e261f0c839f9e", 67108864 bytes, LastModified 2026-11-25T14:36:37.637Z | registro: ETag "e24ab3e7ac1653a1517e261f0c839f9e" desde 2026-11-25T14:36:37.819Z
+PARTE 140 | storage: ETag "afb0771286c17bfe7083f229632a783a", 67108864 bytes, LastModified 2026-11-25T14:36:39.133Z | registro: ETag "afb0771286c17bfe7083f229632a783a" desde 2026-11-25T14:36:40.036Z
+PARTE 141 | storage: ETag "c61c8f4f9faa9349dde86f36d80e68db", 67108864 bytes, LastModified 2026-11-25T14:36:39.129Z | registro: ETag "c61c8f4f9faa9349dde86f36d80e68db" desde 2026-11-25T14:36:40.036Z
+PARTE 142 | storage: ETag "d4779aa86121de2d229a75d4b6e250de", 67108864 bytes, LastModified 2026-11-25T14:36:38.787Z | registro: ETag "d4779aa86121de2d229a75d4b6e250de" desde 2026-11-25T14:36:38.923Z
+PARTE 143 | storage: ETag "156ff12c97c6d5bcf770f93d012c7e35", 67108864 bytes, LastModified 2026-11-25T14:36:38.781Z | registro: ETag "156ff12c97c6d5bcf770f93d012c7e35" desde 2026-11-25T14:36:38.923Z
+PARTE 144 | storage: ETag "32237a4cabfa45428365f461b8c81a75", 67108864 bytes, LastModified 2026-11-25T14:36:40.102Z | registro: ETag "32237a4cabfa45428365f461b8c81a75" desde 2026-11-25T14:36:41.223Z
+PARTE 145 | storage: ETag "3d0e40c4873752d8d6d64987bf4a029f", 67108864 bytes, LastModified 2026-11-25T14:36:40.105Z | registro: ETag "3d0e40c4873752d8d6d64987bf4a029f" desde 2026-11-25T14:36:41.223Z
+PARTE 146 | storage: ETag "67e62bfb18bc11698f8551e53679eaf6", 67108864 bytes, LastModified 2026-11-25T14:36:41.143Z | registro: ETag "67e62bfb18bc11698f8551e53679eaf6" desde 2026-11-25T14:36:41.223Z
+PARTE 147 | storage: ETag "7e8d435ac49ea58b986121194c0647c6", 67108864 bytes, LastModified 2026-11-25T14:36:41.470Z | registro: ETag "7e8d435ac49ea58b986121194c0647c6" desde 2026-11-25T14:36:42.322Z
+PARTE 148 | storage: ETag "8228f4399007eca17517fe1864d85298", 67108864 bytes, LastModified 2026-11-25T14:36:41.145Z | registro: ETag "8228f4399007eca17517fe1864d85298" desde 2026-11-25T14:36:42.322Z
+PARTE 149 | storage: ETag "8ceb4a3a4fe3d6831aa121eb24b39427", 67108864 bytes, LastModified 2026-11-25T14:36:41.145Z | registro: ETag "8ceb4a3a4fe3d6831aa121eb24b39427" desde 2026-11-25T14:36:41.223Z
+PARTE 150 | storage: ETag "7b844af6f73d00364dc69272e5b76f1e", 779264 bytes, LastModified 2026-11-25T14:36:41.283Z | registro: ETag "7b844af6f73d00364dc69272e5b76f1e" desde 2026-11-25T14:36:42.322Z
+--- comparação com o retrato depois da interrupção
+INFO | partes confirmed na retomada | observado: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,74]
+INFO | partes com PUT na retomada | observado: [73,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150]
+PASSOU | cliente: nenhum PUT de parte confirmed na retomada | esperado: nenhuma | observado: nenhuma
+PASSOU | storage: partes confirmed com o mesmo ETag, tamanho e LastModified antes e depois da retomada | esperado: 73 de 73 iguais | observado: 73 de 73 iguais
+PASSOU | registro da API: ETag e etag_registered_at das partes confirmed inalterados | esperado: 73 de 73 inalterados | observado: 73 de 73 inalterados
+PASSOU | controle: cada parte reenviada aparece no storage com LastModified novo | esperado: 77 de 77 | observado: 77 de 77
+PASSOU | antes do completion: todas as partes no storage, registradas com o mesmo ETag | esperado: 150 de 150 | observado: 150 de 150
+COMPARAÇÃO | 5 itens, 0 com falha
+RETOMADA | sessão 74b0593a-80a5-4554-995f-8b9fdf48a1a7 active | confirmed: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,74] | unregistered: [73,75] | missing: [76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150] | divergent: []
+CHECKSUM | parte 1 | 67108864 bytes | 125.4 ms | conferência da retomada
+CHECKSUM | parte 2 | 67108864 bytes | 125.1 ms | conferência da retomada
+CHECKSUM | parte 3 | 67108864 bytes | 126.3 ms | conferência da retomada
+CHECKSUM | parte 4 | 67108864 bytes | 128.3 ms | conferência da retomada
+CHECKSUM | parte 5 | 67108864 bytes | 144.1 ms | conferência da retomada
+CHECKSUM | parte 6 | 67108864 bytes | 165.8 ms | conferência da retomada
+CHECKSUM | parte 7 | 67108864 bytes | 138.3 ms | conferência da retomada
+CHECKSUM | parte 8 | 67108864 bytes | 121.5 ms | conferência da retomada
+CHECKSUM | parte 9 | 67108864 bytes | 122 ms | conferência da retomada
+CHECKSUM | parte 10 | 67108864 bytes | 122.7 ms | conferência da retomada
+CHECKSUM | parte 11 | 67108864 bytes | 128.9 ms | conferência da retomada
+CHECKSUM | parte 12 | 67108864 bytes | 128.6 ms | conferência da retomada
+CHECKSUM | parte 13 | 67108864 bytes | 128.4 ms | conferência da retomada
+CHECKSUM | parte 14 | 67108864 bytes | 127.7 ms | conferência da retomada
+CHECKSUM | parte 15 | 67108864 bytes | 137.2 ms | conferência da retomada
+CHECKSUM | parte 16 | 67108864 bytes | 122 ms | conferência da retomada
+CHECKSUM | parte 17 | 67108864 bytes | 122.1 ms | conferência da retomada
+CHECKSUM | parte 18 | 67108864 bytes | 135.9 ms | conferência da retomada
+CHECKSUM | parte 19 | 67108864 bytes | 126.4 ms | conferência da retomada
+CHECKSUM | parte 20 | 67108864 bytes | 127.8 ms | conferência da retomada
+CHECKSUM | parte 21 | 67108864 bytes | 159.6 ms | conferência da retomada
+CHECKSUM | parte 22 | 67108864 bytes | 130.6 ms | conferência da retomada
+CHECKSUM | parte 23 | 67108864 bytes | 128.4 ms | conferência da retomada
+CHECKSUM | parte 24 | 67108864 bytes | 123.6 ms | conferência da retomada
+CHECKSUM | parte 25 | 67108864 bytes | 158.7 ms | conferência da retomada
+CHECKSUM | parte 26 | 67108864 bytes | 121.2 ms | conferência da retomada
+CHECKSUM | parte 27 | 67108864 bytes | 143 ms | conferência da retomada
+CHECKSUM | parte 28 | 67108864 bytes | 129.2 ms | conferência da retomada
+CHECKSUM | parte 29 | 67108864 bytes | 126.1 ms | conferência da retomada
+CHECKSUM | parte 30 | 67108864 bytes | 123.5 ms | conferência da retomada
+CHECKSUM | parte 31 | 67108864 bytes | 135.5 ms | conferência da retomada
+CHECKSUM | parte 32 | 67108864 bytes | 144 ms | conferência da retomada
+CHECKSUM | parte 33 | 67108864 bytes | 181.9 ms | conferência da retomada
+CHECKSUM | parte 34 | 67108864 bytes | 198 ms | conferência da retomada
+CHECKSUM | parte 35 | 67108864 bytes | 157.6 ms | conferência da retomada
+CHECKSUM | parte 36 | 67108864 bytes | 143.8 ms | conferência da retomada
+CHECKSUM | parte 37 | 67108864 bytes | 127.7 ms | conferência da retomada
+CHECKSUM | parte 38 | 67108864 bytes | 147.7 ms | conferência da retomada
+CHECKSUM | parte 39 | 67108864 bytes | 169.4 ms | conferência da retomada
+CHECKSUM | parte 40 | 67108864 bytes | 159.6 ms | conferência da retomada
+CHECKSUM | parte 41 | 67108864 bytes | 191.5 ms | conferência da retomada
+CHECKSUM | parte 42 | 67108864 bytes | 174.1 ms | conferência da retomada
+CHECKSUM | parte 43 | 67108864 bytes | 167.6 ms | conferência da retomada
+CHECKSUM | parte 44 | 67108864 bytes | 147.7 ms | conferência da retomada
+CHECKSUM | parte 45 | 67108864 bytes | 154.4 ms | conferência da retomada
+CHECKSUM | parte 46 | 67108864 bytes | 177.3 ms | conferência da retomada
+CHECKSUM | parte 47 | 67108864 bytes | 161.1 ms | conferência da retomada
+CHECKSUM | parte 48 | 67108864 bytes | 133.2 ms | conferência da retomada
+CHECKSUM | parte 49 | 67108864 bytes | 153.4 ms | conferência da retomada
+CHECKSUM | parte 50 | 67108864 bytes | 131.2 ms | conferência da retomada
+CHECKSUM | parte 51 | 67108864 bytes | 156 ms | conferência da retomada
+CHECKSUM | parte 52 | 67108864 bytes | 129.3 ms | conferência da retomada
+CHECKSUM | parte 53 | 67108864 bytes | 133.2 ms | conferência da retomada
+CHECKSUM | parte 54 | 67108864 bytes | 132.2 ms | conferência da retomada
+CHECKSUM | parte 55 | 67108864 bytes | 134.2 ms | conferência da retomada
+CHECKSUM | parte 56 | 67108864 bytes | 199 ms | conferência da retomada
+CHECKSUM | parte 57 | 67108864 bytes | 131.8 ms | conferência da retomada
+CHECKSUM | parte 58 | 67108864 bytes | 179.6 ms | conferência da retomada
+CHECKSUM | parte 59 | 67108864 bytes | 162.4 ms | conferência da retomada
+CHECKSUM | parte 60 | 67108864 bytes | 136.5 ms | conferência da retomada
+CHECKSUM | parte 61 | 67108864 bytes | 129.4 ms | conferência da retomada
+CHECKSUM | parte 62 | 67108864 bytes | 132.7 ms | conferência da retomada
+CHECKSUM | parte 63 | 67108864 bytes | 148.4 ms | conferência da retomada
+CHECKSUM | parte 64 | 67108864 bytes | 131.7 ms | conferência da retomada
+CHECKSUM | parte 65 | 67108864 bytes | 151.4 ms | conferência da retomada
+CHECKSUM | parte 66 | 67108864 bytes | 143.8 ms | conferência da retomada
+CHECKSUM | parte 67 | 67108864 bytes | 139.8 ms | conferência da retomada
+CHECKSUM | parte 68 | 67108864 bytes | 176.2 ms | conferência da retomada
+CHECKSUM | parte 69 | 67108864 bytes | 201.3 ms | conferência da retomada
+CHECKSUM | parte 70 | 67108864 bytes | 179.9 ms | conferência da retomada
+CHECKSUM | parte 71 | 67108864 bytes | 128.8 ms | conferência da retomada
+CHECKSUM | parte 72 | 67108864 bytes | 157.8 ms | conferência da retomada
+CHECKSUM | parte 73 | 67108864 bytes | 195.9 ms | conferência da retomada
+CHECKSUM | parte 74 | 67108864 bytes | 192.2 ms | conferência da retomada
+CHECKSUM | parte 75 | 67108864 bytes | 153.1 ms | conferência da retomada
+CONFERÊNCIA | 75 partes (5033164800 bytes) recalculadas em 11236.4 ms | file-verifications HTTP 200 match em 40.7 ms
+REENVIO | partes [73,75,76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150]; nenhuma parte confirmed é reenviada
+CHECKSUM | parte 76 | 67108864 bytes | 263.5 ms | antes da assinatura
+CHECKSUM | parte 77 | 67108864 bytes | 208.8 ms | antes da assinatura
+CHECKSUM | parte 78 | 67108864 bytes | 165.4 ms | antes da assinatura
+PUT | parte 75 | 67108864 bytes | 786 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 79 | 67108864 bytes | 328.5 ms | antes da assinatura
+PUT | parte 73 | 67108864 bytes | 1341.7 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 80 | 67108864 bytes | 469.1 ms | antes da assinatura
+CHECKSUM | parte 81 | 67108864 bytes | 481.7 ms | antes da assinatura
+PUT | parte 78 | 67108864 bytes | 3291.7 ms | HTTP 200 | tentativa 1
+PUT | parte 76 | 67108864 bytes | 3341.9 ms | HTTP 200 | tentativa 1
+PUT | parte 77 | 67108864 bytes | 3350.1 ms | HTTP 200 | tentativa 1
+PUT | parte 79 | 67108864 bytes | 3226.1 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 82 | 67108864 bytes | 2828.3 ms | antes da assinatura
+CHECKSUM | parte 83 | 67108864 bytes | 155.4 ms | antes da assinatura
+CHECKSUM | parte 84 | 67108864 bytes | 230.4 ms | antes da assinatura
+CHECKSUM | parte 85 | 67108864 bytes | 203.1 ms | antes da assinatura
+CHECKSUM | parte 86 | 67108864 bytes | 210.3 ms | antes da assinatura
+PUT | parte 81 | 67108864 bytes | 1457.1 ms | HTTP 200 | tentativa 1
+PUT | parte 80 | 67108864 bytes | 1542.4 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 87 | 67108864 bytes | 664.7 ms | antes da assinatura
+PUT | parte 82 | 67108864 bytes | 1011.9 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 88 | 67108864 bytes | 488.6 ms | antes da assinatura
+PUT | parte 83 | 67108864 bytes | 1122.5 ms | HTTP 200 | tentativa 1
+PUT | parte 85 | 67108864 bytes | 960.8 ms | HTTP 200 | tentativa 1
+PUT | parte 84 | 67108864 bytes | 1209.7 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 89 | 67108864 bytes | 608.3 ms | antes da assinatura
+CHECKSUM | parte 90 | 67108864 bytes | 197.5 ms | antes da assinatura
+PUT | parte 87 | 67108864 bytes | 1004.2 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 91 | 67108864 bytes | 601.2 ms | antes da assinatura
+PUT | parte 86 | 67108864 bytes | 1373.5 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 92 | 67108864 bytes | 329.8 ms | antes da assinatura
+PUT | parte 88 | 67108864 bytes | 976.1 ms | HTTP 200 | tentativa 1
+PUT | parte 89 | 67108864 bytes | 976.8 ms | HTTP 200 | tentativa 1
+PUT | parte 90 | 67108864 bytes | 1127.6 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 93 | 67108864 bytes | 599.1 ms | antes da assinatura
+CHECKSUM | parte 94 | 67108864 bytes | 162 ms | antes da assinatura
+CHECKSUM | parte 95 | 67108864 bytes | 176.3 ms | antes da assinatura
+CHECKSUM | parte 96 | 67108864 bytes | 208.7 ms | antes da assinatura
+CHECKSUM | parte 97 | 67108864 bytes | 231.3 ms | antes da assinatura
+PUT | parte 92 | 67108864 bytes | 1305 ms | HTTP 200 | tentativa 1
+PUT | parte 91 | 67108864 bytes | 1342.2 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 98 | 67108864 bytes | 629.5 ms | antes da assinatura
+CHECKSUM | parte 99 | 67108864 bytes | 380.8 ms | antes da assinatura
+PUT | parte 95 | 67108864 bytes | 1077.4 ms | HTTP 200 | tentativa 1
+PUT | parte 94 | 67108864 bytes | 1134 ms | HTTP 200 | tentativa 1
+PUT | parte 96 | 67108864 bytes | 1101.5 ms | HTTP 200 | tentativa 1
+PUT | parte 93 | 67108864 bytes | 1419.3 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 100 | 67108864 bytes | 892.7 ms | antes da assinatura
+PUT | parte 98 | 67108864 bytes | 713.8 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 101 | 67108864 bytes | 436.4 ms | antes da assinatura
+PUT | parte 97 | 67108864 bytes | 938.8 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 102 | 67108864 bytes | 249.7 ms | antes da assinatura
+PUT | parte 99 | 67108864 bytes | 1198.2 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 103 | 67108864 bytes | 475.2 ms | antes da assinatura
+CHECKSUM | parte 104 | 67108864 bytes | 238 ms | antes da assinatura
+CHECKSUM | parte 105 | 67108864 bytes | 196.8 ms | antes da assinatura
+PUT | parte 102 | 67108864 bytes | 916.9 ms | HTTP 200 | tentativa 1
+PUT | parte 100 | 67108864 bytes | 3374.3 ms | HTTP 200 | tentativa 1
+PUT | parte 101 | 67108864 bytes | 3396.2 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 106 | 67108864 bytes | 2783.1 ms | antes da assinatura
+CHECKSUM | parte 107 | 67108864 bytes | 418.3 ms | antes da assinatura
+PUT | parte 105 | 67108864 bytes | 1258.8 ms | HTTP 200 | tentativa 1
+PUT | parte 104 | 67108864 bytes | 1313.8 ms | HTTP 200 | tentativa 1
+PUT | parte 106 | 67108864 bytes | 1114 ms | HTTP 200 | tentativa 1
+PUT | parte 103 | 67108864 bytes | 1364.6 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 108 | 67108864 bytes | 830.5 ms | antes da assinatura
+CHECKSUM | parte 109 | 67108864 bytes | 171.7 ms | antes da assinatura
+CHECKSUM | parte 110 | 67108864 bytes | 152.2 ms | antes da assinatura
+CHECKSUM | parte 111 | 67108864 bytes | 140.3 ms | antes da assinatura
+CHECKSUM | parte 112 | 67108864 bytes | 210.5 ms | antes da assinatura
+CHECKSUM | parte 113 | 67108864 bytes | 197.4 ms | antes da assinatura
+CHECKSUM | parte 114 | 67108864 bytes | 434.2 ms | antes da assinatura
+PUT | parte 107 | 67108864 bytes | 1399.3 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 115 | 67108864 bytes | 493.9 ms | antes da assinatura
+PUT | parte 109 | 67108864 bytes | 1236.2 ms | HTTP 200 | tentativa 1
+PUT | parte 110 | 67108864 bytes | 1261.2 ms | HTTP 200 | tentativa 1
+PUT | parte 108 | 67108864 bytes | 1307.5 ms | HTTP 200 | tentativa 1
+PUT | parte 111 | 67108864 bytes | 1150.7 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 116 | 67108864 bytes | 918.3 ms | antes da assinatura
+CHECKSUM | parte 117 | 67108864 bytes | 478.5 ms | antes da assinatura
+PUT | parte 114 | 67108864 bytes | 715.9 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 118 | 67108864 bytes | 470.4 ms | antes da assinatura
+PUT | parte 115 | 67108864 bytes | 1276.2 ms | HTTP 200 | tentativa 1
+PUT | parte 112 | 67108864 bytes | 1572.3 ms | HTTP 200 | tentativa 1
+PUT | parte 113 | 67108864 bytes | 1559.9 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 119 | 67108864 bytes | 408.8 ms | antes da assinatura
+CHECKSUM | parte 120 | 67108864 bytes | 325.1 ms | antes da assinatura
+PUT | parte 116 | 67108864 bytes | 830.5 ms | HTTP 200 | tentativa 1
+PUT | parte 117 | 67108864 bytes | 957.1 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 121 | 67108864 bytes | 483.9 ms | antes da assinatura
+CHECKSUM | parte 122 | 67108864 bytes | 284.7 ms | antes da assinatura
+PUT | parte 120 | 67108864 bytes | 807.1 ms | HTTP 200 | tentativa 1
+PUT | parte 119 | 67108864 bytes | 1187 ms | HTTP 200 | tentativa 1
+PUT | parte 118 | 67108864 bytes | 1210.5 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 123 | 67108864 bytes | 687.3 ms | antes da assinatura
+CHECKSUM | parte 124 | 67108864 bytes | 264.5 ms | antes da assinatura
+CHECKSUM | parte 125 | 67108864 bytes | 191.2 ms | antes da assinatura
+PUT | parte 121 | 67108864 bytes | 1048.9 ms | HTTP 200 | tentativa 1
+PUT | parte 122 | 67108864 bytes | 1066.6 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 126 | 67108864 bytes | 514.5 ms | antes da assinatura
+CHECKSUM | parte 127 | 67108864 bytes | 288.4 ms | antes da assinatura
+CHECKSUM | parte 128 | 67108864 bytes | 273.1 ms | antes da assinatura
+PUT | parte 124 | 67108864 bytes | 892.2 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 129 | 67108864 bytes | 415.1 ms | antes da assinatura
+PUT | parte 125 | 67108864 bytes | 1165.4 ms | HTTP 200 | tentativa 1
+PUT | parte 123 | 67108864 bytes | 1254.3 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 130 | 67108864 bytes | 396 ms | antes da assinatura
+CHECKSUM | parte 131 | 67108864 bytes | 300.3 ms | antes da assinatura
+PUT | parte 126 | 67108864 bytes | 868.3 ms | HTTP 200 | tentativa 1
+PUT | parte 127 | 67108864 bytes | 913.1 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 132 | 67108864 bytes | 589.2 ms | antes da assinatura
+PUT | parte 128 | 67108864 bytes | 1145.9 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 133 | 67108864 bytes | 338.9 ms | antes da assinatura
+PUT | parte 129 | 67108864 bytes | 731.1 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 134 | 67108864 bytes | 2435.5 ms | antes da assinatura
+PUT | parte 130 | 67108864 bytes | 3006.3 ms | HTTP 200 | tentativa 1
+PUT | parte 131 | 67108864 bytes | 3179.2 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 135 | 67108864 bytes | 503.7 ms | antes da assinatura
+CHECKSUM | parte 136 | 67108864 bytes | 281.8 ms | antes da assinatura
+PUT | parte 133 | 67108864 bytes | 864.5 ms | HTTP 200 | tentativa 1
+PUT | parte 132 | 67108864 bytes | 1055.4 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 137 | 67108864 bytes | 350.3 ms | antes da assinatura
+PUT | parte 134 | 67108864 bytes | 1170.7 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 138 | 67108864 bytes | 372.4 ms | antes da assinatura
+CHECKSUM | parte 139 | 67108864 bytes | 310.4 ms | antes da assinatura
+PUT | parte 135 | 67108864 bytes | 993.9 ms | HTTP 200 | tentativa 1
+PUT | parte 137 | 67108864 bytes | 1001.8 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 140 | 67108864 bytes | 439.9 ms | antes da assinatura
+PUT | parte 136 | 67108864 bytes | 1254.2 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 141 | 67108864 bytes | 369.5 ms | antes da assinatura
+CHECKSUM | parte 142 | 67108864 bytes | 214.7 ms | antes da assinatura
+CHECKSUM | parte 143 | 67108864 bytes | 236.3 ms | antes da assinatura
+PUT | parte 139 | 67108864 bytes | 957.7 ms | HTTP 200 | tentativa 1
+PUT | parte 138 | 67108864 bytes | 1060.8 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 144 | 67108864 bytes | 475 ms | antes da assinatura
+CHECKSUM | parte 145 | 67108864 bytes | 399 ms | antes da assinatura
+PUT | parte 143 | 67108864 bytes | 896.7 ms | HTTP 200 | tentativa 1
+PUT | parte 142 | 67108864 bytes | 933 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 146 | 67108864 bytes | 572.3 ms | antes da assinatura
+PUT | parte 141 | 67108864 bytes | 1262.9 ms | HTTP 200 | tentativa 1
+PUT | parte 140 | 67108864 bytes | 1292.8 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 147 | 67108864 bytes | 315.5 ms | antes da assinatura
+CHECKSUM | parte 148 | 67108864 bytes | 197.6 ms | antes da assinatura
+CHECKSUM | parte 149 | 67108864 bytes | 239.7 ms | antes da assinatura
+CHECKSUM | parte 150 | 779264 bytes | 5.9 ms | antes da assinatura
+PUT | parte 144 | 67108864 bytes | 1007.9 ms | HTTP 200 | tentativa 1
+PUT | parte 145 | 67108864 bytes | 1063.3 ms | HTTP 200 | tentativa 1
+PUT | parte 146 | 67108864 bytes | 997 ms | HTTP 200 | tentativa 1
+PUT | parte 149 | 67108864 bytes | 997 ms | HTTP 200 | tentativa 1
+PUT | parte 148 | 67108864 bytes | 1041.5 ms | HTTP 200 | tentativa 1
+PUT | parte 150 | 779264 bytes | 92.4 ms | HTTP 200 | tentativa 1
+PUT | parte 147 | 67108864 bytes | 1310 ms | HTTP 200 | tentativa 1
+ENVIO | 77 partes reenviadas e registradas
+ESPERA | todas as partes registradas; aguardando liberação do completion
+COMPLETION | HTTP 202 em 341.4 ms | vídeo processing
+POLLING | processing | consulta 1
+POLLING | error MEDIA_INVALID | consulta 2
+código do cliente: 0; código da comparação: 0
+
+=== Relógio depois da carga (14:36:56Z)
+$ clock depois
+relógio (depois): VM − Windows = 32 ms, incerteza ± 121 ms (menor ida e volta entre 15 medidas)
+
+=== Fim das sondas (14:37:00Z)
+$ stop_probes
+SONDA | latência das respostas ok (ms): p50 2.7 | p95 6.3 | p99 14.5 | máx 46.3
+SONDA | latência das respostas ok (ms): p50 2.8 | p95 5.1 | p99 10.6 | máx 24.3
+SONDA | latência das respostas ok (ms): p50 2.7 | p95 6.6 | p99 14.1 | máx 204.5
+SONDA | latência das respostas ok (ms): p50 2.7 | p95 7.2 | p99 16.2 | máx 59.8
+SONDA | latência das respostas ok (ms): p50 2.7 | p95 6.7 | p99 14.0 | máx 60.4
+SONDA | latência das respostas ok (ms): p50 2.8 | p95 5.7 | p99 15.2 | máx 20.8
+SONDA | latência das respostas ok (ms): p50 2.8 | p95 5.7 | p99 10.1 | máx 144.5
+SONDA | latência das respostas ok (ms): p50 2.7 | p95 6.2 | p99 40.2 | máx 640.4
+SONDA | latência das respostas ok (ms): p50 2.7 | p95 4.9 | p99 9.0 | máx 175.3
+SONDA | latência das respostas ok (ms): p50 2.7 | p95 6.8 | p99 13.4 | máx 17.5
+SONDA | latência das respostas ok (ms): p50 2.7 | p95 7.5 | p99 15.4 | máx 20.6
+SONDA | latência das respostas ok (ms): p50 2.7 | p95 7.0 | p99 19.7 | máx 531.4
+SONDA | latência das respostas ok (ms): p50 2.4 | p95 10.7 | p99 19.8 | máx 520.1
+
+=== Fim dos monitores (14:37:02Z)
+$ stop_monitors
+monitores parados
+
+=== Fim do amostrador do storage (14:37:08Z)
+$ stop_storage_sampler
+amostrador do storage parado: 2764 amostras
+
+=== Espaço livre antes da limpeza (14:37:08Z)
+$ host_disk
+host:    1B-blocks         Used       Avail Mounted on
+host: 510987681792 481191133184 29796548608 /mnt/c
+host: docker_data.vhdx do Docker Desktop: 40853569536 bytes
+disco de dados do Docker: Filesystem          1-blocks        Used    Available Capacity Mounted on
+disco de dados do Docker: /dev/sdf       1081101176832 29178114048 996930707456       3% /data
+
+=== Resumo das medidas (14:37:08Z)
+$ summarize
+      0 amostrador-vm.err
+ 585764 amostrador-vm.txt
+1963896 api-db.jsonl
+  17145 api-gc.jsonl
+ 115951 api-loop.jsonl
+ 434049 api-requests.jsonl
+   8465 api.log
+  17535 client-client-resume.log
+  11673 client-client-start.log
+    184 client-ctrl-c.log
+  66805 client-events.jsonl
+   2660 client-progress.json
+    316 client-state.json
+  18561 disk-completion-fast.txt
+    125 disk-sampler.err
+ 157770 disk-samples.txt
+ 193405 docker-stats.txt
+   1281 memoria-containers.txt
+    112 memoria-vm.txt
+      0 monitor-windows.err
+  37367 parts-after-interruption.json
+  72917 parts-before-completion.json
+  21475 probe-1.csv
+    500 probe-1.log
+  21787 probe-10.csv
+    503 probe-10.log
+  21790 probe-11.csv
+    503 probe-11.log
+  21791 probe-12.csv
+    504 probe-12.log
+  21809 probe-13.csv
+    505 probe-13.log
+  21473 probe-2.csv
+    500 probe-2.log
+  21418 probe-3.csv
+    501 probe-3.log
+  21419 probe-4.csv
+    500 probe-4.log
+  21418 probe-5.csv
+    500 probe-5.log
+  21420 probe-6.csv
+    500 probe-6.log
+  21413 probe-7.csv
+    501 probe-7.log
+  21419 probe-8.csv
+    501 probe-8.log
+  21411 probe-9.csv
+    500 probe-9.log
+   1366 relogio-antes.json
+   1366 relogio-depois.json
+    335 residue-before.txt
+    347 snapshot-before.txt
+  45337 sonda-db.txt
+  46343 windows.csv
+4087636 total
+eventos do cliente levados ao relógio da VM (conversão nominal): + 8 ms; incerteza registrada à parte: ± 145 ms
+intervalo 1 (start): 1795617305818 a 1795617342377 (36559 ms), fecha em load_end
+intervalo 2 (resume): 1795617353502 a 1795617402357 (48855 ms), fecha em load_end
+intervalo 3 (resume): 1795617411331 a 1795617411764 (433 ms), fecha em load_end
+MEDIDA | plano | {"sizeBytes":10000000000,"partSize":67108864,"partCount":150,"lastPartSize":779264}
+MEDIDA | geração do arquivo | {"bytes":10000000000,"ms":86141.9}
+MEDIDA | intervalos de upload ativo | [{"start":"2026-11-25T14:35:05.818Z","end":"2026-11-25T14:35:42.377Z","seconds":36.559},{"start":"2026-11-25T14:35:53.502Z","end":"2026-11-25T14:36:42.357Z","seconds":48.855},{"start":"2026-11-25T14:36:51.331Z","end":"2026-11-25T14:36:51.764Z","seconds":0.433}]
+MEDIDA | upload ativo total (s) | 85.847
+MEDIDA | segmento start | {"puts":75,"putBytes":5033164800,"putActiveMs":36477.3,"putMiBps":131.6,"abortedPuts":4,"failedPuts":0,"checksumParts":81,"checksumBytes":5435817984,"checksumMs":35960.3,"checksumMiBps":144.2}
+MEDIDA | segmento resume (PUTs e checksums de assinatura) | {"puts":77,"putBytes":5101052928,"putActiveMs":36395.8,"putMiBps":133.7,"abortedPuts":0,"failedPuts":0,"checksumParts":75,"checksumBytes":4966835200,"checksumMs":34490.9,"checksumMiBps":137.3}
+MEDIDA | conferência da retomada (checksums) | {"puts":77,"putBytes":5101052928,"putActiveMs":36395.8,"putMiBps":133.7,"abortedPuts":0,"failedPuts":0,"checksumParts":75,"checksumBytes":5033164800,"checksumMs":10961.7,"checksumMiBps":437.9}
+MEDIDA | interrupção | {"signal":"SIGINT","putDone":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,73,74,75],"registered":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,74],"inFlight":[76,77,78,79],"putDonePercent":50.3}
+MEDIDA | intervalo entre a interrupção e a retomada (s) | 11.132
+MEDIDA | retomada | {"confirmed":[1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70,71,72,74],"unregistered":[73,75],"missing":[76,77,78,79,80,81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100,101,102,103,104,105,106,107,108,109,110,111,112,113,114,115,116,117,118,119,120,121,122,123,124,125,126,127,128,129,130,131,132,133,134,135,136,137,138,139,140,141,142,143,144,145,146,147,148,149,150],"divergent":[],"verification":{"parts":75,"bytes":5033164800,"checksumMs":11236.4,"requestMs":40.7}}
+MEDIDA | bytes dos PUTs concluídos (abortados fora da soma) | {"bytes":10134217728,"resentFraction":0.0134,"putActiveMs":72873.1,"putMiBps":132.6}
+MEDIDA | checksums | {"signBytes":10402653184,"signMs":70451.2,"signMiBps":140.8,"verifyBytes":5033164800,"verifyMs":10961.7,"verifyMiBps":437.9}
+MEDIDA | completion | {"status":202,"ms":341.4,"startedAt":"2026-11-25T14:36:51.387Z","endedAt":"2026-11-25T14:36:51.754Z"}
+MEDIDA | processamento até o estado final | {"status":"error","errorCode":"MEDIA_INVALID","seconds":2.094}
+MEDIDA | chamadas à API e renovações de token | {"apiCalls":62,"tokenRenewals":0}
+MEDIDA | disco do storage (du em KiB por componente) | {"samples":2764,"medianIntervalMs":265,"baseline":{"at":"2026-11-25T14:24:33.224Z","totalKiB":328096,"bucketKiB":4,"multipartKiB":16,"tmpKiB":327880,"trashKiB":152},"peak":{"at":"2026-11-25T14:36:51.828Z","totalKiB":10226180,"bucketKiB":9766296,"multipartKiB":16,"tmpKiB":459672,"trashKiB":131944},"peakGrowthBytes":10135638016,"uploadDataPeakBytes":10001289216,"tmpGrowthBytes":0,"trashMaxKiB":131944,"completionWindowSamples":9,"completionWindowPeakGrowthBytes":10135638016,"beforeCompletion":{"at":"2026-11-25T14:36:51.249Z","totalKiB":10226168,"bucketKiB":4,"multipartKiB":9766900,"tmpKiB":459068,"trashKiB":131340},"afterCompletion":{"at":"2026-11-25T14:36:51.828Z","totalKiB":10226180,"bucketKiB":9766296,"multipartKiB":16,"tmpKiB":459672,"trashKiB":131944},"final":{"at":"2026-11-25T14:37:08.313Z","totalKiB":10226180,"bucketKiB":9766296,"multipartKiB":16,"tmpKiB":459672,"trashKiB":131944},"dockerDiskUsedBaselineKiB":18594488,"dockerDiskUsedPeakKiB":28496060,"dockerDiskAvailMinKiB":973563336}
+MEDIDA | df sem pausa em volta do completion | {"samples":807,"samplesDuringCompletion":31,"medianIntervalMs":6,"usedBeforeKiB":28496016,"usedPeakDuringKiB":28496028,"usedPeakAfterKiB":28496052,"peakGrowthDuringBytes":12288}
+MEDIDA | sonda (informativo) | {"instances":13,"all":{"samples":4812,"ok":4812,"non2xx":0,"status429":0,"timeouts":0,"networkErrors":0,"unexpectedBody":0,"p50":2.72,"p95":6.85,"p99":14.3,"max":640.39},"baseline":{"samples":4060,"ok":4060,"non2xx":0,"status429":0,"timeouts":0,"networkErrors":0,"unexpectedBody":0,"p50":2.66,"p95":4,"p99":6.3,"max":24.28},"load":{"samples":554,"ok":554,"non2xx":0,"status429":0,"timeouts":0,"networkErrors":0,"unexpectedBody":0,"p50":4.49,"p95":17.51,"p99":144.45,"max":640.39},"outside":{"samples":198,"ok":198,"non2xx":0,"status429":0,"timeouts":0,"networkErrors":0,"unexpectedBody":0,"p50":3.42,"p95":8.31,"p99":11.42,"max":18.98}}
+PROJEÇÃO | 10.000.000.000 bytes, linear, margem de 30% onde indicado | {"factor":1,"margin":1.3,"generationSeconds":86.1,"loadSeconds":85.8,"loadSecondsWithMargin":111.6,"putSeconds":72.9,"signChecksumSeconds":70.5,"verifyChecksumSeconds":11,"completionSeconds":0.3,"probeInstances":7,"storagePeakBytes":10135638016,"storagePeakBytesWithMargin":13176329421,"sourceFileBytes":10000000000,"requiredFreeBytesWithMargin":26176329421,"baselineSeconds":600}
+
+=== Vereditos de latência (critérios do registro prévio) (14:37:16Z)
+$ latency_verdict
+FASE | base (618.3 s) | 4019 amostras (instância 1: 310, instância 2: 309, instância 3: 309, instância 4: 309, instância 5: 310, instância 6: 309, instância 7: 309, instância 8: 309, instância 9: 309, instância 10: 309, instância 11: 309, instância 12: 309, instância 13: 309) | p50 2.65 ms | p95 3.89 ms | p99 5.21 ms | máx 13.51 ms | fora de 2xx 0 | 429 0 | timeout 0 | erro de rede 0 | corpo inesperado 0
+FASE | carga nominal (85.8 s de upload ativo, 3 intervalos) | 554 amostras (instância 1: 44, instância 2: 42, instância 3: 42, instância 4: 42, instância 5: 44, instância 6: 44, instância 7: 42, instância 8: 42, instância 9: 42, instância 10: 42, instância 11: 43, instância 12: 42, instância 13: 43) | p50 4.49 ms | p95 17.51 ms | p99 144.45 ms | máx 640.39 ms | fora de 2xx 0 | 429 0 | timeout 0 | erro de rede 0 | corpo inesperado 0
+FASE | aquecimento | 17 amostras (instância 1: 2, instância 2: 2, instância 3: 2, instância 4: 2, instância 5: 1, instância 6: 1, instância 7: 1, instância 8: 1, instância 9: 1, instância 10: 1, instância 11: 1, instância 12: 1, instância 13: 1) | p50 10.3 ms | p95 24.28 ms | p99 24.28 ms | máx 24.28 ms | fora de 2xx 0 | 429 0 | timeout 0 | erro de rede 0 | corpo inesperado 0
+FASE | fora da base e da carga | 222 amostras (instância 1: 15, instância 2: 18, instância 3: 17, instância 4: 17, instância 5: 15, instância 6: 16, instância 7: 18, instância 8: 18, instância 9: 18, instância 10: 18, instância 11: 17, instância 12: 18, instância 13: 17) | p50 3.44 ms | p95 8.22 ms | p99 11.28 ms | máx 18.98 ms | fora de 2xx 0 | 429 0 | timeout 0 | erro de rede 0 | corpo inesperado 0
+FASE | todas as amostras | 4812 amostras (instância 1: 371, instância 2: 371, instância 3: 370, instância 4: 370, instância 5: 370, instância 6: 370, instância 7: 370, instância 8: 370, instância 9: 370, instância 10: 370, instância 11: 370, instância 12: 370, instância 13: 370) | p50 2.72 ms | p95 6.85 ms | p99 14.3 ms | máx 640.39 ms | fora de 2xx 0 | 429 0 | timeout 0 | erro de rede 0 | corpo inesperado 0
+AMOSTRAS | mínimo de 300 por fase: atingido na carga nominal (base 4019, carga 554) | N recalculado pela D medida: 7
+INCERTEZA | relógio do cliente ± 145 ms, registrada à parte (intervalos nominais preservados) | amostras de borda: 8 (4 na carga nominal, 4 fora) | carga certa: 550 | carga possível: 550 a 558 | p95 de 17.51 a 17.81 ms | p99 de 144.45 a 144.45 ms
+INCERTEZA | possíveis: (a) aprovado | (b) aprovado | suficiência atingida
+INCERTEZA | borda mais lenta: instância 4, 18.98 ms (ok), a -42 ms do início do intervalo 3, fora da carga nominal
+VEREDITO | (a) p95 carga 17.51 ms ≤ 53.89 ms (max(1,5 × p95 base; p95 base + 50 ms)) | aprovado
+VEREDITO | (b) p95 carga 17.51 ms ≤ 250 ms e p99 carga 144.45 ms ≤ 500 ms | aprovado
+VEREDITO | (c) 0 amostras sem 2xx válido em 4812 (fora de 2xx 0, 429 0, timeout 0, erro de rede 0, corpo inesperado 0) | aprovado
+VEREDITO | latência | aprovado
+
+=== Limpeza dos recursos de prova (14:37:22Z)
+
+=== Sondas, monitores, cliente, API, containers e pastas temporárias (14:37:22Z)
+$ cleanup_local
+monitores parados
+processos da API restantes: 0
+containers de prova restantes: 0
+diretório no nestjs-api presente: não
+pasta no Windows presente: não
+JS compilado presente: não
+
+=== Usuários, vídeos, objetos, multiparts, jobs e e-mails de prova (14:37:28Z)
+$ support cleanup --emails p10gbr-20261125142232-bc4b5d-uploader@proofs.streamtube.test,p10gbr-20261125142232-bc4b5d-control@proofs.streamtube.test
+LIMPEZA | 2 e-mails de prova | 2 usuários, 2 vídeos, 2 sessões
+LIMPEZA | multiparts abortados: 2 (os demais já estavam concluídos ou abortados)
+LIMPEZA | jobs de processamento removidos: 0
+LIMPEZA prefixo originals/6c862d88-c914-41c2-9d8a-55da539d4e66/: 1 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA prefixo thumbnails/6c862d88-c914-41c2-9d8a-55da539d4e66/: 0 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA prefixo originals/ae6db751-73ba-4b14-95e2-f5b487d84eb9/: 0 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA prefixo thumbnails/ae6db751-73ba-4b14-95e2-f5b487d84eb9/: 0 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA | e-mails removidos do Mailpit: 2
+PASSOU | linhas de prova no banco (usuários, vídeos e sessões) | esperado: 0 | observado: 0
+PASSOU | objetos de prova no bucket | esperado: 0 restantes | observado: 0 restantes
+PASSOU | multiparts das sessões de prova | esperado: 0 | observado: 0
+PASSOU | jobs de processamento dos vídeos de prova | esperado: 0 | observado: 0
+PASSOU | e-mails de prova no Mailpit | esperado: 0 | observado: 0
+LIMPEZA | 5 itens, 0 com falha
+
+=== Purga da lixeira do storage depois da limpeza (14:37:31Z)
+$ measure_release
+uso logo depois da limpeza (ms total bucket multipart tmp lixeira usado livre, em KiB): 1795617451791 10226212 4 4 10226008 9898280 28491632 973567764
+aguardando a purga da lixeira do storage: 1795617451966 10226212 4 4 10226008 9898280 28491632 973567764
+lixeira do storage com 104 KiB depois de 50 s; uso (ms total bucket multipart tmp lixeira usado livre, em KiB): 1795617502890 328036 4 4 327832 104 18593460 983465936
+purga da lixeira observada em 51 s depois da limpeza
+
+=== Uso do storage depois da limpeza e da purga (14:38:22Z)
+$ storage_usage
+1795617503069 328036 4 4 327832 104 18593460 983465936
+
+=== Retrato depois (só leitura) (14:38:23Z)
+$ snapshot_into <saída>/p10gbr-20261125142232-bc4b5d/snapshot-after.txt
+SNAPSHOT banco users=0 channels=0 videos=0 upload_sessions=0 upload_parts=0 refresh_tokens=0 verification_tokens=0 | bucket objetos=0 bytes=0 sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | fila video-processing wait=0 active=0 delayed=0 prioritized=0 waiting-children=0 completed=0 failed=0 jobs=0 | mailpit mensagens=8
+
+=== Retrato preservado (antes = depois) (14:38:26Z)
+$ compare_snapshots
+retratos iguais: SNAPSHOT banco users=0 channels=0 videos=0 upload_sessions=0 upload_parts=0 refresh_tokens=0 verification_tokens=0 | bucket objetos=0 bytes=0 sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | fila video-processing wait=0 active=0 delayed=0 prioritized=0 waiting-children=0 completed=0 failed=0 jobs=0 | mailpit mensagens=8
+
+=== Temporários do Silo: anteriores preservados e novos (só leitura) (14:38:26Z)
+$ compare_residue
+temporários do Silo em .minio.sys/tmp: 5 diretórios, 327720 KiB
+65544 KiB 70731b75-f39b-4526-aedc-6fa12fad583bx1795548947967467323
+65544 KiB 80115752-ef5f-41e0-9f12-3feff2e419ecx1795548947731336221
+65544 KiB c07d02bb-16b7-4553-b833-f7653e7f8b1bx1795549731540036430
+65544 KiB d9462442-bfb8-4597-80c0-6491370b2508x1795549732611218187
+65544 KiB f963343c-ee2f-4f83-82bd-e0b61f0243d1x1795549105789409450
+anteriores preservados (mesmo nome e tamanho): 5 de 5; anteriores ausentes ou alterados: 0
+novos, deixados durante a prova: 0 diretórios, 0 KiB
+
+=== Espaço livre depois da limpeza (14:38:26Z)
+$ host_disk
+host:    1B-blocks         Used       Avail Mounted on
+host: 510987681792 471192227840 39795453952 /mnt/c
+host: docker_data.vhdx do Docker Desktop: 40853569536 bytes
+disco de dados do Docker: Filesystem          1-blocks        Used     Available Capacity Mounted on
+disco de dados do Docker: /dev/sdf       1081101176832 19039653888 1007069167616       2% /data
+
+=== Situação dos passos (14:38:26Z)
+- Estado do ambiente: código 0
+- API parada antes do roteiro: código 0
+- Espaço livre exigido na unidade C:: código 0
+- Versões: código 0
+- Espaço livre e VHDX antes da prova: código 0
+- Retrato antes (só leitura): código 0
+- Temporários do Silo antes da prova (só leitura): código 0
+- Pastas de prova: código 0
+- Build da API e JS do cliente e da sonda: código 0
+- Arquivo de prova no Windows, preparado antes da medição: código 0
+- Espaço livre com o arquivo de prova: código 0
+- API sem watch (npm run start:prod) com os monitores: código 0
+- Contas de prova e vídeo de controle: código 0
+- Relógio antes da base: código 0
+- Lixeira do storage vazia antes da medição: código 0
+- Amostrador de disco do storage: código 0
+- Monitores (VM, PostgreSQL, docker stats e Windows): código 0
+- Sondas compiladas em containers próprios: código 0
+- Memória com todas as sondas em execução (referência informativa de 4 GiB): código 0
+- Fase de base: código 0
+- Upload no Windows interrompido por Ctrl+C real por volta de 0.5: código 0
+- Retrato das partes depois da interrupção: código 0
+- Retomada no Windows, conferência das partes recebidas, completion e polling: código 0
+- Relógio depois da carga: código 0
+- Fim das sondas: código 0
+- Fim dos monitores: código 0
+- Fim do amostrador do storage: código 0
+- Espaço livre antes da limpeza: código 0
+- Resumo das medidas: código 0
+- Vereditos de latência (critérios do registro prévio): código 0
+- Sondas, monitores, cliente, API, containers e pastas temporárias: código 0
+- Usuários, vídeos, objetos, multiparts, jobs e e-mails de prova: código 0
+- Purga da lixeira do storage depois da limpeza: código 0
+- Uso do storage depois da limpeza e da purga: código 0
+- Retrato depois (só leitura): código 0
+- Retrato preservado (antes = depois): código 0
+- Temporários do Silo: anteriores preservados e novos (só leitura): código 0
+- Espaço livre depois da limpeza: código 0
+código final: 0 (interrupção ou etapa obrigatória: 0; primeira etapa com falha: 0; limpeza: 0)
+log completo: <saída>/p10gbr-20261125142232-bc4b5d.log
+evidências: <saída>/p10gbr-20261125142232-bc4b5d

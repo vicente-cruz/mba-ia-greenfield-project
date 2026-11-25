@@ -1,0 +1,15 @@
+{
+  "descricao": "304 amostras certas e 4 de borda fora da carga nominal: de 304 a 308, sempre ≥ 300",
+  "baselineStart": 1800000000000,
+  "baselineEnd": 1800000700000,
+  "uncertaintyMs": 157,
+  "esperado": {
+    "carga_nominal": 304,
+    "bordas": 4,
+    "a": "aprovado",
+    "b": "aprovado",
+    "nominalLatency": "aprovado",
+    "latency": "aprovado",
+    "suficiencia_muda": false
+  }
+}

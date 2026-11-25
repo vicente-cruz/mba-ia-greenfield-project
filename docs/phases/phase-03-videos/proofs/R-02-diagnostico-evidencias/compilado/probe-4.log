@@ -1,0 +1,5 @@
+ Container r02e-20261125015519-9477cd-probe-4 Creating 
+ Container r02e-20261125015519-9477cd-probe-4 Created 
+SONDA | instância 4 | GET /videos/1mV9uV-tkC8 | intervalo 2000 ms | timeout 5000 ms | renovação 120 s antes de expirar | duração até SIGINT/SIGTERM
+SONDA | fim (SIGTERM) | 38 amostras em 75.5 s | ok 38 | fora de 2xx 0 (429: 0) | timeout 0 | erro de rede 0 | corpo inesperado 0 | renovações 0
+SONDA | latência das respostas ok (ms): p50 2.9 | p95 12.4 | p99 43.5 | máx 43.5

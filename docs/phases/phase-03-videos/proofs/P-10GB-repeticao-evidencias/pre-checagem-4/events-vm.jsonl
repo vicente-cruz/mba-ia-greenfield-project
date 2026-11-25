@@ -1,0 +1,94 @@
+{"t": 1795582799718, "seg": "generate", "ev": "generate", "bytes": 1000000000, "ms": 2864.4, "sha256": "6f00b2efee5a35543c41004d1b47a65883cdc9aaa235dfefec9fc06431dabb99"}
+{"t": 1795582948890, "seg": "start", "ev": "segment_start", "pid": 24976, "concurrency": 4, "signBatch": 10, "registerEvery": 4, "partUrlsIntervalMs": 1100, "storageConnect": false, "tokenExpiresAt": "2026-11-25T05:15:05.000Z"}
+{"t": 1795582948978, "seg": "start", "ev": "api", "op": "POST /videos", "attempt": 1, "status": 201, "ms": 71.3}
+{"t": 1795582948989, "seg": "start", "ev": "plan", "publicId": "McLunnyLDug", "sessionId": "f43d53db-33d2-4592-a819-8c5e1127f93a", "sizeBytes": 1000000000, "partSize": 67108864, "partCount": 15, "lastPartSize": 60475904, "checksumAlgorithm": "SHA256", "sessionExpiresAt": "2026-11-26T05:02:28.922Z"}
+{"t": 1795582949135, "seg": "start", "ev": "checksum", "part": 1, "bytes": 67108864, "ms": 134.7, "purpose": "sign"}
+{"t": 1795582949299, "seg": "start", "ev": "load_start", "reason": "part-urls"}
+{"t": 1795582949164, "seg": "start", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 18.4}
+{"t": 1795582949168, "seg": "start", "ev": "part_urls", "signed": [1], "registered": []}
+{"t": 1795582949338, "seg": "start", "ev": "checksum", "part": 2, "bytes": 67108864, "ms": 195.9, "purpose": "sign"}
+{"t": 1795582949485, "seg": "start", "ev": "checksum", "part": 3, "bytes": 67108864, "ms": 144.6, "purpose": "sign"}
+{"t": 1795582949628, "seg": "start", "ev": "checksum", "part": 4, "bytes": 67108864, "ms": 138.1, "purpose": "sign"}
+{"t": 1795582949766, "seg": "start", "ev": "checksum", "part": 5, "bytes": 67108864, "ms": 133.7, "purpose": "sign"}
+{"t": 1795582949921, "seg": "start", "ev": "checksum", "part": 6, "bytes": 67108864, "ms": 152.3, "purpose": "sign"}
+{"t": 1795582950063, "seg": "start", "ev": "checksum", "part": 7, "bytes": 67108864, "ms": 137.5, "purpose": "sign"}
+{"t": 1795582950219, "seg": "start", "ev": "checksum", "part": 8, "bytes": 67108864, "ms": 148.8, "purpose": "sign"}
+{"t": 1795582950269, "seg": "start", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 23.9}
+{"t": 1795582950273, "seg": "start", "ev": "part_urls", "signed": [2, 3, 4, 5, 6, 7, 8], "registered": []}
+{"t": 1795582950679, "seg": "start", "ev": "checksum", "part": 9, "bytes": 67108864, "ms": 456.8, "purpose": "sign"}
+{"t": 1795582950884, "seg": "start", "ev": "put", "part": 1, "bytes": 67108864, "ms": 1692.5, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"ab8ba39aa2074701d5b07b4232b19b10\""}
+{"t": 1795582951068, "seg": "start", "ev": "checksum", "part": 10, "bytes": 67108864, "ms": 381.3, "purpose": "sign"}
+{"t": 1795582951210, "seg": "start", "ev": "checksum", "part": 11, "bytes": 67108864, "ms": 138.1, "purpose": "sign"}
+{"t": 1795582951361, "seg": "start", "ev": "checksum", "part": 12, "bytes": 67108864, "ms": 145.8, "purpose": "sign"}
+{"t": 1795582951389, "seg": "start", "ev": "put", "part": 3, "bytes": 67108864, "ms": 1084.8, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"1afa70f98bd64503ba10e418319f7fee\""}
+{"t": 1795582951605, "seg": "start", "ev": "checksum", "part": 13, "bytes": 67108864, "ms": 241.2, "purpose": "sign"}
+{"t": 1795582951610, "seg": "start", "ev": "put", "part": 2, "bytes": 67108864, "ms": 1315, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"dd24f36f23248cfc7c3a01e44500f5dd\""}
+{"t": 1795582951733, "seg": "start", "ev": "put", "part": 4, "bytes": 67108864, "ms": 1419.6, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"b643e2f50391523b240d20871667de6f\""}
+{"t": 1795582951786, "seg": "start", "ev": "api", "op": "POST part-urls (s\u00f3 registro)", "attempt": 1, "status": 200, "ms": 20.3}
+{"t": 1795582951791, "seg": "start", "ev": "part_urls", "signed": [], "registered": [1, 2, 3, 4]}
+{"t": 1795582952042, "seg": "start", "ev": "checksum", "part": 14, "bytes": 67108864, "ms": 432.3, "purpose": "sign"}
+{"t": 1795582952178, "seg": "start", "ev": "put", "part": 5, "bytes": 67108864, "ms": 1267.4, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"374f8b3fc19558baca3d2da26ac5bb77\""}
+{"t": 1795582952350, "seg": "start", "ev": "checksum", "part": 15, "bytes": 60475904, "ms": 299.1, "purpose": "sign"}
+{"t": 1795582952685, "seg": "start", "ev": "put", "part": 6, "bytes": 67108864, "ms": 1267, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"cee712ecae7138bf45edc4547b853ee8\""}
+{"t": 1795582952700, "seg": "start", "ev": "put", "part": 7, "bytes": 67108864, "ms": 1059.2, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"b6393cdebcf635342f043fff9ec899c8\""}
+{"t": 1795582952886, "seg": "start", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 18.1}
+{"t": 1795582952892, "seg": "start", "ev": "part_urls", "signed": [9, 10, 11, 12, 13, 14, 15], "registered": [5, 6, 7]}
+{"t": 1795582953043, "seg": "start", "ev": "put", "part": 8, "bytes": 67108864, "ms": 1278.5, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"3d6e11711a8fbdc89fca71a81df0cbcc\""}
+{"t": 1795582953230, "seg": "start", "ev": "interrupted", "signal": "SIGINT", "putDone": [1, 2, 3, 4, 5, 6, 7, 8], "registered": [1, 2, 3, 4, 5, 6, 7], "inFlight": [9, 10, 11, 12]}
+{"t": 1795582953082, "seg": "start", "ev": "load_end", "reason": "interrupted"}
+{"t": 1795582953269, "seg": "start", "ev": "put", "part": 9, "bytes": 67108864, "ms": 352.7, "attempt": 1, "outcome": "aborted"}
+{"t": 1795582953276, "seg": "start", "ev": "put", "part": 10, "bytes": 67108864, "ms": 239.6, "attempt": 1, "outcome": "aborted"}
+{"t": 1795582953279, "seg": "start", "ev": "put", "part": 11, "bytes": 67108864, "ms": 230.3, "attempt": 1, "outcome": "aborted"}
+{"t": 1795582953282, "seg": "start", "ev": "put", "part": 12, "bytes": 67108864, "ms": 204, "attempt": 1, "outcome": "aborted"}
+{"t": 1795582953285, "seg": "start", "ev": "segment_end", "outcome": "interrupted"}
+{"t": 1795582964318, "seg": "resume", "ev": "segment_start", "pid": 32684, "concurrency": 4, "signBatch": 10, "registerEvery": 4, "partUrlsIntervalMs": 1100, "storageConnect": false, "tokenExpiresAt": "2026-11-25T05:15:05.000Z"}
+{"t": 1795582964487, "seg": "resume", "ev": "load_start", "reason": "resume"}
+{"t": 1795582964390, "seg": "resume", "ev": "api", "op": "GET /videos/:publicId", "attempt": 1, "status": 200, "ms": 55.5}
+{"t": 1795582964408, "seg": "resume", "ev": "api", "op": "GET upload-session", "attempt": 1, "status": 200, "ms": 15}
+{"t": 1795582964412, "seg": "resume", "ev": "resume_classification", "confirmed": [1, 2, 3, 4, 5, 6, 7], "missing": [9, 10, 11, 12, 13, 14, 15], "divergent": [], "unregistered": [8]}
+{"t": 1795582964557, "seg": "resume", "ev": "checksum", "part": 1, "bytes": 67108864, "ms": 131, "purpose": "verify"}
+{"t": 1795582964696, "seg": "resume", "ev": "checksum", "part": 2, "bytes": 67108864, "ms": 134.7, "purpose": "verify"}
+{"t": 1795582964866, "seg": "resume", "ev": "checksum", "part": 3, "bytes": 67108864, "ms": 166.3, "purpose": "verify"}
+{"t": 1795582965012, "seg": "resume", "ev": "checksum", "part": 4, "bytes": 67108864, "ms": 141.2, "purpose": "verify"}
+{"t": 1795582965150, "seg": "resume", "ev": "checksum", "part": 5, "bytes": 67108864, "ms": 133.9, "purpose": "verify"}
+{"t": 1795582965285, "seg": "resume", "ev": "checksum", "part": 6, "bytes": 67108864, "ms": 131.6, "purpose": "verify"}
+{"t": 1795582965412, "seg": "resume", "ev": "checksum", "part": 7, "bytes": 67108864, "ms": 122.7, "purpose": "verify"}
+{"t": 1795582965535, "seg": "resume", "ev": "checksum", "part": 8, "bytes": 67108864, "ms": 120.6, "purpose": "verify"}
+{"t": 1795582965552, "seg": "resume", "ev": "api", "op": "POST file-verifications", "attempt": 1, "status": 200, "ms": 10.6}
+{"t": 1795582965556, "seg": "resume", "ev": "file_verification", "parts": [1, 2, 3, 4, 5, 6, 7, 8], "bytes": 536870912, "checksumMs": 1115.5, "requestMs": 10.6, "verifiedParts": 8}
+{"t": 1795582965560, "seg": "resume", "ev": "resend_plan", "parts": [8, 9, 10, 11, 12, 13, 14, 15]}
+{"t": 1795582965589, "seg": "resume", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 13.6}
+{"t": 1795582965592, "seg": "resume", "ev": "part_urls", "signed": [8], "registered": []}
+{"t": 1795582965741, "seg": "resume", "ev": "checksum", "part": 9, "bytes": 67108864, "ms": 166.7, "purpose": "sign"}
+{"t": 1795582965888, "seg": "resume", "ev": "checksum", "part": 10, "bytes": 67108864, "ms": 143.6, "purpose": "sign"}
+{"t": 1795582966018, "seg": "resume", "ev": "checksum", "part": 11, "bytes": 67108864, "ms": 126.3, "purpose": "sign"}
+{"t": 1795582966153, "seg": "resume", "ev": "checksum", "part": 12, "bytes": 67108864, "ms": 130.4, "purpose": "sign"}
+{"t": 1795582966294, "seg": "resume", "ev": "checksum", "part": 13, "bytes": 67108864, "ms": 137.7, "purpose": "sign"}
+{"t": 1795582966429, "seg": "resume", "ev": "checksum", "part": 14, "bytes": 67108864, "ms": 132.7, "purpose": "sign"}
+{"t": 1795582966553, "seg": "resume", "ev": "checksum", "part": 15, "bytes": 60475904, "ms": 118, "purpose": "sign"}
+{"t": 1795582966690, "seg": "resume", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 11.2}
+{"t": 1795582966694, "seg": "resume", "ev": "part_urls", "signed": [9, 10, 11, 12, 13, 14, 15], "registered": []}
+{"t": 1795582967144, "seg": "resume", "ev": "put", "part": 8, "bytes": 67108864, "ms": 1531.8, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"3d6e11711a8fbdc89fca71a81df0cbcc\""}
+{"t": 1795582967603, "seg": "resume", "ev": "put", "part": 11, "bytes": 67108864, "ms": 856.1, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"9b0a85f63531a3820b955de13ae96028\""}
+{"t": 1795582967643, "seg": "resume", "ev": "put", "part": 10, "bytes": 67108864, "ms": 911.9, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"71c3c3c73e0b57a621b496bcce02e472\""}
+{"t": 1795582967778, "seg": "resume", "ev": "put", "part": 9, "bytes": 67108864, "ms": 1060, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"0c24c2f443acc143984c4e4f9a2f24ad\""}
+{"t": 1795582967820, "seg": "resume", "ev": "api", "op": "POST part-urls (s\u00f3 registro)", "attempt": 1, "status": 200, "ms": 18}
+{"t": 1795582967827, "seg": "resume", "ev": "part_urls", "signed": [], "registered": [8, 9, 10, 11]}
+{"t": 1795582968500, "seg": "resume", "ev": "put", "part": 12, "bytes": 67108864, "ms": 1309.6, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"08ea4384f678cda1414525a6bacecc0b\""}
+{"t": 1795582968518, "seg": "resume", "ev": "put", "part": 15, "bytes": 60475904, "ms": 717.8, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"242fbb849100718857b3814db34c5fe7\""}
+{"t": 1795582968814, "seg": "resume", "ev": "put", "part": 14, "bytes": 67108864, "ms": 1038.4, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"dac32c8b25188fea63e604f2789e6813\""}
+{"t": 1795582968827, "seg": "resume", "ev": "put", "part": 13, "bytes": 67108864, "ms": 1185.1, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"a96304ae5b28e9c9e8aaf98844a109ab\""}
+{"t": 1795582968916, "seg": "resume", "ev": "api", "op": "POST part-urls (s\u00f3 registro)", "attempt": 1, "status": 200, "ms": 6.7}
+{"t": 1795582968920, "seg": "resume", "ev": "part_urls", "signed": [], "registered": [12, 13, 14, 15]}
+{"t": 1795582968778, "seg": "resume", "ev": "load_end", "reason": "hold"}
+{"t": 1795582968937, "seg": "resume", "ev": "hold_start"}
+{"t": 1795582977128, "seg": "resume", "ev": "hold_end"}
+{"t": 1795582977147, "seg": "resume", "ev": "completion_start"}
+{"t": 1795582977213, "seg": "resume", "ev": "api", "op": "POST completion", "attempt": 1, "status": 202, "ms": 62.1}
+{"t": 1795582977217, "seg": "resume", "ev": "completion", "status": 202, "ms": 62.1, "videoStatus": "processing"}
+{"t": 1795582977242, "seg": "resume", "ev": "api", "op": "GET /videos/:publicId (polling)", "attempt": 1, "status": 200, "ms": 4.6}
+{"t": 1795582977245, "seg": "resume", "ev": "poll_state", "status": "processing", "errorCode": null, "polls": 1}
+{"t": 1795582979287, "seg": "resume", "ev": "api", "op": "GET /videos/:publicId (polling)", "attempt": 1, "status": 200, "ms": 25.1}
+{"t": 1795582979291, "seg": "resume", "ev": "poll_state", "status": "error", "errorCode": "MEDIA_INVALID", "polls": 2}
+{"t": 1795582979295, "seg": "resume", "ev": "final", "status": "error", "errorCode": "MEDIA_INVALID", "errorMessage": "http://storage:9000/streamtube/originals/9325c48f-38de-4c77-aedc-4c4ec6fc3845/f43d53db-33d2-4592-a819-8c5e1127f93a: Invalid data found when processing input", "polls": 2}
+{"t": 1795582979325, "seg": "resume", "ev": "segment_end", "outcome": "ok"}

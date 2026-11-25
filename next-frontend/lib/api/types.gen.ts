@@ -200,16 +200,464 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/videos": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Create a video draft and its first upload session
+         * @description Registers the video as a draft in the user's channel and starts a resumable multipart upload, signed part by part afterwards. The video is addressed only by its publicId.
+         */
+        post: operations["VideosController_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/videos/{publicId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get the state and the metadata of a video
+         * @description Returns the state of the video, the metadata extracted by the processing and its current upload session, for the owner. It is the route of the polling while the video is processed.
+         */
+        get: operations["VideosController_getOwnVideo"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/videos/{publicId}/playback-url": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get a short-lived URL to play a ready video
+         * @description Issues a presigned GET of the original on the public storage endpoint, valid for PLAYBACK_URL_TTL_SECONDS, for the owner of a ready video. The video is played by progressive download: the storage answers Range requests with 206 Partial Content and Content-Range, and the bytes never pass through the API. Request a new URL when it expires.
+         */
+        get: operations["VideosController_getPlaybackUrl"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/videos/{publicId}/download-url": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get a short-lived URL to download the original of a ready video
+         * @description Issues a presigned GET of the original on the public storage endpoint, valid for DOWNLOAD_URL_TTL_SECONDS, for the owner of a ready video. The storage answers it as an attachment named after the original file name (filename* in UTF-8, with an ASCII fallback in filename; RFC 6266), and the bytes never pass through the API.
+         */
+        get: operations["VideosController_getDownloadUrl"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/videos/{publicId}/upload-sessions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Restart the upload of a draft video
+         * @description Creates a new upload session, with a new key for the original, for a draft video, and aborts the previous session. The video declares the new file. The new session starts without the file mismatch block of the previous one.
+         */
+        post: operations["UploadSessionsController_restartSession"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/videos/{publicId}/upload-sessions/{sessionId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Get the upload session and the state of its parts
+         * @description Returns the state of the session and, for an active session, one entry per part of the plan, classified against the parts listed by the storage. It is the base of the resumption.
+         */
+        get: operations["UploadSessionsController_getSession"];
+        put?: never;
+        post?: never;
+        /**
+         * Abort the upload session
+         * @description Claims the session for abort and aborts its multipart upload in the storage until the storage confirms that it is gone. The video stays in draft and can restart the upload. Repeating the call on an aborted session has no new effect.
+         */
+        delete: operations["UploadSessionsController_abortSession"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/videos/{publicId}/upload-sessions/{sessionId}/part-urls": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Sign upload parts and register ETags
+         * @description Signs, in one batch, the PUT of each part with its exact size and its SHA-256, and registers the ETags of the parts already sent. The bytes go from the browser straight to the storage.
+         */
+        post: operations["UploadSessionsController_requestPartUrls"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/videos/{publicId}/upload-sessions/{sessionId}/file-verifications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Verify the file selected again on the resumption
+         * @description Compares the SHA-256 recalculated for every part already received (confirmed and unregistered) with the registered checksums. A different checksum blocks the session until an explicit restart.
+         */
+        post: operations["UploadSessionsController_verifyFile"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/videos/{publicId}/upload-sessions/{sessionId}/completion": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Complete the upload
+         * @description Checks every part against the storage, completes the multipart upload from the registered parts and moves the video to processing, publishing its processing job. Repeating the call after the success returns the current state of the video.
+         */
+        post: operations["UploadSessionsController_completeUpload"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
-        RegisterDto: Record<string, never>;
-        ResendConfirmationDto: Record<string, never>;
-        LoginDto: Record<string, never>;
-        RefreshTokenDto: Record<string, never>;
-        ForgotPasswordDto: Record<string, never>;
-        ResetPasswordDto: Record<string, never>;
+        RegisterDto: {
+            /** Format: email */
+            email: string;
+            password: string;
+        };
+        ResendConfirmationDto: {
+            /** Format: email */
+            email: string;
+        };
+        LoginDto: {
+            /** Format: email */
+            email: string;
+            password: string;
+        };
+        RefreshTokenDto: {
+            refresh_token: string;
+        };
+        ForgotPasswordDto: {
+            /** Format: email */
+            email: string;
+        };
+        ResetPasswordDto: {
+            token: string;
+            new_password: string;
+        };
+        UploadDeclarationDto: {
+            /** @description Name of the file chosen by the user, from 1 to 255 characters. */
+            fileName: string;
+            /** @description Size of the whole file in bytes: a safe integer of at least 1. */
+            sizeBytes: number;
+            /** @description MIME type of the file in the `type/subtype` format, e.g. `video/mp4`. */
+            contentType: string;
+        };
+        StartedUploadSessionDto: {
+            /** Format: uuid */
+            id: string;
+            /** @enum {string} */
+            status: "active";
+            /**
+             * @description Size in bytes of every part except the last
+             * @example 67108864
+             */
+            partSize: number;
+            /** @example 150 */
+            partCount: number;
+            /** @enum {string} */
+            checksumAlgorithm: "SHA256";
+            /**
+             * Format: date-time
+             * @description Absolute expiry of the session
+             */
+            expiresAt: string;
+        };
+        VideoUploadSessionResponseDto: {
+            /**
+             * @description 11 base64url characters
+             * @example dQw4w9WgXcQ
+             */
+            publicId: string;
+            /** @enum {string} */
+            status: "draft";
+            uploadSession: components["schemas"]["StartedUploadSessionDto"];
+        };
+        /** @enum {string} */
+        VideoStatus: "draft" | "processing" | "ready" | "error";
+        /** @enum {string} */
+        UploadSessionStatus: "initiating" | "active" | "completing" | "completed" | "aborting" | "aborted";
+        VideoCurrentUploadSessionDto: {
+            /** Format: uuid */
+            id: string;
+            status: components["schemas"]["UploadSessionStatus"];
+            /**
+             * Format: date-time
+             * @description Absolute expiry of the session
+             */
+            expiresAt: string;
+        };
+        VideoResponseDto: {
+            /**
+             * @description 11 base64url characters
+             * @example dQw4w9WgXcQ
+             */
+            publicId: string;
+            status: components["schemas"]["VideoStatus"];
+            /** @example clip.mp4 */
+            originalFilename: string;
+            /** @example video/mp4 */
+            contentType: string;
+            /** @example 1048576 */
+            sizeBytes: number;
+            /**
+             * @description Duration in seconds, filled by the processing
+             * @example 4.04
+             */
+            durationSeconds: number | null;
+            /** @example 1280 */
+            width: number | null;
+            /** @example 720 */
+            height: number | null;
+            /** @example h264 */
+            videoCodec: string | null;
+            /** @example aac */
+            audioCodec: string | null;
+            /** @description The processing produced a thumbnail */
+            hasThumbnail: boolean;
+            /**
+             * @description Filled when the video is in error
+             * @enum {string|null}
+             */
+            errorCode: "MEDIA_INVALID" | "MEDIA_CONTAINER_MISMATCH" | "MEDIA_UNSUPPORTED_CODEC" | "PROCESSING_FAILED" | "PROCESSING_STALLED" | "PROCESSING_INCONSISTENT" | null;
+            errorMessage: string | null;
+            /** @description Current upload session of the video */
+            uploadSession: components["schemas"]["VideoCurrentUploadSessionDto"] | null;
+            /** Format: date-time */
+            createdAt: string;
+            /** Format: date-time */
+            updatedAt: string;
+        };
+        PlaybackUrlResponseDto: {
+            /**
+             * Format: uri
+             * @description Presigned GET of the original on the public storage endpoint; it answers 206 Partial Content with Content-Range to Range requests
+             */
+            url: string;
+            /**
+             * @description Content type of the video, signed as the response type
+             * @example video/mp4
+             */
+            contentType: string;
+            /**
+             * Format: date-time
+             * @description Expiry of the URL: emission + PLAYBACK_URL_TTL_SECONDS
+             */
+            expiresAt: string;
+        };
+        DownloadUrlResponseDto: {
+            /**
+             * Format: uri
+             * @description Presigned GET of the original on the public storage endpoint, answered with Content-Disposition: attachment and the original file name in filename* (UTF-8, RFC 6266)
+             */
+            url: string;
+            /**
+             * Format: date-time
+             * @description Expiry of the URL: emission + DOWNLOAD_URL_TTL_SECONDS
+             */
+            expiresAt: string;
+        };
+        /**
+         * @description confirmed: present with the registered ETag, checksum and size; missing: absent from the storage; divergent: present but different from the registry; unregistered: present without a registered ETag
+         * @enum {string}
+         */
+        UploadPartState: "confirmed" | "missing" | "divergent" | "unregistered";
+        UploadSessionPartDto: {
+            /** @example 1 */
+            partNumber: number;
+            /** @description confirmed: present with the registered ETag, checksum and size; missing: absent from the storage; divergent: present but different from the registry; unregistered: present without a registered ETag */
+            state: components["schemas"]["UploadPartState"];
+            /** @description Registered SHA-256 of the part, base64 with padding; null when the part was never signed */
+            checksumSha256: string | null;
+            /** @description Registered ETag of the part */
+            etag: string | null;
+        };
+        UploadSessionResponseDto: {
+            /** Format: uuid */
+            id: string;
+            status: components["schemas"]["UploadSessionStatus"];
+            /** @description true when the session is active and its expiresAt has passed */
+            expired: boolean;
+            /** @description The file check failed, or a part was signed again with another checksum; the session no longer signs parts */
+            fileMismatch: boolean;
+            /**
+             * @description Size in bytes of every part except the last
+             * @example 67108864
+             */
+            partSize: number;
+            /** @example 150 */
+            partCount: number;
+            /** @enum {string} */
+            checksumAlgorithm: "SHA256";
+            /**
+             * Format: date-time
+             * @description Absolute expiry of the session
+             */
+            expiresAt: string;
+            /** @description One entry per part of the plan, from 1 to partCount, only for an active session; empty in the other states */
+            parts: components["schemas"]["UploadSessionPartDto"][];
+        };
+        PartToSignDto: {
+            /** @description Number of the part, from 1. The upper bound `partCount` is checked by the service (400 INVALID_PART_NUMBER). */
+            partNumber: number;
+            /** @description SHA-256 of the exact bytes of the part, in base64 with padding (44 characters). */
+            checksumSha256: string;
+        };
+        CompletedPartDto: {
+            /** @description Number of a part whose checksum is already registered. */
+            partNumber: number;
+            /** @description ETag read from the response of the PUT of the part. */
+            etag: string;
+        };
+        PartUrlsRequestDto: {
+            /** @description Parts to sign, up to 50. */
+            parts?: components["schemas"]["PartToSignDto"][];
+            /** @description Parts already sent, with the ETag of their PUT, up to 150. */
+            completedParts?: components["schemas"]["CompletedPartDto"][];
+        };
+        PartUploadHeadersDto: {
+            /** @description Declared SHA-256 of the part, base64 with padding */
+            "x-amz-checksum-sha256": string;
+        };
+        SignedPartDto: {
+            /** @example 150 */
+            partNumber: number;
+            /** @description Presigned UploadPart URL on the public storage endpoint */
+            url: string;
+            /** @enum {string} */
+            method: "PUT";
+            /**
+             * @description Exact number of bytes of the body, sent as a Blob or an ArrayBuffer; any other size is refused by the storage
+             * @example 779264
+             */
+            expectedSize: number;
+            headers: components["schemas"]["PartUploadHeadersDto"];
+            /**
+             * Format: date-time
+             * @description Signing time plus UPLOAD_PART_URL_TTL_SECONDS
+             */
+            expiresAt: string;
+        };
+        PartUrlsResponseDto: {
+            parts: components["schemas"]["SignedPartDto"][];
+            /**
+             * @description Parts whose ETag was registered by this request
+             * @example [
+             *       1,
+             *       2
+             *     ]
+             */
+            registeredParts: number[];
+        };
+        RecalculatedPartChecksumDto: {
+            /** @description Number of the part, from 1. The plan (`partCount`) and the registered checksum are checked by the service (400 INVALID_PART_NUMBER). */
+            partNumber: number;
+            /** @description SHA-256 recalculated from the exact bytes of the part of the file selected again, in base64 with padding (44 characters). */
+            checksumSha256: string;
+        };
+        FileVerificationsRequestDto: {
+            /** @description Parts already received by the storage, up to 150, each once. An empty list is valid when no part was received. */
+            parts: components["schemas"]["RecalculatedPartChecksumDto"][];
+        };
+        FileVerificationsResponseDto: {
+            /** @enum {string} */
+            result: "match";
+            /**
+             * @description Number of parts whose recalculated checksum matched the registered one; 0 when no part was received
+             * @example 2
+             */
+            verifiedParts: number;
+        };
+        UploadCompletionResponseDto: {
+            /**
+             * @description 11 base64url characters
+             * @example dQw4w9WgXcQ
+             */
+            publicId: string;
+            /**
+             * @description Current state of the video; always processing in the 202 answer
+             * @enum {string}
+             */
+            status: "processing" | "ready" | "error";
+        };
         ApiErrorEnvelope: {
             /** @example 401 */
             statusCode: number;
@@ -241,7 +689,9 @@ export interface operations {
                 headers: {
                     [name: string]: unknown;
                 };
-                content?: never;
+                content: {
+                    "application/json": string;
+                };
             };
         };
     };
@@ -294,7 +744,9 @@ export interface operations {
     };
     AuthController_confirmEmail: {
         parameters: {
-            query?: never;
+            query: {
+                token: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -581,6 +1033,662 @@ export interface operations {
             };
             /** @description Missing or invalid access token */
             401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+        };
+    };
+    VideosController_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UploadDeclarationDto"];
+            };
+        };
+        responses: {
+            /** @description Draft video and active upload session */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VideoUploadSessionResponseDto"];
+                };
+            };
+            /** @description Validation failed */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description Missing or invalid access token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description The user has no channel (CHANNEL_NOT_FOUND) */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description sizeBytes above the maximum video size, informed in the message (VIDEO_TOO_LARGE) */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description contentType other than video/mp4 or video/webm (UNSUPPORTED_VIDEO_TYPE) */
+            415: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description The storage could not start the upload; no usable session was created (STORAGE_UNAVAILABLE) */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+        };
+    };
+    VideosController_getOwnVideo: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Public id of the video, 11 base64url characters */
+                publicId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description State, metadata and current upload session of the video */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VideoResponseDto"];
+                };
+            };
+            /** @description Missing or invalid access token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description Video not found or of another channel (VIDEO_NOT_FOUND) */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+        };
+    };
+    VideosController_getPlaybackUrl: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Public id of the video, 11 base64url characters */
+                publicId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Presigned playback URL, its content type and its expiry */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlaybackUrlResponseDto"];
+                };
+            };
+            /** @description Missing or invalid access token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description Video not found or of another channel (VIDEO_NOT_FOUND) */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description The video is not ready (VIDEO_NOT_READY) */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+        };
+    };
+    VideosController_getDownloadUrl: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Public id of the video, 11 base64url characters */
+                publicId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Presigned download URL and its expiry */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DownloadUrlResponseDto"];
+                };
+            };
+            /** @description Missing or invalid access token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description Video not found or of another channel (VIDEO_NOT_FOUND) */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description The video is not ready (VIDEO_NOT_READY) */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+        };
+    };
+    UploadSessionsController_restartSession: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Public id of the video, 11 base64url characters */
+                publicId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["UploadDeclarationDto"];
+            };
+        };
+        responses: {
+            /** @description New active session, ready to sign parts */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["VideoUploadSessionResponseDto"];
+                };
+            };
+            /** @description Validation failed */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description Missing or invalid access token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description Video not found or of another channel (VIDEO_NOT_FOUND) */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description The video is not a draft (VIDEO_INVALID_STATE), its current session is completing (UPLOAD_SESSION_COMPLETING) or being created (UPLOAD_SESSION_INITIATING), or the activation lost the new session to another restart (UPLOAD_SESSION_NOT_ACTIVE) */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description The file is larger than the limit (VIDEO_TOO_LARGE) */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description Unsupported content type (UNSUPPORTED_VIDEO_TYPE) */
+            415: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description Transient failure of the storage (STORAGE_UNAVAILABLE); the new session ends aborted and the video stays a restartable draft */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+        };
+    };
+    UploadSessionsController_getSession: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Public id of the video, 11 base64url characters */
+                publicId: string;
+                /** @description Id of the upload session (UUID) */
+                sessionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description State of the session and its classified parts */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UploadSessionResponseDto"];
+                };
+            };
+            /** @description Missing or invalid access token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description Video not found or of another channel (VIDEO_NOT_FOUND), or session not found (UPLOAD_SESSION_NOT_FOUND) */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description The storage no longer knows the upload of the active session, which is aborted (UPLOAD_SESSION_EXPIRED) */
+            410: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description The storage could not list the parts (STORAGE_UNAVAILABLE); the session is not changed */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+        };
+    };
+    UploadSessionsController_abortSession: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Public id of the video, 11 base64url characters */
+                publicId: string;
+                /** @description Id of the upload session (UUID) */
+                sessionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The session is aborted, or stays aborting while a part in transit prevents the confirmation; the sweep concludes it */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Missing or invalid access token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description Video not found or of another channel (VIDEO_NOT_FOUND), or session not found (UPLOAD_SESSION_NOT_FOUND) */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description The session is completing (UPLOAD_SESSION_COMPLETING), is being created (UPLOAD_SESSION_INITIATING), or is completed (UPLOAD_SESSION_NOT_ACTIVE) */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+        };
+    };
+    UploadSessionsController_requestPartUrls: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Public id of the video, 11 base64url characters */
+                publicId: string;
+                /** @description Id of the upload session (UUID) */
+                sessionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PartUrlsRequestDto"];
+            };
+        };
+        responses: {
+            /** @description Signed parts and the parts whose ETag was registered */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PartUrlsResponseDto"];
+                };
+            };
+            /** @description Validation failed, or a part number above partCount or repeated in the batch (INVALID_PART_NUMBER) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description Missing or invalid access token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description Video not found or of another channel (VIDEO_NOT_FOUND), or session not found (UPLOAD_SESSION_NOT_FOUND) */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description Session not current or not active (UPLOAD_SESSION_NOT_ACTIVE), checksum different from the registered one or session blocked (UPLOAD_FILE_MISMATCH), or ETag of a part never signed (UPLOAD_PART_NOT_SIGNED) */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description The session has expired (UPLOAD_SESSION_EXPIRED) */
+            410: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+        };
+    };
+    UploadSessionsController_verifyFile: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Public id of the video, 11 base64url characters */
+                publicId: string;
+                /** @description Id of the upload session (UUID) */
+                sessionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FileVerificationsRequestDto"];
+            };
+        };
+        responses: {
+            /** @description The file is the same */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FileVerificationsResponseDto"];
+                };
+            };
+            /** @description Validation failed, a part outside the plan or without a registered checksum (INVALID_PART_NUMBER), or a part already received left out (UPLOAD_VERIFICATION_INCOMPLETE) */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description Missing or invalid access token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description Video not found or of another channel (VIDEO_NOT_FOUND), or session not found (UPLOAD_SESSION_NOT_FOUND) */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description Session not current or not active (UPLOAD_SESSION_NOT_ACTIVE), or a checksum different from the registered one, which blocks the session, or a session already blocked (UPLOAD_FILE_MISMATCH) */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description The session has expired, or the storage no longer knows its upload (UPLOAD_SESSION_EXPIRED) */
+            410: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description The storage could not list the parts (STORAGE_UNAVAILABLE); nothing is recorded */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+        };
+    };
+    UploadSessionsController_completeUpload: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description Public id of the video, 11 base64url characters */
+                publicId: string;
+                /** @description Id of the upload session (UUID) */
+                sessionId: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description The session was already completed as the current one of the video; current state of the video */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UploadCompletionResponseDto"];
+                };
+            };
+            /** @description This call completed the upload and moved the video to processing */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UploadCompletionResponseDto"];
+                };
+            };
+            /** @description Missing or invalid access token */
+            401: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description Video not found or of another channel (VIDEO_NOT_FOUND), or session not found (UPLOAD_SESSION_NOT_FOUND) */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description Another completion is in progress (UPLOAD_SESSION_COMPLETING), the completion was reverted by another call (UPLOAD_COMPLETION_INTERRUPTED), a part is missing or has no registered ETag (UPLOAD_INCOMPLETE), the storage differs from the registry (UPLOAD_PART_MISMATCH), the session is blocked (UPLOAD_FILE_MISMATCH), or it is not the current active session (UPLOAD_SESSION_NOT_ACTIVE) */
+            409: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description The session has expired, or the storage no longer has its upload nor the completed object (UPLOAD_SESSION_EXPIRED) */
+            410: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ApiErrorEnvelope"];
+                };
+            };
+            /** @description Transient failure of the storage (STORAGE_UNAVAILABLE); the claim expires and the next call resumes */
+            503: {
                 headers: {
                     [name: string]: unknown;
                 };

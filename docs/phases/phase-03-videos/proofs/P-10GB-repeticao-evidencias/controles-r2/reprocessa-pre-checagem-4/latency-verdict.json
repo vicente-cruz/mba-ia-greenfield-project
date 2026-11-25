@@ -1,0 +1,315 @@
+{
+  "phases": {
+    "baseline": {
+      "start": "2026-11-25T05:00:23.614Z",
+      "end": "2026-11-25T05:02:25.624Z",
+      "seconds": 122.01,
+      "samples": 732,
+      "ok": 732,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": 2.86,
+      "p95": 4.36,
+      "p99": 5.85,
+      "max": 7.07,
+      "byInstance": {
+        "1": 61,
+        "2": 61,
+        "3": 61,
+        "4": 61,
+        "5": 61,
+        "6": 61,
+        "7": 61,
+        "8": 61,
+        "9": 61,
+        "10": 61,
+        "11": 61,
+        "12": 61
+      }
+    },
+    "load": {
+      "intervals": [
+        {
+          "start": "2026-11-25T05:02:29.142Z",
+          "end": "2026-11-25T05:02:33.239Z",
+          "seconds": 4.097
+        },
+        {
+          "start": "2026-11-25T05:02:44.330Z",
+          "end": "2026-11-25T05:02:48.935Z",
+          "seconds": 4.605
+        },
+        {
+          "start": "2026-11-25T05:02:57.132Z",
+          "end": "2026-11-25T05:02:57.221Z",
+          "seconds": 0.089
+        }
+      ],
+      "seconds": 8.791,
+      "samples": 58,
+      "ok": 58,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": 3.96,
+      "p95": 16.2,
+      "p99": 18.12,
+      "max": 18.12,
+      "byInstance": {
+        "1": 5,
+        "2": 5,
+        "3": 6,
+        "4": 4,
+        "5": 4,
+        "6": 4,
+        "7": 5,
+        "8": 5,
+        "9": 5,
+        "10": 5,
+        "11": 5,
+        "12": 5
+      }
+    },
+    "warmup": {
+      "samples": 16,
+      "ok": 16,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": 11.13,
+      "p95": 34.99,
+      "p99": 34.99,
+      "max": 34.99,
+      "byInstance": {
+        "1": 2,
+        "2": 2,
+        "3": 2,
+        "4": 2,
+        "5": 1,
+        "6": 1,
+        "7": 1,
+        "8": 1,
+        "9": 1,
+        "10": 1,
+        "11": 1,
+        "12": 1
+      }
+    },
+    "outside": {
+      "samples": 194,
+      "ok": 194,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": 3.36,
+      "p95": 6.45,
+      "p99": 8.21,
+      "max": 14.22,
+      "byInstance": {
+        "1": 16,
+        "2": 16,
+        "3": 15,
+        "4": 17,
+        "5": 17,
+        "6": 17,
+        "7": 16,
+        "8": 16,
+        "9": 16,
+        "10": 16,
+        "11": 16,
+        "12": 16
+      }
+    },
+    "all": {
+      "samples": 1000,
+      "ok": 1000,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": 3.03,
+      "p95": 5.85,
+      "p99": 13.15,
+      "max": 34.99,
+      "byInstance": {
+        "1": 84,
+        "2": 84,
+        "3": 84,
+        "4": 84,
+        "5": 83,
+        "6": 83,
+        "7": 83,
+        "8": 83,
+        "9": 83,
+        "10": 83,
+        "11": 83,
+        "12": 83
+      }
+    }
+  },
+  "instances": 12,
+  "minPhaseSamples": 300,
+  "enoughSamples": false,
+  "clockUncertainty": {
+    "uncertaintyMs": 157,
+    "model": "cada amostra de borda pode estar dentro ou fora da carga, independentemente das outras (conservador)",
+    "certainLoadSamples": 50,
+    "borderSamples": [
+      {
+        "instance": "3",
+        "epochMs": 1795582949206,
+        "latencyMs": 3.85,
+        "outcome": "ok",
+        "nominalLoad": true,
+        "interval": 1,
+        "edge": "início",
+        "distanceMs": 64
+      },
+      {
+        "instance": "3",
+        "epochMs": 1795582953206,
+        "latencyMs": 3.96,
+        "outcome": "ok",
+        "nominalLoad": true,
+        "interval": 1,
+        "edge": "fim",
+        "distanceMs": -33
+      },
+      {
+        "instance": "6",
+        "epochMs": 1795582964220,
+        "latencyMs": 3.64,
+        "outcome": "ok",
+        "nominalLoad": false,
+        "interval": 2,
+        "edge": "início",
+        "distanceMs": -110
+      },
+      {
+        "instance": "1",
+        "epochMs": 1795582964405,
+        "latencyMs": 3.17,
+        "outcome": "ok",
+        "nominalLoad": true,
+        "interval": 2,
+        "edge": "início",
+        "distanceMs": 75
+      },
+      {
+        "instance": "7",
+        "epochMs": 1795582964457,
+        "latencyMs": 3.67,
+        "outcome": "ok",
+        "nominalLoad": true,
+        "interval": 2,
+        "edge": "início",
+        "distanceMs": 127
+      },
+      {
+        "instance": "2",
+        "epochMs": 1795582968837,
+        "latencyMs": 2.87,
+        "outcome": "ok",
+        "nominalLoad": true,
+        "interval": 2,
+        "edge": "fim",
+        "distanceMs": -98
+      },
+      {
+        "instance": "11",
+        "epochMs": 1795582968858,
+        "latencyMs": 12.58,
+        "outcome": "ok",
+        "nominalLoad": true,
+        "interval": 2,
+        "edge": "fim",
+        "distanceMs": -77
+      },
+      {
+        "instance": "12",
+        "epochMs": 1795582968915,
+        "latencyMs": 2.79,
+        "outcome": "ok",
+        "nominalLoad": true,
+        "interval": 2,
+        "edge": "fim",
+        "distanceMs": -20
+      },
+      {
+        "instance": "3",
+        "epochMs": 1795582977207,
+        "latencyMs": 3.12,
+        "outcome": "ok",
+        "nominalLoad": true,
+        "interval": 3,
+        "edge": "fim",
+        "distanceMs": -14
+      }
+    ],
+    "possibleLoadSamples": {
+      "min": 50,
+      "max": 59
+    },
+    "p95Ms": {
+      "min": 16.2,
+      "max": 16.2
+    },
+    "p99Ms": {
+      "min": 18.12,
+      "max": 18.12
+    },
+    "possible": {
+      "a": [
+        "inconclusivo"
+      ],
+      "b": [
+        "inconclusivo"
+      ],
+      "enoughSamples": [
+        false
+      ]
+    },
+    "changes": {
+      "a": false,
+      "b": false,
+      "enoughSamples": false
+    }
+  },
+  "criteria": {
+    "a": {
+      "verdict": "inconclusivo",
+      "nominal": "inconclusivo",
+      "thresholdMs": 54.36,
+      "loadP95Ms": 16.2
+    },
+    "b": {
+      "verdict": "inconclusivo",
+      "nominal": "inconclusivo",
+      "loadP95Ms": 16.2,
+      "loadP99Ms": 18.12
+    },
+    "c": {
+      "verdict": "aprovado",
+      "samples": 1000,
+      "failures": 0,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0
+    }
+  },
+  "nominalLatency": "inconclusivo",
+  "latency": "inconclusivo",
+  "recalculatedInstances": 69
+}

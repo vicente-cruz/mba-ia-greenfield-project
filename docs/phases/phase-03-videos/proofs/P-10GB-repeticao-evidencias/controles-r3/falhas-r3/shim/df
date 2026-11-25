@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+case "${P10GB_CONTROLE_FALHA:-}:$*" in
+  disco-host:*"--output=size,used,avail,target /mnt/c") echo "CONTROLE | falha injetada: df da unidade C:" >&2; exit 2 ;;
+esac
+exec "/usr/bin/df" "$@"

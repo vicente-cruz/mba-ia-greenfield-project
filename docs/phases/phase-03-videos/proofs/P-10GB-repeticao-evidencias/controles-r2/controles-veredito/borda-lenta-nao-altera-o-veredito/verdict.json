@@ -1,0 +1,214 @@
+{
+  "phases": {
+    "baseline": {
+      "start": "2027-01-15T08:00:00.000Z",
+      "end": "2027-01-15T08:11:40.000Z",
+      "seconds": 700,
+      "samples": 4550,
+      "ok": 4550,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": 5,
+      "p95": 5,
+      "p99": 5,
+      "max": 5,
+      "byInstance": {
+        "1": 350,
+        "2": 350,
+        "3": 350,
+        "4": 350,
+        "5": 350,
+        "6": 350,
+        "7": 350,
+        "8": 350,
+        "9": 350,
+        "10": 350,
+        "11": 350,
+        "12": 350,
+        "13": 350
+      }
+    },
+    "load": {
+      "intervals": [
+        {
+          "start": "2027-01-15T08:11:45.000Z",
+          "end": "2027-01-15T08:15:05.000Z",
+          "seconds": 200
+        },
+        {
+          "start": "2027-01-15T08:15:25.000Z",
+          "end": "2027-01-15T08:15:35.000Z",
+          "seconds": 10
+        },
+        {
+          "start": "2027-01-15T08:15:43.000Z",
+          "end": "2027-01-15T08:15:43.089Z",
+          "seconds": 0.089
+        }
+      ],
+      "seconds": 210.089,
+      "samples": 400,
+      "ok": 400,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": 10,
+      "p95": 10,
+      "p99": 10,
+      "max": 10,
+      "byInstance": {
+        "1": 31,
+        "2": 31,
+        "3": 31,
+        "4": 31,
+        "5": 31,
+        "6": 31,
+        "7": 31,
+        "8": 31,
+        "9": 31,
+        "10": 31,
+        "11": 30,
+        "12": 30,
+        "13": 30
+      }
+    },
+    "warmup": {
+      "samples": 0,
+      "ok": 0,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": null,
+      "p95": null,
+      "p99": null,
+      "max": null,
+      "byInstance": {}
+    },
+    "outside": {
+      "samples": 1,
+      "ok": 1,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": 600,
+      "p95": 600,
+      "p99": 600,
+      "max": 600,
+      "byInstance": {
+        "11": 1
+      }
+    },
+    "all": {
+      "samples": 4951,
+      "ok": 4951,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": 5,
+      "p95": 10,
+      "p99": 10,
+      "max": 600,
+      "byInstance": {
+        "1": 381,
+        "2": 381,
+        "3": 381,
+        "4": 381,
+        "5": 381,
+        "6": 381,
+        "7": 381,
+        "8": 381,
+        "9": 381,
+        "10": 381,
+        "11": 381,
+        "12": 380,
+        "13": 380
+      }
+    }
+  },
+  "instances": 1,
+  "minPhaseSamples": 300,
+  "enoughSamples": true,
+  "clockUncertainty": {
+    "uncertaintyMs": 157,
+    "model": "cada amostra de borda pode estar dentro ou fora da carga, independentemente das outras (conservador)",
+    "certainLoadSamples": 400,
+    "borderSamples": [
+      {
+        "instance": "11",
+        "epochMs": 1800000905050,
+        "latencyMs": 600,
+        "outcome": "ok",
+        "nominalLoad": false,
+        "interval": 1,
+        "edge": "fim",
+        "distanceMs": 50
+      }
+    ],
+    "possibleLoadSamples": {
+      "min": 400,
+      "max": 401
+    },
+    "p95Ms": {
+      "min": 10,
+      "max": 10
+    },
+    "p99Ms": {
+      "min": 10,
+      "max": 10
+    },
+    "possible": {
+      "a": [
+        "aprovado"
+      ],
+      "b": [
+        "aprovado"
+      ],
+      "enoughSamples": [
+        true
+      ]
+    },
+    "changes": {
+      "a": false,
+      "b": false,
+      "enoughSamples": false
+    }
+  },
+  "criteria": {
+    "a": {
+      "verdict": "aprovado",
+      "nominal": "aprovado",
+      "thresholdMs": 55,
+      "loadP95Ms": 10
+    },
+    "b": {
+      "verdict": "aprovado",
+      "nominal": "aprovado",
+      "loadP95Ms": 10,
+      "loadP99Ms": 10
+    },
+    "c": {
+      "verdict": "aprovado",
+      "samples": 4951,
+      "failures": 0,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0
+    }
+  },
+  "nominalLatency": "aprovado",
+  "latency": "aprovado",
+  "recalculatedInstances": 3
+}

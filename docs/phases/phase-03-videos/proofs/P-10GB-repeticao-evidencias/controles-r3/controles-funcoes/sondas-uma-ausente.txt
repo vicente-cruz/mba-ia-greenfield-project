@@ -1,0 +1,1 @@
+FALHA | sonda 13 sem CSV de amostras (código 1)

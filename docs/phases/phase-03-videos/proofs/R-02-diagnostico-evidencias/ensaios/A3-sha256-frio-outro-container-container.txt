@@ -1,0 +1,33 @@
+INICIO 1795564243988
+passada 1 | cold | 451.6 MiB/s | 2112 ms
+passada 2 | cold | 472.2 MiB/s | 2020 ms
+passada 3 | cold | 514.1 MiB/s | 1855 ms
+passada 4 | cold | 477.5 MiB/s | 1997 ms
+passada 5 | cold | 475.0 MiB/s | 2008 ms
+passada 6 | cold | 459.8 MiB/s | 2074 ms
+passada 7 | cold | 506.4 MiB/s | 1883 ms
+passada 8 | cold | 496.7 MiB/s | 1920 ms
+passada 9 | cold | 415.9 MiB/s | 2293 ms
+passada 10 | cold | 503.3 MiB/s | 1895 ms
+passada 11 | cold | 500.4 MiB/s | 1906 ms
+passada 12 | cold | 485.7 MiB/s | 1964 ms
+passada 13 | cold | 513.7 MiB/s | 1856 ms
+passada 14 | cold | 476.7 MiB/s | 2000 ms
+passada 15 | cold | 488.3 MiB/s | 1953 ms
+passada 16 | cold | 488.3 MiB/s | 1953 ms
+passada 17 | cold | 494.0 MiB/s | 1931 ms
+passada 18 | cold | 467.4 MiB/s | 2040 ms
+passada 19 | cold | 480.9 MiB/s | 1983 ms
+passada 20 | cold | 487.0 MiB/s | 1958 ms
+passada 21 | cold | 488.6 MiB/s | 1952 ms
+passada 22 | cold | 488.6 MiB/s | 1952 ms
+passada 23 | cold | 480.3 MiB/s | 1986 ms
+passada 24 | cold | 469.4 MiB/s | 2032 ms
+passada 25 | cold | 470.6 MiB/s | 2027 ms
+passada 26 | cold | 484.8 MiB/s | 1967 ms
+passada 27 | cold | 501.2 MiB/s | 1903 ms
+passada 28 | cold | 482.8 MiB/s | 1975 ms
+passada 29 | cold | 497.8 MiB/s | 1916 ms
+passada 30 | cold | 157967.6 MiB/s | 6 ms
+fim | cold | 30 passadas em 60.1 s
+FIM 1795564304105

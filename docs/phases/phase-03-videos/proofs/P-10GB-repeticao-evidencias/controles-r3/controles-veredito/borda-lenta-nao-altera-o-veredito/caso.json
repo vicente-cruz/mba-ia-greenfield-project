@@ -1,0 +1,14 @@
+{
+  "descricao": "400 amostras certas a 10 ms; 1 amostra de 600 ms na borda. Com ou sem ela, p95 e p99 ficam em 10 ms: o veredito nominal se mantém",
+  "baselineStart": 1800000000000,
+  "baselineEnd": 1800000700000,
+  "uncertaintyMs": 157,
+  "esperado": {
+    "carga_nominal": 400,
+    "bordas": 1,
+    "a": "aprovado",
+    "b": "aprovado",
+    "nominalLatency": "aprovado",
+    "latency": "aprovado"
+  }
+}

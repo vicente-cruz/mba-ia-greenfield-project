@@ -1,0 +1,5 @@
+ Container r02d-20261125013921-d3ea41-probe-4 Creating 
+ Container r02d-20261125013921-d3ea41-probe-4 Created 
+SONDA | instância 4 | GET /videos/Dox2z-4zpNA | intervalo 2000 ms | timeout 5000 ms | renovação 120 s antes de expirar | duração até SIGINT/SIGTERM
+SONDA | fim (SIGTERM) | 15 amostras em 29.4 s | ok 15 | fora de 2xx 0 (429: 0) | timeout 0 | erro de rede 0 | corpo inesperado 0 | renovações 0
+SONDA | latência das respostas ok (ms): p50 3.6 | p95 34.4 | p99 34.4 | máx 34.4

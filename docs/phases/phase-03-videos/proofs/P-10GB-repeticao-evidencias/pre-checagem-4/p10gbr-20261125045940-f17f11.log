@@ -1,0 +1,509 @@
+
+=== P-10GB repetição (pre-checagem) — runId 20261125045940-f17f11 (04:59:40Z)
+arquivo de 1000000000 bytes; 12 instâncias da sonda com espaçamento de 167 ms; base de 60 s; interrupção a 0.5; intervalo antes da retomada: 5 s
+usuários de prova: p10gbr-20261125045940-f17f11-uploader@proofs.streamtube.test (upload) e p10gbr-20261125045940-f17f11-control@proofs.streamtube.test (dono do vídeo de controle)
+
+=== Estado do ambiente (04:59:40Z)
+$ docker compose ps --format {{.Service}} {{.State}} {{.Health}}
+db running healthy
+mailpit running healthy
+nestjs-api running 
+redis running healthy
+storage running healthy
+video-worker running 
+
+=== API parada antes do roteiro (04:59:40Z)
+$ api_stopped
+processos da API no nestjs-api antes do roteiro: 0 (o roteiro exige 0: ele faz o build e sobe a API)
+
+=== Espaço livre exigido na unidade C: (04:59:41Z)
+$ check_free_space
+livre na unidade C:: 40025018368 bytes; exigido: 29500000000 bytes
+
+=== Versões (04:59:41Z)
+$ versions
+sha256:c20d112390b9a9ce8c11b8af95ad35bcaa62f4759663c09c936cd8d2b511f329 ["pgsty/silo@sha256:c20d112390b9a9ce8c11b8af95ad35bcaa62f4759663c09c936cd8d2b511f329"]
+Docker Engine 29.8.2 (cliente 29.8.2)
+Docker Desktop; kernel 6.6.87.2-microsoft-standard-WSL2; 16 CPUs; 8208449536 bytes de memória na VM
+imagem do nestjs-api e do video-worker: sha256:6b5db062366a60972c02199bbd399758b27ff62ae4974ebd03ebe8b672d23b57 criada 2026-11-18T02:06:47.956302183Z
+Node do container: v25.6.0; Node do Windows: v22.17.0; tsc: Version 5.9.3; Nest CLI: 11.0.16
+docker.exe no Windows: Docker version 29.8.2, build 7fc2dff
+
+=== Espaço livre e VHDX antes da prova (04:59:43Z)
+$ host_disk
+host:    1B-blocks         Used       Avail Mounted on
+host: 510987681792 470962728960 40024952832 /mnt/c
+host: docker_data.vhdx do Docker Desktop: 40853569536 bytes
+disco de dados do Docker: Filesystem          1-blocks        Used     Available Capacity Mounted on
+disco de dados do Docker: /dev/sdf       1081101176832 19039412224 1007069409280       2% /data
+
+=== Retrato antes (só leitura) (04:59:43Z)
+$ snapshot_into <saída>/p10gbr-20261125045940-f17f11/snapshot-before.txt
+SNAPSHOT banco users=0 channels=0 videos=0 upload_sessions=0 upload_parts=0 refresh_tokens=0 verification_tokens=0 | bucket objetos=0 bytes=0 sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | fila video-processing wait=0 active=0 delayed=0 prioritized=0 waiting-children=0 completed=0 failed=0 jobs=0 | mailpit mensagens=8
+
+=== Temporários do Silo antes da prova (só leitura) (04:59:47Z)
+$ residue_into <saída>/p10gbr-20261125045940-f17f11/residue-before.txt
+temporários do Silo em .minio.sys/tmp: 5 diretórios, 327720 KiB
+65544 KiB 70731b75-f39b-4526-aedc-6fa12fad583bx1795548947967467323
+65544 KiB 80115752-ef5f-41e0-9f12-3feff2e419ecx1795548947731336221
+65544 KiB c07d02bb-16b7-4553-b833-f7653e7f8b1bx1795549731540036430
+65544 KiB d9462442-bfb8-4597-80c0-6491370b2508x1795549732611218187
+65544 KiB f963343c-ee2f-4f83-82bd-e0b61f0243d1x1795549105789409450
+
+=== Pastas de prova (04:59:47Z)
+$ prepare
+pastas: /tmp/p10gbr-20261125045940-f17f11 (nestjs-api), pasta p10gbr-20261125045940-f17f11 no temporário do Windows, <saída>/js-20261125045940-f17f11
+
+=== Build da API e JS do cliente e da sonda (04:59:47Z)
+$ build_and_compile
+--- build da API (npm run build = nest build; dist/ fora do Git)
+
+> nestjs-project@0.0.1 build
+> nest build
+
+--- cliente e sonda compilados para JS (tsc), uma vez
+JS: 3965b639fa7acd70 043e2b95a654c264 712670275c780413 
+pré-checagem da sonda compilada montada (uso inválido, esperado 64): 64
+
+=== Arquivo de prova no Windows, preparado antes da medição (04:59:56Z)
+$ generate_file
+ARQUIVO | source.bin | 1000000000 bytes | sha256 6f00b2efee5a35543c41004d1b47a65883cdc9aaa235dfefec9fc06431dabb99 | gerado em 2864.4 ms (332.9 MiB/s)
+
+=== Espaço livre com o arquivo de prova (04:59:59Z)
+$ host_disk
+host:    1B-blocks         Used       Avail Mounted on
+host: 510987681792 471962497024 39025184768 /mnt/c
+host: docker_data.vhdx do Docker Desktop: 40853569536 bytes
+disco de dados do Docker: Filesystem          1-blocks        Used     Available Capacity Mounted on
+disco de dados do Docker: /dev/sdf       1081101176832 19039510528 1007069310976       2% /data
+
+=== API sem watch (npm run start:prod) com os monitores (04:59:59Z)
+$ start_api
+API pronta em 3 s; processos: npm run start:prod;sh -c node dist/main;node dist/main;
+API pela porta publicada, do Windows: HTTP 200
+
+=== Contas de prova e vídeo de controle (05:00:02Z)
+$ accounts
+CONTA | p10gbr-20261125045940-f17f11-uploader@proofs.streamtube.test | register 201, confirm-email 204 (link do Mailpit), login 200 | credenciais em /tmp/p10gbr-20261125045940-f17f11/uploader.json (0600)
+CONTA | p10gbr-20261125045940-f17f11-control@proofs.streamtube.test | register 201, confirm-email 204 (link do Mailpit), login 200 | credenciais em /tmp/p10gbr-20261125045940-f17f11/control.json (0600)
+CONTROLE | vídeo 14QZX6GMBI8 em draft, sessão d627fe39-faca-4bc4-ba87-8855509948f1, nenhuma parte enviada
+vídeo de controle: 14QZX6GMBI8 (dono: p10gbr-20261125045940-f17f11-control@proofs.streamtube.test; upload: p10gbr-20261125045940-f17f11-uploader@proofs.streamtube.test)
+
+=== Relógio antes da base (05:00:12Z)
+$ clock antes
+relógio (antes): VM − Windows = 38 ms, incerteza ± 112 ms (menor ida e volta entre 15 medidas)
+
+=== Lixeira do storage vazia antes da medição (05:00:16Z)
+$ wait_trash_empty 900
+lixeira do storage com 152 KiB depois de 0 s; uso (ms total bucket multipart tmp lixeira usado livre, em KiB): 1795582816932 328096 4 16 327880 152 18593436 983465960
+
+=== Amostrador de disco do storage (05:00:16Z)
+$ start_storage_sampler
+amostrador do storage: 7 amostras em 2 s
+
+=== Monitores (VM, PostgreSQL, docker stats e Windows) (05:00:18Z)
+$ start_monitors
+monitores iniciados: amostrador da VM, sonda do PostgreSQL, docker stats e monitor do Windows
+
+=== Sondas compiladas em containers próprios (05:00:19Z)
+$ start_probes
+instância 1: processo 1 = node /r02js/responsiveness-probe.js --public-id 14QZX6GMBI8 ; fase do disparo (epoch_ms mod 2000) = 405 ms
+instância 2: processo 1 = node /r02js/responsiveness-probe.js --public-id 14QZX6GMBI8 ; fase do disparo (epoch_ms mod 2000) = 836 ms
+instância 3: processo 1 = node /r02js/responsiveness-probe.js --public-id 14QZX6GMBI8 ; fase do disparo (epoch_ms mod 2000) = 1207 ms
+instância 4: processo 1 = node /r02js/responsiveness-probe.js --public-id 14QZX6GMBI8 ; fase do disparo (epoch_ms mod 2000) = 1499 ms
+instância 5: processo 1 = node /r02js/responsiveness-probe.js --public-id 14QZX6GMBI8 ; fase do disparo (epoch_ms mod 2000) = 1878 ms
+instância 6: processo 1 = node /r02js/responsiveness-probe.js --public-id 14QZX6GMBI8 ; fase do disparo (epoch_ms mod 2000) = 220 ms
+instância 7: processo 1 = node /r02js/responsiveness-probe.js --public-id 14QZX6GMBI8 ; fase do disparo (epoch_ms mod 2000) = 457 ms
+instância 8: processo 1 = node /r02js/responsiveness-probe.js --public-id 14QZX6GMBI8 ; fase do disparo (epoch_ms mod 2000) = 618 ms
+instância 9: processo 1 = node /r02js/responsiveness-probe.js --public-id 14QZX6GMBI8 ; fase do disparo (epoch_ms mod 2000) = 636 ms
+instância 10: processo 1 = node /r02js/responsiveness-probe.js --public-id 14QZX6GMBI8 ; fase do disparo (epoch_ms mod 2000) = 743 ms
+instância 11: processo 1 = node /r02js/responsiveness-probe.js --public-id 14QZX6GMBI8 ; fase do disparo (epoch_ms mod 2000) = 860 ms
+instância 12: processo 1 = node /r02js/responsiveness-probe.js --public-id 14QZX6GMBI8 ; fase do disparo (epoch_ms mod 2000) = 917 ms
+base: início em 1795582823614 ms (relógio dos containers), com 12 instâncias
+
+=== Memória com todas as sondas em execução (referência informativa de 4 GiB) (05:00:24Z)
+$ memory_snapshot
+nestjs-project-db-1 cpu 0.69% mem 36.24MiB / 7.645GiB
+nestjs-project-mailpit-1 cpu 3.20% mem 28.61MiB / 7.645GiB
+nestjs-project-nestjs-api-1 cpu 8.06% mem 341.2MiB / 7.645GiB
+nestjs-project-redis-1 cpu 0.12% mem 12.62MiB / 7.645GiB
+nestjs-project-storage-1 cpu 9.54% mem 126.8MiB / 7.645GiB
+nestjs-project-video-worker-1 cpu 0.71% mem 275.8MiB / 7.645GiB
+p10gbr-20261125045940-f17f11-probe-12 cpu 0.09% mem 14.24MiB / 7.645GiB
+p10gbr-20261125045940-f17f11-probe-11 cpu 0.08% mem 14.22MiB / 7.645GiB
+p10gbr-20261125045940-f17f11-probe-10 cpu 0.08% mem 14.22MiB / 7.645GiB
+p10gbr-20261125045940-f17f11-probe-9 cpu 0.08% mem 14.28MiB / 7.645GiB
+p10gbr-20261125045940-f17f11-probe-8 cpu 0.09% mem 14.23MiB / 7.645GiB
+p10gbr-20261125045940-f17f11-probe-7 cpu 0.09% mem 14.23MiB / 7.645GiB
+p10gbr-20261125045940-f17f11-probe-6 cpu 0.09% mem 14.23MiB / 7.645GiB
+p10gbr-20261125045940-f17f11-probe-5 cpu 0.00% mem 14.24MiB / 7.645GiB
+p10gbr-20261125045940-f17f11-probe-4 cpu 0.00% mem 14.25MiB / 7.645GiB
+p10gbr-20261125045940-f17f11-probe-3 cpu 0.00% mem 14.23MiB / 7.645GiB
+p10gbr-20261125045940-f17f11-probe-2 cpu 0.10% mem 14.23MiB / 7.645GiB
+p10gbr-20261125045940-f17f11-probe-1 cpu 0.09% mem 14.22MiB / 7.645GiB
+MemTotal:        8016064 kB
+MemAvailable:    4108352 kB
+SwapTotal:       2097152 kB
+SwapFree:         621612 kB
+Windows (13 amostras): disponível mín 2009 MB, mediana 2013 MB (abaixo da referência informativa de 4.096 MiB); commit máx 23.58 de 33.05 GB; arquivo de paginação 12%; vmmem 4.94 GB
+
+=== Fase de base (05:01:25Z)
+$ baseline
+fase de base: 60 s sem upload, com as mesmas 12 instâncias
+amostras até aqui, com o aquecimento: 747
+
+=== Upload no Windows interrompido por Ctrl+C real por volta de 0.5 (05:02:25Z)
+$ upload_with_interruption
+base: fim em 1795582945624 ms (antes de armar o envio do Ctrl+C e de lançar o cliente de upload)
+envio do Ctrl+C armado: 1795582946755 armado: esperando ctrl-c.trigger
+lançamento do cliente de upload em 1795582947026 ms (relógio dos containers)
+cliente iniciado no Windows; console 30404
+VIGIA | gatilho do Ctrl+C real criado em 1795582953007 (relógio do Windows) para o console 30404, com 8 de 15 partes com PUT concluído (limite: 8) | PUT concluído: [1,2,3,4,5,6,7,8] | registradas: [1,2,3,4,5,6,7] | em andamento: [9,10,11]
+INÍCIO | vídeo McLunnyLDug (draft) | sessão f43d53db-33d2-4592-a819-8c5e1127f93a | 1000000000 bytes em 15 partes de 67108864 (última com 60475904) | SHA256
+CHECKSUM | parte 1 | 67108864 bytes | 134.7 ms | antes da assinatura
+CHECKSUM | parte 2 | 67108864 bytes | 195.9 ms | antes da assinatura
+CHECKSUM | parte 3 | 67108864 bytes | 144.6 ms | antes da assinatura
+CHECKSUM | parte 4 | 67108864 bytes | 138.1 ms | antes da assinatura
+CHECKSUM | parte 5 | 67108864 bytes | 133.7 ms | antes da assinatura
+CHECKSUM | parte 6 | 67108864 bytes | 152.3 ms | antes da assinatura
+CHECKSUM | parte 7 | 67108864 bytes | 137.5 ms | antes da assinatura
+CHECKSUM | parte 8 | 67108864 bytes | 148.8 ms | antes da assinatura
+CHECKSUM | parte 9 | 67108864 bytes | 456.8 ms | antes da assinatura
+PUT | parte 1 | 67108864 bytes | 1692.5 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 10 | 67108864 bytes | 381.3 ms | antes da assinatura
+CHECKSUM | parte 11 | 67108864 bytes | 138.1 ms | antes da assinatura
+CHECKSUM | parte 12 | 67108864 bytes | 145.8 ms | antes da assinatura
+PUT | parte 3 | 67108864 bytes | 1084.8 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 13 | 67108864 bytes | 241.2 ms | antes da assinatura
+PUT | parte 2 | 67108864 bytes | 1315 ms | HTTP 200 | tentativa 1
+PUT | parte 4 | 67108864 bytes | 1419.6 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 14 | 67108864 bytes | 432.3 ms | antes da assinatura
+PUT | parte 5 | 67108864 bytes | 1267.4 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 15 | 60475904 bytes | 299.1 ms | antes da assinatura
+PUT | parte 6 | 67108864 bytes | 1267 ms | HTTP 200 | tentativa 1
+PUT | parte 7 | 67108864 bytes | 1059.2 ms | HTTP 200 | tentativa 1
+PUT | parte 8 | 67108864 bytes | 1278.5 ms | HTTP 200 | tentativa 1
+INTERRUPÇÃO | SIGINT | PUT concluído: [1,2,3,4,5,6,7,8] | registradas: [1,2,3,4,5,6,7] | em andamento: [9,10,11,12]
+PUT | parte 9 | abortado depois de 352.7 ms
+PUT | parte 10 | abortado depois de 239.6 ms
+PUT | parte 11 | abortado depois de 230.3 ms
+PUT | parte 12 | abortado depois de 204 ms
+FIM | interrompido por SIGINT
+ctrl-c.ps1: 1795582946755 armado: esperando ctrl-c.trigger
+ctrl-c.ps1: 1795582953023 gatilho visto
+ctrl-c.ps1: 1795582953128 AttachConsole(30404): True (187)
+ctrl-c.ps1: 1795582953173 GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0): True
+código do vigia: 0; código do envio do Ctrl+C: 0; código do cliente: 130 (esperado: 130, SIGINT tratado pelo cliente)
+
+=== Retrato das partes depois da interrupção (05:02:33Z)
+$ parts_snapshot parts-after-interruption
+PARTES | vídeo McLunnyLDug draft | sessão active | 15 partes no registro da API, 7 com ETag | 8 partes no ListParts
+PARTE 1 | storage: ETag "ab8ba39aa2074701d5b07b4232b19b10", 67108864 bytes, LastModified 2026-11-25T05:02:30.816Z | registro: ETag "ab8ba39aa2074701d5b07b4232b19b10" desde 2026-11-25T05:02:31.718Z
+PARTE 2 | storage: ETag "dd24f36f23248cfc7c3a01e44500f5dd", 67108864 bytes, LastModified 2026-11-25T05:02:31.489Z | registro: ETag "dd24f36f23248cfc7c3a01e44500f5dd" desde 2026-11-25T05:02:31.718Z
+PARTE 3 | storage: ETag "1afa70f98bd64503ba10e418319f7fee", 67108864 bytes, LastModified 2026-11-25T05:02:31.253Z | registro: ETag "1afa70f98bd64503ba10e418319f7fee" desde 2026-11-25T05:02:31.718Z
+PARTE 4 | storage: ETag "b643e2f50391523b240d20871667de6f", 67108864 bytes, LastModified 2026-11-25T05:02:31.661Z | registro: ETag "b643e2f50391523b240d20871667de6f" desde 2026-11-25T05:02:31.718Z
+PARTE 5 | storage: ETag "374f8b3fc19558baca3d2da26ac5bb77", 67108864 bytes, LastModified 2026-11-25T05:02:32.111Z | registro: ETag "374f8b3fc19558baca3d2da26ac5bb77" desde 2026-11-25T05:02:32.820Z
+PARTE 6 | storage: ETag "cee712ecae7138bf45edc4547b853ee8", 67108864 bytes, LastModified 2026-11-25T05:02:32.623Z | registro: ETag "cee712ecae7138bf45edc4547b853ee8" desde 2026-11-25T05:02:32.820Z
+PARTE 7 | storage: ETag "b6393cdebcf635342f043fff9ec899c8", 67108864 bytes, LastModified 2026-11-25T05:02:32.627Z | registro: ETag "b6393cdebcf635342f043fff9ec899c8" desde 2026-11-25T05:02:32.820Z
+PARTE 8 | storage: ETag "3d6e11711a8fbdc89fca71a81df0cbcc", 67108864 bytes, LastModified 2026-11-25T05:02:32.970Z | registro: sem ETag
+
+=== Retomada no Windows, conferência das partes recebidas, completion e polling (05:02:37Z)
+$ resume_and_complete
+--- retrato das partes antes do completion
+PARTES | vídeo McLunnyLDug draft | sessão active | 15 partes no registro da API, 15 com ETag | 15 partes no ListParts
+PARTE 1 | storage: ETag "ab8ba39aa2074701d5b07b4232b19b10", 67108864 bytes, LastModified 2026-11-25T05:02:30.816Z | registro: ETag "ab8ba39aa2074701d5b07b4232b19b10" desde 2026-11-25T05:02:31.718Z
+PARTE 2 | storage: ETag "dd24f36f23248cfc7c3a01e44500f5dd", 67108864 bytes, LastModified 2026-11-25T05:02:31.489Z | registro: ETag "dd24f36f23248cfc7c3a01e44500f5dd" desde 2026-11-25T05:02:31.718Z
+PARTE 3 | storage: ETag "1afa70f98bd64503ba10e418319f7fee", 67108864 bytes, LastModified 2026-11-25T05:02:31.253Z | registro: ETag "1afa70f98bd64503ba10e418319f7fee" desde 2026-11-25T05:02:31.718Z
+PARTE 4 | storage: ETag "b643e2f50391523b240d20871667de6f", 67108864 bytes, LastModified 2026-11-25T05:02:31.661Z | registro: ETag "b643e2f50391523b240d20871667de6f" desde 2026-11-25T05:02:31.718Z
+PARTE 5 | storage: ETag "374f8b3fc19558baca3d2da26ac5bb77", 67108864 bytes, LastModified 2026-11-25T05:02:32.111Z | registro: ETag "374f8b3fc19558baca3d2da26ac5bb77" desde 2026-11-25T05:02:32.820Z
+PARTE 6 | storage: ETag "cee712ecae7138bf45edc4547b853ee8", 67108864 bytes, LastModified 2026-11-25T05:02:32.623Z | registro: ETag "cee712ecae7138bf45edc4547b853ee8" desde 2026-11-25T05:02:32.820Z
+PARTE 7 | storage: ETag "b6393cdebcf635342f043fff9ec899c8", 67108864 bytes, LastModified 2026-11-25T05:02:32.627Z | registro: ETag "b6393cdebcf635342f043fff9ec899c8" desde 2026-11-25T05:02:32.820Z
+PARTE 8 | storage: ETag "3d6e11711a8fbdc89fca71a81df0cbcc", 67108864 bytes, LastModified 2026-11-25T05:02:47.079Z | registro: ETag "3d6e11711a8fbdc89fca71a81df0cbcc" desde 2026-11-25T05:02:47.757Z
+PARTE 9 | storage: ETag "0c24c2f443acc143984c4e4f9a2f24ad", 67108864 bytes, LastModified 2026-11-25T05:02:47.715Z | registro: ETag "0c24c2f443acc143984c4e4f9a2f24ad" desde 2026-11-25T05:02:47.757Z
+PARTE 10 | storage: ETag "71c3c3c73e0b57a621b496bcce02e472", 67108864 bytes, LastModified 2026-11-25T05:02:47.543Z | registro: ETag "71c3c3c73e0b57a621b496bcce02e472" desde 2026-11-25T05:02:47.757Z
+PARTE 11 | storage: ETag "9b0a85f63531a3820b955de13ae96028", 67108864 bytes, LastModified 2026-11-25T05:02:47.539Z | registro: ETag "9b0a85f63531a3820b955de13ae96028" desde 2026-11-25T05:02:47.757Z
+PARTE 12 | storage: ETag "08ea4384f678cda1414525a6bacecc0b", 67108864 bytes, LastModified 2026-11-25T05:02:48.438Z | registro: ETag "08ea4384f678cda1414525a6bacecc0b" desde 2026-11-25T05:02:48.858Z
+PARTE 13 | storage: ETag "a96304ae5b28e9c9e8aaf98844a109ab", 67108864 bytes, LastModified 2026-11-25T05:02:48.755Z | registro: ETag "a96304ae5b28e9c9e8aaf98844a109ab" desde 2026-11-25T05:02:48.858Z
+PARTE 14 | storage: ETag "dac32c8b25188fea63e604f2789e6813", 67108864 bytes, LastModified 2026-11-25T05:02:48.753Z | registro: ETag "dac32c8b25188fea63e604f2789e6813" desde 2026-11-25T05:02:48.858Z
+PARTE 15 | storage: ETag "242fbb849100718857b3814db34c5fe7", 60475904 bytes, LastModified 2026-11-25T05:02:48.441Z | registro: ETag "242fbb849100718857b3814db34c5fe7" desde 2026-11-25T05:02:48.858Z
+--- comparação com o retrato depois da interrupção
+INFO | partes confirmed na retomada | observado: [1,2,3,4,5,6,7]
+INFO | partes com PUT na retomada | observado: [8,9,10,11,12,13,14,15]
+PASSOU | cliente: nenhum PUT de parte confirmed na retomada | esperado: nenhuma | observado: nenhuma
+PASSOU | storage: partes confirmed com o mesmo ETag, tamanho e LastModified antes e depois da retomada | esperado: 7 de 7 iguais | observado: 7 de 7 iguais
+PASSOU | registro da API: ETag e etag_registered_at das partes confirmed inalterados | esperado: 7 de 7 inalterados | observado: 7 de 7 inalterados
+PASSOU | controle: cada parte reenviada aparece no storage com LastModified novo | esperado: 8 de 8 | observado: 8 de 8
+PASSOU | antes do completion: todas as partes no storage, registradas com o mesmo ETag | esperado: 15 de 15 | observado: 15 de 15
+COMPARAÇÃO | 5 itens, 0 com falha
+RETOMADA | sessão f43d53db-33d2-4592-a819-8c5e1127f93a active | confirmed: [1,2,3,4,5,6,7] | unregistered: [8] | missing: [9,10,11,12,13,14,15] | divergent: []
+CHECKSUM | parte 1 | 67108864 bytes | 131 ms | conferência da retomada
+CHECKSUM | parte 2 | 67108864 bytes | 134.7 ms | conferência da retomada
+CHECKSUM | parte 3 | 67108864 bytes | 166.3 ms | conferência da retomada
+CHECKSUM | parte 4 | 67108864 bytes | 141.2 ms | conferência da retomada
+CHECKSUM | parte 5 | 67108864 bytes | 133.9 ms | conferência da retomada
+CHECKSUM | parte 6 | 67108864 bytes | 131.6 ms | conferência da retomada
+CHECKSUM | parte 7 | 67108864 bytes | 122.7 ms | conferência da retomada
+CHECKSUM | parte 8 | 67108864 bytes | 120.6 ms | conferência da retomada
+CONFERÊNCIA | 8 partes (536870912 bytes) recalculadas em 1115.5 ms | file-verifications HTTP 200 match em 10.6 ms
+REENVIO | partes [8,9,10,11,12,13,14,15]; nenhuma parte confirmed é reenviada
+CHECKSUM | parte 9 | 67108864 bytes | 166.7 ms | antes da assinatura
+CHECKSUM | parte 10 | 67108864 bytes | 143.6 ms | antes da assinatura
+CHECKSUM | parte 11 | 67108864 bytes | 126.3 ms | antes da assinatura
+CHECKSUM | parte 12 | 67108864 bytes | 130.4 ms | antes da assinatura
+CHECKSUM | parte 13 | 67108864 bytes | 137.7 ms | antes da assinatura
+CHECKSUM | parte 14 | 67108864 bytes | 132.7 ms | antes da assinatura
+CHECKSUM | parte 15 | 60475904 bytes | 118 ms | antes da assinatura
+PUT | parte 8 | 67108864 bytes | 1531.8 ms | HTTP 200 | tentativa 1
+PUT | parte 11 | 67108864 bytes | 856.1 ms | HTTP 200 | tentativa 1
+PUT | parte 10 | 67108864 bytes | 911.9 ms | HTTP 200 | tentativa 1
+PUT | parte 9 | 67108864 bytes | 1060 ms | HTTP 200 | tentativa 1
+PUT | parte 12 | 67108864 bytes | 1309.6 ms | HTTP 200 | tentativa 1
+PUT | parte 15 | 60475904 bytes | 717.8 ms | HTTP 200 | tentativa 1
+PUT | parte 14 | 67108864 bytes | 1038.4 ms | HTTP 200 | tentativa 1
+PUT | parte 13 | 67108864 bytes | 1185.1 ms | HTTP 200 | tentativa 1
+ENVIO | 8 partes reenviadas e registradas
+ESPERA | todas as partes registradas; aguardando liberação do completion
+COMPLETION | HTTP 202 em 62.1 ms | vídeo processing
+POLLING | processing | consulta 1
+POLLING | error MEDIA_INVALID | consulta 2
+código do cliente: 0; código da comparação: 0
+
+=== Relógio depois da carga (05:03:02Z)
+$ clock depois
+relógio (depois): VM − Windows = 66 ms, incerteza ± 143 ms (menor ida e volta entre 15 medidas)
+
+=== Fim das sondas (05:03:07Z)
+$ stop_probes
+SONDA | latência das respostas ok (ms): p50 3.0 | p95 5.2 | p99 35.0 | máx 35.0
+SONDA | latência das respostas ok (ms): p50 3.0 | p95 6.0 | p99 18.1 | máx 18.1
+SONDA | latência das respostas ok (ms): p50 3.1 | p95 6.5 | p99 13.1 | máx 13.1
+SONDA | latência das respostas ok (ms): p50 3.1 | p95 6.2 | p99 18.7 | máx 18.7
+SONDA | latência das respostas ok (ms): p50 3.0 | p95 4.9 | p99 17.3 | máx 17.3
+SONDA | latência das respostas ok (ms): p50 3.2 | p95 4.8 | p99 24.4 | máx 24.4
+SONDA | latência das respostas ok (ms): p50 3.0 | p95 4.9 | p99 14.8 | máx 14.8
+SONDA | latência das respostas ok (ms): p50 3.0 | p95 5.2 | p99 12.2 | máx 12.2
+SONDA | latência das respostas ok (ms): p50 2.9 | p95 5.0 | p99 10.3 | máx 10.3
+SONDA | latência das respostas ok (ms): p50 3.1 | p95 5.9 | p99 9.8 | máx 9.8
+SONDA | latência das respostas ok (ms): p50 2.9 | p95 6.5 | p99 16.2 | máx 16.2
+SONDA | latência das respostas ok (ms): p50 3.0 | p95 5.2 | p99 13.2 | máx 13.2
+
+=== Fim dos monitores (05:03:09Z)
+$ stop_monitors
+monitores parados
+
+=== Fim do amostrador do storage (05:03:10Z)
+$ stop_storage_sampler
+amostrador do storage parado: 649 amostras
+
+=== Espaço livre antes da limpeza (05:03:10Z)
+$ host_disk
+host:    1B-blocks         Used       Avail Mounted on
+host: 510987681792 471963619328 39024062464 /mnt/c
+host: docker_data.vhdx do Docker Desktop: 40853569536 bytes
+disco de dados do Docker: Filesystem          1-blocks        Used     Available Capacity Mounted on
+disco de dados do Docker: /dev/sdf       1081101176832 20107673600 1006001147904       2% /data
+
+=== Resumo das medidas (05:03:11Z)
+$ summarize
+   102 amostrador-vm.err
+137002 amostrador-vm.txt
+418490 api-db.jsonl
+  4037 api-gc.jsonl
+ 28726 api-loop.jsonl
+ 91636 api-requests.jsonl
+  8465 api.log
+  2224 client-client-resume.log
+  2067 client-client-start.log
+   184 client-ctrl-c.log
+ 11425 client-events.jsonl
+   397 client-progress.json
+   314 client-state.json
+ 26772 disk-completion-fast.txt
+     0 disk-sampler.err
+ 37242 disk-samples.txt
+ 41121 docker-stats.txt
+  1210 memoria-containers.txt
+   112 memoria-vm.txt
+     0 monitor-windows.err
+  5379 parts-after-interruption.json
+  7478 parts-before-completion.json
+  4837 probe-1.csv
+   498 probe-1.log
+  4861 probe-10.csv
+   499 probe-10.log
+  4864 probe-11.csv
+   501 probe-11.log
+  4862 probe-12.csv
+   501 probe-12.log
+  4839 probe-2.csv
+   498 probe-2.log
+  4837 probe-3.csv
+   498 probe-3.log
+  4836 probe-4.csv
+   498 probe-4.log
+  4780 probe-5.csv
+   498 probe-5.log
+  4779 probe-6.csv
+   498 probe-6.log
+  4780 probe-7.csv
+   498 probe-7.log
+  4779 probe-8.csv
+   498 probe-8.log
+  4779 probe-9.csv
+   498 probe-9.log
+  1365 relogio-antes.json
+  1364 relogio-depois.json
+   335 residue-before.txt
+   347 snapshot-before.txt
+ 10384 sonda-db.txt
+  8270 windows.csv
+910264 total
+eventos do cliente levados ao relógio da VM: + 52 ms; intervalos de carga encolhidos em 157 ms de cada lado
+intervalo 1 (start): 1795582949142 a 1795582953239 (4097 ms) ajustado para 1795582949299 a 1795582953082 (3783 ms); fecha em load_end
+intervalo 2 (resume): 1795582964330 a 1795582968935 (4605 ms) ajustado para 1795582964487 a 1795582968778 (4291 ms); fecha em load_end
+intervalo 3 (resume): 1795582977132 a 1795582977221 (89 ms) descartado: vazio depois do encolhimento de 157 ms de cada lado
+MEDIDA | plano | {"sizeBytes":1000000000,"partSize":67108864,"partCount":15,"lastPartSize":60475904}
+MEDIDA | geração do arquivo | {"bytes":1000000000,"ms":2864.4}
+MEDIDA | intervalos de upload ativo | [{"start":"2026-11-25T05:02:29.299Z","end":"2026-11-25T05:02:33.082Z","seconds":3.783},{"start":"2026-11-25T05:02:44.487Z","end":"2026-11-25T05:02:48.778Z","seconds":4.291}]
+MEDIDA | upload ativo total (s) | 8.074
+MEDIDA | segmento start | {"puts":8,"putBytes":536870912,"putActiveMs":4090.5,"putMiBps":125.2,"abortedPuts":4,"failedPuts":0,"checksumParts":15,"checksumBytes":1000000000,"checksumMs":3280.2,"checksumMiBps":290.7}
+MEDIDA | segmento resume (PUTs e checksums de assinatura) | {"puts":8,"putBytes":530237952,"putActiveMs":3214.8,"putMiBps":157.3,"abortedPuts":0,"failedPuts":0,"checksumParts":7,"checksumBytes":463129088,"checksumMs":955.4,"checksumMiBps":462.3}
+MEDIDA | conferência da retomada (checksums) | {"puts":8,"putBytes":530237952,"putActiveMs":3214.8,"putMiBps":157.3,"abortedPuts":0,"failedPuts":0,"checksumParts":8,"checksumBytes":536870912,"checksumMs":1082,"checksumMiBps":473.2}
+MEDIDA | interrupção | {"signal":"SIGINT","putDone":[1,2,3,4,5,6,7,8],"registered":[1,2,3,4,5,6,7],"inFlight":[9,10,11,12],"putDonePercent":53.7}
+MEDIDA | intervalo entre a interrupção e a retomada (s) | 11.257
+MEDIDA | retomada | {"confirmed":[1,2,3,4,5,6,7],"unregistered":[8],"missing":[9,10,11,12,13,14,15],"divergent":[],"verification":{"parts":8,"bytes":536870912,"checksumMs":1115.5,"requestMs":10.6}}
+MEDIDA | bytes dos PUTs concluídos (abortados fora da soma) | {"bytes":1067108864,"resentFraction":0.0671,"putActiveMs":7305.3,"putMiBps":139.3}
+MEDIDA | checksums | {"signBytes":1463129088,"signMs":4235.6,"signMiBps":329.4,"verifyBytes":536870912,"verifyMs":1082,"verifyMiBps":473.2}
+MEDIDA | completion | {"status":202,"ms":62.1,"startedAt":"2026-11-25T05:02:57.147Z","endedAt":"2026-11-25T05:02:57.217Z"}
+MEDIDA | processamento até o estado final | {"status":"error","errorCode":"MEDIA_INVALID","seconds":2.078}
+MEDIDA | chamadas à API e renovações de token | {"apiCalls":15,"tokenRenewals":0}
+MEDIDA | disco do storage (du em KiB por componente) | {"samples":649,"medianIntervalMs":266,"baseline":{"at":"2026-11-25T05:00:17.117Z","totalKiB":328144,"bucketKiB":4,"multipartKiB":16,"tmpKiB":327928,"trashKiB":200},"peak":{"at":"2026-11-25T05:02:57.213Z","totalKiB":1370492,"bucketKiB":976648,"multipartKiB":16,"tmpKiB":393632,"trashKiB":65904},"peakGrowthBytes":1067364352,"uploadDataPeakBytes":1000140800,"tmpGrowthBytes":0,"trashMaxKiB":65904,"completionWindowSamples":7,"completionWindowPeakGrowthBytes":1067364352,"beforeCompletion":{"at":"2026-11-25T05:02:56.945Z","totalKiB":1370484,"bucketKiB":4,"multipartKiB":976716,"tmpKiB":393568,"trashKiB":65840},"afterCompletion":{"at":"2026-11-25T05:02:57.481Z","totalKiB":1370492,"bucketKiB":976648,"multipartKiB":16,"tmpKiB":393632,"trashKiB":65904},"final":{"at":"2026-11-25T05:03:10.423Z","totalKiB":1370492,"bucketKiB":976648,"multipartKiB":16,"tmpKiB":393632,"trashKiB":65904},"dockerDiskUsedBaselineKiB":18593488,"dockerDiskUsedPeakKiB":19637744,"dockerDiskAvailMinKiB":982421652}
+MEDIDA | df sem pausa em volta do completion | {"samples":1164,"samplesDuringCompletion":13,"medianIntervalMs":5,"usedBeforeKiB":19637708,"usedPeakDuringKiB":19637708,"usedPeakAfterKiB":19637728,"peakGrowthDuringBytes":0}
+MEDIDA | sonda (informativo) | {"instances":12,"all":{"samples":1000,"ok":1000,"non2xx":0,"status429":0,"timeouts":0,"networkErrors":0,"unexpectedBody":0,"p50":3.03,"p95":5.85,"p99":13.15,"max":34.99},"baseline":{"samples":771,"ok":771,"non2xx":0,"status429":0,"timeouts":0,"networkErrors":0,"unexpectedBody":0,"p50":2.89,"p95":4.7,"p99":11.16,"max":34.99},"load":{"samples":50,"ok":50,"non2xx":0,"status429":0,"timeouts":0,"networkErrors":0,"unexpectedBody":0,"p50":4.11,"p95":16.2,"p99":18.12,"max":18.12},"outside":{"samples":179,"ok":179,"non2xx":0,"status429":0,"timeouts":0,"networkErrors":0,"unexpectedBody":0,"p50":3.36,"p95":6.52,"p99":12.58,"max":14.22}}
+PROJEÇÃO | 10.000.000.000 bytes, linear, margem de 30% onde indicado | {"factor":10,"margin":1.3,"generationSeconds":28.6,"loadSeconds":80.7,"loadSecondsWithMargin":105,"putSeconds":73.1,"signChecksumSeconds":42.4,"verifyChecksumSeconds":10.8,"completionSeconds":0.6,"probeInstances":8,"storagePeakBytes":10673643520,"storagePeakBytesWithMargin":13875736576,"sourceFileBytes":10000000000,"requiredFreeBytesWithMargin":26875736576,"baselineSeconds":600}
+
+=== Vereditos de latência (critérios do registro prévio) (05:03:18Z)
+$ latency_verdict
+FASE | base (122 s) | 732 amostras (instância 1: 61, instância 2: 61, instância 3: 61, instância 4: 61, instância 5: 61, instância 6: 61, instância 7: 61, instância 8: 61, instância 9: 61, instância 10: 61, instância 11: 61, instância 12: 61) | p50 2.86 ms | p95 4.36 ms | p99 5.85 ms | máx 7.07 ms | fora de 2xx 0 | 429 0 | timeout 0 | erro de rede 0 | corpo inesperado 0
+FASE | carga (8.1 s de upload ativo) | 50 amostras (instância 1: 4, instância 2: 4, instância 3: 3, instância 4: 4, instância 5: 4, instância 6: 4, instância 7: 4, instância 8: 5, instância 9: 5, instância 10: 5, instância 11: 4, instância 12: 4) | p50 4.11 ms | p95 16.2 ms | p99 18.12 ms | máx 18.12 ms | fora de 2xx 0 | 429 0 | timeout 0 | erro de rede 0 | corpo inesperado 0
+FASE | aquecimento | 16 amostras (instância 1: 2, instância 2: 2, instância 3: 2, instância 4: 2, instância 5: 1, instância 6: 1, instância 7: 1, instância 8: 1, instância 9: 1, instância 10: 1, instância 11: 1, instância 12: 1) | p50 11.13 ms | p95 34.99 ms | p99 34.99 ms | máx 34.99 ms | fora de 2xx 0 | 429 0 | timeout 0 | erro de rede 0 | corpo inesperado 0
+FASE | fora da base e da carga | 202 amostras (instância 1: 17, instância 2: 17, instância 3: 18, instância 4: 17, instância 5: 17, instância 6: 17, instância 7: 17, instância 8: 16, instância 9: 16, instância 10: 16, instância 11: 17, instância 12: 17) | p50 3.36 ms | p95 6.45 ms | p99 8.21 ms | máx 14.22 ms | fora de 2xx 0 | 429 0 | timeout 0 | erro de rede 0 | corpo inesperado 0
+FASE | todas as amostras | 1000 amostras (instância 1: 84, instância 2: 84, instância 3: 84, instância 4: 84, instância 5: 83, instância 6: 83, instância 7: 83, instância 8: 83, instância 9: 83, instância 10: 83, instância 11: 83, instância 12: 83) | p50 3.03 ms | p95 5.85 ms | p99 13.15 ms | máx 34.99 ms | fora de 2xx 0 | 429 0 | timeout 0 | erro de rede 0 | corpo inesperado 0
+AMOSTRAS | mínimo de 300 por fase: não atingido | N recalculado pela D medida: 75
+VEREDITO | (a) p95 carga 16.2 ms ≤ 54.36 ms (max(1,5 × p95 base; p95 base + 50 ms)) | inconclusivo
+VEREDITO | (b) p95 carga 16.2 ms ≤ 250 ms e p99 carga 18.12 ms ≤ 500 ms | inconclusivo
+VEREDITO | (c) 0 amostras sem 2xx válido em 1000 (fora de 2xx 0, 429 0, timeout 0, erro de rede 0, corpo inesperado 0) | aprovado
+VEREDITO | latência | inconclusivo
+
+=== Limpeza dos recursos de prova (05:03:23Z)
+
+=== Sondas, monitores, cliente, API, containers e pastas temporárias (05:03:23Z)
+$ cleanup_local
+monitores parados
+processos da API restantes: 0
+containers de prova restantes: 0
+diretório no nestjs-api presente: não
+pasta no Windows presente: não
+JS compilado presente: não
+
+=== Usuários, vídeos, objetos, multiparts, jobs e e-mails de prova (05:03:29Z)
+$ support cleanup --emails p10gbr-20261125045940-f17f11-uploader@proofs.streamtube.test,p10gbr-20261125045940-f17f11-control@proofs.streamtube.test
+LIMPEZA | 2 e-mails de prova | 2 usuários, 2 vídeos, 2 sessões
+LIMPEZA | multiparts abortados: 2 (os demais já estavam concluídos ou abortados)
+LIMPEZA | jobs de processamento removidos: 0
+LIMPEZA prefixo originals/9325c48f-38de-4c77-aedc-4c4ec6fc3845/: 1 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA prefixo thumbnails/9325c48f-38de-4c77-aedc-4c4ec6fc3845/: 0 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA prefixo originals/25dbb115-43f4-49b4-9a49-bd2ac3c9b1fe/: 0 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA prefixo thumbnails/25dbb115-43f4-49b4-9a49-bd2ac3c9b1fe/: 0 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA | e-mails removidos do Mailpit: 2
+PASSOU | linhas de prova no banco (usuários, vídeos e sessões) | esperado: 0 | observado: 0
+PASSOU | objetos de prova no bucket | esperado: 0 restantes | observado: 0 restantes
+PASSOU | multiparts das sessões de prova | esperado: 0 | observado: 0
+PASSOU | jobs de processamento dos vídeos de prova | esperado: 0 | observado: 0
+PASSOU | e-mails de prova no Mailpit | esperado: 0 | observado: 0
+LIMPEZA | 5 itens, 0 com falha
+
+=== Purga da lixeira do storage depois da limpeza (05:03:32Z)
+$ measure_release
+uso logo depois da limpeza (ms total bucket multipart tmp lixeira usado livre, em KiB): 1795583012717 1304676 4 4 1304472 976744 19570016 982489380
+aguardando a purga da lixeira do storage: 1795583012888 1304676 4 4 1304472 976744 19570016 982489380
+aguardando a purga da lixeira do storage: 1795583073951 1304724 4 4 1304520 976792 19570056 982489340
+aguardando a purga da lixeira do storage: 1795583134997 1304772 4 4 1304568 976840 19570104 982489292
+aguardando a purga da lixeira do storage: 1795583196029 1304820 4 4 1304616 976888 19570152 982489244
+aguardando a purga da lixeira do storage: 1795583257089 1304868 4 4 1304664 976936 19570200 982489196
+lixeira do storage com 104 KiB depois de 280 s; uso (ms total bucket multipart tmp lixeira usado livre, em KiB): 1795583297787 328036 4 4 327832 104 18593368 983466028
+purga da lixeira observada em 285 s depois da limpeza
+
+=== Uso do storage depois da limpeza e da purga (05:08:17Z)
+$ storage_usage
+1795583297984 328036 4 4 327832 104 18593368 983466028
+
+=== Retrato depois (só leitura) (05:08:18Z)
+$ snapshot_into <saída>/p10gbr-20261125045940-f17f11/snapshot-after.txt
+SNAPSHOT banco users=0 channels=0 videos=0 upload_sessions=0 upload_parts=0 refresh_tokens=0 verification_tokens=0 | bucket objetos=0 bytes=0 sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | fila video-processing wait=0 active=0 delayed=0 prioritized=0 waiting-children=0 completed=0 failed=0 jobs=0 | mailpit mensagens=8
+
+=== Retrato preservado (antes = depois) (05:08:21Z)
+$ compare_snapshots
+retratos iguais: SNAPSHOT banco users=0 channels=0 videos=0 upload_sessions=0 upload_parts=0 refresh_tokens=0 verification_tokens=0 | bucket objetos=0 bytes=0 sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | fila video-processing wait=0 active=0 delayed=0 prioritized=0 waiting-children=0 completed=0 failed=0 jobs=0 | mailpit mensagens=8
+
+=== Temporários do Silo: anteriores preservados e novos (só leitura) (05:08:21Z)
+$ compare_residue
+temporários do Silo em .minio.sys/tmp: 5 diretórios, 327720 KiB
+65544 KiB 70731b75-f39b-4526-aedc-6fa12fad583bx1795548947967467323
+65544 KiB 80115752-ef5f-41e0-9f12-3feff2e419ecx1795548947731336221
+65544 KiB c07d02bb-16b7-4553-b833-f7653e7f8b1bx1795549731540036430
+65544 KiB d9462442-bfb8-4597-80c0-6491370b2508x1795549732611218187
+65544 KiB f963343c-ee2f-4f83-82bd-e0b61f0243d1x1795549105789409450
+anteriores preservados (mesmo nome e tamanho): 5 de 5; anteriores ausentes ou alterados: 0
+novos, deixados durante a prova: 0 diretórios, 0 KiB
+
+=== Espaço livre depois da limpeza (05:08:21Z)
+$ host_disk
+host:    1B-blocks         Used       Avail Mounted on
+host: 510987681792 470964047872 40023633920 /mnt/c
+host: docker_data.vhdx do Docker Desktop: 40853569536 bytes
+disco de dados do Docker: Filesystem          1-blocks        Used     Available Capacity Mounted on
+disco de dados do Docker: /dev/sdf       1081101176832 19039608832 1007069212672       2% /data
+
+=== Situação dos passos (05:08:21Z)
+- Estado do ambiente: código 0
+- API parada antes do roteiro: código 0
+- Espaço livre exigido na unidade C:: código 0
+- Versões: código 0
+- Espaço livre e VHDX antes da prova: código 0
+- Retrato antes (só leitura): código 0
+- Temporários do Silo antes da prova (só leitura): código 0
+- Pastas de prova: código 0
+- Build da API e JS do cliente e da sonda: código 0
+- Arquivo de prova no Windows, preparado antes da medição: código 0
+- Espaço livre com o arquivo de prova: código 0
+- API sem watch (npm run start:prod) com os monitores: código 0
+- Contas de prova e vídeo de controle: código 0
+- Relógio antes da base: código 0
+- Lixeira do storage vazia antes da medição: código 0
+- Amostrador de disco do storage: código 0
+- Monitores (VM, PostgreSQL, docker stats e Windows): código 0
+- Sondas compiladas em containers próprios: código 0
+- Memória com todas as sondas em execução (referência informativa de 4 GiB): código 0
+- Fase de base: código 0
+- Upload no Windows interrompido por Ctrl+C real por volta de 0.5: código 0
+- Retrato das partes depois da interrupção: código 0
+- Retomada no Windows, conferência das partes recebidas, completion e polling: código 0
+- Relógio depois da carga: código 0
+- Fim das sondas: código 0
+- Fim dos monitores: código 0
+- Fim do amostrador do storage: código 0
+- Espaço livre antes da limpeza: código 0
+- Resumo das medidas: código 0
+- Vereditos de latência (critérios do registro prévio): código 1
+- Sondas, monitores, cliente, API, containers e pastas temporárias: código 0
+- Usuários, vídeos, objetos, multiparts, jobs e e-mails de prova: código 0
+- Purga da lixeira do storage depois da limpeza: código 0
+- Uso do storage depois da limpeza e da purga: código 0
+- Retrato depois (só leitura): código 0
+- Retrato preservado (antes = depois): código 0
+- Temporários do Silo: anteriores preservados e novos (só leitura): código 0
+- Espaço livre depois da limpeza: código 0
+código final: 1 (interrupção ou etapa obrigatória: 0; primeira etapa com falha: 1; limpeza: 0)
+log completo: <saída>/p10gbr-20261125045940-f17f11.log
+evidências: <saída>/p10gbr-20261125045940-f17f11

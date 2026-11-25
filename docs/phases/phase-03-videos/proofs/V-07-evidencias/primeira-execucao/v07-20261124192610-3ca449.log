@@ -1,0 +1,394 @@
+
+=== V-07 — runId 20261124192610-3ca449 (19:26:10Z)
+arquivo sintético de 1000000000 bytes; fase de base informativa da sonda: 60 s; intervalo antes da retomada: 5 s
+usuários de prova: v07-20261124192610-3ca449-uploader@proofs.streamtube.test (upload) e v07-20261124192610-3ca449-control@proofs.streamtube.test (dono do vídeo de controle)
+
+=== Estado do ambiente (19:26:10Z)
+$ docker compose ps --format {{.Service}} {{.State}} {{.Health}}
+db running healthy
+mailpit running healthy
+nestjs-api running 
+redis running healthy
+storage running healthy
+video-worker running 
+
+=== Versões (19:26:10Z)
+$ versions
+sha256:c20d112390b9a9ce8c11b8af95ad35bcaa62f4759663c09c936cd8d2b511f329 ["pgsty/silo@sha256:c20d112390b9a9ce8c11b8af95ad35bcaa62f4759663c09c936cd8d2b511f329"]
+Docker Engine 29.8.2 (cliente 29.8.2)
+Docker Desktop; kernel 6.6.87.2-microsoft-standard-WSL2; 16 CPUs; 8208449536 bytes de memória
+v25.6.0
+node:internal/modules/cjs/loader:691
+      throw e;
+      ^
+
+Error: Cannot find module '/home/node/app/node_modules/typeorm/package.json.js'
+    at createEsmNotFoundErr (node:internal/modules/cjs/loader:1490:15)
+    at finalizeEsmResolution (node:internal/modules/cjs/loader:1479:9)
+    at resolveExports (node:internal/modules/cjs/loader:684:14)
+    at Module._findPath (node:internal/modules/cjs/loader:751:31)
+    at Module._resolveFilename (node:internal/modules/cjs/loader:1438:27)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1064:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1069:22)
+    at Module._load (node:internal/modules/cjs/loader:1239:25)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:255:19)
+    at Module.require (node:internal/modules/cjs/loader:1553:12) {
+  code: 'MODULE_NOT_FOUND',
+  path: '/home/node/app/node_modules/typeorm'
+}
+
+Node.js v25.6.0
+imagem do nestjs-api: sha256:6b5db062366a60972c02199bbd399758b27ff62ae4974ebd03ebe8b672d23b57 criada 2026-11-18T02:06:47.956302183Z
+
+=== API no ar (19:26:11Z)
+$ support api-check
+API | GET http://nestjs-api:3000/ | HTTP 200 em 13.1 ms
+
+=== Espaço livre antes da prova (19:26:14Z)
+$ host_disk
+host: Filesystem        1B-blocks        Used        Avail Mounted on
+host: /dev/sdd       269427478528 28176027648 227490779136 /
+host:    1B-blocks         Used       Avail Mounted on
+host: 510987681792 468066521088 42921160704 /mnt/c
+host: docker_data.vhdx do Docker Desktop: 22029533184 bytes
+storage: Filesystem          1-blocks        Used     Available Capacity Mounted on
+storage: /dev/sdf       1081101176832 19004727296 1007104094208       2% /data
+nestjs-api: Filesystem          1-blocks        Used     Available Capacity Mounted on
+nestjs-api: overlay        1081101176832 19004727296 1007104094208       2% /
+
+=== Retrato antes (só leitura) (19:26:15Z)
+$ snapshot_into <saída>/v07-20261124192610-3ca449/snapshot-before.txt
+SNAPSHOT banco users=0 channels=0 videos=0 upload_sessions=0 upload_parts=0 refresh_tokens=0 verification_tokens=0 | bucket objetos=0 bytes=0 sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | fila video-processing wait=0 active=0 delayed=0 prioritized=0 waiting-children=0 completed=0 failed=0 jobs=0 | mailpit mensagens=8
+
+=== Diretório de prova no nestjs-api (19:26:18Z)
+$ prepare_workdir
+drwx------ 2 node node 4096 Nov 24 19:26 /tmp/v07-20261124192610-3ca449
+
+=== Conta de prova do upload (19:26:18Z)
+$ support account --email v07-20261124192610-3ca449-uploader@proofs.streamtube.test --credentials /tmp/v07-20261124192610-3ca449/uploader.json
+CONTA | v07-20261124192610-3ca449-uploader@proofs.streamtube.test | register 201, confirm-email 204 (link do Mailpit), login 200 | credenciais em /tmp/v07-20261124192610-3ca449/uploader.json (0600)
+
+=== Conta de prova do vídeo de controle (19:26:22Z)
+$ support account --email v07-20261124192610-3ca449-control@proofs.streamtube.test --credentials /tmp/v07-20261124192610-3ca449/control.json
+CONTA | v07-20261124192610-3ca449-control@proofs.streamtube.test | register 201, confirm-email 204 (link do Mailpit), login 200 | credenciais em /tmp/v07-20261124192610-3ca449/control.json (0600)
+
+=== Vídeo de controle em draft (19:26:25Z)
+$ create_control_video
+CONTROLE | vídeo CPddiSEi82s em draft, sessão 3a78d742-9edc-4110-a84a-b5f3bae73478, nenhuma parte enviada
+vídeo de controle: CPddiSEi82s
+
+=== Arquivo sintético (19:26:29Z)
+$ generate_file
+ARQUIVO | source.bin | 1000000000 bytes | sha256 ac61c0bb29d0d1d0d42c298143a198acc1a3d7ad819781536fe4425de7aa3f1a | gerado em 8807.6 ms (108.3 MiB/s)
+
+=== Espaço livre com o arquivo sintético (19:26:40Z)
+$ host_disk
+host: Filesystem        1B-blocks        Used        Avail Mounted on
+host: /dev/sdd       269427478528 28176113664 227490693120 /
+host:    1B-blocks         Used       Avail Mounted on
+host: 510987681792 468066545664 42921136128 /mnt/c
+host: docker_data.vhdx do Docker Desktop: 22029533184 bytes
+storage: Filesystem          1-blocks        Used     Available Capacity Mounted on
+storage: /dev/sdf       1081101176832 20004933632 1006103887872       2% /data
+nestjs-api: Filesystem          1-blocks        Used     Available Capacity Mounted on
+nestjs-api: overlay        1081101176832 20004933632 1006103887872       2% /
+
+=== Amostrador de disco do storage (19:26:41Z)
+$ start_sampler
+amostrador no storage: 3 amostras no primeiro segundo; primeira: 1795548401301 293500 19536072 982523324
+
+=== Sonda em container próprio e fase de base informativa (19:26:42Z)
+$ start_probe
+proofs/phase-03/v07-roteiro.sh: line 165: <saída>/v07-20261124192610-3ca449/probe-1.csv: No such file or directory
+ Container v07-20261124192610-3ca449-probe Creating 
+ Container v07-20261124192610-3ca449-probe Created 
+SONDA | instância 1 | GET /videos/CPddiSEi82s | intervalo 2000 ms | timeout 5000 ms | renovação 120 s antes de expirar | duração até SIGINT/SIGTERM
+IP do container da sonda: 172.20.0.8 ; IP do nestjs-api (cliente de upload): 172.20.0.6 
+fase de base informativa: 60 s sem upload
+amostras até aqui: 31
+
+=== Upload interrompido por SIGINT por volta de 50% (19:27:49Z)
+$ upload_with_interruption
+VIGIA | SIGINT enviado ao cliente (pid 4404) com 8 de 15 partes com PUT concluído (limite: 8) | PUT concluído: [1,2,3,4,5,6,7,8] | registradas: [] | em andamento: [9,10]
+INÍCIO | vídeo 5xVa1tbVQFo (draft) | sessão c44bcc67-54c6-4d03-b4f3-27158e5ea98f | 1000000000 bytes em 15 partes de 67108864 (última com 60475904) | SHA256
+CHECKSUM | parte 1 | 67108864 bytes | 1598.2 ms | antes da assinatura
+CHECKSUM | parte 2 | 67108864 bytes | 1121.9 ms | antes da assinatura
+CHECKSUM | parte 3 | 67108864 bytes | 3386.1 ms | antes da assinatura
+CHECKSUM | parte 4 | 67108864 bytes | 1067.8 ms | antes da assinatura
+CHECKSUM | parte 5 | 67108864 bytes | 1080.3 ms | antes da assinatura
+CHECKSUM | parte 6 | 67108864 bytes | 587.9 ms | antes da assinatura
+CHECKSUM | parte 7 | 67108864 bytes | 843.9 ms | antes da assinatura
+CHECKSUM | parte 8 | 67108864 bytes | 260.8 ms | antes da assinatura
+CHECKSUM | parte 9 | 67108864 bytes | 218.2 ms | antes da assinatura
+CHECKSUM | parte 10 | 67108864 bytes | 188.2 ms | antes da assinatura
+PUT | parte 3 | 67108864 bytes | 4767.5 ms | HTTP 200 | tentativa 1
+PUT | parte 4 | 67108864 bytes | 4830.4 ms | HTTP 200 | tentativa 1
+PUT | parte 2 | 67108864 bytes | 4932.7 ms | HTTP 200 | tentativa 1
+PUT | parte 1 | 67108864 bytes | 4951.6 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 11 | 67108864 bytes | 1035.6 ms | antes da assinatura
+PUT | parte 5 | 67108864 bytes | 1304 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 12 | 67108864 bytes | 341.3 ms | antes da assinatura
+PUT | parte 6 | 67108864 bytes | 2716.7 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 13 | 67108864 bytes | 1270 ms | antes da assinatura
+PUT | parte 7 | 67108864 bytes | 3764.6 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 14 | 67108864 bytes | 1702.6 ms | antes da assinatura
+PUT | parte 8 | 67108864 bytes | 4749.3 ms | HTTP 200 | tentativa 1
+INTERRUPÇÃO | SIGINT | PUT concluído: [1,2,3,4,5,6,7,8] | registradas: [] | em andamento: [9,10]
+PUT | parte 9 | abortado depois de 3745.5 ms
+PUT | parte 10 | abortado depois de 2280.1 ms
+CHECKSUM | parte 15 | 60475904 bytes | 766.1 ms | antes da assinatura
+FIM | interrompido por SIGINT
+código do vigia: 0; código do cliente: 130 (esperado: 130, interrompido por SIGINT)
+docker stats: start 19:27:49Z nestjs-project-nestjs-api-1 cpu 289.58% mem 1.103GiB / 7.645GiB
+docker stats: start 19:27:49Z nestjs-project-storage-1 cpu 9.29% mem 152.5MiB / 7.645GiB
+docker stats: start 19:27:49Z v07-20261124192610-3ca449-probe cpu 0.00% mem 185.5MiB / 7.645GiB
+docker stats: start 19:27:54Z nestjs-project-nestjs-api-1 cpu 323.66% mem 1.561GiB / 7.645GiB
+docker stats: start 19:27:54Z nestjs-project-storage-1 cpu 143.30% mem 149.5MiB / 7.645GiB
+docker stats: start 19:27:54Z v07-20261124192610-3ca449-probe cpu 0.47% mem 185.8MiB / 7.645GiB
+docker stats: start 19:27:59Z nestjs-project-nestjs-api-1 cpu 190.59% mem 1.719GiB / 7.645GiB
+docker stats: start 19:27:59Z nestjs-project-storage-1 cpu 33.50% mem 146.5MiB / 7.645GiB
+docker stats: start 19:27:59Z v07-20261124192610-3ca449-probe cpu 0.00% mem 185.8MiB / 7.645GiB
+docker stats: start 19:28:05Z nestjs-project-nestjs-api-1 cpu 180.43% mem 1.872GiB / 7.645GiB
+docker stats: start 19:28:05Z nestjs-project-storage-1 cpu 633.74% mem 149.7MiB / 7.645GiB
+docker stats: start 19:28:05Z v07-20261124192610-3ca449-probe cpu 0.00% mem 185.9MiB / 7.645GiB
+docker stats: start 19:28:11Z nestjs-project-nestjs-api-1 cpu 172.30% mem 965.7MiB / 7.645GiB
+docker stats: start 19:28:11Z nestjs-project-storage-1 cpu 322.67% mem 154.1MiB / 7.645GiB
+docker stats: start 19:28:11Z v07-20261124192610-3ca449-probe cpu 0.14% mem 186.1MiB / 7.645GiB
+
+=== Retrato das partes depois da interrupção (19:28:17Z)
+$ parts_snapshot parts-after-interruption
+PARTES | vídeo 5xVa1tbVQFo draft | sessão active | 10 partes no registro da API, 0 com ETag | 8 partes no ListParts
+PARTE 1 | storage: ETag "be6da3a09526fbc9de0e8af1ab471b55", 67108864 bytes, LastModified 2026-11-24T19:28:08.596Z | registro: sem ETag
+PARTE 2 | storage: ETag "d5206190ab00b888ab2fac9ed954a905", 67108864 bytes, LastModified 2026-11-24T19:28:08.577Z | registro: sem ETag
+PARTE 3 | storage: ETag "0168ba64c97d0ef63693f4d263559404", 67108864 bytes, LastModified 2026-11-24T19:28:08.248Z | registro: sem ETag
+PARTE 4 | storage: ETag "88cf7c3ba388eaafd8627fee7dcfa493", 67108864 bytes, LastModified 2026-11-24T19:28:08.369Z | registro: sem ETag
+PARTE 5 | storage: ETag "bbead5f317cf9f0ee2288d8430f8215c", 67108864 bytes, LastModified 2026-11-24T19:28:09.662Z | registro: sem ETag
+PARTE 6 | storage: ETag "35e8a1a74ee708527a008b4787bc88ff", 67108864 bytes, LastModified 2026-11-24T19:28:11.129Z | registro: sem ETag
+PARTE 7 | storage: ETag "55be2145d06cd65058cfae945ffc2773", 67108864 bytes, LastModified 2026-11-24T19:28:12.326Z | registro: sem ETag
+PARTE 8 | storage: ETag "426e5fadf5f1b0dbe83977c92b99d926", 67108864 bytes, LastModified 2026-11-24T19:28:13.325Z | registro: sem ETag
+
+=== Retomada, conferência das partes confirmed, completion e polling (19:28:21Z)
+$ resume_and_complete
+--- retrato das partes antes do completion
+PARTES | vídeo 5xVa1tbVQFo draft | sessão active | 15 partes no registro da API, 15 com ETag | 15 partes no ListParts
+PARTE 1 | storage: ETag "be6da3a09526fbc9de0e8af1ab471b55", 67108864 bytes, LastModified 2026-11-24T19:28:33.591Z | registro: ETag "be6da3a09526fbc9de0e8af1ab471b55" desde 2026-11-24T19:28:42.166Z
+PARTE 2 | storage: ETag "d5206190ab00b888ab2fac9ed954a905", 67108864 bytes, LastModified 2026-11-24T19:28:33.760Z | registro: ETag "d5206190ab00b888ab2fac9ed954a905" desde 2026-11-24T19:28:42.166Z
+PARTE 3 | storage: ETag "0168ba64c97d0ef63693f4d263559404", 67108864 bytes, LastModified 2026-11-24T19:28:33.748Z | registro: ETag "0168ba64c97d0ef63693f4d263559404" desde 2026-11-24T19:28:42.166Z
+PARTE 4 | storage: ETag "88cf7c3ba388eaafd8627fee7dcfa493", 67108864 bytes, LastModified 2026-11-24T19:28:33.439Z | registro: ETag "88cf7c3ba388eaafd8627fee7dcfa493" desde 2026-11-24T19:28:42.166Z
+PARTE 5 | storage: ETag "bbead5f317cf9f0ee2288d8430f8215c", 67108864 bytes, LastModified 2026-11-24T19:28:35.063Z | registro: ETag "bbead5f317cf9f0ee2288d8430f8215c" desde 2026-11-24T19:28:42.166Z
+PARTE 6 | storage: ETag "35e8a1a74ee708527a008b4787bc88ff", 67108864 bytes, LastModified 2026-11-24T19:28:36.383Z | registro: ETag "35e8a1a74ee708527a008b4787bc88ff" desde 2026-11-24T19:28:42.166Z
+PARTE 7 | storage: ETag "55be2145d06cd65058cfae945ffc2773", 67108864 bytes, LastModified 2026-11-24T19:28:36.383Z | registro: ETag "55be2145d06cd65058cfae945ffc2773" desde 2026-11-24T19:28:42.166Z
+PARTE 8 | storage: ETag "426e5fadf5f1b0dbe83977c92b99d926", 67108864 bytes, LastModified 2026-11-24T19:28:36.376Z | registro: ETag "426e5fadf5f1b0dbe83977c92b99d926" desde 2026-11-24T19:28:42.166Z
+PARTE 9 | storage: ETag "dbc337adaa900bf86eff976768526d82", 67108864 bytes, LastModified 2026-11-24T19:28:41.408Z | registro: ETag "dbc337adaa900bf86eff976768526d82" desde 2026-11-24T19:28:42.166Z
+PARTE 10 | storage: ETag "7c0d977acb12eaacf153de51cf490932", 67108864 bytes, LastModified 2026-11-24T19:28:41.507Z | registro: ETag "7c0d977acb12eaacf153de51cf490932" desde 2026-11-24T19:28:42.166Z
+PARTE 11 | storage: ETag "d5263074e66d0f6a74646789008b9459", 67108864 bytes, LastModified 2026-11-24T19:28:45.958Z | registro: ETag "d5263074e66d0f6a74646789008b9459" desde 2026-11-24T19:28:46.958Z
+PARTE 12 | storage: ETag "dd69841691e8bfa090ac075e3d563b9e", 67108864 bytes, LastModified 2026-11-24T19:28:44.592Z | registro: ETag "dd69841691e8bfa090ac075e3d563b9e" desde 2026-11-24T19:28:46.958Z
+PARTE 13 | storage: ETag "ac1a5020fd3541cb215e523d9d20aeae", 67108864 bytes, LastModified 2026-11-24T19:28:44.397Z | registro: ETag "ac1a5020fd3541cb215e523d9d20aeae" desde 2026-11-24T19:28:46.958Z
+PARTE 14 | storage: ETag "c9cc25ba3c501db5b897c3e14e871c3c", 67108864 bytes, LastModified 2026-11-24T19:28:44.235Z | registro: ETag "c9cc25ba3c501db5b897c3e14e871c3c" desde 2026-11-24T19:28:46.958Z
+PARTE 15 | storage: ETag "f194855e0c93abdf94d895e9e0053ef3", 60475904 bytes, LastModified 2026-11-24T19:28:46.947Z | registro: ETag "f194855e0c93abdf94d895e9e0053ef3" desde 2026-11-24T19:28:46.970Z
+--- comparação com o retrato depois da interrupção
+INFO | partes confirmed na retomada | observado: []
+INFO | partes com PUT na retomada | observado: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
+FALHOU | cliente: nenhum PUT de parte confirmed na retomada | esperado: nenhuma | observado: nenhuma
+PASSOU | storage: partes confirmed com o mesmo ETag, tamanho e LastModified antes e depois da retomada | esperado: 0 de 0 iguais | observado: 0 de 0 iguais
+PASSOU | registro da API: ETag e etag_registered_at das partes confirmed inalterados | esperado: 0 de 0 inalterados | observado: 0 de 0 inalterados
+PASSOU | controle: cada parte reenviada aparece no storage com LastModified novo | esperado: 15 de 15 | observado: 15 de 15
+PASSOU | antes do completion: todas as partes no storage, registradas com o mesmo ETag | esperado: 15 de 15 | observado: 15 de 15
+COMPARAÇÃO | 5 itens, 1 com falha
+RETOMADA | sessão c44bcc67-54c6-4d03-b4f3-27158e5ea98f active | confirmed: [] | unregistered: [1,2,3,4,5,6,7,8] | missing: [9,10,11,12,13,14,15] | divergent: []
+CHECKSUM | parte 1 | 67108864 bytes | 175.2 ms | conferência da retomada
+CHECKSUM | parte 2 | 67108864 bytes | 202.6 ms | conferência da retomada
+CHECKSUM | parte 3 | 67108864 bytes | 196.2 ms | conferência da retomada
+CHECKSUM | parte 4 | 67108864 bytes | 198.1 ms | conferência da retomada
+CHECKSUM | parte 5 | 67108864 bytes | 191.4 ms | conferência da retomada
+CHECKSUM | parte 6 | 67108864 bytes | 226.8 ms | conferência da retomada
+CHECKSUM | parte 7 | 67108864 bytes | 182.4 ms | conferência da retomada
+CHECKSUM | parte 8 | 67108864 bytes | 187.2 ms | conferência da retomada
+CONFERÊNCIA | 8 partes (536870912 bytes) recalculadas em 1564.1 ms | file-verifications HTTP 200 match em 35.8 ms
+REENVIO | partes [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]; nenhuma parte confirmed é reenviada
+CHECKSUM | parte 9 | 67108864 bytes | 293.9 ms | antes da assinatura
+CHECKSUM | parte 10 | 67108864 bytes | 422.3 ms | antes da assinatura
+PUT | parte 4 | 67108864 bytes | 1517.6 ms | HTTP 200 | tentativa 1
+PUT | parte 1 | 67108864 bytes | 1542.3 ms | HTTP 200 | tentativa 1
+PUT | parte 3 | 67108864 bytes | 1542.5 ms | HTTP 200 | tentativa 1
+PUT | parte 2 | 67108864 bytes | 1558.6 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 11 | 67108864 bytes | 1119.9 ms | antes da assinatura
+PUT | parte 5 | 67108864 bytes | 2020.6 ms | HTTP 200 | tentativa 1
+PUT | parte 8 | 67108864 bytes | 2686.9 ms | HTTP 200 | tentativa 1
+PUT | parte 6 | 67108864 bytes | 2726.1 ms | HTTP 200 | tentativa 1
+PUT | parte 7 | 67108864 bytes | 2727.6 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 12 | 67108864 bytes | 2722.8 ms | antes da assinatura
+PUT | parte 9 | 67108864 bytes | 5435.5 ms | HTTP 200 | tentativa 1
+PUT | parte 10 | 67108864 bytes | 5085.5 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 13 | 67108864 bytes | 4152.7 ms | antes da assinatura
+CHECKSUM | parte 14 | 67108864 bytes | 226.4 ms | antes da assinatura
+CHECKSUM | parte 15 | 60475904 bytes | 159.1 ms | antes da assinatura
+PUT | parte 14 | 67108864 bytes | 2046.6 ms | HTTP 200 | tentativa 1
+PUT | parte 13 | 67108864 bytes | 2205.4 ms | HTTP 200 | tentativa 1
+PUT | parte 12 | 67108864 bytes | 2439.9 ms | HTTP 200 | tentativa 1
+PUT | parte 11 | 67108864 bytes | 4745.6 ms | HTTP 200 | tentativa 1
+PUT | parte 15 | 60475904 bytes | 2690.2 ms | HTTP 200 | tentativa 1
+ENVIO | 15 partes reenviadas e registradas
+ESPERA | todas as partes registradas; aguardando liberação do completion
+COMPLETION | HTTP 202 em 66.4 ms | vídeo processing
+POLLING | processing | consulta 1
+POLLING | error MEDIA_INVALID | consulta 2
+docker stats: resume 19:28:27Z nestjs-project-nestjs-api-1 cpu 201.04% mem 1.327GiB / 7.645GiB
+docker stats: resume 19:28:27Z nestjs-project-storage-1 cpu 8.26% mem 156.4MiB / 7.645GiB
+docker stats: resume 19:28:27Z v07-20261124192610-3ca449-probe cpu 0.20% mem 186.4MiB / 7.645GiB
+docker stats: resume 19:28:32Z nestjs-project-nestjs-api-1 cpu 272.40% mem 1.617GiB / 7.645GiB
+docker stats: resume 19:28:32Z nestjs-project-storage-1 cpu 256.04% mem 167.5MiB / 7.645GiB
+docker stats: resume 19:28:32Z v07-20261124192610-3ca449-probe cpu 0.00% mem 186.4MiB / 7.645GiB
+docker stats: resume 19:28:37Z nestjs-project-nestjs-api-1 cpu 4.11% mem 1.593GiB / 7.645GiB
+docker stats: resume 19:28:37Z nestjs-project-storage-1 cpu 192.09% mem 176.5MiB / 7.645GiB
+docker stats: resume 19:28:37Z v07-20261124192610-3ca449-probe cpu 0.00% mem 186.6MiB / 7.645GiB
+docker stats: resume 19:28:42Z nestjs-project-nestjs-api-1 cpu 153.36% mem 1.672GiB / 7.645GiB
+docker stats: resume 19:28:42Z nestjs-project-storage-1 cpu 773.35% mem 175.8MiB / 7.645GiB
+docker stats: resume 19:28:42Z v07-20261124192610-3ca449-probe cpu 0.00% mem 186.6MiB / 7.645GiB
+docker stats: resume 19:28:47Z nestjs-project-nestjs-api-1 cpu 158.62% mem 1.875GiB / 7.645GiB
+docker stats: resume 19:28:47Z nestjs-project-storage-1 cpu 7.68% mem 169.1MiB / 7.645GiB
+docker stats: resume 19:28:47Z v07-20261124192610-3ca449-probe cpu 0.00% mem 186.6MiB / 7.645GiB
+docker stats: resume 19:28:52Z nestjs-project-nestjs-api-1 cpu 233.24% mem 1.782GiB / 7.645GiB
+docker stats: resume 19:28:52Z nestjs-project-storage-1 cpu 7.10% mem 162.9MiB / 7.645GiB
+docker stats: resume 19:28:52Z v07-20261124192610-3ca449-probe cpu 0.00% mem 186.6MiB / 7.645GiB
+docker stats: resume 19:28:56Z nestjs-project-nestjs-api-1 cpu 1.41% mem 1.145GiB / 7.645GiB
+docker stats: resume 19:28:56Z nestjs-project-storage-1 cpu 11.07% mem 228MiB / 7.645GiB
+docker stats: resume 19:28:56Z v07-20261124192610-3ca449-probe cpu 0.09% mem 186.6MiB / 7.645GiB
+código do cliente: 0; código da comparação: 1
+
+=== Fim da sonda (19:29:01Z)
+$ stop_probe
+ Container v07-20261124192610-3ca449-probe Creating 
+ Container v07-20261124192610-3ca449-probe Created 
+SONDA | instância 1 | GET /videos/CPddiSEi82s | intervalo 2000 ms | timeout 5000 ms | renovação 120 s antes de expirar | duração até SIGINT/SIGTERM
+SONDA | fim (SIGTERM) | 67 amostras em 133.7 s | ok 67 | fora de 2xx 0 (429: 0) | timeout 0 | erro de rede 0 | corpo inesperado 0 | renovações 0
+SONDA | latência das respostas ok (ms): p50 4.8 | p95 107.9 | p99 382.0 | máx 382.0
+linhas no CSV da sonda (com o cabeçalho): 68
+
+=== Fim do amostrador (19:29:02Z)
+$ stop_sampler
+amostrador parado: 487 amostras
+
+=== Espaço livre antes da limpeza (19:29:03Z)
+$ host_disk
+host: Filesystem        1B-blocks        Used        Avail Mounted on
+host: /dev/sdd       269427478528 28176519168 227490287616 /
+host:    1B-blocks         Used       Avail Mounted on
+host: 510987681792 469541122048 41446559744 /mnt/c
+host: docker_data.vhdx do Docker Desktop: 23338156032 bytes
+storage: Filesystem          1-blocks        Used     Available Capacity Mounted on
+storage: /dev/sdf       1081101176832 21241884672 1004866936832       3% /data
+nestjs-api: Filesystem          1-blocks        Used     Available Capacity Mounted on
+nestjs-api: overlay        1081101176832 21241884672 1004866936832       3% /
+
+=== Resumo das medidas e projeção (19:29:03Z)
+$ summarize
+total 72
+-rw-r--r-- 1 <usuário> <usuário>  2728 Nov 24 16:28 client-resume.log
+-rw-r--r-- 1 <usuário> <usuário>  1970 Nov 24 16:28 client-start.log
+-rw-r--r-- 1 <usuário> <usuário>     0 Nov 24 16:26 disk-sampler.err
+-rw-r--r-- 1 <usuário> <usuário> 19561 Nov 24 16:29 disk-samples.txt
+-rw-r--r-- 1 <usuário> <usuário>  2873 Nov 24 16:28 docker-stats.txt
+-rw-r--r-- 1 <usuário> <usuário> 11797 Nov 24 16:29 events.jsonl
+-rw-r--r-- 1 <usuário> <usuário>  4027 Nov 24 16:29 parts-after-interruption.json
+-rw-r--r-- 1 <usuário> <usuário>  7478 Nov 24 16:29 parts-before-completion.json
+-rw-r--r-- 1 <usuário> <usuário>  3884 Nov 24 16:29 probe-1.csv
+-rw-r--r-- 1 <usuário> <usuário>   492 Nov 24 16:29 probe-1.log
+-rw-r--r-- 1 <usuário> <usuário>   347 Nov 24 16:26 snapshot-before.txt
+MEDIDA | plano | {"sizeBytes":1000000000,"partSize":67108864,"partCount":15,"lastPartSize":60475904}
+MEDIDA | geração do arquivo | {"bytes":1000000000,"ms":8807.6}
+MEDIDA | intervalos de upload ativo | [{"start":"2026-11-24T19:28:03.604Z","end":"2026-11-24T19:28:13.445Z","seconds":9.841},{"start":"2026-11-24T19:28:29.632Z","end":"2026-11-24T19:28:46.974Z","seconds":17.342},{"start":"2026-11-24T19:28:54.993Z","end":"2026-11-24T19:28:55.060Z","seconds":0.067}]
+MEDIDA | upload ativo total (s) | 27.25
+MEDIDA | segmento start | {"puts":8,"putBytes":536870912,"putActiveMs":9839.7,"putMiBps":52,"abortedPuts":2,"failedPuts":0,"checksumParts":15,"checksumBytes":1000000000,"checksumMs":15468.9,"checksumMiBps":61.7}
+MEDIDA | segmento resume (PUTs e checksums de assinatura) | {"puts":15,"putBytes":1000000000,"putActiveMs":14104.9,"putMiBps":67.6,"abortedPuts":0,"failedPuts":0,"checksumParts":7,"checksumBytes":463129088,"checksumMs":9097.1,"checksumMiBps":48.6}
+MEDIDA | conferência da retomada (checksums) | {"puts":15,"putBytes":1000000000,"putActiveMs":14104.9,"putMiBps":67.6,"abortedPuts":0,"failedPuts":0,"checksumParts":8,"checksumBytes":536870912,"checksumMs":1559.9,"checksumMiBps":328.2}
+MEDIDA | interrupção | {"signal":"SIGINT","putDone":[1,2,3,4,5,6,7,8],"registered":[],"inFlight":[9,10],"putDonePercent":53.7}
+MEDIDA | intervalo entre a interrupção e a retomada (s) | 16.187
+MEDIDA | retomada | {"confirmed":[],"unregistered":[1,2,3,4,5,6,7,8],"missing":[9,10,11,12,13,14,15],"divergent":[],"verification":{"parts":8,"bytes":536870912,"checksumMs":1564.1,"requestMs":35.8}}
+MEDIDA | bytes pela rede | {"bytes":1536870912,"resentFraction":0.5369,"putActiveMs":23944.6,"putMiBps":61.2}
+MEDIDA | checksums | {"signBytes":1463129088,"signMs":24566,"signMiBps":56.8,"verifyBytes":536870912,"verifyMs":1559.9,"verifyMiBps":328.2}
+MEDIDA | completion | {"status":202,"ms":66.4,"startedAt":"2026-11-24T19:28:54.993Z","endedAt":"2026-11-24T19:28:55.060Z"}
+MEDIDA | processamento até o estado final | {"status":"error","errorCode":"MEDIA_INVALID","seconds":2.011}
+MEDIDA | chamadas à API e renovações de token | {"apiCalls":12,"tokenRenewals":0}
+MEDIDA | disco do storage (du de /data) | {"samples":487,"medianIntervalMs":262,"baselineKiB":293500,"peakKiB":1501420,"peakAt":"2026-11-24T19:28:55.278Z","peakGrowthBytes":1236910080,"completionWindowSamples":6,"completionPeakKiB":1501420,"completionPeakGrowthBytes":1236910080,"finalKiB":1501420,"dockerDiskUsedBaselineKiB":19536072,"dockerDiskUsedPeakKiB":20746956,"dockerDiskAvailMinKiB":981312440}
+MEDIDA | sonda (informativo) | {"instances":1,"all":{"samples":67,"ok":67,"non2xx":0,"status429":0,"timeouts":0,"networkErrors":0,"unexpectedBody":0,"p50":4.82,"p95":107.89,"p99":382.03,"max":382.03},"baseline":{"samples":38,"ok":38,"non2xx":0,"status429":0,"timeouts":0,"networkErrors":0,"unexpectedBody":0,"p50":4.18,"p95":315.31,"p99":379.15,"max":379.15},"load":{"samples":14,"ok":14,"non2xx":0,"status429":0,"timeouts":0,"networkErrors":0,"unexpectedBody":0,"p50":13.47,"p95":382.03,"p99":382.03,"max":382.03},"outside":{"samples":15,"ok":15,"non2xx":0,"status429":0,"timeouts":0,"networkErrors":0,"unexpectedBody":0,"p50":5.17,"p95":27.81,"p99":27.81,"max":27.81}}
+PROJEÇÃO | 10.000.000.000 bytes, linear, margem de 30% onde indicado | {"factor":10,"margin":1.3,"generationSeconds":88.1,"loadSeconds":272.5,"loadSecondsWithMargin":354.3,"putSeconds":239.4,"signChecksumSeconds":245.7,"verifyChecksumSeconds":15.6,"completionSeconds":0.7,"probeInstances":3,"storagePeakBytes":12369100800,"storagePeakBytesWithMargin":16079831040,"sourceFileBytes":10000000000,"requiredFreeBytesWithMargin":29079831040,"baselineSeconds":600}
+
+=== Limpeza dos recursos de prova (19:29:09Z)
+
+=== Sonda e amostrador parados e removidos (19:29:09Z)
+$ cleanup_containers
+containers de prova restantes: 0
+arquivos do amostrador restantes no storage: 0
+
+=== Usuários, vídeos, objetos, multiparts, jobs e e-mails de prova (19:29:09Z)
+$ support cleanup --emails v07-20261124192610-3ca449-uploader@proofs.streamtube.test,v07-20261124192610-3ca449-control@proofs.streamtube.test
+LIMPEZA | 2 e-mails de prova | 2 usuários, 2 vídeos, 2 sessões
+LIMPEZA | multiparts abortados: 2 (os demais já estavam concluídos ou abortados)
+LIMPEZA | jobs de processamento removidos: 0
+LIMPEZA prefixo originals/49cb61d9-dfdb-47cf-ab4d-0499df5cfaa1/: 1 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA prefixo thumbnails/49cb61d9-dfdb-47cf-ab4d-0499df5cfaa1/: 0 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA prefixo originals/53992f81-421c-4273-8f3f-0f90191cf41c/: 0 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA prefixo thumbnails/53992f81-421c-4273-8f3f-0f90191cf41c/: 0 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA | e-mails removidos do Mailpit: 2
+PASSOU | linhas de prova no banco (usuários, vídeos e sessões) | esperado: 0 | observado: 0
+PASSOU | objetos de prova no bucket | esperado: 0 restantes | observado: 0 restantes
+PASSOU | multiparts das sessões de prova | esperado: 0 | observado: 0
+PASSOU | jobs de processamento dos vídeos de prova | esperado: 0 | observado: 0
+PASSOU | e-mails de prova no Mailpit | esperado: 0 | observado: 0
+LIMPEZA | 5 itens, 0 com falha
+
+=== Diretório de prova no nestjs-api (19:29:17Z)
+$ cleanup_workdir
+diretório de prova no nestjs-api presente: não
+
+=== Retrato depois (só leitura) (19:29:17Z)
+$ snapshot_into <saída>/v07-20261124192610-3ca449/snapshot-after.txt
+SNAPSHOT banco users=0 channels=0 videos=0 upload_sessions=0 upload_parts=0 refresh_tokens=0 verification_tokens=0 | bucket objetos=0 bytes=0 sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | fila video-processing wait=0 active=0 delayed=0 prioritized=0 waiting-children=0 completed=0 failed=0 jobs=0 | mailpit mensagens=8
+
+=== Retrato preservado (antes = depois) (19:29:21Z)
+$ compare_snapshots
+retratos iguais: SNAPSHOT banco users=0 channels=0 videos=0 upload_sessions=0 upload_parts=0 refresh_tokens=0 verification_tokens=0 | bucket objetos=0 bytes=0 sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | fila video-processing wait=0 active=0 delayed=0 prioritized=0 waiting-children=0 completed=0 failed=0 jobs=0 | mailpit mensagens=8
+
+=== Espaço livre depois da limpeza (19:29:21Z)
+$ host_disk
+host: Filesystem        1B-blocks        Used        Avail Mounted on
+host: /dev/sdd       269427478528 28176740352 227490066432 /
+host:    1B-blocks         Used       Avail Mounted on
+host: 510987681792 469539532800 41448148992 /mnt/c
+host: docker_data.vhdx do Docker Desktop: 23338156032 bytes
+storage: Filesystem          1-blocks        Used     Available Capacity Mounted on
+storage: /dev/sdf       1081101176832 20241989632 1005866831872       2% /data
+nestjs-api: Filesystem          1-blocks        Used     Available Capacity Mounted on
+nestjs-api: overlay        1081101176832 20241989632 1005866831872       2% /
+
+=== Situação dos passos (19:29:22Z)
+- Estado do ambiente: código 0
+- Versões: código 0
+- API no ar: código 0
+- Espaço livre antes da prova: código 0
+- Retrato antes (só leitura): código 0
+- Diretório de prova no nestjs-api: código 0
+- Conta de prova do upload: código 0
+- Conta de prova do vídeo de controle: código 0
+- Vídeo de controle em draft: código 0
+- Arquivo sintético: código 0
+- Espaço livre com o arquivo sintético: código 0
+- Amostrador de disco do storage: código 0
+- Sonda em container próprio e fase de base informativa: código 0
+- Upload interrompido por SIGINT por volta de 50%: código 0
+- Retrato das partes depois da interrupção: código 0
+- Retomada, conferência das partes confirmed, completion e polling: código 1
+- Fim da sonda: código 0
+- Fim do amostrador: código 0
+- Espaço livre antes da limpeza: código 0
+- Resumo das medidas e projeção: código 0
+- Sonda e amostrador parados e removidos: código 0
+- Usuários, vídeos, objetos, multiparts, jobs e e-mails de prova: código 0
+- Diretório de prova no nestjs-api: código 0
+- Retrato depois (só leitura): código 0
+- Retrato preservado (antes = depois): código 0
+- Espaço livre depois da limpeza: código 0
+código final: 1 (interrupção ou etapa obrigatória: 0; primeira etapa com falha: 1; limpeza: 0)
+log completo: <saída>/v07-20261124192610-3ca449.log
+evidências: <saída>/v07-20261124192610-3ca449

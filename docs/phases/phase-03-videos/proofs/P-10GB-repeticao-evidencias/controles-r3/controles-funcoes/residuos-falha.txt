@@ -1,0 +1,2 @@
+CONTROLE | falha injetada: temporários do Silo
+FALHA | lista dos temporários do Silo (código 2)

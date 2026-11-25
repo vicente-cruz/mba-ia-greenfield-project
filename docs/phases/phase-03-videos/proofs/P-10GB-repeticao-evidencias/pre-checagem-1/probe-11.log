@@ -1,0 +1,5 @@
+ Container p10gbr-20261125022403-73f57a-probe-11 Creating 
+ Container p10gbr-20261125022403-73f57a-probe-11 Created 
+SONDA | instância 11 | GET /videos/2Fbd5QzYS2U | intervalo 2000 ms | timeout 5000 ms | renovação 120 s antes de expirar | duração até SIGINT/SIGTERM
+SONDA | fim (SIGTERM) | 63 amostras em 125.4 s | ok 63 | fora de 2xx 0 (429: 0) | timeout 0 | erro de rede 0 | corpo inesperado 0 | renovações 0
+SONDA | latência das respostas ok (ms): p50 3.6 | p95 8.6 | p99 15.2 | máx 15.2

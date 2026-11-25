@@ -1,0 +1,13 @@
+FASE | base (700 s) | 4550 amostras (instância 1: 350, instância 2: 350, instância 3: 350, instância 4: 350, instância 5: 350, instância 6: 350, instância 7: 350, instância 8: 350, instância 9: 350, instância 10: 350, instância 11: 350, instância 12: 350, instância 13: 350) | p50 5 ms | p95 5 ms | p99 5 ms | máx 5 ms | fora de 2xx 0 | 429 0 | timeout 0 | erro de rede 0 | corpo inesperado 0
+FASE | carga nominal (210.1 s de upload ativo, 3 intervalos) | 400 amostras (instância 1: 31, instância 2: 31, instância 3: 31, instância 4: 31, instância 5: 31, instância 6: 31, instância 7: 31, instância 8: 31, instância 9: 31, instância 10: 31, instância 11: 30, instância 12: 30, instância 13: 30) | p50 10 ms | p95 10 ms | p99 10 ms | máx 10 ms | fora de 2xx 0 | 429 0 | timeout 0 | erro de rede 0 | corpo inesperado 0
+FASE | aquecimento | 0 amostras () | p50 NaN ms | p95 NaN ms | p99 NaN ms | máx NaN ms | fora de 2xx 0 | 429 0 | timeout 0 | erro de rede 0 | corpo inesperado 0
+FASE | fora da base e da carga | 1 amostras (instância 11: 1) | p50 600 ms | p95 600 ms | p99 600 ms | máx 600 ms | fora de 2xx 0 | 429 0 | timeout 0 | erro de rede 0 | corpo inesperado 0
+FASE | todas as amostras | 4951 amostras (instância 1: 381, instância 2: 381, instância 3: 381, instância 4: 381, instância 5: 381, instância 6: 381, instância 7: 381, instância 8: 381, instância 9: 381, instância 10: 381, instância 11: 381, instância 12: 380, instância 13: 380) | p50 5 ms | p95 10 ms | p99 10 ms | máx 600 ms | fora de 2xx 0 | 429 0 | timeout 0 | erro de rede 0 | corpo inesperado 0
+AMOSTRAS | mínimo de 300 por fase: atingido na carga nominal (base 4550, carga 400) | N recalculado pela D medida: 3
+INCERTEZA | relógio do cliente ± 157 ms, registrada à parte (intervalos nominais preservados) | amostras de borda: 1 (0 na carga nominal, 1 fora) | carga certa: 400 | carga possível: 400 a 401 | p95 de 10 a 10 ms | p99 de 10 a 10 ms
+INCERTEZA | possíveis: (a) aprovado | (b) aprovado | suficiência atingida
+INCERTEZA | borda mais lenta: instância 11, 600 ms (ok), a 50 ms do fim do intervalo 1, fora da carga nominal
+VEREDITO | (a) p95 carga 10 ms ≤ 55 ms (max(1,5 × p95 base; p95 base + 50 ms)) | aprovado
+VEREDITO | (b) p95 carga 10 ms ≤ 250 ms e p99 carga 10 ms ≤ 500 ms | aprovado
+VEREDITO | (c) 0 amostras sem 2xx válido em 4951 (fora de 2xx 0, 429 0, timeout 0, erro de rede 0, corpo inesperado 0) | aprovado
+VEREDITO | latência | aprovado

@@ -1,0 +1,38 @@
+RETOMADA | sessão eeff9275-1f1d-4b08-b05a-662fa4b9f084 active | confirmed: [] | unregistered: [1,2,3,4] | missing: [5,6,7,8,9,10,11,12,13,14,15] | divergent: []
+CHECKSUM | parte 1 | 67108864 bytes | 169.3 ms | conferência da retomada
+CHECKSUM | parte 2 | 67108864 bytes | 146.6 ms | conferência da retomada
+CHECKSUM | parte 3 | 67108864 bytes | 143.3 ms | conferência da retomada
+CHECKSUM | parte 4 | 67108864 bytes | 147.8 ms | conferência da retomada
+CONFERÊNCIA | 4 partes (268435456 bytes) recalculadas em 623.9 ms | file-verifications HTTP 200 match em 12.4 ms
+REENVIO | partes [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]; nenhuma parte confirmed é reenviada
+CHECKSUM | parte 5 | 67108864 bytes | 585.9 ms | antes da assinatura
+CHECKSUM | parte 6 | 67108864 bytes | 700.5 ms | antes da assinatura
+PUT | parte 3 | 67108864 bytes | 1445.3 ms | HTTP 200 | tentativa 1
+PUT | parte 4 | 67108864 bytes | 1456.8 ms | HTTP 200 | tentativa 1
+PUT | parte 2 | 67108864 bytes | 1494.9 ms | HTTP 200 | tentativa 1
+PUT | parte 1 | 67108864 bytes | 1517.1 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 7 | 67108864 bytes | 366.9 ms | antes da assinatura
+CHECKSUM | parte 8 | 67108864 bytes | 154.6 ms | antes da assinatura
+CHECKSUM | parte 9 | 67108864 bytes | 198.9 ms | antes da assinatura
+CHECKSUM | parte 10 | 67108864 bytes | 216.3 ms | antes da assinatura
+PUT | parte 5 | 67108864 bytes | 825.6 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 11 | 67108864 bytes | 312.7 ms | antes da assinatura
+PUT | parte 6 | 67108864 bytes | 1315.3 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 12 | 67108864 bytes | 542.1 ms | antes da assinatura
+CHECKSUM | parte 13 | 67108864 bytes | 729.7 ms | antes da assinatura
+PUT | parte 8 | 67108864 bytes | 1149.7 ms | HTTP 200 | tentativa 1
+PUT | parte 9 | 67108864 bytes | 1652.7 ms | HTTP 200 | tentativa 1
+PUT | parte 7 | 67108864 bytes | 1729 ms | HTTP 200 | tentativa 1
+PUT | parte 10 | 67108864 bytes | 1487.5 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 14 | 67108864 bytes | 766.5 ms | antes da assinatura
+CHECKSUM | parte 15 | 60475904 bytes | 256.3 ms | antes da assinatura
+PUT | parte 11 | 67108864 bytes | 1125.6 ms | HTTP 200 | tentativa 1
+PUT | parte 13 | 67108864 bytes | 1227.5 ms | HTTP 200 | tentativa 1
+PUT | parte 12 | 67108864 bytes | 1254.4 ms | HTTP 200 | tentativa 1
+PUT | parte 14 | 67108864 bytes | 1194.8 ms | HTTP 200 | tentativa 1
+PUT | parte 15 | 60475904 bytes | 1433.1 ms | HTTP 200 | tentativa 1
+ENVIO | 15 partes reenviadas e registradas
+ESPERA | todas as partes registradas; aguardando liberação do completion
+COMPLETION | HTTP 202 em 102.3 ms | vídeo processing
+POLLING | processing | consulta 1
+POLLING | error MEDIA_INVALID | consulta 2

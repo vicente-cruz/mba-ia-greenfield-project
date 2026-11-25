@@ -1,0 +1,2 @@
+CONTROLE | falha injetada: df da unidade C:
+FALHA | espaço da unidade C: (código 2)

@@ -1,0 +1,215 @@
+
+=== Fluxo completo — runId 20261124212322-3c8d00 (21:23:22Z)
+vídeo de 180 s, 1280x720 a 30 fps, H.264 a 4M e AAC a 128k; usuário de prova: fluxo-20261124212322-3c8d00-uploader@proofs.streamtube.test
+
+=== Estado do ambiente (21:23:22Z)
+$ docker compose ps --format {{.Service}} {{.State}} {{.Health}}
+db running healthy
+mailpit running healthy
+nestjs-api running 
+redis running healthy
+storage running healthy
+video-worker running 
+
+=== Versões (21:23:22Z)
+$ versions
+sha256:c20d112390b9a9ce8c11b8af95ad35bcaa62f4759663c09c936cd8d2b511f329 ["pgsty/silo@sha256:c20d112390b9a9ce8c11b8af95ad35bcaa62f4759663c09c936cd8d2b511f329"]
+Docker Engine 29.8.2 (cliente 29.8.2)
+Docker Desktop; kernel 6.6.87.2-microsoft-standard-WSL2; 16 CPUs; 8208449536 bytes de memória
+imagem do nestjs-api e do video-worker: sha256:6b5db062366a60972c02199bbd399758b27ff62ae4974ebd03ebe8b672d23b57 criada 2026-11-18T02:06:47.956302183Z
+v25.6.0
+@aws-sdk/client-s3 3.1170.0, @aws-sdk/s3-request-presigner 3.1170.0, bullmq 6.7.7, typeorm 0.3.28, ts-node 10.9.2, typescript 5.9.3
+ffmpeg version 5.1.9-0+deb12u1 Copyright (c) 2000-2026 the FFmpeg developers
+ffprobe version 5.1.9-0+deb12u1 Copyright (c) 2007-2026 the FFmpeg developers
+ffmpeg 7:5.1.9-0+deb12u1
+libavcodec59 7:5.1.9-0+deb12u1
+libavformat59 7:5.1.9-0+deb12u1
+libx264-164 2:0.164.3095+gitbaee400-3
+video-worker: ffmpeg version 5.1.9-0+deb12u1 Copyright (c) 2000-2026 the FFmpeg developers
+
+=== API no ar (21:23:28Z)
+$ support api-check
+API | GET http://nestjs-api:3000/ | HTTP 200 em 22.6 ms
+
+=== Espaço livre antes da prova (21:23:32Z)
+$ host_disk
+host:    1B-blocks        Used        Avail Mounted on
+host: 269427478528 28167897088 227498909696 /
+host:    1B-blocks         Used       Avail Mounted on
+host: 510987681792 471346393088 39641288704 /mnt/c
+storage: Filesystem          1-blocks        Used     Available Capacity Mounted on
+storage: /dev/sdf       1081101176832 19038822400 1007069999104       2% /data
+
+=== Retrato antes (só leitura) (21:23:32Z)
+$ snapshot_into <saída>/fluxo-20261124212322-3c8d00/snapshot-before.txt
+SNAPSHOT banco users=0 channels=0 videos=0 upload_sessions=0 upload_parts=0 refresh_tokens=0 verification_tokens=0 | bucket objetos=0 bytes=0 sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | fila video-processing wait=0 active=0 delayed=0 prioritized=0 waiting-children=0 completed=0 failed=0 jobs=0 | mailpit mensagens=8
+
+=== Resíduos anteriores do storage (só leitura) (21:23:37Z)
+$ residue_into <saída>/fluxo-20261124212322-3c8d00/residue-before.txt
+temporários do Silo em .minio.sys/tmp: 5 diretórios, 327720 KiB
+65544 KiB 70731b75-f39b-4526-aedc-6fa12fad583bx1795548947967467323
+65544 KiB 80115752-ef5f-41e0-9f12-3feff2e419ecx1795548947731336221
+65544 KiB c07d02bb-16b7-4553-b833-f7653e7f8b1bx1795549731540036430
+65544 KiB d9462442-bfb8-4597-80c0-6491370b2508x1795549732611218187
+65544 KiB f963343c-ee2f-4f83-82bd-e0b61f0243d1x1795549105789409450
+
+=== Uso do storage antes da prova (21:23:37Z)
+$ storage_usage
+ms 1795555417779 | KiB: total 328036 bucket 4 multipart 4 temporários 327832 lixeira 104
+
+=== Diretório de prova no nestjs-api (21:23:37Z)
+$ prepare_workdir
+drwx------ 2 node node 4096 Nov 24 21:23 /tmp/fluxo-20261124212322-3c8d00
+
+=== Conta de prova (21:23:38Z)
+$ support account --email fluxo-20261124212322-3c8d00-uploader@proofs.streamtube.test --credentials /tmp/fluxo-20261124212322-3c8d00/uploader.json
+CONTA | fluxo-20261124212322-3c8d00-uploader@proofs.streamtube.test | register 201, confirm-email 204 (link do Mailpit), login 200 | credenciais em /tmp/fluxo-20261124212322-3c8d00/uploader.json (0600)
+
+=== Vídeo MP4 H.264/AAC gerado com o FFmpeg da imagem (21:23:43Z)
+$ generate_video
+comando: ffmpeg -hide_banner -loglevel error -nostdin -y -f lavfi -i testsrc2=size=1280x720:rate=30:duration=180 -f lavfi -i sine=frequency=440:beep_factor=4:sample_rate=48000:duration=180 -map 0:v -map 1:a -c:v libx264 -preset veryfast -b:v 4M -maxrate 4M -bufsize 8M -pix_fmt yuv420p -g 60 -c:a aac -b:a 128k -ac 2 -movflags +faststart /tmp/fluxo-20261124212322-3c8d00/fluxo.mp4
+geração: 31564 ms
+
+=== Tamanho e SHA-256 do vídeo (21:24:15Z)
+$ hash_video
+bf8c00339f1232e781020a1f49ff789dc4ef641458f59fdbabf89d604b57bcd4  fluxo.mp4
+sha256sum: 396 ms
+tamanho: 93092031 bytes
+
+=== Upload pelo cliente de prova, completion e polling até o estado final (21:24:15Z)
+$ upload_until_ready
+INÍCIO | vídeo UaaveBejRrU (draft) | sessão 5c2cee16-31c0-4c31-ab27-b663a4962a57 | 93092031 bytes em 2 partes de 67108864 (última com 25983167) | SHA256
+CHECKSUM | parte 1 | 67108864 bytes | 161.6 ms | antes da assinatura
+CHECKSUM | parte 2 | 25983167 bytes | 74.5 ms | antes da assinatura
+PUT | parte 1 | 67108864 bytes | 586.5 ms | HTTP 200 | tentativa 1
+PUT | parte 2 | 25983167 bytes | 322.3 ms | HTTP 200 | tentativa 1
+ENVIO | 2 partes enviadas e registradas
+COMPLETION | HTTP 202 em 111.7 ms | vídeo processing
+POLLING | processing | consulta 1
+POLLING | ready | consulta 2
+código do cliente: 0 (esperado: 0, com o completion e o polling até o estado final)
+
+=== Conferência do fluxo: metadados, thumbnail, Range e download (21:24:22Z)
+$ flow_check
+INFO | arquivo enviado | observado: 93092031 bytes, SHA-256 bf8c00339f1232e781020a1f49ff789dc4ef641458f59fdbabf89d604b57bcd4 (258.4 ms)
+PASSOU | arquivo enviado: contêiner, codecs e duração (ffprobe) | esperado: mp4 com um fluxo h264 e um aac, ao menos 120 s | observado: mov,mp4,m4a,3gp,3g2,mj2; 2 fluxos; vídeo h264 High 1280x720 yuv420p 30/1; áudio aac LC 48000 Hz 2 canais; 180 s; 4137423 bit/s
+PASSOU | sem preenchimento artificial (caixas de topo do MP4) | esperado: só ftyp, moov e mdat, e no máximo 1 KiB em free ou skip | observado: ftyp 32, moov 194203, free 8, mdat 92897788; free/skip 8 bytes; mdat 99.79% do arquivo
+PASSOU | plano do upload | esperado: 93092031 bytes em 2 partes de 67108864 | observado: 93092031 bytes em 2 partes de 67108864, a última com 25983167
+PASSOU | completion | esperado: HTTP 202 | observado: HTTP 202 em 111.7 ms, vídeo processing
+PASSOU | polling até o estado final | esperado: ready | observado: ready em 2 consultas, 2.02 s depois do 202
+PASSOU | estado, tamanho e tipo pela API | esperado: ready sem erro, 93092031 bytes, video/mp4 | observado: ready sem erro, 93092031 bytes, video/mp4
+PASSOU | duração | esperado: 180 s (ffprobe do arquivo enviado, com 3 casas) | observado: 180 s
+PASSOU | dimensões | esperado: 1280x720 | observado: 1280x720
+PASSOU | codecs | esperado: h264 e aac | observado: h264 e aac
+PASSOU | hasThumbnail | esperado: true | observado: true
+PASSOU | thumbnail_key no banco | esperado: thumbnails/<videoId>/<attemptId>.jpg | observado: thumbnails/<videoId>/ffd058a2-c79e-48b9-8684-b12529f65671.jpg
+PASSOU | media_format no banco | esperado: mov,mp4,m4a,3gp,3g2,mj2 | observado: mov,mp4,m4a,3gp,3g2,mj2
+PASSOU | objeto original no storage (HeadObject) | esperado: 93092031 bytes | observado: 93092031 bytes, video/mp4
+PASSOU | objeto da thumbnail no storage | esperado: image/jpeg, JPEG com SOI e EOI, 1280x720 | observado: image/jpeg, 43057 bytes, JPEG com SOI e EOI, mjpeg 1280x720
+PASSOU | playback-url | esperado: 200, URL assinada no endpoint público, video/mp4 | observado: 200 em 6.7 ms; host localhost:9000; assinada sim; video/mp4; expira em 3600 s
+PASSOU | Range início (bytes=0-1048575) | esperado: 206, Content-Range bytes 0-1048575/93092031, 1048576 bytes iguais aos do arquivo | observado: 206, Content-Range bytes 0-1048575/93092031, Content-Length 1048576, 1048576 bytes iguais, video/mp4, 14.9 ms
+PASSOU | Range meio (bytes=46546015-47594590) | esperado: 206, Content-Range bytes 46546015-47594590/93092031, 1048576 bytes iguais aos do arquivo | observado: 206, Content-Range bytes 46546015-47594590/93092031, Content-Length 1048576, 1048576 bytes iguais, video/mp4, 8.6 ms
+PASSOU | Range fim (bytes=-1048576) | esperado: 206, Content-Range bytes 92043455-93092030/93092031, 1048576 bytes iguais aos do arquivo | observado: 206, Content-Range bytes 92043455-93092030/93092031, Content-Length 1048576, 1048576 bytes iguais, video/mp4, 12.3 ms
+PASSOU | download-url | esperado: 200, URL assinada no endpoint público | observado: 200 em 5.7 ms; host localhost:9000; assinada sim; expira em 300 s
+PASSOU | download completo | esperado: 200, 93092031 bytes, SHA-256 igual ao do arquivo enviado (bf8c00339f1232e781020a1f49ff789dc4ef641458f59fdbabf89d604b57bcd4) | observado: 200, Content-Length 93092031, 93092031 bytes, SHA-256 bf8c00339f1232e781020a1f49ff789dc4ef641458f59fdbabf89d604b57bcd4, 401.1 ms (221.3 MiB/s)
+PASSOU | Content-Disposition do download | esperado: attachment com o nome original (fluxo-20261124212322-3c8d00.mp4) | observado: attachment; filename="fluxo-20261124212322-3c8d00.mp4"; filename*=UTF-8''fluxo-20261124212322-3c8d00.mp4
+FLUXO | 21 itens, 0 com falha
+
+=== Uso do storage com o vídeo (21:24:27Z)
+$ storage_usage
+ms 1795555467851 | KiB: total 419088 bucket 90996 multipart 4 temporários 327892 lixeira 164
+
+=== Evidências (21:24:27Z)
+$ collect_evidence
+  585 client-start.log
+ 2709 events.jsonl
+14304 flow-check.json
+  335 residue-before.txt
+  347 snapshot-before.txt
+  332 state.json
+43057 thumbnail.jpg
+61669 total
+
+=== Limpeza dos recursos de prova (21:24:29Z)
+
+=== Usuário, vídeo, objetos, multipart, job e e-mails de prova (21:24:29Z)
+$ support cleanup --emails fluxo-20261124212322-3c8d00-uploader@proofs.streamtube.test
+LIMPEZA | 1 e-mails de prova | 1 usuários, 1 vídeos, 1 sessões
+LIMPEZA | multiparts abortados: 1 (os demais já estavam concluídos ou abortados)
+LIMPEZA | jobs de processamento removidos: 1
+LIMPEZA prefixo originals/e2ba2b54-f4d1-4c05-81d8-58f21b14b677/: 1 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA prefixo thumbnails/e2ba2b54-f4d1-4c05-81d8-58f21b14b677/: 1 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA | e-mails removidos do Mailpit: 1
+PASSOU | linhas de prova no banco (usuários, vídeos e sessões) | esperado: 0 | observado: 0
+PASSOU | objetos de prova no bucket | esperado: 0 restantes | observado: 0 restantes
+PASSOU | multiparts das sessões de prova | esperado: 0 | observado: 0
+PASSOU | jobs de processamento dos vídeos de prova | esperado: 0 | observado: 0
+PASSOU | e-mails de prova no Mailpit | esperado: 0 | observado: 0
+LIMPEZA | 5 itens, 0 com falha
+
+=== Diretório de prova no nestjs-api (21:24:33Z)
+$ cleanup_workdir
+diretório de prova no nestjs-api presente: não
+
+=== Liberação do disco do storage (purga da lixeira depois da limpeza) (21:24:34Z)
+$ measure_release
+uso logo depois da limpeza: ms 1795555474246 | KiB: total 419064 bucket 4 multipart 4 temporários 418860 lixeira 91132
+aguardando a purga da lixeira: ms 1795555474443 | KiB: total 419064 bucket 4 multipart 4 temporários 418860 lixeira 91132
+aguardando a purga da lixeira: ms 1795555535602 | KiB: total 419112 bucket 4 multipart 4 temporários 418908 lixeira 91180
+aguardando a purga da lixeira: ms 1795555596701 | KiB: total 419160 bucket 4 multipart 4 temporários 418956 lixeira 91228
+aguardando a purga da lixeira: ms 1795555657878 | KiB: total 419208 bucket 4 multipart 4 temporários 419004 lixeira 91276
+lixeira com 56 KiB, 214 s depois da limpeza: ms 1795555688406 | KiB: total 327988 bucket 4 multipart 4 temporários 327784 lixeira 56
+
+=== Retrato depois (só leitura) (21:28:08Z)
+$ snapshot_into <saída>/fluxo-20261124212322-3c8d00/snapshot-after.txt
+SNAPSHOT banco users=0 channels=0 videos=0 upload_sessions=0 upload_parts=0 refresh_tokens=0 verification_tokens=0 | bucket objetos=0 bytes=0 sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | fila video-processing wait=0 active=0 delayed=0 prioritized=0 waiting-children=0 completed=0 failed=0 jobs=0 | mailpit mensagens=8
+
+=== Retrato preservado (antes = depois) (21:28:11Z)
+$ compare_snapshots
+retratos iguais: SNAPSHOT banco users=0 channels=0 videos=0 upload_sessions=0 upload_parts=0 refresh_tokens=0 verification_tokens=0 | bucket objetos=0 bytes=0 sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | fila video-processing wait=0 active=0 delayed=0 prioritized=0 waiting-children=0 completed=0 failed=0 jobs=0 | mailpit mensagens=8
+
+=== Resíduos anteriores do storage preservados (só leitura) (21:28:11Z)
+$ compare_residue
+temporários do Silo em .minio.sys/tmp: 5 diretórios, 327720 KiB
+65544 KiB 70731b75-f39b-4526-aedc-6fa12fad583bx1795548947967467323
+65544 KiB 80115752-ef5f-41e0-9f12-3feff2e419ecx1795548947731336221
+65544 KiB c07d02bb-16b7-4553-b833-f7653e7f8b1bx1795549731540036430
+65544 KiB d9462442-bfb8-4597-80c0-6491370b2508x1795549732611218187
+65544 KiB f963343c-ee2f-4f83-82bd-e0b61f0243d1x1795549105789409450
+resíduos anteriores preservados e nenhum novo: listas iguais antes e depois
+
+=== Espaço livre depois da limpeza (21:28:11Z)
+$ host_disk
+host:    1B-blocks        Used        Avail Mounted on
+host: 269427478528 28168380416 227498426368 /
+host:    1B-blocks         Used       Avail Mounted on
+host: 510987681792 471346016256 39641665536 /mnt/c
+storage: Filesystem          1-blocks        Used     Available Capacity Mounted on
+storage: /dev/sdf       1081101176832 19038912512 1007069908992       2% /data
+
+=== Situação dos passos (21:28:12Z)
+- Estado do ambiente: código 0
+- Versões: código 0
+- API no ar: código 0
+- Espaço livre antes da prova: código 0
+- Retrato antes (só leitura): código 0
+- Resíduos anteriores do storage (só leitura): código 0
+- Uso do storage antes da prova: código 0
+- Diretório de prova no nestjs-api: código 0
+- Conta de prova: código 0
+- Vídeo MP4 H.264/AAC gerado com o FFmpeg da imagem: código 0
+- Tamanho e SHA-256 do vídeo: código 0
+- Upload pelo cliente de prova, completion e polling até o estado final: código 0
+- Conferência do fluxo: metadados, thumbnail, Range e download: código 0
+- Uso do storage com o vídeo: código 0
+- Evidências: código 0
+- Usuário, vídeo, objetos, multipart, job e e-mails de prova: código 0
+- Diretório de prova no nestjs-api: código 0
+- Liberação do disco do storage (purga da lixeira depois da limpeza): código 0
+- Retrato depois (só leitura): código 0
+- Retrato preservado (antes = depois): código 0
+- Resíduos anteriores do storage preservados (só leitura): código 0
+- Espaço livre depois da limpeza: código 0
+código final: 0 (interrupção ou etapa obrigatória: 0; primeira etapa com falha: 0; limpeza: 0)
+log completo: <saída>/fluxo-20261124212322-3c8d00.log
+evidências: <saída>/fluxo-20261124212322-3c8d00

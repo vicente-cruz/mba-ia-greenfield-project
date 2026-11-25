@@ -2,17 +2,28 @@
 
 ## Environment Startup Verification
 
-**Default behavior:** starting the environment means starting **only infrastructure services** (database, mail, etc.) — **never** start the NestJS application server unless the user explicitly asks to run/serve the project (e.g., "rode o projeto", "suba o servidor", "run the app").
+**Default behavior:** starting the environment means starting **only infrastructure services** (database, mail, storage, Redis) — **never** start the NestJS API server unless the user explicitly asks to run/serve the project (e.g., "rode o projeto", "suba o servidor", "run the app"). `docker compose up -d` also starts the `nestjs-api` container, but it only runs `tail -f /dev/null`; the API server is started on demand.
 
-After starting infrastructure, always confirm the containers are up before proceeding:
+**Exception — `video-worker`:** `docker compose up -d` also starts the `video-worker` service, which runs application code (`npm run start:worker:dev`, watch mode). This is intentional (`phase-03-videos/TD-10`, Q-07, D-11): the integration and e2e suites need storage, queue and worker running (R-10, `phase-03-videos/TD-15`). Consequences:
+
+- it recompiles and restarts on every change under `src/` (bind mount);
+- before mutating sources for a red check, stop it with `docker compose stop video-worker`, which is graceful: SIGTERM and up to 200 s for the current job. Restore the sources before starting it again with `docker compose start video-worker`;
+- do not start a second worker by hand next to it.
+
+After starting the environment, always confirm the containers are up before proceeding:
 
 ```bash
-docker compose ps   # all services must show status "running"
+docker compose ps      # db, mailpit, storage, redis: "running (healthy)"; nestjs-api and video-worker: "running"
+docker compose ps -a storage-init   # one-shot: must show "Exited (0)"
 ```
 
-Then verify each infrastructure service is actually ready to accept connections — not just running:
+Then verify each service is actually ready — not just running:
 
 - **PostgreSQL:** `docker compose exec db pg_isready -U streamtube` — expect `accepting connections`
+- **Storage (S3 API):** `docker compose exec storage curl -fsS -o /dev/null -w '%{http_code}\n' http://localhost:9000/minio/health/ready` — expect `200`
+- **Bucket and application credential:** `docker compose ps -a storage-init` — expect `Exited (0)` (it creates the bucket `S3_BUCKET` and the credential restricted to it)
+- **Redis:** `docker compose exec redis redis-cli ping` — expect `PONG`; and `docker compose exec redis redis-cli config get maxmemory-policy` — expect `noeviction` (required by BullMQ)
+- **Video worker:** `docker compose logs video-worker | grep 'video-worker started'` — expect `video-worker started (pid N)`, after the three `video-maintenance.scheduler-registered` events
 
 Only start the NestJS dev server (`npm run start:dev`) when the user **explicitly** asks to run the application — never as part of "start the environment".
 
@@ -31,26 +42,37 @@ docker compose exec nestjs-api npm install
 docker compose exec nestjs-api npm run start:dev
 ```
 
-Services:
-- `nestjs-api` — NestJS API, port `3000`
+Services (all from `compose.yaml`; `nestjs-api` and `video-worker` share the image `streamtube-nestjs-dev`, built from `Dockerfile.dev`):
+- `nestjs-api` — NestJS API, port `3000` (server started on demand)
+- `video-worker` — video processing and maintenance worker (`src/worker.ts`, output in `dist-worker/`); no HTTP port; starts with `docker compose up` (see the exception above)
 - `db` — PostgreSQL 17, port `5432`, database `streamtube`, user/password `streamtube`
+- `mailpit` — SMTP capture used by the auth flows and tests, SMTP port `1025`, web UI port `8025`
+- `storage` — S3-compatible object storage (`pgsty/silo`, community fork of MinIO, pinned by tag and digest), S3 API port `9000`, console port `9001`, volume `storage-data`
+- `storage-init` — one-shot (`pgsty/mc`): creates the private bucket and the application credential, then exits
+- `redis` — Redis 8.8.4 for the BullMQ queues `video-processing` and `video-maintenance`, with `--maxmemory-policy noeviction`, volume `redis-data`; no published port (`redis:6379` inside the Compose network)
+- `proof-browser` — Playwright image for the browser proofs (V-08, V-09); profile `proofs` only, never started with the environment
 
 All verification and teardown commands run on the **host machine**:
 
 ```bash
-# Verify NestJS is running (expect 200 + "Hello World!")
-curl http://localhost:3000
+# Verify NestJS is running, after start:dev (expect 200 + "Hello World!")
+curl --noproxy '*' http://localhost:3000
 
-# Verify PostgreSQL is ready (runs inside the db container)
+# Readiness of the infrastructure (see "Environment Startup Verification")
 docker compose exec db pg_isready -U streamtube
+docker compose exec storage curl -fsS -o /dev/null -w '%{http_code}\n' http://localhost:9000/minio/health/ready
+docker compose exec redis redis-cli ping
 
 # Check container logs
 docker compose logs nestjs-api
+docker compose logs video-worker
 docker compose logs db
 
-# Tear down the entire environment
+# Tear down the entire environment (keeps the named volumes storage-data and redis-data; -v also removes volumes)
 docker compose down
 ```
+
+The host uses a corporate proxy that does not exclude `localhost`: host-side `curl` to published ports needs `--noproxy '*'`, otherwise the proxy answers `503`. Containers do not use the proxy.
 
 ## Commands
 
@@ -73,13 +95,20 @@ npm run lint                             # ESLint with auto-fix
 npm run format                           # Prettier formatting
 ```
 
+### Video worker commands
+
+The `video-worker` service runs `npm run start:worker:dev` (`docker/worker-dev.sh`: `nest start --watch -p tsconfig.worker.json`). Compiled build, inside the container: `npm run build:worker` (emits `dist-worker/worker.js`) and `npm run start:worker`. Lifecycle, on the host: `docker compose stop video-worker` (graceful), `docker compose start video-worker`, and `docker compose kill video-worker` (SIGKILL, only for the manual T-12 check in `README.md`).
+
 ### Host-only commands (Docker / connectivity probes)
 
 ```bash
 docker compose ps
 docker compose logs nestjs-api
+docker compose logs video-worker
 docker compose exec db pg_isready -U streamtube
-curl http://localhost:3000
+docker compose exec storage curl -fsS -o /dev/null -w '%{http_code}\n' http://localhost:9000/minio/health/ready
+docker compose exec redis redis-cli ping
+curl --noproxy '*' http://localhost:3000
 ```
 
 ### Test execution
@@ -88,7 +117,7 @@ Integration and e2e suites share a single test database. They **must** be run wi
 
 ```bash
 docker compose exec nestjs-api npm test -- --runInBand
-docker compose exec nestjs-api npm run test:e2e   # already configured
+docker compose exec nestjs-api npm run test:e2e -- --runInBand
 ```
 
 Parallel execution causes FK violations, deadlocks, and cross-suite contamination because suites truncate or seed shared tables concurrently.

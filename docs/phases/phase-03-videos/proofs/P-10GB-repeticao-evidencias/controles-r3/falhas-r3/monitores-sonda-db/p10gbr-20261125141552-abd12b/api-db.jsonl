@@ -1,0 +1,85 @@
+{"t":1795616169887,"kind":"connect","ms":59.189,"err":false}
+{"t":1795616169947,"kind":"connect","ms":0.092,"err":false}
+{"t":1795616169947,"kind":"query","sql":"SELECT version()","ms":1.438,"err":false}
+{"t":1795616169949,"kind":"query","sql":"SELECT * FROM current_schema()","ms":0.433,"err":false}
+{"t":1795616169959,"kind":"connect","ms":0.038,"err":false}
+{"t":1795616174515,"kind":"connect","ms":0.053,"err":false}
+{"t":1795616174515,"kind":"query","sql":"SELECT \"user\".\"id\" AS \"user_id\", \"user\".\"email\" AS \"user_ema","ms":2.007,"err":false}
+{"t":1795616174588,"kind":"connect","ms":0.071,"err":false}
+{"t":1795616174588,"kind":"query","sql":"START TRANSACTION","ms":0.41,"err":false}
+{"t":1795616174591,"kind":"query","sql":"INSERT INTO \"users\"(\"id\", \"email\", \"password\", \"is_confirmed","ms":1.759,"err":false}
+{"t":1795616174594,"kind":"query","sql":"COMMIT","ms":13.1,"err":false}
+{"t":1795616174607,"kind":"connect","ms":0.037,"err":false}
+{"t":1795616174607,"kind":"query","sql":"START TRANSACTION","ms":0.282,"err":false}
+{"t":1795616174609,"kind":"query","sql":"SELECT \"Channel\".\"id\" AS \"Channel_id\", \"Channel\".\"name\" AS \"","ms":0.655,"err":false}
+{"t":1795616174610,"kind":"query","sql":"INSERT INTO \"channels\"(\"id\", \"name\", \"nickname\", \"descriptio","ms":1.402,"err":false}
+{"t":1795616174612,"kind":"query","sql":"COMMIT","ms":1.684,"err":false}
+{"t":1795616174614,"kind":"connect","ms":0.034,"err":false}
+{"t":1795616174614,"kind":"query","sql":"START TRANSACTION","ms":0.211,"err":false}
+{"t":1795616174615,"kind":"query","sql":"INSERT INTO \"verification_tokens\"(\"id\", \"token_hash\", \"type\"","ms":0.763,"err":false}
+{"t":1795616174615,"kind":"query","sql":"COMMIT","ms":1.834,"err":false}
+{"t":1795616174700,"kind":"connect","ms":0.053,"err":false}
+{"t":1795616174700,"kind":"query","sql":"SELECT DISTINCT \"distinctAlias\".\"VerificationToken_id\" AS \"i","ms":1.111,"err":false}
+{"t":1795616174702,"kind":"query","sql":"SELECT \"VerificationToken\".\"id\" AS \"VerificationToken_id\", \"","ms":0.784,"err":false}
+{"t":1795616174705,"kind":"connect","ms":0.309,"err":false}
+{"t":1795616174706,"kind":"query","sql":"SELECT \"VerificationToken\".\"id\" AS \"VerificationToken_id\", \"","ms":0.457,"err":false}
+{"t":1795616174707,"kind":"query","sql":"START TRANSACTION","ms":0.286,"err":false}
+{"t":1795616174709,"kind":"query","sql":"UPDATE \"verification_tokens\" SET \"used_at\" = $1 WHERE \"id\" I","ms":0.458,"err":false}
+{"t":1795616174710,"kind":"query","sql":"COMMIT","ms":1.533,"err":false}
+{"t":1795616174705,"kind":"connect","ms":8.699,"err":false}
+{"t":1795616174714,"kind":"query","sql":"SELECT \"User\".\"id\" AS \"User_id\", \"User\".\"email\" AS \"User_ema","ms":0.971,"err":false}
+{"t":1795616174715,"kind":"query","sql":"START TRANSACTION","ms":0.213,"err":false}
+{"t":1795616174716,"kind":"query","sql":"UPDATE \"users\" SET \"is_confirmed\" = $1, \"updated_at\" = CURRE","ms":0.503,"err":false}
+{"t":1795616174716,"kind":"query","sql":"COMMIT","ms":1.57,"err":false}
+{"t":1795616174721,"kind":"connect","ms":0.04,"err":false}
+{"t":1795616174721,"kind":"query","sql":"SELECT \"user\".\"id\" AS \"user_id\", \"user\".\"email\" AS \"user_ema","ms":0.692,"err":false}
+{"t":1795616174780,"kind":"connect","ms":0.051,"err":false}
+{"t":1795616174780,"kind":"query","sql":"START TRANSACTION","ms":0.336,"err":false}
+{"t":1795616174781,"kind":"query","sql":"INSERT INTO \"refresh_tokens\"(\"id\", \"token_hash\", \"family\", \"","ms":1.321,"err":false}
+{"t":1795616174782,"kind":"query","sql":"COMMIT","ms":19.316,"err":false}
+{"t":1795616177674,"kind":"connect","ms":0.033,"err":false}
+{"t":1795616177674,"kind":"query","sql":"SELECT \"user\".\"id\" AS \"user_id\", \"user\".\"email\" AS \"user_ema","ms":0.535,"err":false}
+{"t":1795616177741,"kind":"connect","ms":0.075,"err":false}
+{"t":1795616177741,"kind":"query","sql":"START TRANSACTION","ms":0.447,"err":false}
+{"t":1795616177742,"kind":"query","sql":"INSERT INTO \"users\"(\"id\", \"email\", \"password\", \"is_confirmed","ms":0.548,"err":false}
+{"t":1795616177742,"kind":"query","sql":"COMMIT","ms":1.665,"err":false}
+{"t":1795616177744,"kind":"connect","ms":0.019,"err":false}
+{"t":1795616177744,"kind":"query","sql":"START TRANSACTION","ms":0.198,"err":false}
+{"t":1795616177744,"kind":"query","sql":"SELECT \"Channel\".\"id\" AS \"Channel_id\", \"Channel\".\"name\" AS \"","ms":0.593,"err":false}
+{"t":1795616177745,"kind":"query","sql":"INSERT INTO \"channels\"(\"id\", \"name\", \"nickname\", \"descriptio","ms":0.494,"err":false}
+{"t":1795616177746,"kind":"query","sql":"COMMIT","ms":1.548,"err":false}
+{"t":1795616177748,"kind":"connect","ms":0.021,"err":false}
+{"t":1795616177748,"kind":"query","sql":"START TRANSACTION","ms":0.233,"err":false}
+{"t":1795616177748,"kind":"query","sql":"INSERT INTO \"verification_tokens\"(\"id\", \"token_hash\", \"type\"","ms":0.616,"err":false}
+{"t":1795616177749,"kind":"query","sql":"COMMIT","ms":1.614,"err":false}
+{"t":1795616177812,"kind":"connect","ms":0.029,"err":false}
+{"t":1795616177812,"kind":"query","sql":"SELECT DISTINCT \"distinctAlias\".\"VerificationToken_id\" AS \"i","ms":0.946,"err":false}
+{"t":1795616177814,"kind":"query","sql":"SELECT \"VerificationToken\".\"id\" AS \"VerificationToken_id\", \"","ms":0.558,"err":false}
+{"t":1795616177815,"kind":"connect","ms":0.217,"err":false}
+{"t":1795616177815,"kind":"connect","ms":0.042,"err":false}
+{"t":1795616177815,"kind":"query","sql":"SELECT \"VerificationToken\".\"id\" AS \"VerificationToken_id\", \"","ms":0.293,"err":false}
+{"t":1795616177815,"kind":"query","sql":"SELECT \"User\".\"id\" AS \"User_id\", \"User\".\"email\" AS \"User_ema","ms":0.674,"err":false}
+{"t":1795616177815,"kind":"query","sql":"START TRANSACTION","ms":0.465,"err":false}
+{"t":1795616177816,"kind":"query","sql":"START TRANSACTION","ms":0.478,"err":false}
+{"t":1795616177816,"kind":"query","sql":"UPDATE \"verification_tokens\" SET \"used_at\" = $1 WHERE \"id\" I","ms":0.436,"err":false}
+{"t":1795616177816,"kind":"query","sql":"UPDATE \"users\" SET \"is_confirmed\" = $1, \"updated_at\" = CURRE","ms":0.48,"err":false}
+{"t":1795616177817,"kind":"query","sql":"COMMIT","ms":1.516,"err":false}
+{"t":1795616177817,"kind":"query","sql":"COMMIT","ms":2.494,"err":false}
+{"t":1795616177821,"kind":"connect","ms":0.022,"err":false}
+{"t":1795616177822,"kind":"query","sql":"SELECT \"user\".\"id\" AS \"user_id\", \"user\".\"email\" AS \"user_ema","ms":0.403,"err":false}
+{"t":1795616177878,"kind":"connect","ms":0.041,"err":false}
+{"t":1795616177878,"kind":"query","sql":"START TRANSACTION","ms":0.371,"err":false}
+{"t":1795616177879,"kind":"query","sql":"INSERT INTO \"refresh_tokens\"(\"id\", \"token_hash\", \"family\", \"","ms":0.718,"err":false}
+{"t":1795616177880,"kind":"query","sql":"COMMIT","ms":2.147,"err":false}
+{"t":1795616181002,"kind":"connect","ms":0.033,"err":false}
+{"t":1795616181002,"kind":"query","sql":"SELECT \"Channel\".\"id\" AS \"Channel_id\", \"Channel\".\"name\" AS \"","ms":0.617,"err":false}
+{"t":1795616181003,"kind":"connect","ms":0.023,"err":false}
+{"t":1795616181003,"kind":"query","sql":"START TRANSACTION","ms":0.26,"err":false}
+{"t":1795616181003,"kind":"query","sql":"SAVEPOINT public_id_attempt_1","ms":0.229,"err":false}
+{"t":1795616181004,"kind":"query","sql":"INSERT INTO \"videos\"(\"id\", \"public_id\", \"channel_id\", \"statu","ms":1.257,"err":false}
+{"t":1795616181005,"kind":"query","sql":"RELEASE SAVEPOINT public_id_attempt_1","ms":0.249,"err":false}
+{"t":1795616181006,"kind":"query","sql":"INSERT INTO \"upload_sessions\"(\"id\", \"video_id\", \"object_key\"","ms":1.71,"err":false}
+{"t":1795616181008,"kind":"query","sql":"UPDATE \"videos\" SET \"current_upload_session_id\" = $1, \"updat","ms":0.594,"err":false}
+{"t":1795616181009,"kind":"query","sql":"COMMIT","ms":1.629,"err":false}
+{"t":1795616181036,"kind":"connect","ms":0.064,"err":false}
+{"t":1795616181036,"kind":"query","sql":"UPDATE \"upload_sessions\" SET \"status\" = $1, \"upload_id\" = $2","ms":2.936,"err":false}

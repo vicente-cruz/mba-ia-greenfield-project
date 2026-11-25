@@ -1,0 +1,2 @@
+CONTROLE | falha injetada: ps no nestjs-api
+FALHA | lista de processos do nestjs-api (código 2)

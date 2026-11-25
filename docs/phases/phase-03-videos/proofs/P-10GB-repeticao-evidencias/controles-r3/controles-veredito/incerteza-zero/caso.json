@@ -1,0 +1,12 @@
+{
+  "descricao": "o caso da borda lenta com u = 0 (cliente e sondas no mesmo relógio, como na P-10GB original): sem amostras de borda, o veredito é o nominal",
+  "baselineStart": 1800000000000,
+  "baselineEnd": 1800000700000,
+  "uncertaintyMs": 0,
+  "esperado": {
+    "carga_nominal": 320,
+    "bordas": 0,
+    "nominalLatency": "aprovado",
+    "latency": "aprovado"
+  }
+}

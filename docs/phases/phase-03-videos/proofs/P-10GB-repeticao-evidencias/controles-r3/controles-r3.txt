@@ -1,0 +1,57 @@
+=== casos sintéticos do veredito (r3)
+8 casos gerados
+CONTROLE | intervalo-menor-que-a-incerteza | código 0 | latência aprovado (nominal aprovado) | carga certa 320, possível 320 a 322 | p95 10 a 10 ms | p99 10 a 10 ms | (a) aprovado | (b) aprovado | passou
+CONTROLE | borda-lenta-altera-o-veredito | código 1 | latência inconclusivo (nominal aprovado) | carga certa 320, possível 320 a 324 | p95 10 a 10 ms | p99 10 a 600 ms | (a) aprovado | (b) aprovado/reprovado | passou
+CONTROLE | borda-lenta-nao-altera-o-veredito | código 0 | latência aprovado (nominal aprovado) | carga certa 400, possível 400 a 401 | p95 10 a 10 ms | p99 10 a 10 ms | (a) aprovado | (b) aprovado | passou
+CONTROLE | contagem-perto-de-300-altera-a-suficiencia | código 1 | latência inconclusivo (nominal aprovado) | carga certa 296, possível 296 a 302 | p95 10 a 10 ms | p99 10 a 10 ms | (a) inconclusivo/aprovado | (b) inconclusivo/aprovado | passou
+CONTROLE | contagem-perto-de-300-nao-altera-a-suficiencia | código 0 | latência aprovado (nominal aprovado) | carga certa 304, possível 304 a 308 | p95 10 a 10 ms | p99 10 a 10 ms | (a) aprovado | (b) aprovado | passou
+CONTROLE | reprovacao-robusta | código 1 | latência reprovado (nominal reprovado) | carga certa 320, possível 320 a 324 | p95 800 a 800 ms | p99 800 a 800 ms | (a) reprovado | (b) reprovado | passou
+CONTROLE | incerteza-zero | código 0 | latência aprovado (nominal aprovado) | carga certa 320, possível 320 a 320 | p95 10 a 10 ms | p99 10 a 10 ms | (a) aprovado | (b) aprovado | passou
+CONTROLE | base-dentro-da-incerteza | código 1 | latência - (nominal -) | passou
+CONTROLES | 8 de 8 passaram
+=== roteiro r3: 10 modos de falha
+CONTROLE | prepare-pasta | roteiro saiu com 2 | Pastas de prova: código 2 | etapa seguinte iniciada: não | sentinela: não | passou
+  CONTROLE | falha injetada: criação da pasta no nestjs-api
+  FALHA | pasta /tmp/p10gbr-20261125141154-e0aa28 no nestjs-api (código 2)
+CONTROLE | prepare-auxiliar-container | roteiro saiu com 2 | Pastas de prova: código 2 | etapa seguinte iniciada: não | sentinela: não | passou
+  CONTROLE | falha injetada: cópia de monitor-api.cjs para o nestjs-api
+  FALHA | cópia de monitor-api.cjs para o nestjs-api (código 2)
+CONTROLE | prepare-auxiliar-windows | roteiro saiu com 2 | Pastas de prova: código 2 | etapa seguinte iniciada: não | sentinela: não | passou
+  CONTROLE | falha injetada: cópia de vigia-interrupcao.cjs para o Windows
+  FALHA | cópia de vigia-interrupcao.cjs para o Windows (código 2)
+CONTROLE | build | roteiro saiu com 2 | Build da API e JS do cliente e da sonda: código 2 | etapa seguinte iniciada: não | sentinela: não | passou
+  CONTROLE | falha injetada: npm run build
+  FALHA | build da API: código 2
+CONTROLE | tsc | roteiro saiu com 2 | Build da API e JS do cliente e da sonda: código 2 | etapa seguinte iniciada: não | sentinela: não | passou
+  CONTROLE | falha injetada: tsc do cliente e da sonda
+  FALHA | tsc do cliente e da sonda: código 2
+CONTROLE | copia-container | roteiro saiu com 2 | Build da API e JS do cliente e da sonda: código 2 | etapa seguinte iniciada: não | sentinela: não | passou
+  CONTROLE | falha injetada: cópia do JS do container
+  FALHA | cópia de upload-client.js do container: código 2
+CONTROLE | copia-windows | roteiro saiu com 2 | Build da API e JS do cliente e da sonda: código 2 | etapa seguinte iniciada: não | sentinela: não | passou
+  CONTROLE | falha injetada: cópia do JS para o Windows
+  FALHA | cópia de upload-client.js para o Windows: código 2
+CONTROLE | accounts-credenciais | roteiro saiu com 2 | Contas de prova e vídeo de controle: código 2 | etapa seguinte iniciada: não | sentinela: não | passou
+  CONTROLE | falha injetada: cópia das credenciais
+  FALHA | cópia das credenciais do usuário de upload para o Windows (código 2)
+CONTROLE | accounts-control-id | roteiro saiu com 1 | Contas de prova e vídeo de controle: código 1 | etapa seguinte iniciada: não | sentinela: não | passou
+  CONTROLE | falha injetada: leitura do estado do vídeo de controle
+  CONTROLE | vídeo a_KmFyCtILo em draft, sessão 16528e86-1383-40c0-9118-fed841da0a6c, nenhuma parte enviada
+  FALHA | leitura do publicId do vídeo de controle (código 1)
+CONTROLE | monitores-sonda-db | roteiro saiu com 2 | Monitores (VM, PostgreSQL, docker stats e Windows): código 2 | etapa seguinte iniciada: não | sentinela: não | passou
+  CONTROLE | falha injetada: cópia da sonda do banco
+  CONTROLE | vídeo kStI_IzC54s em draft, sessão b6d6a180-5e93-44f5-bc5d-9fdd2f23f53b, nenhuma parte enviada
+  FALHA | cópia da sonda do banco para o db (código 2)
+CONTROLES | 10 de 10 passaram
+=== r2 (controle negativo: falha nas credenciais, base de 5 s)
+CONTROLE | accounts-credenciais | roteiro saiu com 1 | Contas de prova e vídeo de controle: código 0 | etapa seguinte iniciada: sim | sentinela: upload upload  | NÃO PASSOU
+  verificação reprovada: etapa com falha registrada
+  verificação reprovada: etapa seguinte não iniciada
+  verificação reprovada: sentinelas não acionadas
+  CONTROLE | SENTINELA: o início do upload foi alcançado e bloqueado
+  CONTROLE | falha injetada: cópia das credenciais
+  CONTROLE | vídeo mAE1PrYrPY0 em draft, sessão 59410e28-f963-447a-ad5c-913f3afdbb97, nenhuma parte enviada
+CONTROLES | 0 de 1 passaram
+controle negativo r2: código 1 (esperado: não passar)
+cópia temporária da r2 presente: não
+FIM

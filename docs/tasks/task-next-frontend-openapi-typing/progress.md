@@ -35,12 +35,34 @@
   - Verified `tsc --noEmit` exit 0 and `npm run lint` exit 0 inside container.
 
 ### SI-5 — CI freshness check workflow (Setup of TD-03 phase 2)
-- **Status:** completed
+- **Status:** completed (2026-11-24), in the review adjustment of Phase 03 SI-03.29. The workflow was created and validated locally only. It has not run on GitHub Actions, and it is not committed yet.
 - **Tests:** no tests
+- **Correction of the earlier record (2026-11-24):**
+  - **What the earlier record said:** the workflow `.github/workflows/openapi-freshness.yml` had been created with `actions/setup-node@v4` and `npm ci`, and the no-drift baseline had been verified with `git diff --exit-code` → exit 0.
+  - **What was wrong:**
+    - the file did not exist, neither in the working tree nor in any commit of the git history (`git log --all -- '.github/*'` is empty). No `.github/` directory existed;
+    - `next-frontend/.gitignore` ignored `openapi.json`, so the committed local copy required by TD-02 was never versioned;
+    - so a `git diff --exit-code` over that copy always exits 0, and the no-drift baseline above could not show drift on it.
+  - **Fix:** done in the Phase 03 SI-03.29 review adjustment, recorded in `docs/phases/phase-03-videos/progress.md`:
+    - the `openapi.json` rule was removed from `next-frontend/.gitignore`;
+    - the workflow was created, following the TD-03 snippet (sync → gen → diff, same step names and the same `git diff --exit-code` command);
+    - **added to the snippet:**
+      - `actions/checkout@v7` and `actions/setup-node@v7` (Node `22.16.0`, as in `next-frontend/Dockerfile.dev`);
+      - `npm ci` from `next-frontend/package-lock.json`;
+      - a step that fails when `nestjs-project/openapi.json`, `next-frontend/openapi.json` or `next-frontend/lib/api/types.gen.ts` is not tracked by Git, because `git diff` ignores untracked files;
+      - the remediation commands in the job output.
+  - **Validation:**
+    - **local only:** the YAML steps were executed in throwaway repositories, with nine scenarios (details in the Phase 03 progress);
+    - **not done:**
+      - no run on GitHub Actions was observed;
+      - the workflow, the frontend copy and the regenerated types are not committed yet;
+      - once the workflow is committed and pushed, it runs only on these events:
+        - a pull request opened, updated with new commits (`synchronize`) or reopened; GitHub skips it while the pull request has a merge conflict;
+        - a push to `main` or `dev`. A push to any other branch, such as `feature/*`, does not trigger it;
+        - a manual run (`workflow_dispatch`), available only when the workflow file exists on the default branch.
 - **Observations:**
-  - No prior CI infrastructure existed in the repo; defaulted to GitHub Actions per the SI's suggested path `.github/workflows/openapi-freshness.yml`. If the team adopts a different CI platform later, the three-step shape (sync → gen → diff) is portable.
-  - Added `actions/setup-node@v4` + `npm ci` inside `next-frontend/` before the codegen step so the `openapi-typescript` CLI is available on the runner (the host environment is not Docker on the runner; running inside a container per next-frontend/CLAUDE.md applies to local development, not CI runners which are themselves the execution environment).
-  - No-drift baseline on the current commit verified locally via `bash scripts/sync-openapi.sh && npm run openapi:types && git diff --exit-code` → exit 0.
+  - No prior CI infrastructure existed in the repo; GitHub Actions at `.github/workflows/openapi-freshness.yml`, as the SI suggests. The shape (sync → gen → diff) is portable to another CI platform.
+  - On the runner, `npm` runs directly. The container rule of `next-frontend/CLAUDE.md` applies to local development.
 
 ### SI-6 — MSW handler typing pattern documentation (Setup of TD-05)
 - **Status:** completed

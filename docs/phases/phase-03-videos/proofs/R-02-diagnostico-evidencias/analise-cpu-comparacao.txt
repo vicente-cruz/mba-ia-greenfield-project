@@ -1,0 +1,31 @@
+# Conferência dos registros de CPU da API na comparação A×B (só leitura de comparacao/)
+
+## registro t=1795566313070
+- t=1795566309034 | intervalo real desde a coleta anterior 1000 ms | cpuMs (usuário + sistema) 36 | atraso máx do event loop 19.595 ms | faltas maiores acumuladas 130
+- t=1795566310034 | intervalo real desde a coleta anterior 1000 ms | cpuMs (usuário + sistema) 86 | atraso máx do event loop 184.418 ms | faltas maiores acumuladas 130
+- t=1795566313070 | intervalo real desde a coleta anterior 3036 ms | cpuMs (usuário + sistema) 2772 | atraso máx do event loop 2780.824 ms | faltas maiores acumuladas 130
+- t=1795566314070 | intervalo real desde a coleta anterior 1000 ms | cpuMs (usuário + sistema) 94 | atraso máx do event loop 46.268 ms | faltas maiores acumuladas 130
+- t=1795566315071 | intervalo real desde a coleta anterior 1001 ms | cpuMs (usuário + sistema) 20 | atraso máx do event loop 28.492 ms | faltas maiores acumuladas 130
+
+## registro t=1795566378412
+- t=1795566375797 | intervalo real desde a coleta anterior 1000 ms | cpuMs (usuário + sistema) 3 | atraso máx do event loop 10.625 ms | faltas maiores acumuladas 130
+- t=1795566376897 | intervalo real desde a coleta anterior 1100 ms | cpuMs (usuário + sistema) 15 | atraso máx do event loop 245.498 ms | faltas maiores acumuladas 130
+- t=1795566378412 | intervalo real desde a coleta anterior 1515 ms | cpuMs (usuário + sistema) 1407 | atraso máx do event loop 1379.926 ms | faltas maiores acumuladas 130
+- t=1795566379411 | intervalo real desde a coleta anterior 999 ms | cpuMs (usuário + sistema) 320 | atraso máx do event loop 31.621 ms | faltas maiores acumuladas 130
+- t=1795566380411 | intervalo real desde a coleta anterior 1000 ms | cpuMs (usuário + sistema) 30 | atraso máx do event loop 24.92 ms | faltas maiores acumuladas 130
+
+## amostrador (/proc/45489/stat, node dist/main): CPU de usuário e de sistema entre amostras
+Observação: o amostrador também parou nos episódios; o carimbo de cada volta é tirado antes da leitura do /proc, então o consumo pode aparecer numa volta com carimbo anterior ao travamento.
+
+- em volta de 1795566313070:
+  - carimbo  -4758 ms (Δ carimbo 673 ms): usuário +50 ms, sistema +140 ms, faltas maiores +107
+  - carimbo  -4190 ms (Δ carimbo 568 ms): usuário +10 ms, sistema +0 ms, faltas maiores +0
+  - carimbo  -3279 ms (Δ carimbo 911 ms): usuário +2060 ms, sistema +830 ms, faltas maiores +0
+  - carimbo   +839 ms (Δ carimbo 4118 ms): usuário +50 ms, sistema +10 ms, faltas maiores +0
+  - carimbo  +1458 ms (Δ carimbo 619 ms): usuário +10 ms, sistema +10 ms, faltas maiores +0
+  - carimbo  +2084 ms (Δ carimbo 626 ms): usuário +20 ms, sistema +0 ms, faltas maiores +0
+
+- em volta de 1795566378412:
+  - carimbo   +771 ms (Δ carimbo 770 ms): usuário +60 ms, sistema +0 ms, faltas maiores +0
+  - carimbo  +1369 ms (Δ carimbo 598 ms): usuário +10 ms, sistema +0 ms, faltas maiores +0
+  - carimbo  +2072 ms (Δ carimbo 703 ms): usuário +10 ms, sistema +10 ms, faltas maiores +0

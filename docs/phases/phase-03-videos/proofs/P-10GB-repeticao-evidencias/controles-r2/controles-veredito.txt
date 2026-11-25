@@ -1,0 +1,10 @@
+8 casos gerados
+CONTROLE | intervalo-menor-que-a-incerteza | código 0 | latência aprovado (nominal aprovado) | carga certa 320, possível 320 a 322 | p95 10 a 10 ms | p99 10 a 10 ms | (a) aprovado | (b) aprovado | passou
+CONTROLE | borda-lenta-altera-o-veredito | código 1 | latência inconclusivo (nominal aprovado) | carga certa 320, possível 320 a 324 | p95 10 a 10 ms | p99 10 a 600 ms | (a) aprovado | (b) aprovado/reprovado | passou
+CONTROLE | borda-lenta-nao-altera-o-veredito | código 0 | latência aprovado (nominal aprovado) | carga certa 400, possível 400 a 401 | p95 10 a 10 ms | p99 10 a 10 ms | (a) aprovado | (b) aprovado | passou
+CONTROLE | contagem-perto-de-300-altera-a-suficiencia | código 1 | latência inconclusivo (nominal aprovado) | carga certa 296, possível 296 a 302 | p95 10 a 10 ms | p99 10 a 10 ms | (a) inconclusivo/aprovado | (b) inconclusivo/aprovado | passou
+CONTROLE | contagem-perto-de-300-nao-altera-a-suficiencia | código 0 | latência aprovado (nominal aprovado) | carga certa 304, possível 304 a 308 | p95 10 a 10 ms | p99 10 a 10 ms | (a) aprovado | (b) aprovado | passou
+CONTROLE | reprovacao-robusta | código 1 | latência reprovado (nominal reprovado) | carga certa 320, possível 320 a 324 | p95 800 a 800 ms | p99 800 a 800 ms | (a) reprovado | (b) reprovado | passou
+CONTROLE | incerteza-zero | código 0 | latência aprovado (nominal aprovado) | carga certa 320, possível 320 a 320 | p95 10 a 10 ms | p99 10 a 10 ms | (a) aprovado | (b) aprovado | passou
+CONTROLE | base-dentro-da-incerteza | código 1 | latência - (nominal -) | passou
+CONTROLES | 8 de 8 passaram

@@ -1,0 +1,24 @@
+RETOMADA | sessão 0d75c397-56bb-4523-86a5-6823b968b08f active | confirmed: [1,2,3,4,5,6,7,8,9,10,11,12,13,14] | unregistered: [15] | missing: [] | divergent: []
+CHECKSUM | parte 1 | 67108864 bytes | 126 ms | conferência da retomada
+CHECKSUM | parte 2 | 67108864 bytes | 132.3 ms | conferência da retomada
+CHECKSUM | parte 3 | 67108864 bytes | 136.1 ms | conferência da retomada
+CHECKSUM | parte 4 | 67108864 bytes | 133.3 ms | conferência da retomada
+CHECKSUM | parte 5 | 67108864 bytes | 127 ms | conferência da retomada
+CHECKSUM | parte 6 | 67108864 bytes | 165.3 ms | conferência da retomada
+CHECKSUM | parte 7 | 67108864 bytes | 166.6 ms | conferência da retomada
+CHECKSUM | parte 8 | 67108864 bytes | 136.8 ms | conferência da retomada
+CHECKSUM | parte 9 | 67108864 bytes | 139.8 ms | conferência da retomada
+CHECKSUM | parte 10 | 67108864 bytes | 127.4 ms | conferência da retomada
+CHECKSUM | parte 11 | 67108864 bytes | 128 ms | conferência da retomada
+CHECKSUM | parte 12 | 67108864 bytes | 131 ms | conferência da retomada
+CHECKSUM | parte 13 | 67108864 bytes | 132.9 ms | conferência da retomada
+CHECKSUM | parte 14 | 67108864 bytes | 175 ms | conferência da retomada
+CHECKSUM | parte 15 | 60475904 bytes | 120.5 ms | conferência da retomada
+CONFERÊNCIA | 15 partes (1000000000 bytes) recalculadas em 2141.4 ms | file-verifications HTTP 200 match em 13.5 ms
+REENVIO | partes [15]; nenhuma parte confirmed é reenviada
+PUT | parte 15 | 60475904 bytes | 1239.7 ms | HTTP 200 | tentativa 1
+ENVIO | 1 partes reenviadas e registradas
+ESPERA | todas as partes registradas; aguardando liberação do completion
+COMPLETION | HTTP 202 em 75.2 ms | vídeo processing
+POLLING | processing | consulta 1
+POLLING | error MEDIA_INVALID | consulta 2

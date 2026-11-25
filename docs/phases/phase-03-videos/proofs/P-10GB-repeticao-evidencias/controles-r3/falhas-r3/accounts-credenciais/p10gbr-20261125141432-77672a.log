@@ -1,0 +1,177 @@
+
+=== P-10GB repetição (controle-accounts-credenciais) — runId 20261125141432-77672a (14:14:33Z)
+arquivo de 1000000 bytes; 13 instâncias da sonda com espaçamento de 154 ms; base de 600 s; interrupção a 0.5; intervalo antes da retomada: 5 s
+usuários de prova: p10gbr-20261125141432-77672a-uploader@proofs.streamtube.test (upload) e p10gbr-20261125141432-77672a-control@proofs.streamtube.test (dono do vídeo de controle)
+
+=== Estado do ambiente (14:14:33Z)
+$ docker compose ps --format {{.Service}} {{.State}} {{.Health}}
+db running healthy
+mailpit running healthy
+nestjs-api running 
+redis running healthy
+storage running healthy
+video-worker running 
+
+=== API parada antes do roteiro (14:14:33Z)
+$ api_stopped
+processos da API no nestjs-api antes do roteiro: 0 (o roteiro exige 0: ele faz o build e sobe a API)
+
+=== Espaço livre exigido na unidade C: (14:14:33Z)
+$ check_free_space
+livre na unidade C:: 39818252288 bytes; exigido: 29500000000 bytes
+
+=== Versões (14:14:33Z)
+$ versions
+sha256:c20d112390b9a9ce8c11b8af95ad35bcaa62f4759663c09c936cd8d2b511f329 ["pgsty/silo@sha256:c20d112390b9a9ce8c11b8af95ad35bcaa62f4759663c09c936cd8d2b511f329"]
+Docker Engine 29.8.2 (cliente 29.8.2)
+Docker Desktop; kernel 6.6.87.2-microsoft-standard-WSL2; 16 CPUs; 8208449536 bytes de memória na VM
+imagem do nestjs-api e do video-worker: sha256:6b5db062366a60972c02199bbd399758b27ff62ae4974ebd03ebe8b672d23b57 criada 2026-11-18T02:06:47.956302183Z
+Node do container: v25.6.0; Node do Windows: v22.17.0; tsc: Version 5.9.3; Nest CLI: 11.0.16
+docker.exe no Windows: Docker version 29.8.2, build 7fc2dff
+
+=== Espaço livre e VHDX antes da prova (14:14:35Z)
+$ host_disk
+host:    1B-blocks         Used       Avail Mounted on
+host: 510987681792 471168630784 39819051008 /mnt/c
+host: docker_data.vhdx do Docker Desktop: 40853569536 bytes
+disco de dados do Docker: Filesystem          1-blocks        Used     Available Capacity Mounted on
+disco de dados do Docker: /dev/sdf       1081101176832 19039485952 1007069335552       2% /data
+
+=== Retrato antes (só leitura) (14:14:35Z)
+$ snapshot_into <saída>/falhas-r3/accounts-credenciais/p10gbr-20261125141432-77672a/snapshot-before.txt
+SNAPSHOT banco users=0 channels=0 videos=0 upload_sessions=0 upload_parts=0 refresh_tokens=0 verification_tokens=0 | bucket objetos=0 bytes=0 sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | fila video-processing wait=0 active=0 delayed=0 prioritized=0 waiting-children=0 completed=0 failed=0 jobs=0 | mailpit mensagens=8
+
+=== Temporários do Silo antes da prova (só leitura) (14:14:38Z)
+$ residue_into <saída>/falhas-r3/accounts-credenciais/p10gbr-20261125141432-77672a/residue-before.txt
+temporários do Silo em .minio.sys/tmp: 5 diretórios, 327720 KiB
+65544 KiB 70731b75-f39b-4526-aedc-6fa12fad583bx1795548947967467323
+65544 KiB 80115752-ef5f-41e0-9f12-3feff2e419ecx1795548947731336221
+65544 KiB c07d02bb-16b7-4553-b833-f7653e7f8b1bx1795549731540036430
+65544 KiB d9462442-bfb8-4597-80c0-6491370b2508x1795549732611218187
+65544 KiB f963343c-ee2f-4f83-82bd-e0b61f0243d1x1795549105789409450
+
+=== Pastas de prova (14:14:38Z)
+$ prepare
+pastas: /tmp/p10gbr-20261125141432-77672a (nestjs-api), pasta p10gbr-20261125141432-77672a no temporário do Windows, <saída>/falhas-r3/accounts-credenciais/js-20261125141432-77672a
+
+=== Build da API e JS do cliente e da sonda (14:14:39Z)
+$ build_and_compile
+--- build da API (npm run build = nest build; dist/ fora do Git)
+
+> nestjs-project@0.0.1 build
+> nest build
+
+--- cliente e sonda compilados para JS (tsc), uma vez
+JS: 3965b639fa7acd70 043e2b95a654c264 712670275c780413 
+pré-checagem da sonda compilada montada (uso inválido, esperado 64): 64
+
+=== Arquivo de prova no Windows, preparado antes da medição (14:14:48Z)
+$ generate_file
+ARQUIVO | source.bin | 1000000 bytes | sha256 f7f3847c6b6b8ffc8748de429d826697bbde9a97839e1fafecd6d3549e8af0e8 | gerado em 20.7 ms (46.1 MiB/s)
+
+=== Espaço livre com o arquivo de prova (14:14:48Z)
+$ host_disk
+host:    1B-blocks         Used       Avail Mounted on
+host: 510987681792 471170666496 39817015296 /mnt/c
+host: docker_data.vhdx do Docker Desktop: 40853569536 bytes
+disco de dados do Docker: Filesystem          1-blocks        Used     Available Capacity Mounted on
+disco de dados do Docker: /dev/sdf       1081101176832 19039584256 1007069237248       2% /data
+
+=== API sem watch (npm run start:prod) com os monitores (14:14:48Z)
+$ start_api
+API pronta em 3 s; processos: npm run start:prod;sh -c node dist/main;node dist/main;
+API pela porta publicada, do Windows: HTTP 200
+
+=== Contas de prova e vídeo de controle (14:14:51Z)
+$ accounts
+CONTA | p10gbr-20261125141432-77672a-uploader@proofs.streamtube.test | register 201, confirm-email 204 (link do Mailpit), login 200 | credenciais em /tmp/p10gbr-20261125141432-77672a/uploader.json (0600)
+CONTA | p10gbr-20261125141432-77672a-control@proofs.streamtube.test | register 201, confirm-email 204 (link do Mailpit), login 200 | credenciais em /tmp/p10gbr-20261125141432-77672a/control.json (0600)
+CONTROLE | falha injetada: cópia das credenciais
+FALHA | cópia das credenciais do usuário de upload para o Windows (código 2)
+
+=== Limpeza dos recursos de prova (14:14:57Z)
+
+=== Sondas, monitores, cliente, API, containers e pastas temporárias (14:14:57Z)
+$ cleanup_local
+monitores parados
+processos da API restantes: 0
+containers de prova restantes: 0
+diretório no nestjs-api presente: não
+pasta no Windows presente: não
+JS compilado presente: não
+
+=== Usuários, vídeos, objetos, multiparts, jobs e e-mails de prova (14:15:03Z)
+$ support cleanup --emails p10gbr-20261125141432-77672a-uploader@proofs.streamtube.test,p10gbr-20261125141432-77672a-control@proofs.streamtube.test
+LIMPEZA | 2 e-mails de prova | 2 usuários, 0 vídeos, 0 sessões
+LIMPEZA | multiparts abortados: 0 (os demais já estavam concluídos ou abortados)
+LIMPEZA | jobs de processamento removidos: 0
+LIMPEZA | e-mails removidos do Mailpit: 2
+PASSOU | linhas de prova no banco (usuários, vídeos e sessões) | esperado: 0 | observado: 0
+PASSOU | objetos de prova no bucket | esperado: 0 restantes | observado: 0 restantes
+PASSOU | multiparts das sessões de prova | esperado: 0 | observado: 0
+PASSOU | jobs de processamento dos vídeos de prova | esperado: 0 | observado: 0
+PASSOU | e-mails de prova no Mailpit | esperado: 0 | observado: 0
+LIMPEZA | 5 itens, 0 com falha
+
+=== Purga da lixeira do storage depois da limpeza (14:15:06Z)
+$ measure_release
+uso logo depois da limpeza (ms total bucket multipart tmp lixeira usado livre, em KiB): 1795616106866 328084 4 4 327880 152 18593484 983465912
+lixeira do storage com 152 KiB depois de 0 s; uso (ms total bucket multipart tmp lixeira usado livre, em KiB): 1795616107043 328084 4 4 327880 152 18593484 983465912
+purga da lixeira observada em 1 s depois da limpeza
+
+=== Uso do storage depois da limpeza e da purga (14:15:07Z)
+$ storage_usage
+1795616107221 328084 4 4 327880 152 18593484 983465912
+
+=== Retrato depois (só leitura) (14:15:07Z)
+$ snapshot_into <saída>/falhas-r3/accounts-credenciais/p10gbr-20261125141432-77672a/snapshot-after.txt
+SNAPSHOT banco users=0 channels=0 videos=0 upload_sessions=0 upload_parts=0 refresh_tokens=0 verification_tokens=0 | bucket objetos=0 bytes=0 sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | fila video-processing wait=0 active=0 delayed=0 prioritized=0 waiting-children=0 completed=0 failed=0 jobs=0 | mailpit mensagens=8
+
+=== Retrato preservado (antes = depois) (14:15:10Z)
+$ compare_snapshots
+retratos iguais: SNAPSHOT banco users=0 channels=0 videos=0 upload_sessions=0 upload_parts=0 refresh_tokens=0 verification_tokens=0 | bucket objetos=0 bytes=0 sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | fila video-processing wait=0 active=0 delayed=0 prioritized=0 waiting-children=0 completed=0 failed=0 jobs=0 | mailpit mensagens=8
+
+=== Temporários do Silo: anteriores preservados e novos (só leitura) (14:15:10Z)
+$ compare_residue
+temporários do Silo em .minio.sys/tmp: 5 diretórios, 327720 KiB
+65544 KiB 70731b75-f39b-4526-aedc-6fa12fad583bx1795548947967467323
+65544 KiB 80115752-ef5f-41e0-9f12-3feff2e419ecx1795548947731336221
+65544 KiB c07d02bb-16b7-4553-b833-f7653e7f8b1bx1795549731540036430
+65544 KiB d9462442-bfb8-4597-80c0-6491370b2508x1795549732611218187
+65544 KiB f963343c-ee2f-4f83-82bd-e0b61f0243d1x1795549105789409450
+anteriores preservados (mesmo nome e tamanho): 5 de 5; anteriores ausentes ou alterados: 0
+novos, deixados durante a prova: 0 diretórios, 0 KiB
+
+=== Espaço livre depois da limpeza (14:15:10Z)
+$ host_disk
+host:    1B-blocks         Used       Avail Mounted on
+host: 510987681792 471169286144 39818395648 /mnt/c
+host: docker_data.vhdx do Docker Desktop: 40853569536 bytes
+disco de dados do Docker: Filesystem          1-blocks        Used     Available Capacity Mounted on
+disco de dados do Docker: /dev/sdf       1081101176832 19039727616 1007069093888       2% /data
+
+=== Situação dos passos (14:15:10Z)
+- Estado do ambiente: código 0
+- API parada antes do roteiro: código 0
+- Espaço livre exigido na unidade C:: código 0
+- Versões: código 0
+- Espaço livre e VHDX antes da prova: código 0
+- Retrato antes (só leitura): código 0
+- Temporários do Silo antes da prova (só leitura): código 0
+- Pastas de prova: código 0
+- Build da API e JS do cliente e da sonda: código 0
+- Arquivo de prova no Windows, preparado antes da medição: código 0
+- Espaço livre com o arquivo de prova: código 0
+- API sem watch (npm run start:prod) com os monitores: código 0
+- Contas de prova e vídeo de controle: código 2
+- Sondas, monitores, cliente, API, containers e pastas temporárias: código 0
+- Usuários, vídeos, objetos, multiparts, jobs e e-mails de prova: código 0
+- Purga da lixeira do storage depois da limpeza: código 0
+- Uso do storage depois da limpeza e da purga: código 0
+- Retrato depois (só leitura): código 0
+- Retrato preservado (antes = depois): código 0
+- Temporários do Silo: anteriores preservados e novos (só leitura): código 0
+- Espaço livre depois da limpeza: código 0
+código final: 2 (interrupção ou etapa obrigatória: 2; primeira etapa com falha: 2; limpeza: 0)
+log completo: <saída>/falhas-r3/accounts-credenciais/p10gbr-20261125141432-77672a.log
+evidências: <saída>/falhas-r3/accounts-credenciais/p10gbr-20261125141432-77672a

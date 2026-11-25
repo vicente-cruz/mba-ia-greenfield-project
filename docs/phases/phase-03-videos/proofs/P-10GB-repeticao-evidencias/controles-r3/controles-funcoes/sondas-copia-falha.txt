@@ -1,0 +1,2 @@
+CONTROLE | falha injetada: cópia da sonda 3
+FALHA | cópia da sonda 3 para o nestjs-api (código 2)

@@ -1,0 +1,109 @@
+=== R-02 ensaio com API e sondas compiladas — runId 20261125015519-9477cd (01:55:20Z)
+livre em C: 42209726464
+versões: Node do container v25.6.0; Node do Windows v22.17.0; tsc Version 5.9.3; Nest CLI 11.0.16
+--- build da API (npm run build = nest build; dist/ fora do Git)
+$ api npm run build
+
+> nestjs-project@0.0.1 build
+> nest build
+
+--- compilação do cliente e da sonda para JS (tsc), uma vez
+$ api npx tsc --outDir /tmp/r02e-20261125015519-9477cd/js --module nodenext --moduleResolution nodenext --target ES2023 --esModuleInterop --skipLibCheck --strictNullChecks proofs/phase-03/upload-client.ts proofs/phase-03/responsiveness-probe.ts
+JS compilado: 3965b639fa7acd70 043e2b95a654c264 712670275c780413 
+pré-checagem da sonda compilada montada no container (uso inválido, esperado 64): 64
+ARQUIVO | f.bin | 1000000000 bytes | sha256 c22dbd078527c148304458866ddd81bbd63e4bfd117e9a5a4cf8777fbf451e57 | gerado em 3364.8 ms (283.4 MiB/s)
+API pronta em 3 s
+comando da API: NODE_OPTIONS=--require=<preload-v3.js> npm run start:prod (node dist/main); processos: npm run start:prod;sh -c node dist/main;node dist/main;
+$ support account --email r02e-20261125015519-9477cd-uploaderb@proofs.streamtube.test --credentials /tmp/r02e-20261125015519-9477cd/uploaderb.json
+CONTA | r02e-20261125015519-9477cd-uploaderb@proofs.streamtube.test | register 201, confirm-email 204 (link do Mailpit), login 200 | credenciais em /tmp/r02e-20261125015519-9477cd/uploaderb.json (0600)
+$ support account --email r02e-20261125015519-9477cd-control@proofs.streamtube.test --credentials /tmp/r02e-20261125015519-9477cd/control.json
+CONTA | r02e-20261125015519-9477cd-control@proofs.streamtube.test | register 201, confirm-email 204 (link do Mailpit), login 200 | credenciais em /tmp/r02e-20261125015519-9477cd/control.json (0600)
+$ support control-video --credentials /tmp/r02e-20261125015519-9477cd/control.json --state /tmp/r02e-20261125015519-9477cd/control-state.json --file-name r02e-20261125015519-9477cd-control.mp4
+CONTROLE | vídeo 1mV9uV-tkC8 em draft, sessão 839a1b1e-fb8e-4f05-8b33-403912aaf653, nenhuma parte enviada
+relógios: VM 1795571753342..1795571753781, Windows 1795571753579; diferença Windows − VM ≈ 18 ms (incerteza ± 219 ms)
+sondas prontas: 4
+comando das sondas: docker compose run --rm --no-deps -T -v <js>:/r02js:ro --name <nome> nestjs-api node /r02js/responsiveness-probe.js --public-id <id> --instance <i>; processo 1 de uma sonda: node /r02js/responsiveness-probe.js --public-id 1mV9uV-tkC8 --instance 1
+MARCA | memoria | inicio | 1795571766279
+MARCA | memoria | fim | 1795571782413
+MEMÓRIA do Windows com serviços e sondas em execução (referência informativa, não bloqueio): 12 amostras | disponível mín 2410 MB, mediana 2464 MB (abaixo da referência informativa de 4096 MiB) | commit máx 22.11 de 33.05 GB | vmmem 3.50 GB | pagefile 9%
+memória dos containers:
+nestjs-project-db-1 cpu 5.85% mem 35.34MiB / 7.645GiB
+nestjs-project-mailpit-1 cpu 3.69% mem 28.19MiB / 7.645GiB
+nestjs-project-nestjs-api-1 cpu 4.53% mem 290.9MiB / 7.645GiB
+nestjs-project-redis-1 cpu 0.22% mem 9.762MiB / 7.645GiB
+nestjs-project-storage-1 cpu 0.10% mem 123.5MiB / 7.645GiB
+nestjs-project-video-worker-1 cpu 0.73% mem 238.3MiB / 7.645GiB
+r02e-20261125015519-9477cd-probe-4 cpu 0.08% mem 13.75MiB / 7.645GiB
+r02e-20261125015519-9477cd-probe-1 cpu 0.10% mem 13.78MiB / 7.645GiB
+r02e-20261125015519-9477cd-probe-2 cpu 0.08% mem 13.73MiB / 7.645GiB
+r02e-20261125015519-9477cd-probe-3 cpu 0.09% mem 13.75MiB / 7.645GiB
+memória da VM: MemTotal:        8016064 kB MemAvailable:    4645236 kB SwapTotal:       2097152 kB SwapFree:         495916 kB 
+livre em C: 41243541504
+MARCA | R0-repouso | inicio | 1795571782659
+MARCA | R0-repouso | fim | 1795571812830
+MARCA | V1 | inicio | 1795571813179
+$ (Windows) node.exe js/upload-client.js start --file f.bin … --api http://localhost:3000 --concurrency 4 --sign-batch 10 --register-every 4 --part-urls-interval-ms 1100
+INÍCIO | vídeo f2qFvmBx200 (draft) | sessão 0bedcb9c-dd07-4b12-926b-59d1eedb4564 | 1000000000 bytes em 15 partes de 67108864 (última com 60475904) | SHA256
+CHECKSUM | parte 1 | 67108864 bytes | 147.8 ms | antes da assinatura
+CHECKSUM | parte 2 | 67108864 bytes | 224.2 ms | antes da assinatura
+CHECKSUM | parte 3 | 67108864 bytes | 159.5 ms | antes da assinatura
+CHECKSUM | parte 4 | 67108864 bytes | 171.5 ms | antes da assinatura
+CHECKSUM | parte 5 | 67108864 bytes | 172.3 ms | antes da assinatura
+CHECKSUM | parte 6 | 67108864 bytes | 177.9 ms | antes da assinatura
+CHECKSUM | parte 7 | 67108864 bytes | 132.9 ms | antes da assinatura
+CHECKSUM | parte 8 | 67108864 bytes | 416.8 ms | antes da assinatura
+PUT | parte 1 | 67108864 bytes | 1627.7 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 9 | 67108864 bytes | 484.8 ms | antes da assinatura
+CHECKSUM | parte 10 | 67108864 bytes | 169.7 ms | antes da assinatura
+CHECKSUM | parte 11 | 67108864 bytes | 175.3 ms | antes da assinatura
+PUT | parte 4 | 67108864 bytes | 1168 ms | HTTP 200 | tentativa 1
+PUT | parte 3 | 67108864 bytes | 1202.2 ms | HTTP 200 | tentativa 1
+PUT | parte 2 | 67108864 bytes | 1238.5 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 12 | 67108864 bytes | 465.5 ms | antes da assinatura
+PUT | parte 5 | 67108864 bytes | 1233.7 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 13 | 67108864 bytes | 340 ms | antes da assinatura
+CHECKSUM | parte 14 | 67108864 bytes | 227.9 ms | antes da assinatura
+CHECKSUM | parte 15 | 60475904 bytes | 176.1 ms | antes da assinatura
+PUT | parte 7 | 67108864 bytes | 1229.9 ms | HTTP 200 | tentativa 1
+PUT | parte 8 | 67108864 bytes | 1178.8 ms | HTTP 200 | tentativa 1
+PUT | parte 6 | 67108864 bytes | 1317.7 ms | HTTP 200 | tentativa 1
+PUT | parte 9 | 67108864 bytes | 1107.5 ms | HTTP 200 | tentativa 1
+PUT | parte 11 | 67108864 bytes | 818 ms | HTTP 200 | tentativa 1
+PUT | parte 10 | 67108864 bytes | 1142.9 ms | HTTP 200 | tentativa 1
+PUT | parte 12 | 67108864 bytes | 1128.2 ms | HTTP 200 | tentativa 1
+PUT | parte 13 | 67108864 bytes | 1416.8 ms | HTTP 200 | tentativa 1
+PUT | parte 15 | 60475904 bytes | 997.2 ms | HTTP 200 | tentativa 1
+PUT | parte 14 | 67108864 bytes | 1283.4 ms | HTTP 200 | tentativa 1
+ENVIO | 15 partes enviadas e registradas
+COMPLETION | HTTP 202 em 62.8 ms | vídeo processing
+POLLING | processing | consulta 1
+POLLING | error MEDIA_INVALID | consulta 2
+MARCA | V1 | fim | 1795571823451
+registros com event loop >= 500 ms na verificação: 0
+relógios: VM 1795571823831..1795571824338, Windows 1795571824091; diferença Windows − VM ≈ 7 ms (incerteza ± 253 ms)
+=== limpeza
+processos da API restantes: 0
+containers r02e restantes: 0
+$ support cleanup --emails r02e-20261125015519-9477cd-uploaderb@proofs.streamtube.test,r02e-20261125015519-9477cd-control@proofs.streamtube.test
+LIMPEZA | 2 e-mails de prova | 2 usuários, 2 vídeos, 2 sessões
+LIMPEZA | multiparts abortados: 2 (os demais já estavam concluídos ou abortados)
+LIMPEZA | jobs de processamento removidos: 0
+LIMPEZA prefixo originals/f3a1a0c6-de1e-489f-9478-e2986271d4c3/: 0 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA prefixo thumbnails/f3a1a0c6-de1e-489f-9478-e2986271d4c3/: 0 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA prefixo originals/df729215-89ce-4365-b364-e1a132b06e58/: 1 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA prefixo thumbnails/df729215-89ce-4365-b364-e1a132b06e58/: 0 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA | e-mails removidos do Mailpit: 2
+PASSOU | linhas de prova no banco (usuários, vídeos e sessões) | esperado: 0 | observado: 0
+PASSOU | objetos de prova no bucket | esperado: 0 restantes | observado: 0 restantes
+PASSOU | multiparts das sessões de prova | esperado: 0 | observado: 0
+PASSOU | jobs de processamento dos vídeos de prova | esperado: 0 | observado: 0
+PASSOU | e-mails de prova no Mailpit | esperado: 0 | observado: 0
+LIMPEZA | 5 itens, 0 com falha
+diretório no nestjs-api presente: não
+diretório no Windows presente: não
+JS compilado no scratchpad presente: não
+lixeira do storage: 56 KiB depois de 50 s
+temporários do Silo: lista igual, nenhum novo
+retratos iguais
+livre em C: 42154012672
+código: 0

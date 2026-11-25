@@ -1,0 +1,21 @@
+INÍCIO | vídeo nAFk2GUtxUg (draft) | sessão eeff9275-1f1d-4b08-b05a-662fa4b9f084 | 1000000000 bytes em 15 partes de 67108864 (última com 60475904) | SHA256
+CHECKSUM | parte 1 | 67108864 bytes | 129.4 ms | antes da assinatura
+CHECKSUM | parte 2 | 67108864 bytes | 174.7 ms | antes da assinatura
+CHECKSUM | parte 3 | 67108864 bytes | 140.3 ms | antes da assinatura
+CHECKSUM | parte 4 | 67108864 bytes | 127.8 ms | antes da assinatura
+CHECKSUM | parte 5 | 67108864 bytes | 133.9 ms | antes da assinatura
+CHECKSUM | parte 6 | 67108864 bytes | 153.4 ms | antes da assinatura
+CHECKSUM | parte 7 | 67108864 bytes | 139.3 ms | antes da assinatura
+CHECKSUM | parte 8 | 67108864 bytes | 130.4 ms | antes da assinatura
+CHECKSUM | parte 9 | 67108864 bytes | 307.9 ms | antes da assinatura
+CHECKSUM | parte 10 | 67108864 bytes | 304.7 ms | antes da assinatura
+PUT | parte 1 | 67108864 bytes | 1662.8 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 11 | 67108864 bytes | 611.1 ms | antes da assinatura
+PUT | parte 3 | 67108864 bytes | 1106.1 ms | HTTP 200 | tentativa 1
+PUT | parte 2 | 67108864 bytes | 1149.8 ms | HTTP 200 | tentativa 1
+PUT | parte 4 | 67108864 bytes | 1158.5 ms | HTTP 200 | tentativa 1
+PUT | parte 5 | abortado depois de 611.5 ms
+PUT | parte 6 | abortado depois de 53.4 ms
+PUT | parte 7 | abortado depois de 23.7 ms
+CHECKSUM | parte 12 | 67108864 bytes | 223.9 ms | antes da assinatura
+FALHA | Error: EPERM: operation not permitted, rename '<temp-do-windows>\p10gbr-20261125022403-73f57a\progress.json.28908.tmp' -> '<temp-do-windows>\p10gbr-20261125022403-73f57a\progress.json'

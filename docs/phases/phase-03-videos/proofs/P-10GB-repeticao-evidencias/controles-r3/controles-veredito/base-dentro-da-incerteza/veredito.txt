@@ -1,0 +1,1 @@
+Error: a base precisa terminar antes do primeiro intervalo de upload ativo, descontada a incerteza do relógio

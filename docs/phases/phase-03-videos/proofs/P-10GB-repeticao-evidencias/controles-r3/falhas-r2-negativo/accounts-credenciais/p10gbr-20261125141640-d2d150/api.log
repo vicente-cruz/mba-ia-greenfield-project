@@ -1,0 +1,54 @@
+
+> nestjs-project@0.0.1 start:prod
+> node dist/main
+
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +22ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMailerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mThrottlerModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mDiscoveryModule dependencies initialized[39m[38;5;3m +122ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mBullModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +7ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mStorageModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mBullModule dependencies initialized[39m[38;5;3m +20ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMailModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mMailerCoreModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mBullModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmCoreModule dependencies initialized[39m[38;5;3m +47ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTypeOrmModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mChannelsModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mUsersModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +1ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mVideosModule dependencies initialized[39m[38;5;3m +0ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAppController {/}:[39m[38;5;3m +4ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/, GET} route[39m[38;5;3m +3ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/auth}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/register, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/confirm-email, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/resend-confirmation, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/login, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/refresh, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/forgot-password, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/reset-password, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/logout, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/auth/me, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mVideosController {/videos}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/videos, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/videos/:publicId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/videos/:publicId/playback-url, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/videos/:publicId/download-url, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mUploadSessionsController {/videos/:publicId/upload-sessions}:[39m[38;5;3m +0ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/videos/:publicId/upload-sessions, POST} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/videos/:publicId/upload-sessions/:sessionId, GET} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/videos/:publicId/upload-sessions/:sessionId/part-urls, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/videos/:publicId/upload-sessions/:sessionId/file-verifications, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/videos/:publicId/upload-sessions/:sessionId/completion, POST} route[39m[38;5;3m +0ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/videos/:publicId/upload-sessions/:sessionId, DELETE} route[39m[38;5;3m +1ms[39m
+[32m[Nest] 51031  - [39m11/25/2026, 2:16:57 PM [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +3ms[39m

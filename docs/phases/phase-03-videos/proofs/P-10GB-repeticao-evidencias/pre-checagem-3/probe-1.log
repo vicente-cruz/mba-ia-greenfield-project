@@ -1,0 +1,5 @@
+ Container p10gbr-20261125044914-338152-probe-1 Creating 
+ Container p10gbr-20261125044914-338152-probe-1 Created 
+SONDA | instância 1 | GET /videos/OEPeCTzEIoY | intervalo 2000 ms | timeout 5000 ms | renovação 120 s antes de expirar | duração até SIGINT/SIGTERM
+SONDA | fim (SIGTERM) | 63 amostras em 124.3 s | ok 63 | fora de 2xx 0 (429: 0) | timeout 0 | erro de rede 0 | corpo inesperado 0 | renovações 0
+SONDA | latência das respostas ok (ms): p50 3.1 | p95 12.1 | p99 60.7 | máx 60.7
