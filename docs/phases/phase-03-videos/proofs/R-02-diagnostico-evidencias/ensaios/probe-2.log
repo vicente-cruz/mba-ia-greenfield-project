@@ -1,0 +1,5 @@
+ Container r02-20261124234623-4a6b9e-probe-2 Creating 
+ Container r02-20261124234623-4a6b9e-probe-2 Created 
+SONDA | instância 2 | GET /videos/Jt5eztzXCtA | intervalo 2000 ms | timeout 5000 ms | renovação 120 s antes de expirar | duração até SIGINT/SIGTERM
+SONDA | fim (SIGTERM) | 230 amostras em 458.9 s | ok 227 | fora de 2xx 0 (429: 0) | timeout 0 | erro de rede 3 | corpo inesperado 0 | renovações 0
+SONDA | latência das respostas ok (ms): p50 3.4 | p95 12.5 | p99 91.9 | máx 1650.3

@@ -1,0 +1,81 @@
+# OpenAPI contract freshness check (next-frontend-openapi-typing/TD-03, option C).
+#
+# Consumes the versioned backend contract (nestjs-project/openapi.json) as is: it does not
+# regenerate it. It copies the contract into next-frontend (TD-02), regenerates the frontend types
+# and fails when either committed frontend artifact differs from the regenerated one.
+name: OpenAPI freshness
+
+on:
+  pull_request:
+  push:
+    branches: [main, dev]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  openapi-freshness:
+    name: OpenAPI contract and frontend types are up to date
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      # git diff ignores untracked files: without this step, an artifact missing from the commit
+      # would be recreated by the steps below and the drift check would pass.
+      - name: Check that the contract artifacts are versioned
+        run: |
+          untracked=0
+          for artifact in nestjs-project/openapi.json next-frontend/openapi.json next-frontend/lib/api/types.gen.ts; do
+            if ! git ls-files --error-unmatch -- "$artifact" > /dev/null 2>&1; then
+              echo "::error file=${artifact}::${artifact} is not tracked by Git, so drift on it cannot be detected."
+              untracked=1
+            fi
+          done
+          if [ "$untracked" -ne 0 ]; then
+            echo "To version the artifacts, from the repository root:"
+            echo "  docker compose exec nestjs-api npm run openapi:export   # in nestjs-project/, only if nestjs-project/openapi.json is missing"
+            echo "  bash scripts/sync-openapi.sh && (cd next-frontend && npm run openapi:types)"
+            echo "  git add nestjs-project/openapi.json next-frontend/openapi.json next-frontend/lib/api/types.gen.ts"
+            exit 1
+          fi
+          echo "Tracked: nestjs-project/openapi.json, next-frontend/openapi.json, next-frontend/lib/api/types.gen.ts"
+
+      - name: Set up Node.js (same version as next-frontend/Dockerfile.dev)
+        uses: actions/setup-node@v7
+        with:
+          node-version: '22.16.0'
+          cache: npm
+          cache-dependency-path: next-frontend/package-lock.json
+
+      - name: Install frontend dependencies from the lockfile
+        working-directory: next-frontend
+        run: npm ci
+
+      - name: Sync OpenAPI spec into next-frontend
+        run: bash scripts/sync-openapi.sh
+
+      - name: Regenerate types from openapi.json
+        working-directory: next-frontend
+        run: npm run openapi:types
+
+      - name: Fail on drift
+        run: |
+          if ! git diff --exit-code next-frontend/openapi.json next-frontend/lib/api/types.gen.ts; then
+            echo "::error title=OpenAPI drift::next-frontend/openapi.json or next-frontend/lib/api/types.gen.ts is out of date with nestjs-project/openapi.json."
+            echo "To update the artifacts, from the repository root:"
+            echo "  bash scripts/sync-openapi.sh && (cd next-frontend && npm run openapi:types)"
+            echo "In the Docker development environment, run the type generation inside the container:"
+            echo "  bash scripts/sync-openapi.sh && (cd next-frontend && docker compose exec next-frontend npm run openapi:types)"
+            echo "Then commit next-frontend/openapi.json and next-frontend/lib/api/types.gen.ts."
+            exit 1
+          fi
+          echo "No drift: next-frontend/openapi.json and next-frontend/lib/api/types.gen.ts match nestjs-project/openapi.json."

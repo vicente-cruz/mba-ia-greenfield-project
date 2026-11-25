@@ -1,0 +1,2109 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/": {
+      "get": {
+        "operationId": "AppController_getHello",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "App"
+        ]
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "description": "Creates a new user account and sends an email confirmation link.",
+        "operationId": "AuthController_register",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User registered successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "id": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Email already registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Register a new user",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/confirm-email": {
+      "get": {
+        "description": "Validates the confirmation token and marks the user's email as confirmed.",
+        "operationId": "AuthController_confirmEmail",
+        "parameters": [
+          {
+            "name": "token",
+            "required": true,
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Email confirmed successfully"
+          },
+          "400": {
+            "description": "Validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or expired confirmation token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Confirm email address",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/resend-confirmation": {
+      "post": {
+        "description": "Resends the email confirmation link. No-op if the email is already confirmed or does not exist.",
+        "operationId": "AuthController_resendConfirmation",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResendConfirmationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Confirmation email sent (or silently skipped if already confirmed)"
+          },
+          "400": {
+            "description": "Validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Resend confirmation email",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "description": "Authenticates a confirmed user and returns an access + refresh token pair.",
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "access_token": {
+                      "type": "string"
+                    },
+                    "refresh_token": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid email or password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Email not confirmed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Log in",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/refresh": {
+      "post": {
+        "description": "Issues a new access + refresh token pair using a valid refresh token.",
+        "operationId": "AuthController_refresh",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RefreshTokenDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Tokens refreshed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "access_token": {
+                      "type": "string"
+                    },
+                    "refresh_token": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid, expired, or reused refresh token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Refresh tokens",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/forgot-password": {
+      "post": {
+        "description": "Sends a password reset email. No-op if the email is not registered.",
+        "operationId": "AuthController_forgotPassword",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ForgotPasswordDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Reset email sent (or silently skipped if email not found)"
+          },
+          "400": {
+            "description": "Validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Request password reset",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/reset-password": {
+      "post": {
+        "description": "Resets the user password using a valid reset token.",
+        "operationId": "AuthController_resetPassword",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ResetPasswordDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Password reset successfully"
+          },
+          "400": {
+            "description": "Validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or expired reset token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "summary": "Reset password",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "description": "Revokes all active refresh tokens for the authenticated user.",
+        "operationId": "AuthController_logout",
+        "parameters": [],
+        "responses": {
+          "204": {
+            "description": "Logged out successfully"
+          },
+          "401": {
+            "description": "Missing or invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Log out",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/auth/me": {
+      "get": {
+        "description": "Returns the authenticated user's profile from the JWT payload.",
+        "operationId": "AuthController_me",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Current user payload",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "sub": {
+                      "type": "string",
+                      "format": "uuid"
+                    },
+                    "email": {
+                      "type": "string",
+                      "format": "email"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Get current user",
+        "tags": [
+          "auth"
+        ]
+      }
+    },
+    "/videos": {
+      "post": {
+        "description": "Registers the video as a draft in the user's channel and starts a resumable multipart upload, signed part by part afterwards. The video is addressed only by its publicId.",
+        "operationId": "VideosController_create",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UploadDeclarationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Draft video and active upload session",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VideoUploadSessionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The user has no channel (CHANNEL_NOT_FOUND)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "sizeBytes above the maximum video size, informed in the message (VIDEO_TOO_LARGE)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "contentType other than video/mp4 or video/webm (UNSUPPORTED_VIDEO_TYPE)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The storage could not start the upload; no usable session was created (STORAGE_UNAVAILABLE)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Create a video draft and its first upload session",
+        "tags": [
+          "videos"
+        ]
+      }
+    },
+    "/videos/{publicId}": {
+      "get": {
+        "description": "Returns the state of the video, the metadata extracted by the processing and its current upload session, for the owner. It is the route of the polling while the video is processed.",
+        "operationId": "VideosController_getOwnVideo",
+        "parameters": [
+          {
+            "name": "publicId",
+            "required": true,
+            "in": "path",
+            "description": "Public id of the video, 11 base64url characters",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "State, metadata and current upload session of the video",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VideoResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Video not found or of another channel (VIDEO_NOT_FOUND)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Get the state and the metadata of a video",
+        "tags": [
+          "videos"
+        ]
+      }
+    },
+    "/videos/{publicId}/playback-url": {
+      "get": {
+        "description": "Issues a presigned GET of the original on the public storage endpoint, valid for PLAYBACK_URL_TTL_SECONDS, for the owner of a ready video. The video is played by progressive download: the storage answers Range requests with 206 Partial Content and Content-Range, and the bytes never pass through the API. Request a new URL when it expires.",
+        "operationId": "VideosController_getPlaybackUrl",
+        "parameters": [
+          {
+            "name": "publicId",
+            "required": true,
+            "in": "path",
+            "description": "Public id of the video, 11 base64url characters",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Presigned playback URL, its content type and its expiry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PlaybackUrlResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Video not found or of another channel (VIDEO_NOT_FOUND)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The video is not ready (VIDEO_NOT_READY)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Get a short-lived URL to play a ready video",
+        "tags": [
+          "videos"
+        ]
+      }
+    },
+    "/videos/{publicId}/download-url": {
+      "get": {
+        "description": "Issues a presigned GET of the original on the public storage endpoint, valid for DOWNLOAD_URL_TTL_SECONDS, for the owner of a ready video. The storage answers it as an attachment named after the original file name (filename* in UTF-8, with an ASCII fallback in filename; RFC 6266), and the bytes never pass through the API.",
+        "operationId": "VideosController_getDownloadUrl",
+        "parameters": [
+          {
+            "name": "publicId",
+            "required": true,
+            "in": "path",
+            "description": "Public id of the video, 11 base64url characters",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Presigned download URL and its expiry",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DownloadUrlResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Video not found or of another channel (VIDEO_NOT_FOUND)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The video is not ready (VIDEO_NOT_READY)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Get a short-lived URL to download the original of a ready video",
+        "tags": [
+          "videos"
+        ]
+      }
+    },
+    "/videos/{publicId}/upload-sessions": {
+      "post": {
+        "description": "Creates a new upload session, with a new key for the original, for a draft video, and aborts the previous session. The video declares the new file. The new session starts without the file mismatch block of the previous one.",
+        "operationId": "UploadSessionsController_restartSession",
+        "parameters": [
+          {
+            "name": "publicId",
+            "required": true,
+            "in": "path",
+            "description": "Public id of the video, 11 base64url characters",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UploadDeclarationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "New active session, ready to sign parts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/VideoUploadSessionResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Video not found or of another channel (VIDEO_NOT_FOUND)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The video is not a draft (VIDEO_INVALID_STATE), its current session is completing (UPLOAD_SESSION_COMPLETING) or being created (UPLOAD_SESSION_INITIATING), or the activation lost the new session to another restart (UPLOAD_SESSION_NOT_ACTIVE)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "The file is larger than the limit (VIDEO_TOO_LARGE)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Unsupported content type (UNSUPPORTED_VIDEO_TYPE)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Transient failure of the storage (STORAGE_UNAVAILABLE); the new session ends aborted and the video stays a restartable draft",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Restart the upload of a draft video",
+        "tags": [
+          "videos"
+        ]
+      }
+    },
+    "/videos/{publicId}/upload-sessions/{sessionId}": {
+      "get": {
+        "description": "Returns the state of the session and, for an active session, one entry per part of the plan, classified against the parts listed by the storage. It is the base of the resumption.",
+        "operationId": "UploadSessionsController_getSession",
+        "parameters": [
+          {
+            "name": "publicId",
+            "required": true,
+            "in": "path",
+            "description": "Public id of the video, 11 base64url characters",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sessionId",
+            "required": true,
+            "in": "path",
+            "description": "Id of the upload session (UUID)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "State of the session and its classified parts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadSessionResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Video not found or of another channel (VIDEO_NOT_FOUND), or session not found (UPLOAD_SESSION_NOT_FOUND)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "The storage no longer knows the upload of the active session, which is aborted (UPLOAD_SESSION_EXPIRED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The storage could not list the parts (STORAGE_UNAVAILABLE); the session is not changed",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Get the upload session and the state of its parts",
+        "tags": [
+          "videos"
+        ]
+      },
+      "delete": {
+        "description": "Claims the session for abort and aborts its multipart upload in the storage until the storage confirms that it is gone. The video stays in draft and can restart the upload. Repeating the call on an aborted session has no new effect.",
+        "operationId": "UploadSessionsController_abortSession",
+        "parameters": [
+          {
+            "name": "publicId",
+            "required": true,
+            "in": "path",
+            "description": "Public id of the video, 11 base64url characters",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sessionId",
+            "required": true,
+            "in": "path",
+            "description": "Id of the upload session (UUID)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The session is aborted, or stays aborting while a part in transit prevents the confirmation; the sweep concludes it"
+          },
+          "401": {
+            "description": "Missing or invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Video not found or of another channel (VIDEO_NOT_FOUND), or session not found (UPLOAD_SESSION_NOT_FOUND)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "The session is completing (UPLOAD_SESSION_COMPLETING), is being created (UPLOAD_SESSION_INITIATING), or is completed (UPLOAD_SESSION_NOT_ACTIVE)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Abort the upload session",
+        "tags": [
+          "videos"
+        ]
+      }
+    },
+    "/videos/{publicId}/upload-sessions/{sessionId}/part-urls": {
+      "post": {
+        "description": "Signs, in one batch, the PUT of each part with its exact size and its SHA-256, and registers the ETags of the parts already sent. The bytes go from the browser straight to the storage.",
+        "operationId": "UploadSessionsController_requestPartUrls",
+        "parameters": [
+          {
+            "name": "publicId",
+            "required": true,
+            "in": "path",
+            "description": "Public id of the video, 11 base64url characters",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sessionId",
+            "required": true,
+            "in": "path",
+            "description": "Id of the upload session (UUID)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PartUrlsRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Signed parts and the parts whose ETag was registered",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PartUrlsResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed, or a part number above partCount or repeated in the batch (INVALID_PART_NUMBER)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Video not found or of another channel (VIDEO_NOT_FOUND), or session not found (UPLOAD_SESSION_NOT_FOUND)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Session not current or not active (UPLOAD_SESSION_NOT_ACTIVE), checksum different from the registered one or session blocked (UPLOAD_FILE_MISMATCH), or ETag of a part never signed (UPLOAD_PART_NOT_SIGNED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "The session has expired (UPLOAD_SESSION_EXPIRED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Sign upload parts and register ETags",
+        "tags": [
+          "videos"
+        ]
+      }
+    },
+    "/videos/{publicId}/upload-sessions/{sessionId}/file-verifications": {
+      "post": {
+        "description": "Compares the SHA-256 recalculated for every part already received (confirmed and unregistered) with the registered checksums. A different checksum blocks the session until an explicit restart.",
+        "operationId": "UploadSessionsController_verifyFile",
+        "parameters": [
+          {
+            "name": "publicId",
+            "required": true,
+            "in": "path",
+            "description": "Public id of the video, 11 base64url characters",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sessionId",
+            "required": true,
+            "in": "path",
+            "description": "Id of the upload session (UUID)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/FileVerificationsRequestDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The file is the same",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FileVerificationsResponseDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Validation failed, a part outside the plan or without a registered checksum (INVALID_PART_NUMBER), or a part already received left out (UPLOAD_VERIFICATION_INCOMPLETE)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Video not found or of another channel (VIDEO_NOT_FOUND), or session not found (UPLOAD_SESSION_NOT_FOUND)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Session not current or not active (UPLOAD_SESSION_NOT_ACTIVE), or a checksum different from the registered one, which blocks the session, or a session already blocked (UPLOAD_FILE_MISMATCH)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "The session has expired, or the storage no longer knows its upload (UPLOAD_SESSION_EXPIRED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "The storage could not list the parts (STORAGE_UNAVAILABLE); nothing is recorded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Verify the file selected again on the resumption",
+        "tags": [
+          "videos"
+        ]
+      }
+    },
+    "/videos/{publicId}/upload-sessions/{sessionId}/completion": {
+      "post": {
+        "description": "Checks every part against the storage, completes the multipart upload from the registered parts and moves the video to processing, publishing its processing job. Repeating the call after the success returns the current state of the video.",
+        "operationId": "UploadSessionsController_completeUpload",
+        "parameters": [
+          {
+            "name": "publicId",
+            "required": true,
+            "in": "path",
+            "description": "Public id of the video, 11 base64url characters",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "sessionId",
+            "required": true,
+            "in": "path",
+            "description": "Id of the upload session (UUID)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The session was already completed as the current one of the video; current state of the video",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadCompletionResponseDto"
+                }
+              }
+            }
+          },
+          "202": {
+            "description": "This call completed the upload and moved the video to processing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UploadCompletionResponseDto"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Video not found or of another channel (VIDEO_NOT_FOUND), or session not found (UPLOAD_SESSION_NOT_FOUND)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Another completion is in progress (UPLOAD_SESSION_COMPLETING), the completion was reverted by another call (UPLOAD_COMPLETION_INTERRUPTED), a part is missing or has no registered ETag (UPLOAD_INCOMPLETE), the storage differs from the registry (UPLOAD_PART_MISMATCH), the session is blocked (UPLOAD_FILE_MISMATCH), or it is not the current active session (UPLOAD_SESSION_NOT_ACTIVE)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "410": {
+            "description": "The session has expired, or the storage no longer has its upload nor the completed object (UPLOAD_SESSION_EXPIRED)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Transient failure of the storage (STORAGE_UNAVAILABLE); the claim expires and the next call resumes",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "access-token": []
+          }
+        ],
+        "summary": "Complete the upload",
+        "tags": [
+          "videos"
+        ]
+      }
+    }
+  },
+  "info": {
+    "title": "StreamTube API",
+    "description": "API REST do StreamTube",
+    "version": "1.0",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "access-token": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "type": "http"
+      }
+    },
+    "schemas": {
+      "RegisterDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "ResendConfirmationDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "LoginDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "password": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "email",
+          "password"
+        ]
+      },
+      "RefreshTokenDto": {
+        "type": "object",
+        "properties": {
+          "refresh_token": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "refresh_token"
+        ]
+      },
+      "ForgotPasswordDto": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email"
+          }
+        },
+        "required": [
+          "email"
+        ]
+      },
+      "ResetPasswordDto": {
+        "type": "object",
+        "properties": {
+          "token": {
+            "type": "string"
+          },
+          "new_password": {
+            "type": "string",
+            "minLength": 8,
+            "maxLength": 128
+          }
+        },
+        "required": [
+          "token",
+          "new_password"
+        ]
+      },
+      "UploadDeclarationDto": {
+        "type": "object",
+        "properties": {
+          "fileName": {
+            "type": "string",
+            "description": "Name of the file chosen by the user, from 1 to 255 characters.",
+            "minLength": 1,
+            "maxLength": 255
+          },
+          "sizeBytes": {
+            "type": "number",
+            "description": "Size of the whole file in bytes: a safe integer of at least 1.",
+            "minimum": 1,
+            "maximum": 9007199254740991
+          },
+          "contentType": {
+            "type": "string",
+            "description": "MIME type of the file in the `type/subtype` format, e.g. `video/mp4`.",
+            "maxLength": 100
+          }
+        },
+        "required": [
+          "fileName",
+          "sizeBytes",
+          "contentType"
+        ]
+      },
+      "StartedUploadSessionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active"
+            ]
+          },
+          "partSize": {
+            "type": "number",
+            "example": 67108864,
+            "description": "Size in bytes of every part except the last"
+          },
+          "partCount": {
+            "type": "number",
+            "example": 150
+          },
+          "checksumAlgorithm": {
+            "type": "string",
+            "enum": [
+              "SHA256"
+            ]
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Absolute expiry of the session"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "partSize",
+          "partCount",
+          "checksumAlgorithm",
+          "expiresAt"
+        ]
+      },
+      "VideoUploadSessionResponseDto": {
+        "type": "object",
+        "properties": {
+          "publicId": {
+            "type": "string",
+            "example": "dQw4w9WgXcQ",
+            "description": "11 base64url characters"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "draft"
+            ]
+          },
+          "uploadSession": {
+            "$ref": "#/components/schemas/StartedUploadSessionDto"
+          }
+        },
+        "required": [
+          "publicId",
+          "status",
+          "uploadSession"
+        ]
+      },
+      "VideoStatus": {
+        "type": "string",
+        "enum": [
+          "draft",
+          "processing",
+          "ready",
+          "error"
+        ]
+      },
+      "UploadSessionStatus": {
+        "type": "string",
+        "enum": [
+          "initiating",
+          "active",
+          "completing",
+          "completed",
+          "aborting",
+          "aborted"
+        ]
+      },
+      "VideoCurrentUploadSessionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UploadSessionStatus"
+              }
+            ]
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Absolute expiry of the session"
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "expiresAt"
+        ]
+      },
+      "VideoResponseDto": {
+        "type": "object",
+        "properties": {
+          "publicId": {
+            "type": "string",
+            "example": "dQw4w9WgXcQ",
+            "description": "11 base64url characters"
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VideoStatus"
+              }
+            ]
+          },
+          "originalFilename": {
+            "type": "string",
+            "example": "clip.mp4"
+          },
+          "contentType": {
+            "type": "string",
+            "example": "video/mp4"
+          },
+          "sizeBytes": {
+            "type": "integer",
+            "example": 1048576
+          },
+          "durationSeconds": {
+            "type": "number",
+            "nullable": true,
+            "example": 4.04,
+            "description": "Duration in seconds, filled by the processing"
+          },
+          "width": {
+            "type": "integer",
+            "nullable": true,
+            "example": 1280
+          },
+          "height": {
+            "type": "integer",
+            "nullable": true,
+            "example": 720
+          },
+          "videoCodec": {
+            "type": "string",
+            "nullable": true,
+            "example": "h264"
+          },
+          "audioCodec": {
+            "type": "string",
+            "nullable": true,
+            "example": "aac"
+          },
+          "hasThumbnail": {
+            "type": "boolean",
+            "description": "The processing produced a thumbnail"
+          },
+          "errorCode": {
+            "type": "string",
+            "nullable": true,
+            "enum": [
+              "MEDIA_INVALID",
+              "MEDIA_CONTAINER_MISMATCH",
+              "MEDIA_UNSUPPORTED_CODEC",
+              "PROCESSING_FAILED",
+              "PROCESSING_STALLED",
+              "PROCESSING_INCONSISTENT"
+            ],
+            "description": "Filled when the video is in error"
+          },
+          "errorMessage": {
+            "type": "string",
+            "nullable": true
+          },
+          "uploadSession": {
+            "nullable": true,
+            "description": "Current upload session of the video",
+            "type": "object",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/VideoCurrentUploadSessionDto"
+              }
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": [
+          "publicId",
+          "status",
+          "originalFilename",
+          "contentType",
+          "sizeBytes",
+          "durationSeconds",
+          "width",
+          "height",
+          "videoCodec",
+          "audioCodec",
+          "hasThumbnail",
+          "errorCode",
+          "errorMessage",
+          "uploadSession",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "PlaybackUrlResponseDto": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Presigned GET of the original on the public storage endpoint; it answers 206 Partial Content with Content-Range to Range requests"
+          },
+          "contentType": {
+            "type": "string",
+            "example": "video/mp4",
+            "description": "Content type of the video, signed as the response type"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Expiry of the URL: emission + PLAYBACK_URL_TTL_SECONDS"
+          }
+        },
+        "required": [
+          "url",
+          "contentType",
+          "expiresAt"
+        ]
+      },
+      "DownloadUrlResponseDto": {
+        "type": "object",
+        "properties": {
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Presigned GET of the original on the public storage endpoint, answered with Content-Disposition: attachment and the original file name in filename* (UTF-8, RFC 6266)"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Expiry of the URL: emission + DOWNLOAD_URL_TTL_SECONDS"
+          }
+        },
+        "required": [
+          "url",
+          "expiresAt"
+        ]
+      },
+      "UploadPartState": {
+        "type": "string",
+        "enum": [
+          "confirmed",
+          "missing",
+          "divergent",
+          "unregistered"
+        ],
+        "description": "confirmed: present with the registered ETag, checksum and size; missing: absent from the storage; divergent: present but different from the registry; unregistered: present without a registered ETag"
+      },
+      "UploadSessionPartDto": {
+        "type": "object",
+        "properties": {
+          "partNumber": {
+            "type": "number",
+            "example": 1
+          },
+          "state": {
+            "description": "confirmed: present with the registered ETag, checksum and size; missing: absent from the storage; divergent: present but different from the registry; unregistered: present without a registered ETag",
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UploadPartState"
+              }
+            ]
+          },
+          "checksumSha256": {
+            "type": "string",
+            "nullable": true,
+            "description": "Registered SHA-256 of the part, base64 with padding; null when the part was never signed"
+          },
+          "etag": {
+            "type": "string",
+            "nullable": true,
+            "description": "Registered ETag of the part"
+          }
+        },
+        "required": [
+          "partNumber",
+          "state",
+          "checksumSha256",
+          "etag"
+        ]
+      },
+      "UploadSessionResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/UploadSessionStatus"
+              }
+            ]
+          },
+          "expired": {
+            "type": "boolean",
+            "description": "true when the session is active and its expiresAt has passed"
+          },
+          "fileMismatch": {
+            "type": "boolean",
+            "description": "The file check failed, or a part was signed again with another checksum; the session no longer signs parts"
+          },
+          "partSize": {
+            "type": "number",
+            "example": 67108864,
+            "description": "Size in bytes of every part except the last"
+          },
+          "partCount": {
+            "type": "number",
+            "example": 150
+          },
+          "checksumAlgorithm": {
+            "type": "string",
+            "enum": [
+              "SHA256"
+            ]
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Absolute expiry of the session"
+          },
+          "parts": {
+            "description": "One entry per part of the plan, from 1 to partCount, only for an active session; empty in the other states",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UploadSessionPartDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "status",
+          "expired",
+          "fileMismatch",
+          "partSize",
+          "partCount",
+          "checksumAlgorithm",
+          "expiresAt",
+          "parts"
+        ]
+      },
+      "PartToSignDto": {
+        "type": "object",
+        "properties": {
+          "partNumber": {
+            "type": "number",
+            "description": "Number of the part, from 1. The upper bound `partCount` is checked by the service (400 INVALID_PART_NUMBER).",
+            "minimum": 1
+          },
+          "checksumSha256": {
+            "type": "string",
+            "description": "SHA-256 of the exact bytes of the part, in base64 with padding (44 characters)."
+          }
+        },
+        "required": [
+          "partNumber",
+          "checksumSha256"
+        ]
+      },
+      "CompletedPartDto": {
+        "type": "object",
+        "properties": {
+          "partNumber": {
+            "type": "number",
+            "description": "Number of a part whose checksum is already registered.",
+            "minimum": 1
+          },
+          "etag": {
+            "type": "string",
+            "description": "ETag read from the response of the PUT of the part.",
+            "minLength": 1,
+            "maxLength": 255
+          }
+        },
+        "required": [
+          "partNumber",
+          "etag"
+        ]
+      },
+      "PartUrlsRequestDto": {
+        "type": "object",
+        "properties": {
+          "parts": {
+            "description": "Parts to sign, up to 50.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/PartToSignDto"
+            }
+          },
+          "completedParts": {
+            "description": "Parts already sent, with the ETag of their PUT, up to 150.",
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CompletedPartDto"
+            }
+          }
+        }
+      },
+      "PartUploadHeadersDto": {
+        "type": "object",
+        "properties": {
+          "x-amz-checksum-sha256": {
+            "type": "string",
+            "description": "Declared SHA-256 of the part, base64 with padding"
+          }
+        },
+        "required": [
+          "x-amz-checksum-sha256"
+        ]
+      },
+      "SignedPartDto": {
+        "type": "object",
+        "properties": {
+          "partNumber": {
+            "type": "number",
+            "example": 150
+          },
+          "url": {
+            "type": "string",
+            "description": "Presigned UploadPart URL on the public storage endpoint"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "PUT"
+            ]
+          },
+          "expectedSize": {
+            "type": "number",
+            "example": 779264,
+            "description": "Exact number of bytes of the body, sent as a Blob or an ArrayBuffer; any other size is refused by the storage"
+          },
+          "headers": {
+            "$ref": "#/components/schemas/PartUploadHeadersDto"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Signing time plus UPLOAD_PART_URL_TTL_SECONDS"
+          }
+        },
+        "required": [
+          "partNumber",
+          "url",
+          "method",
+          "expectedSize",
+          "headers",
+          "expiresAt"
+        ]
+      },
+      "PartUrlsResponseDto": {
+        "type": "object",
+        "properties": {
+          "parts": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/SignedPartDto"
+            }
+          },
+          "registeredParts": {
+            "example": [
+              1,
+              2
+            ],
+            "description": "Parts whose ETag was registered by this request",
+            "type": "array",
+            "items": {
+              "type": "number"
+            }
+          }
+        },
+        "required": [
+          "parts",
+          "registeredParts"
+        ]
+      },
+      "RecalculatedPartChecksumDto": {
+        "type": "object",
+        "properties": {
+          "partNumber": {
+            "type": "number",
+            "description": "Number of the part, from 1. The plan (`partCount`) and the registered checksum are checked by the service (400 INVALID_PART_NUMBER).",
+            "minimum": 1
+          },
+          "checksumSha256": {
+            "type": "string",
+            "description": "SHA-256 recalculated from the exact bytes of the part of the file selected again, in base64 with padding (44 characters)."
+          }
+        },
+        "required": [
+          "partNumber",
+          "checksumSha256"
+        ]
+      },
+      "FileVerificationsRequestDto": {
+        "type": "object",
+        "properties": {
+          "parts": {
+            "description": "Parts already received by the storage, up to 150, each once. An empty list is valid when no part was received.",
+            "uniqueItems": true,
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/RecalculatedPartChecksumDto"
+            }
+          }
+        },
+        "required": [
+          "parts"
+        ]
+      },
+      "FileVerificationsResponseDto": {
+        "type": "object",
+        "properties": {
+          "result": {
+            "type": "string",
+            "enum": [
+              "match"
+            ]
+          },
+          "verifiedParts": {
+            "type": "number",
+            "example": 2,
+            "description": "Number of parts whose recalculated checksum matched the registered one; 0 when no part was received"
+          }
+        },
+        "required": [
+          "result",
+          "verifiedParts"
+        ]
+      },
+      "UploadCompletionResponseDto": {
+        "type": "object",
+        "properties": {
+          "publicId": {
+            "type": "string",
+            "example": "dQw4w9WgXcQ",
+            "description": "11 base64url characters"
+          },
+          "status": {
+            "enum": [
+              "processing",
+              "ready",
+              "error"
+            ],
+            "type": "string",
+            "description": "Current state of the video; always processing in the 202 answer"
+          }
+        },
+        "required": [
+          "publicId",
+          "status"
+        ]
+      },
+      "ApiErrorEnvelope": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "number",
+            "example": 401
+          },
+          "error": {
+            "type": "string",
+            "example": "INVALID_CREDENTIALS"
+          },
+          "message": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            ],
+            "example": "Invalid email or password"
+          },
+          "code": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "required": [
+          "statusCode",
+          "error",
+          "message"
+        ]
+      }
+    }
+  }
+}

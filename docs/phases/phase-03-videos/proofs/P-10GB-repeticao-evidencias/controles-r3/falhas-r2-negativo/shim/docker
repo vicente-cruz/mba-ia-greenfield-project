@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+# Shim de controle: falha só o comando escolhido em P10GB_CONTROLE_FALHA; o resto vai ao docker real.
+case "${P10GB_CONTROLE_FALHA:-}:$*" in
+  build:*"exec -T nestjs-api npm run build"*) echo "CONTROLE | falha injetada: npm run build" >&2; exit 2 ;;
+  tsc:*"exec -T nestjs-api npx tsc --outDir"*) echo "CONTROLE | falha injetada: tsc do cliente e da sonda" >&2; exit 2 ;;
+  copia-container:*"exec -T nestjs-api cat /tmp/p10gbr-"*"/js/upload-client.js") echo "CONTROLE | falha injetada: cópia do JS do container" >&2; exit 2 ;;
+  prepare-pasta:*"exec -T nestjs-api sh -c umask 077 && mkdir -p"*) echo "CONTROLE | falha injetada: criação da pasta no nestjs-api" >&2; exit 2 ;;
+  prepare-auxiliar-container:*"exec -T nestjs-api sh -c cat > '/tmp/p10gbr-"*"/monitor-api.cjs'") echo "CONTROLE | falha injetada: cópia de monitor-api.cjs para o nestjs-api" >&2; exit 2 ;;
+  accounts-credenciais:*"exec -T nestjs-api cat /tmp/p10gbr-"*"/uploader.json") echo "CONTROLE | falha injetada: cópia das credenciais" >&2; exit 2 ;;
+  accounts-control-id:*"exec -T nestjs-api cat /tmp/p10gbr-"*"/control-state.json") echo "CONTROLE | falha injetada: leitura do estado do vídeo de controle" >&2; exit 2 ;;
+  monitores-sonda-db:*"exec -T db sh -c cat > /tmp/p10gbr-"*".sonda-db.sh") echo "CONTROLE | falha injetada: cópia da sonda do banco" >&2; exit 2 ;;
+  api-ps:*"exec -T nestjs-api ps -eo args") echo "CONTROLE | falha injetada: ps no nestjs-api" >&2; exit 2 ;;
+  versoes:*"image inspect --format imagem do nestjs-api"*) echo "CONTROLE | falha injetada: imagem do nestjs-api" >&2; exit 2 ;;
+  residuos:*"exec -T storage sh -c cd /data/.minio.sys/tmp"*) echo "CONTROLE | falha injetada: temporários do Silo" >&2; exit 2 ;;
+  uso-storage:*"exec -T storage sh -c t="*) echo "CONTROLE | falha injetada: uso do storage" >&2; exit 2 ;;
+  copia-eventos:*"exec -T nestjs-api sh -c cat > '/tmp/p10gbr-controles-funcoes/events.jsonl'") echo "CONTROLE | falha injetada: cópia dos eventos do cliente" >&2; exit 2 ;;
+  copia-sonda:*"exec -T nestjs-api sh -c cat > '/tmp/p10gbr-controles-funcoes/probe-3.csv'") echo "CONTROLE | falha injetada: cópia da sonda 3" >&2; exit 2 ;;
+  copia-veredito:*"exec -T nestjs-api cat /tmp/p10gbr-controles-funcoes/latency-verdict.json") echo "CONTROLE | falha injetada: cópia do veredito" >&2; exit 2 ;;
+esac
+exec "/usr/bin/docker" "$@"

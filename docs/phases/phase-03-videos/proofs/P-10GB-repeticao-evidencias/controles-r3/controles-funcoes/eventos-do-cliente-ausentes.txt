@@ -1,0 +1,1 @@
+FALHA | events.jsonl do cliente ausente ou vazio (código 1)

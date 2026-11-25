@@ -1,0 +1,2 @@
+sondas em execução na medição: 0 de 13
+FALHA | a medição de memória exige todas as 13 sondas em execução

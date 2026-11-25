@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Sentinela: a geração do arquivo de prova nunca roda num controle de falha.
+case " $* " in
+  *" generate "*)
+    echo "CONTROLE | SENTINELA: a geração do arquivo de prova foi alcançada e bloqueada" >&2
+    echo alcancada >"${P10GB_CONTROLE_SENTINELA:?}"
+    exit 99 ;;
+esac
+exec "/mnt/c/ProgramsDeveloper/nodejs/node.exe" "$@"

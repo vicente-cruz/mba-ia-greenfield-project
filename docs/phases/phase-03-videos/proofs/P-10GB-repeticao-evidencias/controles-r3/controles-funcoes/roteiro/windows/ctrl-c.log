@@ -1,0 +1,4 @@
+1795582946755 armado: esperando ctrl-c.trigger
+1795582953023 gatilho visto
+1795582953128 AttachConsole(30404): True (187)
+1795582953173 GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0): True

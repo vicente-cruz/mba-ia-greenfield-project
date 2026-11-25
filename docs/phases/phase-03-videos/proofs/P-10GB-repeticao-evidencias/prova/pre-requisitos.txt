@@ -1,0 +1,41 @@
+=== Pré-requisitos da prova formal (r3) — 2026-11-25T14:21:47Z
+--- hashes da r3
+proofs/phase-03/p10gb-repeticao-roteiro.sh: OK
+proofs/phase-03/p10gb-repeticao/amostrador-vm.sh: OK
+proofs/phase-03/p10gb-repeticao/controles-veredito.py: OK
+proofs/phase-03/p10gb-repeticao/controles.sh: OK
+proofs/phase-03/p10gb-repeticao/ctrl-c.ps1: OK
+proofs/phase-03/p10gb-repeticao/eventos-relogio-vm.py: OK
+proofs/phase-03/p10gb-repeticao/iniciar-windows.ps1: OK
+proofs/phase-03/p10gb-repeticao/monitor-api.cjs: OK
+proofs/phase-03/p10gb-repeticao/monitor-windows.ps1: OK
+proofs/phase-03/p10gb-repeticao/relogio.cjs: OK
+proofs/phase-03/p10gb-repeticao/sonda-db.sh: OK
+proofs/phase-03/p10gb-repeticao/vigia-interrupcao.cjs: OK
+proofs/phase-03/upload-client.ts: OK
+proofs/phase-03/responsiveness-probe.ts: OK
+proofs/phase-03/upload-proof-support.ts: OK
+divergentes: 0
+--- ambiente
+db running healthy
+mailpit running healthy
+nestjs-api running 
+redis running healthy
+storage running healthy
+video-worker running 
+storage-init Exited (0) 43 hours ago
+/var/run/postgresql:5432 - accepting connections
+storage 200
+PONG
+video-worker started (ocorrências no log): 58
+processos da API no nestjs-api: 0
+containers p10gbr: 0
+outras provas ou suítes em execução no nestjs-api: 0
+--- espaço e Windows
+livre em C:: 39805775872 bytes (exigido: 29500000000)
+node.exe v22.17.0; powershell 5.1.26100.9818; Docker version 29.8.2, build 7fc2dff
+--- lixeira do storage
+lixeira (KiB): 256
+--- type-check e ESLint dos scripts de prova
+tsc --noEmit: 0
+eslint (sem --fix): 0

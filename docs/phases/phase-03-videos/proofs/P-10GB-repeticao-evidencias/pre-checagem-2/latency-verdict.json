@@ -1,0 +1,187 @@
+{
+  "phases": {
+    "baseline": {
+      "start": "2026-11-25T04:43:08.866Z",
+      "end": "2026-11-25T04:45:10.798Z",
+      "seconds": 121.932,
+      "samples": 732,
+      "ok": 732,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": 2.89,
+      "p95": 4.51,
+      "p99": 6.02,
+      "max": 44.92,
+      "byInstance": {
+        "1": 61,
+        "2": 61,
+        "3": 61,
+        "4": 61,
+        "5": 61,
+        "6": 61,
+        "7": 61,
+        "8": 61,
+        "9": 61,
+        "10": 61,
+        "11": 61,
+        "12": 61
+      }
+    },
+    "load": {
+      "intervals": [
+        {
+          "start": "2026-11-25T04:45:12.904Z",
+          "end": "2026-11-25T04:45:20.455Z",
+          "seconds": 7.551
+        },
+        {
+          "start": "2026-11-25T04:45:32.824Z",
+          "end": "2026-11-25T04:45:36.173Z",
+          "seconds": 3.349
+        },
+        {
+          "start": "2026-11-25T04:45:44.979Z",
+          "end": "2026-11-25T04:45:44.863Z",
+          "seconds": -0.116
+        }
+      ],
+      "seconds": 10.784,
+      "samples": 68,
+      "ok": 68,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": 4.05,
+      "p95": 13.36,
+      "p99": 44.27,
+      "max": 44.27,
+      "byInstance": {
+        "1": 6,
+        "2": 6,
+        "3": 4,
+        "4": 4,
+        "5": 6,
+        "6": 6,
+        "7": 6,
+        "8": 6,
+        "9": 6,
+        "10": 6,
+        "11": 6,
+        "12": 6
+      }
+    },
+    "warmup": {
+      "samples": 16,
+      "ok": 16,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": 9.93,
+      "p95": 22.09,
+      "p99": 22.09,
+      "max": 22.09,
+      "byInstance": {
+        "1": 2,
+        "2": 2,
+        "3": 2,
+        "4": 2,
+        "5": 1,
+        "6": 1,
+        "7": 1,
+        "8": 1,
+        "9": 1,
+        "10": 1,
+        "11": 1,
+        "12": 1
+      }
+    },
+    "outside": {
+      "samples": 194,
+      "ok": 194,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": 3.51,
+      "p95": 6.33,
+      "p99": 7.81,
+      "max": 12.84,
+      "byInstance": {
+        "1": 16,
+        "2": 16,
+        "3": 17,
+        "4": 17,
+        "5": 16,
+        "6": 16,
+        "7": 16,
+        "8": 16,
+        "9": 16,
+        "10": 16,
+        "11": 16,
+        "12": 16
+      }
+    },
+    "all": {
+      "samples": 1010,
+      "ok": 1010,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": 3.06,
+      "p95": 6.04,
+      "p99": 12.84,
+      "max": 44.92,
+      "byInstance": {
+        "1": 85,
+        "2": 85,
+        "3": 84,
+        "4": 84,
+        "5": 84,
+        "6": 84,
+        "7": 84,
+        "8": 84,
+        "9": 84,
+        "10": 84,
+        "11": 84,
+        "12": 84
+      }
+    }
+  },
+  "instances": 12,
+  "minPhaseSamples": 300,
+  "enoughSamples": false,
+  "criteria": {
+    "a": {
+      "verdict": "inconclusivo",
+      "thresholdMs": 54.51,
+      "loadP95Ms": 13.36
+    },
+    "b": {
+      "verdict": "inconclusivo",
+      "loadP95Ms": 13.36,
+      "loadP99Ms": 44.27
+    },
+    "c": {
+      "verdict": "aprovado",
+      "samples": 1010,
+      "failures": 0,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0
+    }
+  },
+  "latency": "inconclusivo",
+  "recalculatedInstances": 56
+}

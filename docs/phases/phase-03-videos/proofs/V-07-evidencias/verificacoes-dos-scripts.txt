@@ -1,0 +1,87 @@
+=== runId 20261124192353-734e1e
+SNAPSHOT banco users=0 channels=0 videos=0 upload_sessions=0 upload_parts=0 refresh_tokens=0 verification_tokens=0 | bucket objetos=0 bytes=0 sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | fila video-processing wait=0 active=0 delayed=0 prioritized=0 waiting-children=0 completed=0 failed=0 jobs=0 | mailpit mensagens=8
+=== 1. uso inválido
+RESULTADO | cliente com subcomando inválido | esperado: 64 | observado: 64 | PASSOU
+RESULTADO | cliente sem --file/--credentials | esperado: 64 | observado: 64 | PASSOU
+RESULTADO | sonda sem --public-id | esperado: 64 | observado: 64 | PASSOU
+RESULTADO | limpeza com e-mail que não é de prova | esperado: 64 | observado: 64 | PASSOU
+=== 2. preparo
+CONTA | v07chk-20261124192353-734e1e-uploader@proofs.streamtube.test | register 201, confirm-email 204 (link do Mailpit), login 200 | credenciais em /tmp/v07chk-20261124192353-734e1e/u.json (0600)
+CONTA | v07chk-20261124192353-734e1e-control@proofs.streamtube.test | register 201, confirm-email 204 (link do Mailpit), login 200 | credenciais em /tmp/v07chk-20261124192353-734e1e/c.json (0600)
+CONTROLE | vídeo CZPOC-fsk3Q em draft, sessão 58e035e1-e7fe-498b-992a-2617d26f48cd, nenhuma parte enviada
+modo das credenciais: 600
+ARQUIVO | f.bin | 300000000 bytes | sha256 27501e7aa56dc620b32c104d97fe43f9e06bc46bbda808d4919ce39270b4c166 | gerado em 1128 ms (253.6 MiB/s)
+=== 3. SIGTERM com renovação forçada (margem de 890 s num token de 900 s)
+VIGIA | SIGTERM enviado ao cliente (pid 3650) com 4 de 5 partes com PUT concluído (limite: 2) | PUT concluído: [1,2,3,4] | registradas: [] | em andamento: [5]
+TOKEN | renovado por POST /auth/refresh em 118.2 ms | expirava 2026-11-24T19:39:11.000Z | agora expira 2026-11-24T19:39:36.000Z
+INÍCIO | vídeo QonIGWCnf7k (draft) | sessão d3339a84-1cc3-4e3f-8139-f78153a5194f | 300000000 bytes em 5 partes de 67108864 (última com 31564544) | SHA256
+CHECKSUM | parte 1 | 67108864 bytes | 289.2 ms | antes da assinatura
+CHECKSUM | parte 2 | 67108864 bytes | 251.6 ms | antes da assinatura
+CHECKSUM | parte 3 | 67108864 bytes | 232.2 ms | antes da assinatura
+CHECKSUM | parte 4 | 67108864 bytes | 223.8 ms | antes da assinatura
+CHECKSUM | parte 5 | 31564544 bytes | 120.7 ms | antes da assinatura
+PUT | parte 4 | 67108864 bytes | 7407.3 ms | HTTP 200 | tentativa 1
+PUT | parte 3 | 67108864 bytes | 7419.2 ms | HTTP 200 | tentativa 1
+PUT | parte 2 | 67108864 bytes | 7426 ms | HTTP 200 | tentativa 1
+PUT | parte 1 | 67108864 bytes | 7431.8 ms | HTTP 200 | tentativa 1
+INTERRUPÇÃO | SIGTERM | PUT concluído: [1,2,3,4] | registradas: [] | em andamento: [5]
+PUT | parte 5 | abortado depois de 60 ms
+FIM | interrompido por SIGTERM
+RESULTADO | código do cliente com SIGTERM | esperado: 143 | observado: 143 | PASSOU
+RESULTADO | refresh token persistido mudou depois da renovação | esperado: diferente | observado: diferente | PASSOU
+=== 4. retomada em outro processo, com o refresh token persistido
+TOKEN | renovado por POST /auth/refresh em 61.2 ms | expirava 2026-11-24T19:39:36.000Z | agora expira 2026-11-24T19:40:00.000Z
+RETOMADA | sessão d3339a84-1cc3-4e3f-8139-f78153a5194f active | confirmed: [1,2,3,4] | unregistered: [] | missing: [5] | divergent: []
+CHECKSUM | parte 1 | 67108864 bytes | 152.5 ms | conferência da retomada
+CHECKSUM | parte 2 | 67108864 bytes | 165.9 ms | conferência da retomada
+CHECKSUM | parte 3 | 67108864 bytes | 148.2 ms | conferência da retomada
+CHECKSUM | parte 4 | 67108864 bytes | 145 ms | conferência da retomada
+CONFERÊNCIA | 4 partes (268435456 bytes) recalculadas em 613.2 ms | file-verifications HTTP 200 match em 36.5 ms
+REENVIO | partes [5]; nenhuma parte confirmed é reenviada
+CHECKSUM | parte 5 | 31564544 bytes | 60.2 ms | antes da assinatura
+PUT | parte 5 | 31564544 bytes | 336.1 ms | HTTP 200 | tentativa 1
+ENVIO | 1 partes reenviadas e registradas
+COMPLETION | HTTP 202 em 69 ms | vídeo processing
+POLLING | processing | consulta 1
+POLLING | error MEDIA_INVALID | consulta 2
+RESULTADO | código da retomada | esperado: 0 | observado: 0 | PASSOU
+RESULTADO | renovações por POST /auth/refresh registradas | esperado: >= 2, todas refresh | observado: 2 (['refresh']), por segmento ['resume', 'start'] | PASSOU
+RESULTADO | chamadas com 401 ou 429 | esperado: 0 | observado: 0 | PASSOU
+RESULTADO | partes confirmed reenviadas | esperado: nenhuma | observado: nenhuma (confirmed [1, 2, 3, 4], reenviadas [5]) | PASSOU
+RESULTADO | estado final do vídeo sintético | esperado: error MEDIA_INVALID | observado: error MEDIA_INVALID | PASSOU
+RESULTADO | eventos sem URL assinada, JWT ou senha | esperado: 0 linhas | observado: 0 linhas | PASSOU
+=== 5. sonda: renovação forçada, 30 s
+RESULTADO | código da sonda | esperado: 0 | observado: 0 | PASSOU
+ Container v07chk-20261124192353-734e1e-renew Creating 
+ Container v07chk-20261124192353-734e1e-renew Created 
+SONDA | instância r | GET /videos/CZPOC-fsk3Q | intervalo 2000 ms | timeout 5000 ms | renovação 890 s antes de expirar | duração 30 s
+SONDA | access token renovado por POST /auth/refresh em 19.3 ms (fora das amostras); expira 2026-11-24T19:40:16.000Z
+SONDA | access token renovado por POST /auth/refresh em 8.3 ms (fora das amostras); expira 2026-11-24T19:40:26.000Z
+SONDA | fim (duração) | 15 amostras em 28.0 s | ok 15 | fora de 2xx 0 (429: 0) | timeout 0 | erro de rede 0 | corpo inesperado 0 | renovações 2
+SONDA | latência das respostas ok (ms): p50 3.9 | p95 8.3 | p99 8.3 | máx 8.3
+RESULTADO | amostras em 30 s a cada 2 s | esperado: 15, todas 200 ok | observado: 15, 15 ok | PASSOU
+RESULTADO | intervalo entre disparos (ms) | esperado: 2000 ± 50 | observado: min 1998, máx 2002 | PASSOU
+RESULTADO | renovações fora das amostras | esperado: >= 2 | observado: 2 | PASSOU
+=== 6. sonda: timeout de 1 ms, 6 s
+ Container v07chk-20261124192353-734e1e-timeout Creating 
+ Container v07chk-20261124192353-734e1e-timeout Created 
+SONDA | instância t | GET /videos/CZPOC-fsk3Q | intervalo 2000 ms | timeout 1 ms | renovação 120 s antes de expirar | duração 6 s
+SONDA | fim (duração) | 3 amostras em 4.0 s | ok 0 | fora de 2xx 0 (429: 0) | timeout 3 | erro de rede 0 | corpo inesperado 0 | renovações 0
+RESULTADO | amostras com timeout e status vazio | esperado: 3 de 3 | observado: 3 de 3 | PASSOU
+=== limpeza
+LIMPEZA | 2 e-mails de prova | 2 usuários, 2 vídeos, 2 sessões
+LIMPEZA | multiparts abortados: 2 (os demais já estavam concluídos ou abortados)
+LIMPEZA | jobs de processamento removidos: 0
+LIMPEZA prefixo originals/88c91f2d-1f67-4ebd-93b9-3d571b65e649/: 1 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA prefixo thumbnails/88c91f2d-1f67-4ebd-93b9-3d571b65e649/: 0 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA prefixo originals/c04db91a-6220-4d0f-987e-11afcabb1455/: 0 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA prefixo thumbnails/c04db91a-6220-4d0f-987e-11afcabb1455/: 0 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA | e-mails removidos do Mailpit: 2
+PASSOU | linhas de prova no banco (usuários, vídeos e sessões) | esperado: 0 | observado: 0
+PASSOU | objetos de prova no bucket | esperado: 0 restantes | observado: 0 restantes
+PASSOU | multiparts das sessões de prova | esperado: 0 | observado: 0
+PASSOU | jobs de processamento dos vídeos de prova | esperado: 0 | observado: 0
+PASSOU | e-mails de prova no Mailpit | esperado: 0 | observado: 0
+LIMPEZA | 5 itens, 0 com falha
+diretório removido
+SNAPSHOT banco users=0 channels=0 videos=0 upload_sessions=0 upload_parts=0 refresh_tokens=0 verification_tokens=0 | bucket objetos=0 bytes=0 sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855 | fila video-processing wait=0 active=0 delayed=0 prioritized=0 waiting-children=0 completed=0 failed=0 jobs=0 | mailpit mensagens=8

@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+# Sentinela do upload: nenhum controle inicia o cliente de upload nem arma o Ctrl+C.
+case " $* " in
+  *"iniciar-windows.ps1"* | *"ctrl-c.ps1"*)
+    echo "CONTROLE | SENTINELA: o início do upload foi alcançado e bloqueado" >&2
+    echo upload >>"${P10GB_CONTROLE_SENTINELA:?}"
+    exit 99 ;;
+esac
+exec "/mnt/c/WINDOWS/System32/WindowsPowerShell/v1.0/powershell.exe" "$@"

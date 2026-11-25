@@ -1,0 +1,46 @@
+# Análise só leitura das evidências da P-10GB (execução 20261124215534-349fa9), sem alterá-las
+amostras acima de 250 ms: 89 | todas nos intervalos de upload ativo: True
+fase do disparo das 4 instâncias (epoch_ms mod 2000, por instância): {'1': [189, 206, 207], '2': [187, 201, 202], '3': [33, 177, 191], '4': [189, 204, 205]}
+grupos de fim dentro de 100 ms: 42 | com mais de uma instância: 23 | amostras nesses grupos: 68
+fim +27183.35302734375 ms | 1 amostras | instâncias ['2'] | latências [420] | dispersão do fim 0 ms
+fim +28097.195068359375 ms | 2 amostras | instâncias ['1', '4'] | latências [1334, 1335] | dispersão do fim 0 ms
+fim +35463.580078125 ms | 2 amostras | instâncias ['1', '2'] | latências [731, 735] | dispersão do fim 2 ms
+fim +39153.927978515625 ms | 1 amostras | instâncias ['3'] | latências [431] | dispersão do fim 0 ms
+fim +47233.98291015625 ms | 4 amostras | instâncias ['1', '2', '3', '4'] | latências [265, 337, 632, 455] | dispersão do fim 191 ms
+fim +49239.281005859375 ms | 1 amostras | instâncias ['1'] | latências [505] | dispersão do fim 0 ms
+fim +59436.782958984375 ms | 3 amostras | instâncias ['1', '2', '4'] | latências [705, 708, 743] | dispersão do fim 38 ms
+fim +62199.45703125 ms | 3 amostras | instâncias ['1', '2', '4'] | latências [1467, 1217, 1217] | dispersão do fim 1 ms
+fim +62494.205078125 ms | 2 amostras | instâncias ['3'] | latências [3775, 1005] | dispersão do fim 11 ms
+fim +65453.860107421875 ms | 4 amostras | instâncias ['1', '2', '3', '4'] | latências [722, 722, 724, 569] | dispersão do fim 93 ms
+fim +67363.97290039062 ms | 1 amostras | instâncias ['3'] | latências [646] | dispersão do fim 0 ms
+fim +69313.80395507812 ms | 1 amostras | instâncias ['3'] | latências [344] | dispersão do fim 0 ms
+fim +108124.36694335938 ms | 2 amostras | instâncias ['3'] | latências [3404, 1361] | dispersão do fim 26 ms
+fim +108355.27392578125 ms | 6 amostras | instâncias ['1', '2', '4'] | latências [3622, 3633, 1664, 1672, 3732, 1753] | dispersão do fim 189 ms
+fim +127195.083984375 ms | 3 amostras | instâncias ['1', '2', '4'] | latências [423, 462, 403] | dispersão do fim 3 ms
+fim +141315.71606445312 ms | 2 amostras | instâncias ['1', '4'] | latências [500, 581] | dispersão do fim 0 ms
+fim +141725.17211914062 ms | 1 amostras | instâncias ['2'] | latências [909] | dispersão do fim 0 ms
+fim +143675.42407226562 ms | 3 amostras | instâncias ['1', '2', '4'] | latências [733, 430, 433] | dispersão do fim 51 ms
+fim +149093.15087890625 ms | 1 amostras | instâncias ['4'] | latências [302] | dispersão do fim 0 ms
+fim +149280.30004882812 ms | 1 amostras | instâncias ['2'] | latências [489] | dispersão do fim 0 ms
+fim +151120.27392578125 ms | 2 amostras | instâncias ['2', '4'] | latências [387, 427] | dispersão do fim 45 ms
+fim +152990.14990234375 ms | 3 amostras | instâncias ['1', '2', '4'] | latências [259, 263, 263] | dispersão do fim 5 ms
+fim +159334.63598632812 ms | 1 amostras | instâncias ['4'] | latências [442] | dispersão do fim 0 ms
+fim +161185.06494140625 ms | 4 amostras | instâncias ['1', '2', '3', '4'] | latências [344, 345, 349, 353] | dispersão do fim 8 ms
+fim +165120.06201171875 ms | 3 amostras | instâncias ['1', '3', '4'] | latências [387, 389, 403] | dispersão do fim 4 ms
+fim +181196.876953125 ms | 2 amostras | instâncias ['1', '4'] | latências [464, 466] | dispersão do fim 3 ms
+fim +181897.59912109375 ms | 1 amostras | instâncias ['2'] | latências [1168] | dispersão do fim 0 ms
+fim +185176.36010742188 ms | 3 amostras | instâncias ['1', '2', '4'] | latências [444, 443, 446] | dispersão do fim 1 ms
+fim +188305.90893554688 ms | 1 amostras | instâncias ['2'] | latências [1043] | dispersão do fim 0 ms
+fim +189995.47192382812 ms | 1 amostras | instâncias ['4'] | latências [1088] | dispersão do fim 0 ms
+fim +195509.99389648438 ms | 3 amostras | instâncias ['1', '2', '4'] | latências [778, 778, 781] | dispersão do fim 2 ms
+fim +197257.32202148438 ms | 4 amostras | instâncias ['1', '2', '3', '4'] | latências [537, 531, 531, 263] | dispersão do fim 6 ms
+fim +201014.83911132812 ms | 2 amostras | instâncias ['1', '4'] | latências [281, 281] | dispersão do fim 1 ms
+fim +203763.9951171875 ms | 1 amostras | instâncias ['1'] | latências [489] | dispersão do fim 0 ms
+fim +211133.3291015625 ms | 1 amostras | instâncias ['3'] | latências [364] | dispersão do fim 0 ms
+fim +211288.29711914062 ms | 3 amostras | instâncias ['1', '2', '4'] | latências [518, 604, 606] | dispersão do fim 87 ms
+fim +217399.34106445312 ms | 3 amostras | instâncias ['1', '2', '4'] | latências [668, 583, 589] | dispersão do fim 7 ms
+fim +217522.26489257812 ms | 1 amostras | instâncias ['3'] | latências [802] | dispersão do fim 0 ms
+fim +225132.24609375 ms | 1 amostras | instâncias ['4'] | latências [398] | dispersão do fim 0 ms
+fim +227020.50903320312 ms | 2 amostras | instâncias ['1', '4'] | latências [288, 2288] | dispersão do fim 1 ms
+fim +229358.94604492188 ms | 2 amostras | instâncias ['1', '2'] | latências [2339, 705] | dispersão do fim 76 ms
+fim +231295.63208007812 ms | 1 amostras | instâncias ['4'] | latências [563] | dispersão do fim 0 ms

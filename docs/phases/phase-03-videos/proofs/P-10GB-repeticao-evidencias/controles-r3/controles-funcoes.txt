@@ -1,0 +1,34 @@
+CONTROLE | api-parada-sem-falha | falha injetada: nenhuma | api_stopped → código 0 | passou
+CONTROLE | api-parada-ps-falha | falha injetada: api-ps | api_stopped → código 2 | passou
+  FALHA | lista de processos do nestjs-api (código 2)
+CONTROLE | versoes-falha | falha injetada: versoes | versions → código 2 | passou
+  FALHA | imagem do nestjs-api (código 2)
+CONTROLE | disco-host-falha | falha injetada: disco-host | host_disk → código 2 | passou
+  FALHA | espaço da unidade C: (código 2)
+CONTROLE | residuos-falha | falha injetada: residuos | residue_into <saída>/controles-funcoes/roteiro/evid/residue-controle.txt → código 2 | passou
+  FALHA | lista dos temporários do Silo (código 2)
+CONTROLE | lixeira-uso-falha | falha injetada: uso-storage | wait_trash_empty 30 → código 2 | passou
+  FALHA | uso do storage (código 2)
+CONTROLE | relogio-falha | falha injetada: relogio | clock controle → código 1 | passou
+  FALHA | medida do relógio (controle) (código 1)
+CONTROLE | memoria-sem-as-13-sondas | falha injetada: nenhuma | memory_snapshot → código 1 | passou
+  FALHA | a medição de memória exige todas as 13 sondas em execução
+CONTROLE | eventos-do-cliente-sem-falha | falha injetada: nenhuma | copy_client_files → código 0 | passou
+CONTROLE | eventos-do-cliente-ausentes | falha injetada: nenhuma | copy_client_files → código 1 | passou
+  FALHA | events.jsonl do cliente ausente ou vazio (código 1)
+CONTROLE | eventos-do-cliente-copia-falha | falha injetada: copia-eventos | copy_client_files → código 2 | passou
+  FALHA | cópia de events.jsonl do cliente para o nestjs-api (código 2)
+CONTROLE | sondas-uma-ausente | falha injetada: nenhuma | copy_probes → código 1 | passou
+  FALHA | sonda 13 sem CSV de amostras (código 1)
+CONTROLE | sondas-copia-falha | falha injetada: copia-sonda | copy_probes → código 2 | passou
+  FALHA | cópia da sonda 3 para o nestjs-api (código 2)
+CONTROLE | sondas-sem-falha | falha injetada: nenhuma | copy_probes → código 0 | passou
+  argumentos das sondas: 12 instâncias
+CONTROLE | resumo-pre-checagem-4 | falha injetada: nenhuma | summarize → código 0 | passou
+CONTROLE | veredito-pre-checagem-4 | falha injetada: nenhuma | latency_verdict → código 1 | passou
+CONTROLE | veredito-igual-ao-reprocessamento | latency-verdict.json do roteiro r3 igual, em conteúdo, ao do reprocessamento da pré-checagem 4 | passou
+CONTROLE | veredito-aprovado-sem-falha | falha injetada: nenhuma | latency_verdict → código 0 | passou
+CONTROLE | veredito-aprovado-copia-falha | falha injetada: copia-veredito | latency_verdict → código 1 | passou
+  FALHA | cópia do veredito de latência (código 2)
+CONTROLE | sentinelas | não acionadas (nenhuma geração nem upload) | passou
+CONTROLES | 20 de 20 passaram

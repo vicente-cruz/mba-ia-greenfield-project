@@ -10,6 +10,8 @@ import {
 } from '../exceptions/domain.exception';
 
 describe('DomainExceptionFilter', () => {
+  // Typed as unknown so the asymmetric matcher can sit inside object literals.
+  const anyString: unknown = expect.any(String);
   let filter: DomainExceptionFilter;
   let mockJson: jest.Mock;
   let mockStatus: jest.Mock;
@@ -27,8 +29,12 @@ describe('DomainExceptionFilter', () => {
       }),
       getArgs: () => [],
       getArgByIndex: () => null,
-      switchToRpc: () => ({}) as any,
-      switchToWs: () => ({}) as any,
+      switchToRpc: () => {
+        throw new Error('switchToRpc is not used by HTTP filters');
+      },
+      switchToWs: () => {
+        throw new Error('switchToWs is not used by HTTP filters');
+      },
       getType: () => 'http',
     } as unknown as ArgumentsHost;
   });
@@ -51,7 +57,7 @@ describe('DomainExceptionFilter', () => {
     expect(mockJson).toHaveBeenCalledWith({
       statusCode: 401,
       error: 'INVALID_CREDENTIALS',
-      message: expect.any(String),
+      message: anyString,
     });
   });
 
@@ -62,7 +68,7 @@ describe('DomainExceptionFilter', () => {
     expect(mockJson).toHaveBeenCalledWith({
       statusCode: 403,
       error: 'EMAIL_NOT_CONFIRMED',
-      message: expect.any(String),
+      message: anyString,
     });
   });
 
@@ -73,7 +79,7 @@ describe('DomainExceptionFilter', () => {
     expect(mockJson).toHaveBeenCalledWith({
       statusCode: 401,
       error: 'INVALID_TOKEN',
-      message: expect.any(String),
+      message: anyString,
     });
   });
 
@@ -84,7 +90,7 @@ describe('DomainExceptionFilter', () => {
     expect(mockJson).toHaveBeenCalledWith({
       statusCode: 401,
       error: 'TOKEN_EXPIRED',
-      message: expect.any(String),
+      message: anyString,
     });
   });
 
@@ -95,7 +101,7 @@ describe('DomainExceptionFilter', () => {
     expect(mockJson).toHaveBeenCalledWith({
       statusCode: 401,
       error: 'TOKEN_REUSE_DETECTED',
-      message: expect.any(String),
+      message: anyString,
     });
   });
 });

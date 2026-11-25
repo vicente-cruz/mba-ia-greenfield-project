@@ -1,0 +1,15 @@
+# Análise informativa da fase de carga (não entra nos vereditos), a partir de events.jsonl, probe-*.csv e docker-stats.txt
+
+## Latência da sonda por trecho da carga (posto mais próximo, todas as amostras)
+- início: PUTs, checksums de assinatura e registro: 71.3 s, 144 amostras, p50 10.3 ms, p95 743.2 ms, p99 1467.5 ms, máx 3775.2 ms, acima de 250 ms: 25
+- retomada: conferência (só checksums locais das 76 partes recebidas, sem PUT): 48.5 s, 97 amostras, p50 10.0 ms, p95 1752.9 ms, p99 3732.1 ms, máx 3732.1 ms, acima de 250 ms: 11
+- retomada: PUTs das 76 partes restantes, checksums de assinatura e registro: 97.6 s, 196 amostras, p50 12.3 ms, p95 777.6 ms, p99 2287.8 ms, máx 2338.9 ms, acima de 250 ms: 53
+- completion: 0.2 s, 0 amostras
+
+## CPU dos containers durante o cliente (docker stats a cada ~3 s)
+- resume, nestjs-api (API e cliente): 27 amostras, mediana 174.6%, máximo 371.8%
+- resume, sonda: 108 amostras, mediana 0.1%, máximo 198.3%
+- resume, storage: 27 amostras, mediana 52.9%, máximo 724.8%
+- start, nestjs-api (API e cliente): 13 amostras, mediana 232.4%, máximo 352.1%
+- start, sonda: 52 amostras, mediana 0.0%, máximo 2.2%
+- start, storage: 13 amostras, mediana 167.5%, máximo 352.5%

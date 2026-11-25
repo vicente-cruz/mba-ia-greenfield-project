@@ -1,0 +1,14 @@
+{
+  "descricao": "320 amostras certas a 800 ms e 4 rápidas na borda: todas as classificações reprovam; a incerteza não transforma uma reprovação em inconclusivo",
+  "baselineStart": 1800000000000,
+  "baselineEnd": 1800000700000,
+  "uncertaintyMs": 157,
+  "esperado": {
+    "carga_nominal": 320,
+    "bordas": 4,
+    "a": "reprovado",
+    "b": "reprovado",
+    "nominalLatency": "reprovado",
+    "latency": "reprovado"
+  }
+}

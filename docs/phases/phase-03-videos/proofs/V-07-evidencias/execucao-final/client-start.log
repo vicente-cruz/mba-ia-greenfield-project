@@ -1,0 +1,30 @@
+INÍCIO | vídeo _oLntoLU6fw (draft) | sessão 7db71a73-0d8c-410e-97a5-04e55c489f7a | 1000000000 bytes em 15 partes de 67108864 (última com 60475904) | SHA256
+CHECKSUM | parte 1 | 67108864 bytes | 204.1 ms | antes da assinatura
+CHECKSUM | parte 2 | 67108864 bytes | 273.3 ms | antes da assinatura
+CHECKSUM | parte 3 | 67108864 bytes | 283.2 ms | antes da assinatura
+CHECKSUM | parte 4 | 67108864 bytes | 207.2 ms | antes da assinatura
+PUT | parte 1 | 67108864 bytes | 1072.8 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 5 | 67108864 bytes | 406 ms | antes da assinatura
+CHECKSUM | parte 6 | 67108864 bytes | 683.5 ms | antes da assinatura
+CHECKSUM | parte 7 | 67108864 bytes | 351.8 ms | antes da assinatura
+PUT | parte 4 | 67108864 bytes | 1095.3 ms | HTTP 200 | tentativa 1
+PUT | parte 3 | 67108864 bytes | 1486.6 ms | HTTP 200 | tentativa 1
+PUT | parte 2 | 67108864 bytes | 1493.3 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 8 | 67108864 bytes | 429.1 ms | antes da assinatura
+CHECKSUM | parte 9 | 67108864 bytes | 456.8 ms | antes da assinatura
+CHECKSUM | parte 10 | 67108864 bytes | 458.2 ms | antes da assinatura
+PUT | parte 6 | 67108864 bytes | 1435.4 ms | HTTP 200 | tentativa 1
+PUT | parte 5 | 67108864 bytes | 1550 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 11 | 67108864 bytes | 544.4 ms | antes da assinatura
+CHECKSUM | parte 12 | 67108864 bytes | 709.9 ms | antes da assinatura
+CHECKSUM | parte 13 | 67108864 bytes | 544 ms | antes da assinatura
+CHECKSUM | parte 14 | 67108864 bytes | 503.9 ms | antes da assinatura
+CHECKSUM | parte 15 | 60475904 bytes | 165.2 ms | antes da assinatura
+PUT | parte 9 | 67108864 bytes | 5800.2 ms | HTTP 200 | tentativa 1
+PUT | parte 7 | 67108864 bytes | 6933.4 ms | HTTP 200 | tentativa 1
+INTERRUPÇÃO | SIGINT | PUT concluído: [1,2,3,4,5,6,7,9] | registradas: [1,2,3,4,5,6] | em andamento: [8,10,11,12]
+PUT | parte 8 | abortado depois de 7031.7 ms
+PUT | parte 10 | abortado depois de 5966.4 ms
+PUT | parte 11 | abortado depois de 557.1 ms
+PUT | parte 12 | abortado depois de 79.2 ms
+FIM | interrompido por SIGINT

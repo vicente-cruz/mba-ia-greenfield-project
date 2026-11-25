@@ -1,0 +1,5 @@
+ Container r02b-20261125002224-94186e-probe-1 Creating 
+ Container r02b-20261125002224-94186e-probe-1 Created 
+SONDA | instância 1 | GET /videos/iMtnYXKg15E | intervalo 2000 ms | timeout 5000 ms | renovação 120 s antes de expirar | duração até SIGINT/SIGTERM
+SONDA | fim (SIGTERM) | 102 amostras em 203.3 s | ok 102 | fora de 2xx 0 (429: 0) | timeout 0 | erro de rede 0 | corpo inesperado 0 | renovações 0
+SONDA | latência das respostas ok (ms): p50 4.0 | p95 172.0 | p99 1805.6 | máx 3163.3

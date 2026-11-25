@@ -1,0 +1,208 @@
+=== R-02 comparação A×B — runId 20261125002224-94186e (00:22:25Z)
+livre em C: 42408595456
+Node do container: v25.6.0; Node do Windows: v22.17.0
+$ api npx tsc --outDir /tmp/r02b-20261125002224-94186e/js --module nodenext --moduleResolution nodenext --target ES2023 --esModuleInterop --skipLibCheck --strictNullChecks proofs/phase-03/upload-client.ts
+cliente compilado: 712670275c780413 (container) e 712670275c780413 (Windows)
+API pronta em 10 s
+API pela porta publicada, do Windows: HTTP 200
+$ support account --email r02b-20261125002224-94186e-uploadera@proofs.streamtube.test --credentials /tmp/r02b-20261125002224-94186e/uploadera.json
+CONTA | r02b-20261125002224-94186e-uploadera@proofs.streamtube.test | register 201, confirm-email 204 (link do Mailpit), login 200 | credenciais em /tmp/r02b-20261125002224-94186e/uploadera.json (0600)
+$ support account --email r02b-20261125002224-94186e-uploaderb@proofs.streamtube.test --credentials /tmp/r02b-20261125002224-94186e/uploaderb.json
+CONTA | r02b-20261125002224-94186e-uploaderb@proofs.streamtube.test | register 201, confirm-email 204 (link do Mailpit), login 200 | credenciais em /tmp/r02b-20261125002224-94186e/uploaderb.json (0600)
+$ support account --email r02b-20261125002224-94186e-control@proofs.streamtube.test --credentials /tmp/r02b-20261125002224-94186e/control.json
+CONTA | r02b-20261125002224-94186e-control@proofs.streamtube.test | register 201, confirm-email 204 (link do Mailpit), login 200 | credenciais em /tmp/r02b-20261125002224-94186e/control.json (0600)
+$ support control-video --credentials /tmp/r02b-20261125002224-94186e/control.json --state /tmp/r02b-20261125002224-94186e/control-state.json --file-name r02b-20261125002224-94186e-control.mp4
+CONTROLE | vídeo iMtnYXKg15E em draft, sessão cf577111-228e-4c29-a867-80b5a29d4be6, nenhuma parte enviada
+$ api node /tmp/r02b-20261125002224-94186e/js/upload-client.js generate --file /tmp/r02b-20261125002224-94186e/f.bin --size 1000000000 --seed r02b-20261125002224-94186e-a
+ARQUIVO | f.bin | 1000000000 bytes | sha256 b2874061ce2755ade46d5492b0f3fc9ced4f45913e56999466da93ddea3bd1b3 | gerado em 4630.1 ms (206 MiB/s)
+ARQUIVO | f.bin | 1000000000 bytes | sha256 d9d661108b29489766c3d8c8fc7b2dd791b8efda1570b58ddf1a6be0121b7f9d | gerado em 3822.4 ms (249.5 MiB/s)
+sondas prontas: 4
+MARCA | R0-repouso | inicio | 1795566212537
+MARCA | R0-repouso | fim | 1795566272726
+MARCA | A1 | inicio | 1795566272903
+$ api node /tmp/r02b-20261125002224-94186e/js/upload-client.js start --file /tmp/r02b-20261125002224-94186e/f.bin --file-name r02b-20261125002224-94186e-A1.mp4 --credentials /tmp/r02b-20261125002224-94186e/uploadera.json --state /tmp/r02b-20261125002224-94186e/state-A1.json --events /tmp/r02b-20261125002224-94186e/events-A1.jsonl --progress /tmp/r02b-20261125002224-94186e/progress-A1.json --storage-connect localhost:9000=storage:9000 --concurrency 4 --sign-batch 10 --register-every 4 --part-urls-interval-ms 1100
+INÍCIO | vídeo K2EoXb0JyfY (draft) | sessão 32e514b4-5f2e-46f2-b13a-f238a7536939 | 1000000000 bytes em 15 partes de 67108864 (última com 60475904) | SHA256
+CHECKSUM | parte 1 | 67108864 bytes | 392.3 ms | antes da assinatura
+CHECKSUM | parte 2 | 67108864 bytes | 262.6 ms | antes da assinatura
+CHECKSUM | parte 3 | 67108864 bytes | 254.7 ms | antes da assinatura
+PUT | parte 1 | 67108864 bytes | 623.5 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 4 | 67108864 bytes | 184.7 ms | antes da assinatura
+CHECKSUM | parte 5 | 67108864 bytes | 215.7 ms | antes da assinatura
+CHECKSUM | parte 6 | 67108864 bytes | 282.6 ms | antes da assinatura
+CHECKSUM | parte 7 | 67108864 bytes | 656.8 ms | antes da assinatura
+CHECKSUM | parte 8 | 67108864 bytes | 219.4 ms | antes da assinatura
+CHECKSUM | parte 9 | 67108864 bytes | 198.9 ms | antes da assinatura
+PUT | parte 5 | 67108864 bytes | 1263.9 ms | HTTP 200 | tentativa 1
+PUT | parte 4 | 67108864 bytes | 1275 ms | HTTP 200 | tentativa 1
+PUT | parte 2 | 67108864 bytes | 1285.6 ms | HTTP 200 | tentativa 1
+PUT | parte 3 | 67108864 bytes | 1283.9 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 10 | 67108864 bytes | 260.5 ms | antes da assinatura
+PUT | parte 6 | 67108864 bytes | 1070.3 ms | HTTP 200 | tentativa 1
+PUT | parte 7 | 67108864 bytes | 1076 ms | HTTP 200 | tentativa 1
+PUT | parte 8 | 67108864 bytes | 1076.3 ms | HTTP 200 | tentativa 1
+PUT | parte 9 | 67108864 bytes | 1081.6 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 11 | 67108864 bytes | 1040 ms | antes da assinatura
+PUT | parte 10 | 67108864 bytes | 484.7 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 12 | 67108864 bytes | 496.9 ms | antes da assinatura
+CHECKSUM | parte 13 | 67108864 bytes | 289.7 ms | antes da assinatura
+CHECKSUM | parte 14 | 67108864 bytes | 283.6 ms | antes da assinatura
+PUT | parte 13 | 67108864 bytes | 1008.9 ms | HTTP 200 | tentativa 1
+PUT | parte 11 | 67108864 bytes | 1018.6 ms | HTTP 200 | tentativa 1
+PUT | parte 12 | 67108864 bytes | 1028.5 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 15 | 60475904 bytes | 1165.8 ms | antes da assinatura
+PUT | parte 14 | 67108864 bytes | 462.5 ms | HTTP 200 | tentativa 1
+PUT | parte 15 | 60475904 bytes | 422.5 ms | HTTP 200 | tentativa 1
+ENVIO | 15 partes enviadas e registradas
+COMPLETION | HTTP 202 em 100 ms | vídeo processing
+POLLING | processing | consulta 1
+POLLING | error MEDIA_INVALID | consulta 2
+MARCA | A1 | fim | 1795566283912
+MARCA | B1 | inicio | 1795566304239
+$ (Windows) node.exe js/upload-client.js start --file f.bin … --api http://localhost:3000 --concurrency 4 --sign-batch 10 --register-every 4 --part-urls-interval-ms 1100
+INÍCIO | vídeo uSEHRXioH7Q (draft) | sessão f0210936-e8e8-4e3a-996f-3e058a706f1a | 1000000000 bytes em 15 partes de 67108864 (última com 60475904) | SHA256
+CHECKSUM | parte 1 | 67108864 bytes | 149.8 ms | antes da assinatura
+CHECKSUM | parte 2 | 67108864 bytes | 249.4 ms | antes da assinatura
+CHECKSUM | parte 3 | 67108864 bytes | 150.7 ms | antes da assinatura
+CHECKSUM | parte 4 | 67108864 bytes | 143.6 ms | antes da assinatura
+CHECKSUM | parte 5 | 67108864 bytes | 143.2 ms | antes da assinatura
+CHECKSUM | parte 6 | 67108864 bytes | 142.8 ms | antes da assinatura
+CHECKSUM | parte 7 | 67108864 bytes | 145.2 ms | antes da assinatura
+CHECKSUM | parte 8 | 67108864 bytes | 288.5 ms | antes da assinatura
+CHECKSUM | parte 9 | 67108864 bytes | 510.7 ms | antes da assinatura
+PUT | parte 1 | 67108864 bytes | 1803.3 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 10 | 67108864 bytes | 303.2 ms | antes da assinatura
+CHECKSUM | parte 11 | 67108864 bytes | 198 ms | antes da assinatura
+PUT | parte 2 | 67108864 bytes | 1621.7 ms | HTTP 200 | tentativa 1
+PUT | parte 3 | 67108864 bytes | 1638.5 ms | HTTP 200 | tentativa 1
+PUT | parte 4 | 67108864 bytes | 1653.7 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 12 | 67108864 bytes | 657.7 ms | antes da assinatura
+PUT | parte 5 | 67108864 bytes | 1457.5 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 13 | 67108864 bytes | 469.2 ms | antes da assinatura
+CHECKSUM | parte 14 | 67108864 bytes | 441.9 ms | antes da assinatura
+CHECKSUM | parte 15 | 60475904 bytes | 307.4 ms | antes da assinatura
+PUT | parte 7 | 67108864 bytes | 1519.1 ms | HTTP 200 | tentativa 1
+PUT | parte 6 | 67108864 bytes | 1611.7 ms | HTTP 200 | tentativa 1
+PUT | parte 8 | 67108864 bytes | 5244 ms | HTTP 200 | tentativa 1
+PUT | parte 9 | 67108864 bytes | 5237.2 ms | HTTP 200 | tentativa 1
+PUT | parte 11 | 67108864 bytes | 4957.2 ms | HTTP 200 | tentativa 1
+PUT | parte 10 | 67108864 bytes | 5048 ms | HTTP 200 | tentativa 1
+PUT | parte 12 | 67108864 bytes | 1621.6 ms | HTTP 200 | tentativa 1
+PUT | parte 13 | 67108864 bytes | 1442.6 ms | HTTP 200 | tentativa 1
+PUT | parte 14 | 67108864 bytes | 1475.1 ms | HTTP 200 | tentativa 1
+PUT | parte 15 | 60475904 bytes | 1456.8 ms | HTTP 200 | tentativa 1
+ENVIO | 15 partes enviadas e registradas
+COMPLETION | HTTP 202 em 50.5 ms | vídeo processing
+POLLING | processing | consulta 1
+POLLING | error MEDIA_INVALID | consulta 2
+MARCA | B1 | fim | 1795566318642
+MARCA | A2 | inicio | 1795566338813
+$ api node /tmp/r02b-20261125002224-94186e/js/upload-client.js start --file /tmp/r02b-20261125002224-94186e/f.bin --file-name r02b-20261125002224-94186e-A2.mp4 --credentials /tmp/r02b-20261125002224-94186e/uploadera.json --state /tmp/r02b-20261125002224-94186e/state-A2.json --events /tmp/r02b-20261125002224-94186e/events-A2.jsonl --progress /tmp/r02b-20261125002224-94186e/progress-A2.json --storage-connect localhost:9000=storage:9000 --concurrency 4 --sign-batch 10 --register-every 4 --part-urls-interval-ms 1100
+INÍCIO | vídeo n3nzcGCgzq4 (draft) | sessão fd75679d-7f12-42f5-9c44-c0171ae96cf9 | 1000000000 bytes em 15 partes de 67108864 (última com 60475904) | SHA256
+CHECKSUM | parte 1 | 67108864 bytes | 205.9 ms | antes da assinatura
+CHECKSUM | parte 2 | 67108864 bytes | 223.7 ms | antes da assinatura
+CHECKSUM | parte 3 | 67108864 bytes | 212.1 ms | antes da assinatura
+CHECKSUM | parte 4 | 67108864 bytes | 148.7 ms | antes da assinatura
+PUT | parte 1 | 67108864 bytes | 597.8 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 5 | 67108864 bytes | 175.2 ms | antes da assinatura
+CHECKSUM | parte 6 | 67108864 bytes | 174.8 ms | antes da assinatura
+CHECKSUM | parte 7 | 67108864 bytes | 129.5 ms | antes da assinatura
+CHECKSUM | parte 8 | 67108864 bytes | 298.8 ms | antes da assinatura
+CHECKSUM | parte 9 | 67108864 bytes | 305.8 ms | antes da assinatura
+CHECKSUM | parte 10 | 67108864 bytes | 133.7 ms | antes da assinatura
+CHECKSUM | parte 11 | 67108864 bytes | 140.6 ms | antes da assinatura
+PUT | parte 2 | 67108864 bytes | 889.5 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 12 | 67108864 bytes | 174.1 ms | antes da assinatura
+PUT | parte 5 | 67108864 bytes | 1096 ms | HTTP 200 | tentativa 1
+PUT | parte 4 | 67108864 bytes | 1101.3 ms | HTTP 200 | tentativa 1
+PUT | parte 3 | 67108864 bytes | 1110.7 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 13 | 67108864 bytes | 390.5 ms | antes da assinatura
+CHECKSUM | parte 14 | 67108864 bytes | 168.4 ms | antes da assinatura
+PUT | parte 6 | 67108864 bytes | 724.6 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 15 | 60475904 bytes | 162.4 ms | antes da assinatura
+PUT | parte 7 | 67108864 bytes | 2891.9 ms | HTTP 200 | tentativa 1
+PUT | parte 8 | 67108864 bytes | 3006.8 ms | HTTP 200 | tentativa 1
+PUT | parte 9 | 67108864 bytes | 3019.4 ms | HTTP 200 | tentativa 1
+PUT | parte 10 | 67108864 bytes | 3036.5 ms | HTTP 200 | tentativa 1
+PUT | parte 11 | 67108864 bytes | 777.5 ms | HTTP 200 | tentativa 1
+PUT | parte 12 | 67108864 bytes | 1050.6 ms | HTTP 200 | tentativa 1
+PUT | parte 13 | 67108864 bytes | 1042.1 ms | HTTP 200 | tentativa 1
+PUT | parte 14 | 67108864 bytes | 868.9 ms | HTTP 200 | tentativa 1
+PUT | parte 15 | 60475904 bytes | 849.9 ms | HTTP 200 | tentativa 1
+ENVIO | 15 partes enviadas e registradas
+COMPLETION | HTTP 202 em 70.8 ms | vídeo processing
+POLLING | processing | consulta 1
+POLLING | error MEDIA_INVALID | consulta 2
+MARCA | A2 | fim | 1795566348503
+MARCA | B2 | inicio | 1795566368808
+$ (Windows) node.exe js/upload-client.js start --file f.bin … --api http://localhost:3000 --concurrency 4 --sign-batch 10 --register-every 4 --part-urls-interval-ms 1100
+INÍCIO | vídeo ZHGmNKbqaic (draft) | sessão 8eeb2d0c-8af0-4b9b-8df8-eb13fc18775f | 1000000000 bytes em 15 partes de 67108864 (última com 60475904) | SHA256
+CHECKSUM | parte 1 | 67108864 bytes | 131.7 ms | antes da assinatura
+CHECKSUM | parte 2 | 67108864 bytes | 224 ms | antes da assinatura
+CHECKSUM | parte 3 | 67108864 bytes | 161.9 ms | antes da assinatura
+CHECKSUM | parte 4 | 67108864 bytes | 149.7 ms | antes da assinatura
+CHECKSUM | parte 5 | 67108864 bytes | 148.3 ms | antes da assinatura
+CHECKSUM | parte 6 | 67108864 bytes | 186.5 ms | antes da assinatura
+CHECKSUM | parte 7 | 67108864 bytes | 148.5 ms | antes da assinatura
+CHECKSUM | parte 8 | 67108864 bytes | 307.7 ms | antes da assinatura
+PUT | parte 1 | 67108864 bytes | 1884.1 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 9 | 67108864 bytes | 666.5 ms | antes da assinatura
+PUT | parte 4 | 67108864 bytes | 1010.8 ms | HTTP 200 | tentativa 1
+PUT | parte 2 | 67108864 bytes | 1103.8 ms | HTTP 200 | tentativa 1
+PUT | parte 3 | 67108864 bytes | 1292.5 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 10 | 67108864 bytes | 567.8 ms | antes da assinatura
+CHECKSUM | parte 11 | 67108864 bytes | 6567.6 ms | antes da assinatura
+PUT | parte 5 | 67108864 bytes | 7260 ms | HTTP 200 | tentativa 1
+PUT | parte 7 | 67108864 bytes | 7008.6 ms | HTTP 200 | tentativa 1
+PUT | parte 6 | 67108864 bytes | 7071 ms | HTTP 200 | tentativa 1
+PUT | parte 8 | 67108864 bytes | 7121.5 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 12 | 67108864 bytes | 521.7 ms | antes da assinatura
+CHECKSUM | parte 13 | 67108864 bytes | 308.1 ms | antes da assinatura
+CHECKSUM | parte 14 | 67108864 bytes | 469.1 ms | antes da assinatura
+PUT | parte 11 | 67108864 bytes | 1180.4 ms | HTTP 200 | tentativa 1
+PUT | parte 10 | 67108864 bytes | 1221.9 ms | HTTP 200 | tentativa 1
+PUT | parte 9 | 67108864 bytes | 1364.7 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 15 | 60475904 bytes | 303.3 ms | antes da assinatura
+PUT | parte 13 | 67108864 bytes | 840.6 ms | HTTP 200 | tentativa 1
+PUT | parte 12 | 67108864 bytes | 1154.9 ms | HTTP 200 | tentativa 1
+PUT | parte 15 | 60475904 bytes | 962.8 ms | HTTP 200 | tentativa 1
+PUT | parte 14 | 67108864 bytes | 1877.4 ms | HTTP 200 | tentativa 1
+ENVIO | 15 partes enviadas e registradas
+COMPLETION | HTTP 202 em 47.9 ms | vídeo processing
+POLLING | processing | consulta 1
+POLLING | error MEDIA_INVALID | consulta 2
+MARCA | B2 | fim | 1795566385342
+=== limpeza
+SONDA | latência das respostas ok (ms): p50 4.0 | p95 172.0 | p99 1805.6 | máx 3163.3
+SONDA | latência das respostas ok (ms): p50 3.8 | p95 174.6 | p99 2307.5 | máx 2807.6
+SONDA | latência das respostas ok (ms): p50 3.6 | p95 172.4 | p99 1893.7 | máx 4691.3
+SONDA | latência das respostas ok (ms): p50 3.8 | p95 74.9 | p99 271.3 | máx 2150.6
+processos da API restantes: 0
+containers r02b restantes: 0
+$ support cleanup --emails r02b-20261125002224-94186e-uploadera@proofs.streamtube.test,r02b-20261125002224-94186e-uploaderb@proofs.streamtube.test,r02b-20261125002224-94186e-control@proofs.streamtube.test
+LIMPEZA | 3 e-mails de prova | 3 usuários, 5 vídeos, 5 sessões
+LIMPEZA | multiparts abortados: 5 (os demais já estavam concluídos ou abortados)
+LIMPEZA | jobs de processamento removidos: 1
+LIMPEZA prefixo originals/a245efd1-1279-40a0-98ab-6e7f814f299b/: 0 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA prefixo thumbnails/a245efd1-1279-40a0-98ab-6e7f814f299b/: 0 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA prefixo originals/d9a279b7-9555-420f-930f-74f2258e457b/: 1 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA prefixo thumbnails/d9a279b7-9555-420f-930f-74f2258e457b/: 0 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA prefixo originals/f0736421-c29b-48bd-9b92-1bb37f9e25ed/: 1 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA prefixo thumbnails/f0736421-c29b-48bd-9b92-1bb37f9e25ed/: 0 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA prefixo originals/1b46cb6f-a968-4688-8539-c036e0043480/: 1 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA prefixo thumbnails/1b46cb6f-a968-4688-8539-c036e0043480/: 0 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA prefixo originals/174d8387-666b-406f-8e2f-79ede5f2a280/: 1 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA prefixo thumbnails/174d8387-666b-406f-8e2f-79ede5f2a280/: 0 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA | e-mails removidos do Mailpit: 3
+PASSOU | linhas de prova no banco (usuários, vídeos e sessões) | esperado: 0 | observado: 0
+PASSOU | objetos de prova no bucket | esperado: 0 restantes | observado: 0 restantes
+PASSOU | multiparts das sessões de prova | esperado: 0 | observado: 0
+PASSOU | jobs de processamento dos vídeos de prova | esperado: 0 | observado: 0
+PASSOU | e-mails de prova no Mailpit | esperado: 0 | observado: 0
+LIMPEZA | 5 itens, 0 com falha
+diretório no nestjs-api presente: não
+diretório no Windows presente: não
+lixeira do storage: 56 KiB depois de 80 s
+temporários do Silo: lista igual, nenhum novo
+retratos iguais
+livre em C: 42155794432
+código: 0

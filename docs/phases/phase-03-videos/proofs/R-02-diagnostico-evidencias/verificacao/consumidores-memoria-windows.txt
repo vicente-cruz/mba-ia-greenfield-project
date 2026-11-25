@@ -1,0 +1,26 @@
+
+Nome                 Processos WorkingSetMB PrivadaMB
+----                 --------- ------------ ---------
+vmmemWSL                     1         4632      6473
+brave                       13         1469      1466
+svchost                    100         1069      1411
+Code                        10          708      1357
+msedgewebview2              13          362       721
+com.docker.backend           2          336       558
+explorer                     1          271       582
+Taskmgr                      1          181       105
+powershell                   2          180       149
+dwm                          2          135       174
+TMBMSRV                      1          121       286
+Memory Compression           1          117         9
+CloudEndpointService         1          115       204
+WmiPrvSE                     4          110        86
+Docker Desktop               4           98       271
+LogonUI                      1           82        28
+RuntimeBroker                5           81        41
+WindowsTerminal              1           77        53
+EndpointBasecamp             5           68       122
+conhost                     26           62        48
+
+
+

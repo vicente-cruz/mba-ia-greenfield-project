@@ -1,0 +1,5 @@
+ Container v07-20261124194653-e13c5a-probe Creating 
+ Container v07-20261124194653-e13c5a-probe Created 
+SONDA | instância 1 | GET /videos/UVmsgdzKkT0 | intervalo 2000 ms | timeout 5000 ms | renovação 120 s antes de expirar | duração até SIGINT/SIGTERM
+SONDA | fim (SIGTERM) | 63 amostras em 124.7 s | ok 63 | fora de 2xx 0 (429: 0) | timeout 0 | erro de rede 0 | corpo inesperado 0 | renovações 0
+SONDA | latência das respostas ok (ms): p50 4.8 | p95 1106.1 | p99 2483.0 | máx 2483.0

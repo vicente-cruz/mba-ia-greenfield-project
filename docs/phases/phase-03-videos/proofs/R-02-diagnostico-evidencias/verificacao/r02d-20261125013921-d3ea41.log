@@ -1,0 +1,68 @@
+=== R-02 verificação (cenário B, sem perfil) — runId 20261125013921-d3ea41 (01:39:22Z)
+livre em C: 42210717696
+$ api npx tsc --outDir /tmp/r02d-20261125013921-d3ea41/js --module nodenext --moduleResolution nodenext --target ES2023 --esModuleInterop --skipLibCheck --strictNullChecks proofs/phase-03/upload-client.ts
+cliente compilado: 712670275c780413
+ARQUIVO | f.bin | 1000000000 bytes | sha256 f4cde53f5e4a4214061302a0e6c6f36345eb40d85b0747c97b9345e2e56efe42 | gerado em 3006.9 ms (317.2 MiB/s)
+API pronta em 10 s
+$ support account --email r02d-20261125013921-d3ea41-uploaderb@proofs.streamtube.test --credentials /tmp/r02d-20261125013921-d3ea41/uploaderb.json
+CONTA | r02d-20261125013921-d3ea41-uploaderb@proofs.streamtube.test | register 201, confirm-email 204 (link do Mailpit), login 200 | credenciais em /tmp/r02d-20261125013921-d3ea41/uploaderb.json (0600)
+$ support account --email r02d-20261125013921-d3ea41-control@proofs.streamtube.test --credentials /tmp/r02d-20261125013921-d3ea41/control.json
+CONTA | r02d-20261125013921-d3ea41-control@proofs.streamtube.test | register 201, confirm-email 204 (link do Mailpit), login 200 | credenciais em /tmp/r02d-20261125013921-d3ea41/control.json (0600)
+$ support control-video --credentials /tmp/r02d-20261125013921-d3ea41/control.json --state /tmp/r02d-20261125013921-d3ea41/control-state.json --file-name r02d-20261125013921-d3ea41-control.mp4
+CONTROLE | vídeo Dox2z-4zpNA em draft, sessão a0aae084-111e-4735-ac7d-d2145d8c91bc, nenhuma parte enviada
+relógios: VM 1795570794163..1795570794610, Windows 1795570794387; diferença Windows − VM ≈ 1 ms (incerteza ± 223 ms)
+sondas prontas: 4
+MARCA | folga | inicio | 1795570810076
+MARCA | folga | fim | 1795570826770
+FOLGA (meta: mínimo >= 4096 MiB disponíveis, com API, sondas e monitores em execução): insuficiente | 11 amostras | disponível mín 1600 MB, mediana 1690 MB | commit máx 23.76 de 33.05 GB | vmmem 4.87 GB
+livre em C: 41210372096
+folga insuficiente: maiores consumidores de memória do Windows (por nome, sem PID, caminho ou título); nada é encerrado
+
+Nome                 Processos WorkingSetMB PrivadaMB
+----                 --------- ------------ ---------
+vmmemWSL                     1         4632      6473
+brave                       13         1469      1466
+svchost                    100         1069      1411
+Code                        10          708      1357
+msedgewebview2              13          362       721
+com.docker.backend           2          336       558
+explorer                     1          271       582
+Taskmgr                      1          181       105
+powershell                   2          180       149
+dwm                          2          135       174
+TMBMSRV                      1          121       286
+Memory Compression           1          117         9
+CloudEndpointService         1          115       204
+WmiPrvSE                     4          110        86
+Docker Desktop               4           98       271
+LogonUI                      1           82        28
+RuntimeBroker                5           81        41
+WindowsTerminal              1           77        53
+EndpointBasecamp             5           68       122
+conhost                     26           62        48
+
+
+
+=== limpeza
+processos da API restantes: 0
+containers r02d restantes: 0
+$ support cleanup --emails r02d-20261125013921-d3ea41-uploaderb@proofs.streamtube.test,r02d-20261125013921-d3ea41-control@proofs.streamtube.test
+LIMPEZA | 2 e-mails de prova | 2 usuários, 1 vídeos, 1 sessões
+LIMPEZA | multiparts abortados: 1 (os demais já estavam concluídos ou abortados)
+LIMPEZA | jobs de processamento removidos: 0
+LIMPEZA prefixo originals/ae2efcbd-7a57-40af-ac7f-e50874c43e5f/: 0 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA prefixo thumbnails/ae2efcbd-7a57-40af-ac7f-e50874c43e5f/: 0 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA | e-mails removidos do Mailpit: 2
+PASSOU | linhas de prova no banco (usuários, vídeos e sessões) | esperado: 0 | observado: 0
+PASSOU | objetos de prova no bucket | esperado: 0 restantes | observado: 0 restantes
+PASSOU | multiparts das sessões de prova | esperado: 0 | observado: 0
+PASSOU | jobs de processamento dos vídeos de prova | esperado: 0 | observado: 0
+PASSOU | e-mails de prova no Mailpit | esperado: 0 | observado: 0
+LIMPEZA | 5 itens, 0 com falha
+diretório no nestjs-api presente: não
+diretório no Windows presente: não
+lixeira do storage: 208 KiB depois de 0 s
+temporários do Silo: lista igual, nenhum novo
+retratos iguais
+livre em C: 42194522112
+código: 0

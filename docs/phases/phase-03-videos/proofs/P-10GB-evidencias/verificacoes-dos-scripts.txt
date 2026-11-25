@@ -1,0 +1,40 @@
+# Verificações dos scripts da SI-03.33 (2026-11-24T22:14:44Z), no nestjs-api, sem a API servida
+
+$ npx tsc --noEmit
+código: 0
+
+$ npx eslint proofs/phase-03/upload-proof-support.ts (sem --fix)
+código: 0
+
+$ npx prettier --check proofs/phase-03/upload-proof-support.ts
+Checking formatting...
+All matched files use Prettier code style!
+código: 0
+
+$ bash -n proofs/phase-03/p10gb-roteiro.sh
+código: 0
+
+$ proofs/phase-03/p10gb-roteiro.sh --help
+uso: proofs/phase-03/p10gb-roteiro.sh [diretório de saída]
+código: 64 (esperado: 64)
+
+$ proofs/phase-03/upload-proof-support.ts latency-verdict --events e --baseline-start x --baseline-end 2 --out o (instante inválido, sem --probe)
+Error: --baseline-start e --baseline-end precisam ser instantes em ms, com ao menos um --probe
+código: 64 (esperado: 64)
+
+$ proofs/phase-03/upload-proof-support.ts latency-verdict --probe p (argumentos faltando)
+Error: --baseline-start é obrigatório
+código: 64 (esperado: 64)
+
+# Teste do latency-verdict antes da execução, sem novo upload (2026-11-24, ~21:45Z): os eventos e o CSV
+# preservados da execução final da V-07 foram copiados para /tmp/p10gb-verdict-check no nestjs-api, e o
+# diretório foi removido depois. Base delimitada do primeiro disparo da sonda ao segment_start do cliente.
+FASE | base (63.6 s) | 32 amostras (instância 1: 32) | p50 3.65 ms | p95 6.89 ms | p99 7.9 ms | máx 7.9 ms | fora de 2xx 0 | 429 0 | timeout 0 | erro de rede 0 | corpo inesperado 0
+FASE | carga (27 s de upload ativo) | 14 amostras (instância 1: 14) | p50 47.55 ms | p95 2483.05 ms | p99 2483.05 ms | máx 2483.05 ms | fora de 2xx 0 | 429 0 | timeout 0 | erro de rede 0 | corpo inesperado 0
+AMOSTRAS | mínimo de 300 por fase: não atingido | N recalculado pela D medida: 23
+VEREDITO | (a) … | inconclusivo
+VEREDITO | (b) … | inconclusivo
+VEREDITO | (c) 0 amostras sem 2xx válido em 63 (…) | aprovado
+VEREDITO | latência | inconclusivo
+(código 1; os p95 de base e de carga coincidem com os do V-07.md: 6,89 ms e 2.483 ms)
+Base terminando depois do início da carga: "Error: a base precisa terminar antes do primeiro intervalo de upload ativo".

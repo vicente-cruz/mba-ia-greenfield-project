@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+# Shim de controle: falha só o comando escolhido em P10GB_CONTROLE_FALHA; o resto vai ao docker real.
+case "${P10GB_CONTROLE_FALHA:-}:$*" in
+  build:*"exec -T nestjs-api npm run build"*) echo "CONTROLE | falha injetada: npm run build" >&2; exit 2 ;;
+  tsc:*"exec -T nestjs-api npx tsc --outDir"*) echo "CONTROLE | falha injetada: tsc do cliente e da sonda" >&2; exit 2 ;;
+  copia-container:*"exec -T nestjs-api cat /tmp/p10gbr-"*"/js/upload-client.js") echo "CONTROLE | falha injetada: cópia do JS do container" >&2; exit 2 ;;
+esac
+exec "/usr/bin/docker" "$@"

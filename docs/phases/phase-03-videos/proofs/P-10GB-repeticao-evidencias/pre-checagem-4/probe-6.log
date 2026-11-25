@@ -1,0 +1,5 @@
+ Container p10gbr-20261125045940-f17f11-probe-6 Creating 
+ Container p10gbr-20261125045940-f17f11-probe-6 Created 
+SONDA | instância 6 | GET /videos/14QZX6GMBI8 | intervalo 2000 ms | timeout 5000 ms | renovação 120 s antes de expirar | duração até SIGINT/SIGTERM
+SONDA | fim (SIGTERM) | 83 amostras em 165.4 s | ok 83 | fora de 2xx 0 (429: 0) | timeout 0 | erro de rede 0 | corpo inesperado 0 | renovações 0
+SONDA | latência das respostas ok (ms): p50 3.2 | p95 4.8 | p99 24.4 | máx 24.4

@@ -1,0 +1,41 @@
+# Verificações dos scripts da SI-03.32 (2026-11-24T21:29:19Z), no nestjs-api, sem a API servida
+
+$ npx tsc --noEmit
+código: 0
+
+$ npx eslint proofs/phase-03/upload-proof-support.ts (sem --fix)
+código: 0
+
+$ npx prettier --check proofs/phase-03/upload-proof-support.ts
+Checking formatting...
+All matched files use Prettier code style!
+código: 0
+
+$ bash -n proofs/phase-03/fluxo-completo-roteiro.sh
+código: 0
+
+$ proofs/phase-03/fluxo-completo-roteiro.sh --help
+uso: proofs/phase-03/fluxo-completo-roteiro.sh [diretório de saída]
+código: 64 (esperado: 64)
+
+$ upload-proof-support.ts flow-check --state x (argumentos faltando)
+Error: --credentials é obrigatório
+código: 64 (esperado: 64)
+
+$ upload-proof-support.ts flow-check … --storage-connect inválido
+Error: --storage-connect precisa ter a forma host:porta=host:porta
+código: 64 (esperado: 64)
+
+$ upload-proof-support.ts bogus
+Error: uso: api-check | account | control-video | parts-snapshot | compare-parts | interrupt-when | summarize | flow-check | snapshot | cleanup (ver o cabeçalho do script)
+código: 64 (esperado: 64)
+
+# Rótulo do summarize (ajuste da revisão da SI-03.31), conferido antes destas verificações, sem novo upload:
+# os eventos preservados da execução final da V-07 foram copiados para /tmp/v07-relabel-check no nestjs-api,
+# resumidos de novo e o diretório foi removido. Os arquivos preservados não foram alterados.
+$ upload-proof-support.ts summarize --events /tmp/v07-relabel-check/events.jsonl --out /tmp/v07-relabel-check/summary.json
+MEDIDA | bytes dos PUTs concluídos (abortados fora da soma) | {"bytes":1134217728,"resentFraction":0.1342,"putActiveMs":23689.5,"putMiBps":45.7}
+wire novo {'bytes': 1134217728, 'resentFraction': 0.1342, 'putActiveMs': 23689.5, 'putMiBps': 45.7}
+wire preservado {'bytes': 1134217728, 'resentFraction': 0.1342, 'putActiveMs': 23689.5, 'putMiBps': 45.7}
+iguais
+diretório temporário removido

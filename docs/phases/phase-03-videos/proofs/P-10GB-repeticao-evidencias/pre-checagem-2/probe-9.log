@@ -1,0 +1,5 @@
+ Container p10gbr-20261125044220-c1154c-probe-9 Creating 
+ Container p10gbr-20261125044220-c1154c-probe-9 Created 
+SONDA | instância 9 | GET /videos/0VuV6xYYyYI | intervalo 2000 ms | timeout 5000 ms | renovação 120 s antes de expirar | duração até SIGINT/SIGTERM
+SONDA | fim (SIGTERM) | 84 amostras em 166.9 s | ok 84 | fora de 2xx 0 (429: 0) | timeout 0 | erro de rede 0 | corpo inesperado 0 | renovações 0
+SONDA | latência das respostas ok (ms): p50 2.8 | p95 6.2 | p99 12.8 | máx 12.8

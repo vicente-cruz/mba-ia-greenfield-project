@@ -1,0 +1,14 @@
+{
+  "descricao": "I3 (89 ms) é mais curto que a incerteza (157 ms): fica preservado na conversão nominal; a amostra dentro dele conta na carga nominal e é marcada como de borda",
+  "baselineStart": 1800000000000,
+  "baselineEnd": 1800000700000,
+  "uncertaintyMs": 157,
+  "esperado": {
+    "intervalos": 3,
+    "carga_nominal": 321,
+    "bordas": 2,
+    "bordas_na_carga_nominal": 1,
+    "nominalLatency": "aprovado",
+    "latency": "aprovado"
+  }
+}

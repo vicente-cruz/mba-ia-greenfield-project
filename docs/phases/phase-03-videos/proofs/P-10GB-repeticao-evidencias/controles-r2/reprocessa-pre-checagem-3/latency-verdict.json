@@ -1,0 +1,405 @@
+{
+  "phases": {
+    "baseline": {
+      "start": "2026-11-25T04:49:57.071Z",
+      "end": "2026-11-25T04:51:17.913Z",
+      "seconds": 80.842,
+      "samples": 485,
+      "ok": 485,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": 2.88,
+      "p95": 4.61,
+      "p99": 7.06,
+      "max": 13.49,
+      "byInstance": {
+        "1": 41,
+        "2": 40,
+        "3": 40,
+        "4": 40,
+        "5": 41,
+        "6": 41,
+        "7": 41,
+        "8": 41,
+        "9": 40,
+        "10": 40,
+        "11": 40,
+        "12": 40
+      }
+    },
+    "load": {
+      "intervals": [
+        {
+          "start": "2026-11-25T04:51:20.051Z",
+          "end": "2026-11-25T04:51:24.190Z",
+          "seconds": 4.139
+        },
+        {
+          "start": "2026-11-25T04:51:35.475Z",
+          "end": "2026-11-25T04:51:40.126Z",
+          "seconds": 4.651
+        },
+        {
+          "start": "2026-11-25T04:51:48.277Z",
+          "end": "2026-11-25T04:51:48.368Z",
+          "seconds": 0.091
+        }
+      ],
+      "seconds": 8.881,
+      "samples": 57,
+      "ok": 57,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": 4.21,
+      "p95": 15.87,
+      "p99": 27.86,
+      "max": 27.86,
+      "byInstance": {
+        "1": 5,
+        "2": 5,
+        "3": 4,
+        "4": 4,
+        "5": 4,
+        "6": 5,
+        "7": 5,
+        "8": 5,
+        "9": 5,
+        "10": 6,
+        "11": 5,
+        "12": 4
+      }
+    },
+    "warmup": {
+      "samples": 16,
+      "ok": 16,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": 12.31,
+      "p95": 60.72,
+      "p99": 60.72,
+      "max": 60.72,
+      "byInstance": {
+        "1": 2,
+        "2": 2,
+        "3": 2,
+        "4": 2,
+        "5": 1,
+        "6": 1,
+        "7": 1,
+        "8": 1,
+        "9": 1,
+        "10": 1,
+        "11": 1,
+        "12": 1
+      }
+    },
+    "outside": {
+      "samples": 187,
+      "ok": 187,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": 3.24,
+      "p95": 6.38,
+      "p99": 8.14,
+      "max": 9.36,
+      "byInstance": {
+        "1": 15,
+        "2": 15,
+        "3": 16,
+        "4": 16,
+        "5": 16,
+        "6": 15,
+        "7": 15,
+        "8": 15,
+        "9": 16,
+        "10": 15,
+        "11": 16,
+        "12": 17
+      }
+    },
+    "all": {
+      "samples": 745,
+      "ok": 745,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": 3.02,
+      "p95": 7.16,
+      "p99": 15.87,
+      "max": 60.72,
+      "byInstance": {
+        "1": 63,
+        "2": 62,
+        "3": 62,
+        "4": 62,
+        "5": 62,
+        "6": 62,
+        "7": 62,
+        "8": 62,
+        "9": 62,
+        "10": 62,
+        "11": 62,
+        "12": 62
+      }
+    }
+  },
+  "instances": 12,
+  "minPhaseSamples": 300,
+  "enoughSamples": false,
+  "clockUncertainty": {
+    "uncertaintyMs": 152,
+    "model": "cada amostra de borda pode estar dentro ou fora da carga, independentemente das outras (conservador)",
+    "certainLoadSamples": 49,
+    "borderSamples": [
+      {
+        "instance": "8",
+        "epochMs": 1795582279903,
+        "latencyMs": 7.99,
+        "outcome": "ok",
+        "nominalLoad": false,
+        "interval": 1,
+        "edge": "início",
+        "distanceMs": -148
+      },
+      {
+        "instance": "9",
+        "epochMs": 1795582279974,
+        "latencyMs": 3.77,
+        "outcome": "ok",
+        "nominalLoad": false,
+        "interval": 1,
+        "edge": "início",
+        "distanceMs": -77
+      },
+      {
+        "instance": "10",
+        "epochMs": 1795582280055,
+        "latencyMs": 5.58,
+        "outcome": "ok",
+        "nominalLoad": true,
+        "interval": 1,
+        "edge": "início",
+        "distanceMs": 4
+      },
+      {
+        "instance": "11",
+        "epochMs": 1795582280157,
+        "latencyMs": 3.92,
+        "outcome": "ok",
+        "nominalLoad": true,
+        "interval": 1,
+        "edge": "início",
+        "distanceMs": 106
+      },
+      {
+        "instance": "2",
+        "epochMs": 1795582280161,
+        "latencyMs": 4.08,
+        "outcome": "ok",
+        "nominalLoad": true,
+        "interval": 1,
+        "edge": "início",
+        "distanceMs": 110
+      },
+      {
+        "instance": "10",
+        "epochMs": 1795582284055,
+        "latencyMs": 14.77,
+        "outcome": "ok",
+        "nominalLoad": true,
+        "interval": 1,
+        "edge": "fim",
+        "distanceMs": -135
+      },
+      {
+        "instance": "11",
+        "epochMs": 1795582284156,
+        "latencyMs": 9.67,
+        "outcome": "ok",
+        "nominalLoad": true,
+        "interval": 1,
+        "edge": "fim",
+        "distanceMs": -34
+      },
+      {
+        "instance": "2",
+        "epochMs": 1795582284161,
+        "latencyMs": 7.98,
+        "outcome": "ok",
+        "nominalLoad": true,
+        "interval": 1,
+        "edge": "fim",
+        "distanceMs": -29
+      },
+      {
+        "instance": "12",
+        "epochMs": 1795582284213,
+        "latencyMs": 3.65,
+        "outcome": "ok",
+        "nominalLoad": false,
+        "interval": 1,
+        "edge": "fim",
+        "distanceMs": 23
+      },
+      {
+        "instance": "6",
+        "epochMs": 1795582295573,
+        "latencyMs": 3.17,
+        "outcome": "ok",
+        "nominalLoad": true,
+        "interval": 2,
+        "edge": "início",
+        "distanceMs": 98
+      },
+      {
+        "instance": "10",
+        "epochMs": 1795582300055,
+        "latencyMs": 13.63,
+        "outcome": "ok",
+        "nominalLoad": true,
+        "interval": 2,
+        "edge": "fim",
+        "distanceMs": -71
+      },
+      {
+        "instance": "11",
+        "epochMs": 1795582300157,
+        "latencyMs": 2.48,
+        "outcome": "ok",
+        "nominalLoad": false,
+        "interval": 2,
+        "edge": "fim",
+        "distanceMs": 31
+      },
+      {
+        "instance": "2",
+        "epochMs": 1795582300161,
+        "latencyMs": 2.23,
+        "outcome": "ok",
+        "nominalLoad": false,
+        "interval": 2,
+        "edge": "fim",
+        "distanceMs": 35
+      },
+      {
+        "instance": "12",
+        "epochMs": 1795582300213,
+        "latencyMs": 3.23,
+        "outcome": "ok",
+        "nominalLoad": false,
+        "interval": 2,
+        "edge": "fim",
+        "distanceMs": 87
+      },
+      {
+        "instance": "11",
+        "epochMs": 1795582308156,
+        "latencyMs": 3.39,
+        "outcome": "ok",
+        "nominalLoad": false,
+        "interval": 3,
+        "edge": "início",
+        "distanceMs": -121
+      },
+      {
+        "instance": "2",
+        "epochMs": 1795582308160,
+        "latencyMs": 2.94,
+        "outcome": "ok",
+        "nominalLoad": false,
+        "interval": 3,
+        "edge": "início",
+        "distanceMs": -117
+      },
+      {
+        "instance": "12",
+        "epochMs": 1795582308212,
+        "latencyMs": 2.9,
+        "outcome": "ok",
+        "nominalLoad": false,
+        "interval": 3,
+        "edge": "início",
+        "distanceMs": -65
+      },
+      {
+        "instance": "3",
+        "epochMs": 1795582308482,
+        "latencyMs": 4.34,
+        "outcome": "ok",
+        "nominalLoad": false,
+        "interval": 3,
+        "edge": "fim",
+        "distanceMs": 114
+      }
+    ],
+    "possibleLoadSamples": {
+      "min": 49,
+      "max": 67
+    },
+    "p95Ms": {
+      "min": 14.94,
+      "max": 15.87
+    },
+    "p99Ms": {
+      "min": 27.86,
+      "max": 27.86
+    },
+    "possible": {
+      "a": [
+        "inconclusivo"
+      ],
+      "b": [
+        "inconclusivo"
+      ],
+      "enoughSamples": [
+        false
+      ]
+    },
+    "changes": {
+      "a": false,
+      "b": false,
+      "enoughSamples": false
+    }
+  },
+  "criteria": {
+    "a": {
+      "verdict": "inconclusivo",
+      "nominal": "inconclusivo",
+      "thresholdMs": 54.61,
+      "loadP95Ms": 15.87
+    },
+    "b": {
+      "verdict": "inconclusivo",
+      "nominal": "inconclusivo",
+      "loadP95Ms": 15.87,
+      "loadP99Ms": 27.86
+    },
+    "c": {
+      "verdict": "aprovado",
+      "samples": 745,
+      "failures": 0,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0
+    }
+  },
+  "nominalLatency": "inconclusivo",
+  "latency": "inconclusivo",
+  "recalculatedInstances": 68
+}

@@ -1,0 +1,9 @@
+{"t":1795616090343,"intervalMs":1312,"elMaxMs":0,"elP99Ms":0.001,"cpuUserMs":904,"cpuSystemMs":207,"rss":194891776,"heapUsed":83740616,"majflt":42}
+{"t":1795616091343,"intervalMs":1000,"elMaxMs":23.101,"elP99Ms":15.729,"cpuUserMs":151,"cpuSystemMs":22,"rss":206667776,"heapUsed":63804312,"majflt":42}
+{"t":1795616092342,"intervalMs":999,"elMaxMs":10.346,"elP99Ms":10.265,"cpuUserMs":6,"cpuSystemMs":0,"rss":206798848,"heapUsed":63859064,"majflt":42}
+{"t":1795616093343,"intervalMs":1001,"elMaxMs":10.281,"elP99Ms":10.256,"cpuUserMs":4,"cpuSystemMs":1,"rss":206798848,"heapUsed":63879384,"majflt":42}
+{"t":1795616094343,"intervalMs":1000,"elMaxMs":10.297,"elP99Ms":10.265,"cpuUserMs":5,"cpuSystemMs":1,"rss":206798848,"heapUsed":63899864,"majflt":42}
+{"t":1795616095343,"intervalMs":1000,"elMaxMs":35.455,"elP99Ms":20.283,"cpuUserMs":311,"cpuSystemMs":101,"rss":209244160,"heapUsed":68856672,"majflt":55}
+{"t":1795616096342,"intervalMs":999,"elMaxMs":10.355,"elP99Ms":10.248,"cpuUserMs":4,"cpuSystemMs":1,"rss":209244160,"heapUsed":68897816,"majflt":55}
+{"t":1795616097343,"intervalMs":1001,"elMaxMs":10.248,"elP99Ms":10.24,"cpuUserMs":5,"cpuSystemMs":0,"rss":209244160,"heapUsed":68909728,"majflt":55}
+{"t":1795616098342,"intervalMs":999,"elMaxMs":10.92,"elP99Ms":10.813,"cpuUserMs":226,"cpuSystemMs":47,"rss":209821696,"heapUsed":71076928,"majflt":55}

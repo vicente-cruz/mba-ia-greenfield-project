@@ -1,0 +1,5 @@
+ Container r02c-20261125010724-84efe2-probe-3 Creating 
+ Container r02c-20261125010724-84efe2-probe-3 Created 
+SONDA | instância 3 | GET /videos/G-sND4EZcBo | intervalo 2000 ms | timeout 5000 ms | renovação 120 s antes de expirar | duração até SIGINT/SIGTERM
+SONDA | fim (SIGTERM) | 54 amostras em 106.7 s | ok 54 | fora de 2xx 0 (429: 0) | timeout 0 | erro de rede 0 | corpo inesperado 0 | renovações 0
+SONDA | latência das respostas ok (ms): p50 4.2 | p95 37.0 | p99 159.9 | máx 159.9

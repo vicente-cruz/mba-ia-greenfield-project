@@ -1,0 +1,147 @@
+{
+  "phases": {
+    "baseline": {
+      "start": "2026-11-24T21:57:45.350Z",
+      "end": "2026-11-24T22:07:45.790Z",
+      "seconds": 600.44,
+      "samples": 1200,
+      "ok": 1200,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": 2.88,
+      "p95": 5.11,
+      "p99": 13.6,
+      "max": 36.29,
+      "byInstance": {
+        "1": 300,
+        "2": 300,
+        "3": 300,
+        "4": 300
+      }
+    },
+    "load": {
+      "intervals": [
+        {
+          "start": "2026-11-24T22:07:49.475Z",
+          "end": "2026-11-24T22:09:00.756Z",
+          "seconds": 71.281
+        },
+        {
+          "start": "2026-11-24T22:09:20.212Z",
+          "end": "2026-11-24T22:11:46.330Z",
+          "seconds": 146.118
+        },
+        {
+          "start": "2026-11-24T22:11:56.353Z",
+          "end": "2026-11-24T22:11:56.542Z",
+          "seconds": 0.189
+        }
+      ],
+      "seconds": 217.588,
+      "samples": 437,
+      "ok": 437,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": 10.45,
+      "p95": 802.26,
+      "p99": 3404.37,
+      "max": 3775.2,
+      "byInstance": {
+        "1": 109,
+        "2": 110,
+        "3": 109,
+        "4": 109
+      }
+    },
+    "warmup": {
+      "samples": 4,
+      "ok": 4,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": 4.23,
+      "p95": 6.89,
+      "p99": 6.89,
+      "max": 6.89,
+      "byInstance": {
+        "1": 1,
+        "2": 1,
+        "3": 1,
+        "4": 1
+      }
+    },
+    "outside": {
+      "samples": 75,
+      "ok": 75,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": 5.03,
+      "p95": 12.11,
+      "p99": 34.57,
+      "max": 34.57,
+      "byInstance": {
+        "1": 19,
+        "2": 18,
+        "3": 19,
+        "4": 19
+      }
+    },
+    "all": {
+      "samples": 1716,
+      "ok": 1716,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": 3.15,
+      "p95": 263.27,
+      "p99": 1088.47,
+      "max": 3775.2,
+      "byInstance": {
+        "1": 429,
+        "2": 429,
+        "3": 429,
+        "4": 429
+      }
+    }
+  },
+  "instances": 4,
+  "minPhaseSamples": 300,
+  "enoughSamples": true,
+  "criteria": {
+    "a": {
+      "verdict": "reprovado",
+      "thresholdMs": 55.11,
+      "loadP95Ms": 802.26
+    },
+    "b": {
+      "verdict": "reprovado",
+      "loadP95Ms": 802.26,
+      "loadP99Ms": 3404.37
+    },
+    "c": {
+      "verdict": "aprovado",
+      "samples": 1716,
+      "failures": 0,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0
+    }
+  },
+  "latency": "reprovado",
+  "recalculatedInstances": 3
+}

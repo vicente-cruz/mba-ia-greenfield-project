@@ -1,0 +1,15 @@
+# Comparação ensaio com API e sondas compiladas (cliente no Windows), upload de 1 GB
+
+| Janela | Duração | Sonda: amostras, p95 / máx (>250 ms) | Servidor GET: p95 / máx | Event loop: máx (s >100 ms) | Amostrador: maior intervalo (>1 s) | Sonda do db: consulta p95 / máx; maior intervalo | PSI io some / full | PSI mem some | PSI cpu some | iowait | swap out | faltas maiores | CPU nestjs-api / storage (mediana; máx) | Cliente: PUT MiB/s; checksum MiB/s; completion |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| R0-repouso | 30.2 s | 60, 4.5 / 6.0 ms (0) | 3.56 / 4.95 ms | 11.2 ms (0) | 553 ms (0) | 0.58 / 0.59 ms; 1002 ms | 0.1% / 0.1% | 0.0% | 0.2% | 0.0% | 0 pág | 1 | 6%; 7% / 0%; 4% | — |
+| V1 | 7.2 s | 12, 90.5 / 90.5 ms (0) | 70.75 / 70.75 ms | 134.1 ms (1) | 588 ms (0) | 1.02 / 1.02 ms; 1002 ms | 3.4% / 3.2% | 0.0% | 1.3% | 1.9% | 0 pág | 6 | 9%; 12% / 0%; 314% | 157.8; 261.8; 202 em 62.8 ms → error MEDIA_INVALID |
+
+## Detalhe da V1 (API sem watch e sondas compiladas)
+- API por segundo: event loop máx 134.1 ms; CPU 0% a 14% de um núcleo; intervalo real 998 a 1001 ms; RSS máx 226 MiB
+- GC (tipos pelas constantes): 1 pausas, soma 5.8 ms, maior 5.8 ms, tipos ['minor']
+- Windows na V1 (12 amostras): disponível mín 1636 MB, máx 2416 MB; commit máx 23.12 GB; paginação máx 89024 páginas/s (entrada máx 69758, saída máx 87794); vmmem 3.59 → 4.67 GB; fila de disco máx 24
+- falhas nas sondas em todo o ensaio: 0
+
+- segundo com event loop 134.087 ms (termina em 1795571816878): intervalo real 1000 ms, CPU usuário 30 ms + sistema 6 ms
+  - requisição POST /videos/f2qFvmBx200/upload-sessions/0bedcb9c-dd07-… chegou -460 ms, 32.591 ms, 200
