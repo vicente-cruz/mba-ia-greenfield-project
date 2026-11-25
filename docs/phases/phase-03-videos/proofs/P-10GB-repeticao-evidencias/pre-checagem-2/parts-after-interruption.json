@@ -1,0 +1,222 @@
+{
+  "at": "2026-11-25T04:45:25.836Z",
+  "publicId": "7-eccvoZdb0",
+  "videoStatus": "draft",
+  "sessionId": "0d75c397-56bb-4523-86a5-6823b968b08f",
+  "sessionStatus": "active",
+  "partCount": 15,
+  "registry": [
+    {
+      "partNumber": 1,
+      "etag": "\"4389abfcce48a68cdd26e8bfbc6d4a47\"",
+      "checksumSha256": "/4UH0WHZCcNywfqaRT8uL86r8iojnnDO6N51WGgFYZY=",
+      "expectedSize": 67108864,
+      "etagRegisteredAt": "2026-11-25T04:45:15.399Z"
+    },
+    {
+      "partNumber": 2,
+      "etag": "\"fe0a74b4dcf9035a19e63cee15c039ec\"",
+      "checksumSha256": "SnZgu6u0VvOVFGfDp7leMqewn7SLTK/+p/9Vs9T4A8g=",
+      "expectedSize": 67108864,
+      "etagRegisteredAt": "2026-11-25T04:45:15.399Z"
+    },
+    {
+      "partNumber": 3,
+      "etag": "\"58f99e14f8a2b8e51b524ad43ad330bb\"",
+      "checksumSha256": "bLIeWNGWUb77yoYRTB4IybbKEutFWoHILxms8PhYJyU=",
+      "expectedSize": 67108864,
+      "etagRegisteredAt": "2026-11-25T04:45:15.399Z"
+    },
+    {
+      "partNumber": 4,
+      "etag": "\"dfeb9082dcc5a361c6dc80a4bbdff64b\"",
+      "checksumSha256": "j6PC7lod83Lr2qL2QQ2RGWnSrDA5gdrK2k0Q6efSARk=",
+      "expectedSize": 67108864,
+      "etagRegisteredAt": "2026-11-25T04:45:15.399Z"
+    },
+    {
+      "partNumber": 5,
+      "etag": "\"64b5f868be98e4de86ce9bea103ed11a\"",
+      "checksumSha256": "/3l8v8W7/6VcyVAhmKywbPSfhmpqw8GkCdDJQ6XziSE=",
+      "expectedSize": 67108864,
+      "etagRegisteredAt": "2026-11-25T04:45:16.512Z"
+    },
+    {
+      "partNumber": 6,
+      "etag": "\"7d5b49bf0eeaffa3fc0f405a8ffdaab4\"",
+      "checksumSha256": "EnEQT5iji54zROzMn1ITqxqXm3IHygTgt8nXujyNQcI=",
+      "expectedSize": 67108864,
+      "etagRegisteredAt": "2026-11-25T04:45:16.512Z"
+    },
+    {
+      "partNumber": 7,
+      "etag": "\"c30448d321c9367753496555cead590e\"",
+      "checksumSha256": "93Y6EuWNlOzdcS4aUzg07vUO1W33NYQKsi7ex4b+adI=",
+      "expectedSize": 67108864,
+      "etagRegisteredAt": "2026-11-25T04:45:18.363Z"
+    },
+    {
+      "partNumber": 8,
+      "etag": "\"b2c63cc32a1db56887a0d9f2fb2b9593\"",
+      "checksumSha256": "S0mjQQVpj2ilByreMqJ5jtC7DeXoBZlVk0/N7JmhfTM=",
+      "expectedSize": 67108864,
+      "etagRegisteredAt": "2026-11-25T04:45:18.363Z"
+    },
+    {
+      "partNumber": 9,
+      "etag": "\"ebd1ee7c205255dcda728033c65cec89\"",
+      "checksumSha256": "rDc45/GQ698FGUkflCiwZ+TUKr3lQ8q3LWvhjhdnNho=",
+      "expectedSize": 67108864,
+      "etagRegisteredAt": "2026-11-25T04:45:19.898Z"
+    },
+    {
+      "partNumber": 10,
+      "etag": "\"402cf07bb96d9378cab6d981bf24fb0c\"",
+      "checksumSha256": "kAlRdi4gpHpPHE8aYxOW+VhyNExuM/Tu9I/OvcUVK7Y=",
+      "expectedSize": 67108864,
+      "etagRegisteredAt": "2026-11-25T04:45:18.363Z"
+    },
+    {
+      "partNumber": 11,
+      "etag": "\"9fe2dc447c581e2a4e0123328d47a66f\"",
+      "checksumSha256": "0woHOSzLkU0vdWaXW4sRpySCS3cL5MaGf+lY460SmVw=",
+      "expectedSize": 67108864,
+      "etagRegisteredAt": "2026-11-25T04:45:18.363Z"
+    },
+    {
+      "partNumber": 12,
+      "etag": "\"9a78c9795f6ca3cfb9b582c667992d07\"",
+      "checksumSha256": "prQ8vI8239IdiolMP2dC+IFZGKrF0KArmjes5UX3lWY=",
+      "expectedSize": 67108864,
+      "etagRegisteredAt": "2026-11-25T04:45:19.898Z"
+    },
+    {
+      "partNumber": 13,
+      "etag": "\"d69cd0beb50f953fc427a8888e4a372f\"",
+      "checksumSha256": "jVd4UG8lVblkx+MYg82OnWIgP0F6CqOnf1iEvusFXbs=",
+      "expectedSize": 67108864,
+      "etagRegisteredAt": "2026-11-25T04:45:19.898Z"
+    },
+    {
+      "partNumber": 14,
+      "etag": "\"598a42af118b9b3f77cebb397009e163\"",
+      "checksumSha256": "gLzg+lBBjZycdGlAZts5AjAzmDK/Gdeom33ZH9YHMzg=",
+      "expectedSize": 67108864,
+      "etagRegisteredAt": "2026-11-25T04:45:19.898Z"
+    },
+    {
+      "partNumber": 15,
+      "etag": null,
+      "checksumSha256": "415XL3hn7k7b+2woOrhdBRAaaR7kzhCUaxuc07I9pas=",
+      "expectedSize": 60475904,
+      "etagRegisteredAt": null
+    }
+  ],
+  "storage": [
+    {
+      "partNumber": 1,
+      "etag": "\"4389abfcce48a68cdd26e8bfbc6d4a47\"",
+      "size": 67108864,
+      "lastModified": "2026-11-25T04:45:14.581Z",
+      "checksumSha256": "/4UH0WHZCcNywfqaRT8uL86r8iojnnDO6N51WGgFYZY="
+    },
+    {
+      "partNumber": 2,
+      "etag": "\"fe0a74b4dcf9035a19e63cee15c039ec\"",
+      "size": 67108864,
+      "lastModified": "2026-11-25T04:45:14.854Z",
+      "checksumSha256": "SnZgu6u0VvOVFGfDp7leMqewn7SLTK/+p/9Vs9T4A8g="
+    },
+    {
+      "partNumber": 3,
+      "etag": "\"58f99e14f8a2b8e51b524ad43ad330bb\"",
+      "size": 67108864,
+      "lastModified": "2026-11-25T04:45:15.130Z",
+      "checksumSha256": "bLIeWNGWUb77yoYRTB4IybbKEutFWoHILxms8PhYJyU="
+    },
+    {
+      "partNumber": 4,
+      "etag": "\"dfeb9082dcc5a361c6dc80a4bbdff64b\"",
+      "size": 67108864,
+      "lastModified": "2026-11-25T04:45:15.339Z",
+      "checksumSha256": "j6PC7lod83Lr2qL2QQ2RGWnSrDA5gdrK2k0Q6efSARk="
+    },
+    {
+      "partNumber": 5,
+      "etag": "\"64b5f868be98e4de86ce9bea103ed11a\"",
+      "size": 67108864,
+      "lastModified": "2026-11-25T04:45:16.413Z",
+      "checksumSha256": "/3l8v8W7/6VcyVAhmKywbPSfhmpqw8GkCdDJQ6XziSE="
+    },
+    {
+      "partNumber": 6,
+      "etag": "\"7d5b49bf0eeaffa3fc0f405a8ffdaab4\"",
+      "size": 67108864,
+      "lastModified": "2026-11-25T04:45:16.164Z",
+      "checksumSha256": "EnEQT5iji54zROzMn1ITqxqXm3IHygTgt8nXujyNQcI="
+    },
+    {
+      "partNumber": 7,
+      "etag": "\"c30448d321c9367753496555cead590e\"",
+      "size": 67108864,
+      "lastModified": "2026-11-25T04:45:16.580Z",
+      "checksumSha256": "93Y6EuWNlOzdcS4aUzg07vUO1W33NYQKsi7ex4b+adI="
+    },
+    {
+      "partNumber": 8,
+      "etag": "\"b2c63cc32a1db56887a0d9f2fb2b9593\"",
+      "size": 67108864,
+      "lastModified": "2026-11-25T04:45:16.926Z",
+      "checksumSha256": "S0mjQQVpj2ilByreMqJ5jtC7DeXoBZlVk0/N7JmhfTM="
+    },
+    {
+      "partNumber": 9,
+      "etag": "\"ebd1ee7c205255dcda728033c65cec89\"",
+      "size": 67108864,
+      "lastModified": "2026-11-25T04:45:18.378Z",
+      "checksumSha256": "rDc45/GQ698FGUkflCiwZ+TUKr3lQ8q3LWvhjhdnNho="
+    },
+    {
+      "partNumber": 10,
+      "etag": "\"402cf07bb96d9378cab6d981bf24fb0c\"",
+      "size": 67108864,
+      "lastModified": "2026-11-25T04:45:17.760Z",
+      "checksumSha256": "kAlRdi4gpHpPHE8aYxOW+VhyNExuM/Tu9I/OvcUVK7Y="
+    },
+    {
+      "partNumber": 11,
+      "etag": "\"9fe2dc447c581e2a4e0123328d47a66f\"",
+      "size": 67108864,
+      "lastModified": "2026-11-25T04:45:18.194Z",
+      "checksumSha256": "0woHOSzLkU0vdWaXW4sRpySCS3cL5MaGf+lY460SmVw="
+    },
+    {
+      "partNumber": 12,
+      "etag": "\"9a78c9795f6ca3cfb9b582c667992d07\"",
+      "size": 67108864,
+      "lastModified": "2026-11-25T04:45:18.574Z",
+      "checksumSha256": "prQ8vI8239IdiolMP2dC+IFZGKrF0KArmjes5UX3lWY="
+    },
+    {
+      "partNumber": 13,
+      "etag": "\"d69cd0beb50f953fc427a8888e4a372f\"",
+      "size": 67108864,
+      "lastModified": "2026-11-25T04:45:19.464Z",
+      "checksumSha256": "jVd4UG8lVblkx+MYg82OnWIgP0F6CqOnf1iEvusFXbs="
+    },
+    {
+      "partNumber": 14,
+      "etag": "\"598a42af118b9b3f77cebb397009e163\"",
+      "size": 67108864,
+      "lastModified": "2026-11-25T04:45:19.747Z",
+      "checksumSha256": "gLzg+lBBjZycdGlAZts5AjAzmDK/Gdeom33ZH9YHMzg="
+    },
+    {
+      "partNumber": 15,
+      "etag": "\"2195b6ff800929291f5df8d460271af3\"",
+      "size": 60475904,
+      "lastModified": "2026-11-25T04:45:19.934Z",
+      "checksumSha256": "415XL3hn7k7b+2woOrhdBRAaaR7kzhCUaxuc07I9pas="
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+=== r2 (roteiro corrigido)
+CONTROLE | build | roteiro saiu com 2 | Build da API e JS do cliente e da sonda: código 2 | geração iniciada: não | sentinela: não | retratos iguais | passou
+  CONTROLE | falha injetada: npm run build
+  FALHA | build da API: código 2
+CONTROLE | tsc | roteiro saiu com 2 | Build da API e JS do cliente e da sonda: código 2 | geração iniciada: não | sentinela: não | retratos iguais | passou
+  CONTROLE | falha injetada: tsc do cliente e da sonda
+  FALHA | tsc do cliente e da sonda: código 2
+CONTROLE | copia-container | roteiro saiu com 2 | Build da API e JS do cliente e da sonda: código 2 | geração iniciada: não | sentinela: não | retratos iguais | passou
+  CONTROLE | falha injetada: cópia do JS do container
+  FALHA | cópia de upload-client.js do container: código 2
+CONTROLE | copia-windows | roteiro saiu com 2 | Build da API e JS do cliente e da sonda: código 2 | geração iniciada: não | sentinela: não | retratos iguais | passou
+  CONTROLE | falha injetada: cópia do JS para o Windows
+  FALHA | cópia de upload-client.js para o Windows: código 2
+=== r1 (controle negativo: o roteiro anterior com a mesma falha no build)
+CONTROLE | build | roteiro saiu com 99 | Build da API e JS do cliente e da sonda: código 0 | geração iniciada: sim | sentinela: sim | retratos iguais: 1 | NÃO PASSOU
+  CONTROLE | SENTINELA: a geração do arquivo de prova foi alcançada e bloqueada
+  CONTROLE | falha injetada: npm run build
+controle negativo r1: 1 (esperado: não passar)
+cópia temporária da r1 presente: não
+FIM

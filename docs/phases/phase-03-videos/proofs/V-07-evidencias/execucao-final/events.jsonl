@@ -1,0 +1,105 @@
+{"t":1795549645676,"seg":"generate","ev":"generate","bytes":1000000000,"ms":9479.2,"sha256":"a1ebde86bd78bc09162e6b076403cef311ba82553a332c0aa3418e5c922ac142"}
+{"t":1795549727865,"seg":"start","ev":"segment_start","pid":8507,"concurrency":4,"signBatch":10,"registerEvery":4,"partUrlsIntervalMs":1100,"storageConnect":true,"tokenExpiresAt":"2026-11-24T20:02:06.000Z"}
+{"t":1795549727923,"seg":"start","ev":"api","op":"POST /videos","attempt":1,"status":201,"ms":52.6}
+{"t":1795549727923,"seg":"start","ev":"plan","publicId":"_oLntoLU6fw","sessionId":"7db71a73-0d8c-410e-97a5-04e55c489f7a","sizeBytes":1000000000,"partSize":67108864,"partCount":15,"lastPartSize":60475904,"checksumAlgorithm":"SHA256","sessionExpiresAt":"2026-11-25T19:48:47.915Z"}
+{"t":1795549728129,"seg":"start","ev":"checksum","part":1,"bytes":67108864,"ms":204.1,"purpose":"sign"}
+{"t":1795549728130,"seg":"start","ev":"load_start","reason":"part-urls"}
+{"t":1795549728184,"seg":"start","ev":"api","op":"POST part-urls","attempt":1,"status":200,"ms":52.5}
+{"t":1795549728184,"seg":"start","ev":"part_urls","signed":[1],"registered":[]}
+{"t":1795549728403,"seg":"start","ev":"checksum","part":2,"bytes":67108864,"ms":273.3,"purpose":"sign"}
+{"t":1795549728687,"seg":"start","ev":"checksum","part":3,"bytes":67108864,"ms":283.2,"purpose":"sign"}
+{"t":1795549728894,"seg":"start","ev":"checksum","part":4,"bytes":67108864,"ms":207.2,"purpose":"sign"}
+{"t":1795549729258,"seg":"start","ev":"put","part":1,"bytes":67108864,"ms":1072.8,"attempt":1,"status":200,"outcome":"ok","etag":"\"251fe7fa2a811bb747c6e3d65ec12dff\""}
+{"t":1795549729259,"seg":"start","ev":"api","op":"POST part-urls","attempt":1,"status":200,"ms":19.8}
+{"t":1795549729259,"seg":"start","ev":"part_urls","signed":[2,3,4],"registered":[]}
+{"t":1795549729305,"seg":"start","ev":"checksum","part":5,"bytes":67108864,"ms":406,"purpose":"sign"}
+{"t":1795549729990,"seg":"start","ev":"checksum","part":6,"bytes":67108864,"ms":683.5,"purpose":"sign"}
+{"t":1795549730342,"seg":"start","ev":"checksum","part":7,"bytes":67108864,"ms":351.8,"purpose":"sign"}
+{"t":1795549730356,"seg":"start","ev":"put","part":4,"bytes":67108864,"ms":1095.3,"attempt":1,"status":200,"outcome":"ok","etag":"\"a62817ce051c6dd12a3bb8a1bc32ffd3\""}
+{"t":1795549730603,"seg":"start","ev":"api","op":"POST part-urls","attempt":1,"status":200,"ms":256}
+{"t":1795549730603,"seg":"start","ev":"part_urls","signed":[5,6],"registered":[1]}
+{"t":1795549730747,"seg":"start","ev":"put","part":3,"bytes":67108864,"ms":1486.6,"attempt":1,"status":200,"outcome":"ok","etag":"\"7f62c44a3bd37a8cd32ee97d199a9801\""}
+{"t":1795549730756,"seg":"start","ev":"put","part":2,"bytes":67108864,"ms":1493.3,"attempt":1,"status":200,"outcome":"ok","etag":"\"75847337a98174fcb363b615e1f56725\""}
+{"t":1795549730772,"seg":"start","ev":"checksum","part":8,"bytes":67108864,"ms":429.1,"purpose":"sign"}
+{"t":1795549731230,"seg":"start","ev":"checksum","part":9,"bytes":67108864,"ms":456.8,"purpose":"sign"}
+{"t":1795549731521,"seg":"start","ev":"api","op":"POST part-urls","attempt":1,"status":200,"ms":79.6}
+{"t":1795549731521,"seg":"start","ev":"part_urls","signed":[7,8,9],"registered":[2,3,4]}
+{"t":1795549731689,"seg":"start","ev":"checksum","part":10,"bytes":67108864,"ms":458.2,"purpose":"sign"}
+{"t":1795549732061,"seg":"start","ev":"put","part":6,"bytes":67108864,"ms":1435.4,"attempt":1,"status":200,"outcome":"ok","etag":"\"776938d0a9cb03485343ffee50207a54\""}
+{"t":1795549732166,"seg":"start","ev":"put","part":5,"bytes":67108864,"ms":1550,"attempt":1,"status":200,"outcome":"ok","etag":"\"313d9f3cd4d0b43cf953f8d1a07837d0\""}
+{"t":1795549732234,"seg":"start","ev":"checksum","part":11,"bytes":67108864,"ms":544.4,"purpose":"sign"}
+{"t":1795549732586,"seg":"start","ev":"api","op":"POST part-urls","attempt":1,"status":200,"ms":43.2}
+{"t":1795549732587,"seg":"start","ev":"part_urls","signed":[10,11],"registered":[5,6]}
+{"t":1795549732944,"seg":"start","ev":"checksum","part":12,"bytes":67108864,"ms":709.9,"purpose":"sign"}
+{"t":1795549733488,"seg":"start","ev":"checksum","part":13,"bytes":67108864,"ms":544,"purpose":"sign"}
+{"t":1795549734044,"seg":"start","ev":"checksum","part":14,"bytes":67108864,"ms":503.9,"purpose":"sign"}
+{"t":1795549734210,"seg":"start","ev":"checksum","part":15,"bytes":60475904,"ms":165.2,"purpose":"sign"}
+{"t":1795549735639,"seg":"start","ev":"api","op":"POST part-urls","attempt":1,"status":200,"ms":1430.3}
+{"t":1795549735640,"seg":"start","ev":"part_urls","signed":[12,13,14,15],"registered":[]}
+{"t":1795549737957,"seg":"start","ev":"put","part":9,"bytes":67108864,"ms":5800.2,"attempt":1,"status":200,"outcome":"ok","etag":"\"a26a463d128b8fd60989c1ed21f5fb8d\""}
+{"t":1795549738456,"seg":"start","ev":"put","part":7,"bytes":67108864,"ms":6933.4,"attempt":1,"status":200,"outcome":"ok","etag":"\"5716ac9382eecb48d7923112259e91be\""}
+{"t":1795549738482,"seg":"start","ev":"interrupted","signal":"SIGINT","putDone":[1,2,3,4,5,6,7,9],"registered":[1,2,3,4,5,6],"inFlight":[8,10,11,12]}
+{"t":1795549738482,"seg":"start","ev":"load_end","reason":"interrupted"}
+{"t":1795549738556,"seg":"start","ev":"put","part":8,"bytes":67108864,"ms":7031.7,"attempt":1,"outcome":"aborted"}
+{"t":1795549738556,"seg":"start","ev":"put","part":10,"bytes":67108864,"ms":5966.4,"attempt":1,"outcome":"aborted"}
+{"t":1795549738556,"seg":"start","ev":"put","part":11,"bytes":67108864,"ms":557.1,"attempt":1,"outcome":"aborted"}
+{"t":1795549738556,"seg":"start","ev":"put","part":12,"bytes":67108864,"ms":79.2,"attempt":1,"outcome":"aborted"}
+{"t":1795549738557,"seg":"start","ev":"segment_end","outcome":"interrupted"}
+{"t":1795549757679,"seg":"resume","ev":"segment_start","pid":8582,"concurrency":4,"signBatch":10,"registerEvery":4,"partUrlsIntervalMs":1100,"storageConnect":true,"tokenExpiresAt":"2026-11-24T20:02:06.000Z"}
+{"t":1795549757680,"seg":"resume","ev":"load_start","reason":"resume"}
+{"t":1795549757701,"seg":"resume","ev":"api","op":"GET /videos/:publicId","attempt":1,"status":200,"ms":19.5}
+{"t":1795549757743,"seg":"resume","ev":"api","op":"GET upload-session","attempt":1,"status":200,"ms":41.7}
+{"t":1795549757744,"seg":"resume","ev":"resume_classification","confirmed":[1,2,3,4,5,6],"missing":[8,10,11,12,13,14,15],"divergent":[],"unregistered":[7,9]}
+{"t":1795549757908,"seg":"resume","ev":"checksum","part":1,"bytes":67108864,"ms":163.9,"purpose":"verify"}
+{"t":1795549758068,"seg":"resume","ev":"checksum","part":2,"bytes":67108864,"ms":159.4,"purpose":"verify"}
+{"t":1795549758236,"seg":"resume","ev":"checksum","part":3,"bytes":67108864,"ms":167.5,"purpose":"verify"}
+{"t":1795549758385,"seg":"resume","ev":"checksum","part":4,"bytes":67108864,"ms":149,"purpose":"verify"}
+{"t":1795549758555,"seg":"resume","ev":"checksum","part":5,"bytes":67108864,"ms":169.3,"purpose":"verify"}
+{"t":1795549758710,"seg":"resume","ev":"checksum","part":6,"bytes":67108864,"ms":154.7,"purpose":"verify"}
+{"t":1795549758860,"seg":"resume","ev":"checksum","part":7,"bytes":67108864,"ms":149.8,"purpose":"verify"}
+{"t":1795549759010,"seg":"resume","ev":"checksum","part":9,"bytes":67108864,"ms":150,"purpose":"verify"}
+{"t":1795549760298,"seg":"resume","ev":"api","op":"POST file-verifications","attempt":1,"status":200,"ms":1285.7}
+{"t":1795549760298,"seg":"resume","ev":"file_verification","parts":[1,2,3,4,5,6,7,9],"bytes":536870912,"checksumMs":1266.5,"requestMs":1285.7,"verifiedParts":8}
+{"t":1795549760299,"seg":"resume","ev":"resend_plan","parts":[7,8,9,10,11,12,13,14,15]}
+{"t":1795549760724,"seg":"resume","ev":"checksum","part":8,"bytes":67108864,"ms":153.6,"purpose":"sign"}
+{"t":1795549760781,"seg":"resume","ev":"api","op":"POST part-urls","attempt":1,"status":200,"ms":207.5}
+{"t":1795549760781,"seg":"resume","ev":"part_urls","signed":[7,9],"registered":[]}
+{"t":1795549761022,"seg":"resume","ev":"checksum","part":10,"bytes":67108864,"ms":297,"purpose":"sign"}
+{"t":1795549763771,"seg":"resume","ev":"api","op":"POST part-urls","attempt":1,"status":200,"ms":2096.9}
+{"t":1795549763771,"seg":"resume","ev":"part_urls","signed":[8,10],"registered":[]}
+{"t":1795549764616,"seg":"resume","ev":"checksum","part":11,"bytes":67108864,"ms":3593.4,"purpose":"sign"}
+{"t":1795549764775,"seg":"resume","ev":"checksum","part":12,"bytes":67108864,"ms":158.7,"purpose":"sign"}
+{"t":1795549764802,"seg":"resume","ev":"checksum","part":13,"bytes":67108864,"ms":135.1,"purpose":"sign"}
+{"t":1795549764941,"seg":"resume","ev":"checksum","part":14,"bytes":67108864,"ms":139.2,"purpose":"sign"}
+{"t":1795549765099,"seg":"resume","ev":"checksum","part":15,"bytes":60475904,"ms":158.2,"purpose":"sign"}
+{"t":1795549765331,"seg":"resume","ev":"api","op":"POST part-urls","attempt":1,"status":200,"ms":185.8}
+{"t":1795549765331,"seg":"resume","ev":"part_urls","signed":[11,12,13,14,15],"registered":[]}
+{"t":1795549765652,"seg":"resume","ev":"put","part":9,"bytes":67108864,"ms":4896.2,"attempt":1,"status":200,"outcome":"ok","etag":"\"a26a463d128b8fd60989c1ed21f5fb8d\""}
+{"t":1795549768259,"seg":"resume","ev":"put","part":7,"bytes":67108864,"ms":7505.1,"attempt":1,"status":200,"outcome":"ok","etag":"\"5716ac9382eecb48d7923112259e91be\""}
+{"t":1795549768563,"seg":"resume","ev":"put","part":8,"bytes":67108864,"ms":4791.6,"attempt":1,"status":200,"outcome":"ok","etag":"\"dbec04b5169ff777b35ef9d894d375ae\""}
+{"t":1795549768750,"seg":"resume","ev":"put","part":10,"bytes":67108864,"ms":4975.9,"attempt":1,"status":200,"outcome":"ok","etag":"\"99cc112a5d263745ab3213730f99cb74\""}
+{"t":1795549768762,"seg":"resume","ev":"put","part":11,"bytes":67108864,"ms":3098.8,"attempt":1,"status":200,"outcome":"ok","etag":"\"129d4270f24400d25475092e4d99ecd0\""}
+{"t":1795549768789,"seg":"resume","ev":"api","op":"POST part-urls (só registro)","attempt":1,"status":200,"ms":26.8}
+{"t":1795549768790,"seg":"resume","ev":"part_urls","signed":[],"registered":[7,8,9,10]}
+{"t":1795549769053,"seg":"resume","ev":"put","part":12,"bytes":67108864,"ms":785.3,"attempt":1,"status":200,"outcome":"ok","etag":"\"68082c441b46844d4cdfc18bacdb1fd8\""}
+{"t":1795549770409,"seg":"resume","ev":"put","part":13,"bytes":67108864,"ms":1816.8,"attempt":1,"status":200,"outcome":"ok","etag":"\"acbfacea46ea0b893e976dd0dab53f63\""}
+{"t":1795549772085,"seg":"resume","ev":"put","part":15,"bytes":60475904,"ms":3320,"attempt":1,"status":200,"outcome":"ok","etag":"\"d27a8915981371b4a0d7e4c2d2760db8\""}
+{"t":1795549772183,"seg":"resume","ev":"api","op":"POST part-urls (só registro)","attempt":1,"status":200,"ms":90.1}
+{"t":1795549772183,"seg":"resume","ev":"part_urls","signed":[],"registered":[11,12,13,15]}
+{"t":1795549774075,"seg":"resume","ev":"put","part":14,"bytes":67108864,"ms":5319.7,"attempt":1,"status":200,"outcome":"ok","etag":"\"96494094748a99a772799de486114f12\""}
+{"t":1795549774114,"seg":"resume","ev":"api","op":"POST part-urls (só registro)","attempt":1,"status":200,"ms":34.5}
+{"t":1795549774115,"seg":"resume","ev":"part_urls","signed":[],"registered":[14]}
+{"t":1795549774118,"seg":"resume","ev":"load_end","reason":"hold"}
+{"t":1795549774118,"seg":"resume","ev":"hold_start"}
+{"t":1795549784749,"seg":"resume","ev":"hold_end"}
+{"t":1795549784749,"seg":"resume","ev":"load_start","reason":"hold-released"}
+{"t":1795549784749,"seg":"resume","ev":"completion_start"}
+{"t":1795549784936,"seg":"resume","ev":"api","op":"POST completion","attempt":1,"status":202,"ms":185.4}
+{"t":1795549784936,"seg":"resume","ev":"completion","status":202,"ms":185.4,"videoStatus":"processing"}
+{"t":1795549784936,"seg":"resume","ev":"load_end","reason":"completion"}
+{"t":1795549784946,"seg":"resume","ev":"api","op":"GET /videos/:publicId (polling)","attempt":1,"status":200,"ms":8.6}
+{"t":1795549784946,"seg":"resume","ev":"poll_state","status":"processing","errorCode":null,"polls":1}
+{"t":1795549787137,"seg":"resume","ev":"api","op":"GET /videos/:publicId (polling)","attempt":1,"status":200,"ms":187.7}
+{"t":1795549787137,"seg":"resume","ev":"poll_state","status":"error","errorCode":"MEDIA_INVALID","polls":2}
+{"t":1795549787137,"seg":"resume","ev":"final","status":"error","errorCode":"MEDIA_INVALID","errorMessage":"http://storage:9000/streamtube/originals/121b305d-78d7-48d6-a0ff-be6f35766435/7db71a73-0d8c-410e-97a5-04e55c489f7a: Invalid data found when processing input","polls":2}
+{"t":1795549787209,"seg":"resume","ev":"segment_end","outcome":"ok"}

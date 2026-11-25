@@ -1,0 +1,33 @@
+INÍCIO | vídeo 7-eccvoZdb0 (draft) | sessão 0d75c397-56bb-4523-86a5-6823b968b08f | 1000000000 bytes em 15 partes de 67108864 (última com 60475904) | SHA256
+CHECKSUM | parte 1 | 67108864 bytes | 127.8 ms | antes da assinatura
+CHECKSUM | parte 2 | 67108864 bytes | 176.2 ms | antes da assinatura
+CHECKSUM | parte 3 | 67108864 bytes | 147 ms | antes da assinatura
+CHECKSUM | parte 4 | 67108864 bytes | 131 ms | antes da assinatura
+CHECKSUM | parte 5 | 67108864 bytes | 146.9 ms | antes da assinatura
+CHECKSUM | parte 6 | 67108864 bytes | 126.5 ms | antes da assinatura
+CHECKSUM | parte 7 | 67108864 bytes | 142.6 ms | antes da assinatura
+CHECKSUM | parte 8 | 67108864 bytes | 135.4 ms | antes da assinatura
+CHECKSUM | parte 9 | 67108864 bytes | 314.8 ms | antes da assinatura
+CHECKSUM | parte 10 | 67108864 bytes | 364 ms | antes da assinatura
+PUT | parte 1 | 67108864 bytes | 1872.1 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 11 | 67108864 bytes | 249.9 ms | antes da assinatura
+PUT | parte 2 | 67108864 bytes | 1052.2 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 12 | 67108864 bytes | 261.3 ms | antes da assinatura
+PUT | parte 3 | 67108864 bytes | 1309.9 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 13 | 67108864 bytes | 266.9 ms | antes da assinatura
+PUT | parte 4 | 67108864 bytes | 1421.5 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 14 | 67108864 bytes | 549.5 ms | antes da assinatura
+CHECKSUM | parte 15 | 60475904 bytes | 229.4 ms | antes da assinatura
+PUT | parte 6 | 67108864 bytes | 1258.9 ms | HTTP 200 | tentativa 1
+PUT | parte 5 | 67108864 bytes | 1774.2 ms | HTTP 200 | tentativa 1
+PUT | parte 7 | 67108864 bytes | 1355.8 ms | HTTP 200 | tentativa 1
+PUT | parte 8 | 67108864 bytes | 1551.8 ms | HTTP 200 | tentativa 1
+PUT | parte 10 | 67108864 bytes | 1231.9 ms | HTTP 200 | tentativa 1
+PUT | parte 11 | 67108864 bytes | 1649.6 ms | HTTP 200 | tentativa 1
+PUT | parte 9 | 67108864 bytes | 1891.7 ms | HTTP 200 | tentativa 1
+PUT | parte 12 | 67108864 bytes | 1615 ms | HTTP 200 | tentativa 1
+PUT | parte 13 | 67108864 bytes | 1655.6 ms | HTTP 200 | tentativa 1
+PUT | parte 14 | 67108864 bytes | 1484.8 ms | HTTP 200 | tentativa 1
+PUT | parte 15 | 60475904 bytes | 1416.9 ms | HTTP 200 | tentativa 1
+INTERRUPÇÃO | SIGINT | PUT concluído: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15] | registradas: [1,2,3,4,5,6,7,8,9,10,11,12,13,14] | em andamento: []
+FIM | interrompido por SIGINT

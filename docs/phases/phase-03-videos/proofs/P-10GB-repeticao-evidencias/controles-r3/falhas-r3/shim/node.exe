@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+# Sentinela da geração: nos modos anteriores a ela, a geração nunca roda.
+case " prepare-pasta prepare-auxiliar-container prepare-auxiliar-windows build tsc copia-container copia-windows " in
+  *" ${P10GB_CONTROLE_FALHA:-nenhum} "*)
+    case " $* " in
+      *" generate "*)
+        echo "CONTROLE | SENTINELA: a geração do arquivo de prova foi alcançada e bloqueada" >&2
+        echo geracao >>"${P10GB_CONTROLE_SENTINELA:?}"
+        exit 99 ;;
+    esac ;;
+esac
+case "${P10GB_CONTROLE_FALHA:-}:$*" in
+  relogio:*"relogio.cjs"*) echo "CONTROLE | falha injetada: medida do relógio" >&2; exit 1 ;;
+esac
+exec "/mnt/c/ProgramsDeveloper/nodejs/node.exe" "$@"

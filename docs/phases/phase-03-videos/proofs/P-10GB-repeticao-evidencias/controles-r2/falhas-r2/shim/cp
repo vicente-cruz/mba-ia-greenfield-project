@@ -1,0 +1,5 @@
+#!/usr/bin/env bash
+case "${P10GB_CONTROLE_FALHA:-}:$*" in
+  copia-windows:*"/js/upload-client.js") echo "CONTROLE | falha injetada: cópia do JS para o Windows" >&2; exit 2 ;;
+esac
+exec "/usr/bin/cp" "$@"

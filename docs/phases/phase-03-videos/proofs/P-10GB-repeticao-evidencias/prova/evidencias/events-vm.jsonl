@@ -1,0 +1,527 @@
+{"t": 1795616654265, "seg": "generate", "ev": "generate", "bytes": 10000000000, "ms": 86141.9, "sha256": "5f973ec9603367218fb71365e053516ede5f3e656af82d3417e3ce1539db6a46"}
+{"t": 1795617305561, "seg": "start", "ev": "segment_start", "pid": 16768, "concurrency": 4, "signBatch": 10, "registerEvery": 4, "partUrlsIntervalMs": 1100, "storageConnect": false, "tokenExpiresAt": "2026-11-25T14:39:21.000Z"}
+{"t": 1795617305658, "seg": "start", "ev": "api", "op": "POST /videos", "attempt": 1, "status": 201, "ms": 83.3}
+{"t": 1795617305669, "seg": "start", "ev": "plan", "publicId": "ehRPjVzsXpY", "sessionId": "74b0593a-80a5-4554-995f-8b9fdf48a1a7", "sizeBytes": 10000000000, "partSize": 67108864, "partCount": 150, "lastPartSize": 779264, "checksumAlgorithm": "SHA256", "sessionExpiresAt": "2026-11-26T14:35:05.644Z"}
+{"t": 1795617305814, "seg": "start", "ev": "checksum", "part": 1, "bytes": 67108864, "ms": 132, "purpose": "sign"}
+{"t": 1795617305818, "seg": "start", "ev": "load_start", "reason": "part-urls"}
+{"t": 1795617305848, "seg": "start", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 27.2}
+{"t": 1795617305851, "seg": "start", "ev": "part_urls", "signed": [1], "registered": []}
+{"t": 1795617306041, "seg": "start", "ev": "checksum", "part": 2, "bytes": 67108864, "ms": 223.3, "purpose": "sign"}
+{"t": 1795617306227, "seg": "start", "ev": "checksum", "part": 3, "bytes": 67108864, "ms": 178.3, "purpose": "sign"}
+{"t": 1795617306397, "seg": "start", "ev": "checksum", "part": 4, "bytes": 67108864, "ms": 164.4, "purpose": "sign"}
+{"t": 1795617306556, "seg": "start", "ev": "checksum", "part": 5, "bytes": 67108864, "ms": 155, "purpose": "sign"}
+{"t": 1795617306700, "seg": "start", "ev": "checksum", "part": 6, "bytes": 67108864, "ms": 140.5, "purpose": "sign"}
+{"t": 1795617306837, "seg": "start", "ev": "checksum", "part": 7, "bytes": 67108864, "ms": 133.9, "purpose": "sign"}
+{"t": 1795617306952, "seg": "start", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 29.6}
+{"t": 1795617306957, "seg": "start", "ev": "part_urls", "signed": [2, 3, 4, 5, 6, 7], "registered": []}
+{"t": 1795617307164, "seg": "start", "ev": "checksum", "part": 8, "bytes": 67108864, "ms": 322.6, "purpose": "sign"}
+{"t": 1795617307396, "seg": "start", "ev": "put", "part": 1, "bytes": 67108864, "ms": 1521.8, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"f0fec8aade4e53c524081d22d6c3e60a\""}
+{"t": 1795617307722, "seg": "start", "ev": "checksum", "part": 9, "bytes": 67108864, "ms": 552.6, "purpose": "sign"}
+{"t": 1795617308301, "seg": "start", "ev": "checksum", "part": 10, "bytes": 67108864, "ms": 570.1, "purpose": "sign"}
+{"t": 1795617308449, "seg": "start", "ev": "put", "part": 3, "bytes": 67108864, "ms": 1406.8, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"4eb491197f45446636fb97bc8da739c8\""}
+{"t": 1795617308491, "seg": "start", "ev": "put", "part": 2, "bytes": 67108864, "ms": 1463.4, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"f30878e633f29e7ee8fce143cf9c953b\""}
+{"t": 1795617308528, "seg": "start", "ev": "put", "part": 4, "bytes": 67108864, "ms": 1471.8, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"990ac7f2514a7ce53fbe641e4b5588cf\""}
+{"t": 1795617308614, "seg": "start", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 57.2}
+{"t": 1795617308618, "seg": "start", "ev": "part_urls", "signed": [8, 9, 10], "registered": [1, 2, 3, 4]}
+{"t": 1795617308776, "seg": "start", "ev": "put", "part": 5, "bytes": 67108864, "ms": 1332.3, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"5345e2e73a8dca2f4ed330a1e056003e\""}
+{"t": 1795617309525, "seg": "start", "ev": "checksum", "part": 11, "bytes": 67108864, "ms": 1218.1, "purpose": "sign"}
+{"t": 1795617309884, "seg": "start", "ev": "checksum", "part": 12, "bytes": 67108864, "ms": 352.8, "purpose": "sign"}
+{"t": 1795617310436, "seg": "start", "ev": "put", "part": 8, "bytes": 67108864, "ms": 1666.9, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"b8cf69eee24c45509886bebeb0c219a1\""}
+{"t": 1795617310465, "seg": "start", "ev": "put", "part": 6, "bytes": 67108864, "ms": 1975.4, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"1ea7e6a788025fbb4405fd67b5120c4a\""}
+{"t": 1795617310482, "seg": "start", "ev": "put", "part": 9, "bytes": 67108864, "ms": 1273, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"6391466ee4b73e415ea038886ff06f54\""}
+{"t": 1795617310499, "seg": "start", "ev": "put", "part": 7, "bytes": 67108864, "ms": 1976.2, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"ee9fd9b9ef3ed8526a681ec7af262578\""}
+{"t": 1795617310514, "seg": "start", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 32.2}
+{"t": 1795617310516, "seg": "start", "ev": "part_urls", "signed": [11, 12], "registered": [5, 6, 8]}
+{"t": 1795617310746, "seg": "start", "ev": "checksum", "part": 13, "bytes": 67108864, "ms": 858.6, "purpose": "sign"}
+{"t": 1795617311057, "seg": "start", "ev": "checksum", "part": 14, "bytes": 67108864, "ms": 305.6, "purpose": "sign"}
+{"t": 1795617311419, "seg": "start", "ev": "checksum", "part": 15, "bytes": 67108864, "ms": 354.7, "purpose": "sign"}
+{"t": 1795617311430, "seg": "start", "ev": "put", "part": 12, "bytes": 67108864, "ms": 886, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"1b768822ff0baac87454fc43af995b20\""}
+{"t": 1795617311723, "seg": "start", "ev": "put", "part": 10, "bytes": 67108864, "ms": 1260.5, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"80d0865828c556671595daa85fdaac03\""}
+{"t": 1795617311752, "seg": "start", "ev": "put", "part": 11, "bytes": 67108864, "ms": 1216.4, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"c98e1c7c2dc3f38e0b1c703fc05f62cd\""}
+{"t": 1795617311777, "seg": "start", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 62.2}
+{"t": 1795617311783, "seg": "start", "ev": "part_urls", "signed": [13, 14, 15], "registered": [7, 9, 12]}
+{"t": 1795617312096, "seg": "start", "ev": "checksum", "part": 16, "bytes": 67108864, "ms": 669.3, "purpose": "sign"}
+{"t": 1795617312394, "seg": "start", "ev": "checksum", "part": 17, "bytes": 67108864, "ms": 292.5, "purpose": "sign"}
+{"t": 1795617312780, "seg": "start", "ev": "checksum", "part": 18, "bytes": 67108864, "ms": 378.8, "purpose": "sign"}
+{"t": 1795617312910, "seg": "start", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 92.1}
+{"t": 1795617312915, "seg": "start", "ev": "part_urls", "signed": [16, 17, 18], "registered": [10, 11]}
+{"t": 1795617312956, "seg": "start", "ev": "put", "part": 13, "bytes": 67108864, "ms": 1138.5, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"2908aa11a2f9ef40c055ee10aa1dfcf8\""}
+{"t": 1795617312984, "seg": "start", "ev": "put", "part": 15, "bytes": 67108864, "ms": 1137.6, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"70fd62b2a57359516be10db913ea9cf1\""}
+{"t": 1795617313383, "seg": "start", "ev": "put", "part": 14, "bytes": 67108864, "ms": 1550.8, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"36b3d56d9abe7bcb4fb3b3694be55ff1\""}
+{"t": 1795617313458, "seg": "start", "ev": "checksum", "part": 19, "bytes": 67108864, "ms": 674, "purpose": "sign"}
+{"t": 1795617313974, "seg": "start", "ev": "checksum", "part": 20, "bytes": 67108864, "ms": 506.7, "purpose": "sign"}
+{"t": 1795617313990, "seg": "start", "ev": "put", "part": 17, "bytes": 67108864, "ms": 1005.9, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"16c3571301f893e41d4193600b7395bf\""}
+{"t": 1795617314121, "seg": "start", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 200.7}
+{"t": 1795617314124, "seg": "start", "ev": "part_urls", "signed": [19], "registered": [13, 14, 15]}
+{"t": 1795617314147, "seg": "start", "ev": "put", "part": 18, "bytes": 67108864, "ms": 1136.6, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"5413e711dba19da46d3b5b0d6860926a\""}
+{"t": 1795617314158, "seg": "start", "ev": "put", "part": 16, "bytes": 67108864, "ms": 1205.6, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"dc36bf70407f0e38da4f47732015ed6d\""}
+{"t": 1795617314296, "seg": "start", "ev": "checksum", "part": 21, "bytes": 67108864, "ms": 316.6, "purpose": "sign"}
+{"t": 1795617314447, "seg": "start", "ev": "checksum", "part": 22, "bytes": 67108864, "ms": 148, "purpose": "sign"}
+{"t": 1795617314621, "seg": "start", "ev": "checksum", "part": 23, "bytes": 67108864, "ms": 170.8, "purpose": "sign"}
+{"t": 1795617314794, "seg": "start", "ev": "checksum", "part": 24, "bytes": 67108864, "ms": 169.7, "purpose": "sign"}
+{"t": 1795617315002, "seg": "start", "ev": "checksum", "part": 25, "bytes": 67108864, "ms": 204.3, "purpose": "sign"}
+{"t": 1795617315044, "seg": "start", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 22.1}
+{"t": 1795617315047, "seg": "start", "ev": "part_urls", "signed": [20, 21, 22, 23, 24, 25], "registered": [16, 17, 18]}
+{"t": 1795617315485, "seg": "start", "ev": "checksum", "part": 26, "bytes": 67108864, "ms": 479, "purpose": "sign"}
+{"t": 1795617315654, "seg": "start", "ev": "put", "part": 19, "bytes": 67108864, "ms": 1509.3, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"bab14bf9ea6b01f1fe2c94757ca78a9f\""}
+{"t": 1795617316238, "seg": "start", "ev": "checksum", "part": 27, "bytes": 67108864, "ms": 743, "purpose": "sign"}
+{"t": 1795617316243, "seg": "start", "ev": "put", "part": 22, "bytes": 67108864, "ms": 1144.5, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"4235d97194a9d00d050e11013e635a2c\""}
+{"t": 1795617316364, "seg": "start", "ev": "put", "part": 20, "bytes": 67108864, "ms": 1290, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"d09964ee8840f8f6e46ecf36c7058538\""}
+{"t": 1795617316572, "seg": "start", "ev": "put", "part": 21, "bytes": 67108864, "ms": 1486.6, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"dd7915e7bc54619bc7acefd47406dc95\""}
+{"t": 1795617316628, "seg": "start", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 36.5}
+{"t": 1795617316634, "seg": "start", "ev": "part_urls", "signed": [26, 27], "registered": [19, 20, 21, 22]}
+{"t": 1795617316720, "seg": "start", "ev": "checksum", "part": 28, "bytes": 67108864, "ms": 477.4, "purpose": "sign"}
+{"t": 1795617317086, "seg": "start", "ev": "checksum", "part": 29, "bytes": 67108864, "ms": 359.8, "purpose": "sign"}
+{"t": 1795617317344, "seg": "start", "ev": "put", "part": 23, "bytes": 67108864, "ms": 1638.1, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"3d0aba1d4094f4dd9d89011cbc296bfc\""}
+{"t": 1795617317571, "seg": "start", "ev": "checksum", "part": 30, "bytes": 67108864, "ms": 477.4, "purpose": "sign"}
+{"t": 1795617317579, "seg": "start", "ev": "put", "part": 24, "bytes": 67108864, "ms": 1300, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"740f35af14bdba837bfe171cd4feffff\""}
+{"t": 1795617317796, "seg": "start", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 96.3}
+{"t": 1795617317803, "seg": "start", "ev": "part_urls", "signed": [28, 29, 30], "registered": [23, 24]}
+{"t": 1795617317850, "seg": "start", "ev": "put", "part": 25, "bytes": 67108864, "ms": 1450.1, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"299d79bd188e35a1cc9010bcdc37db97\""}
+{"t": 1795617318162, "seg": "start", "ev": "put", "part": 26, "bytes": 67108864, "ms": 1495.4, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"be07d3f7470b96e1a955e738714969ef\""}
+{"t": 1795617318280, "seg": "start", "ev": "checksum", "part": 31, "bytes": 67108864, "ms": 702.2, "purpose": "sign"}
+{"t": 1795617318701, "seg": "start", "ev": "checksum", "part": 32, "bytes": 67108864, "ms": 413.7, "purpose": "sign"}
+{"t": 1795617318931, "seg": "start", "ev": "checksum", "part": 33, "bytes": 67108864, "ms": 225.2, "purpose": "sign"}
+{"t": 1795617319107, "seg": "start", "ev": "put", "part": 27, "bytes": 67108864, "ms": 1621.3, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"17c72f82a99ff0bf581792fe954877ca\""}
+{"t": 1795617319196, "seg": "start", "ev": "checksum", "part": 34, "bytes": 67108864, "ms": 261.8, "purpose": "sign"}
+{"t": 1795617319221, "seg": "start", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 94.5}
+{"t": 1795617319225, "seg": "start", "ev": "part_urls", "signed": [31, 32, 33], "registered": [25, 26, 27]}
+{"t": 1795617319450, "seg": "start", "ev": "checksum", "part": 35, "bytes": 67108864, "ms": 250, "purpose": "sign"}
+{"t": 1795617319477, "seg": "start", "ev": "put", "part": 29, "bytes": 67108864, "ms": 1540.2, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"67804000af8b4b3837b41ad5e114cb3f\""}
+{"t": 1795617319722, "seg": "start", "ev": "checksum", "part": 36, "bytes": 67108864, "ms": 265.6, "purpose": "sign"}
+{"t": 1795617319818, "seg": "start", "ev": "put", "part": 28, "bytes": 67108864, "ms": 1968.3, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"9ace2dc818824c022bd6dc8073017e87\""}
+{"t": 1795617320007, "seg": "start", "ev": "checksum", "part": 37, "bytes": 67108864, "ms": 280.6, "purpose": "sign"}
+{"t": 1795617320022, "seg": "start", "ev": "put", "part": 30, "bytes": 67108864, "ms": 1804.5, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"3a74895ab7d5ea79a5d2a194d07df003\""}
+{"t": 1795617320287, "seg": "start", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 58.7}
+{"t": 1795617320297, "seg": "start", "ev": "part_urls", "signed": [34, 35, 36, 37], "registered": [28, 29, 30]}
+{"t": 1795617320469, "seg": "start", "ev": "checksum", "part": 38, "bytes": 67108864, "ms": 452.6, "purpose": "sign"}
+{"t": 1795617320706, "seg": "start", "ev": "checksum", "part": 39, "bytes": 67108864, "ms": 233.1, "purpose": "sign"}
+{"t": 1795617320924, "seg": "start", "ev": "checksum", "part": 40, "bytes": 67108864, "ms": 209.3, "purpose": "sign"}
+{"t": 1795617320978, "seg": "start", "ev": "put", "part": 31, "bytes": 67108864, "ms": 1717.8, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"4c971c11b3a355a63da9aa568e5c6aa0\""}
+{"t": 1795617321182, "seg": "start", "ev": "checksum", "part": 41, "bytes": 67108864, "ms": 254.6, "purpose": "sign"}
+{"t": 1795617321269, "seg": "start", "ev": "put", "part": 32, "bytes": 67108864, "ms": 1744.9, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"d8e370b44a6e3648ab6d39836a692366\""}
+{"t": 1795617321443, "seg": "start", "ev": "put", "part": 33, "bytes": 67108864, "ms": 1578.9, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"6d21fa4bff545f8214b04e0efc705e57\""}
+{"t": 1795617321555, "seg": "start", "ev": "checksum", "part": 42, "bytes": 67108864, "ms": 365, "purpose": "sign"}
+{"t": 1795617321846, "seg": "start", "ev": "checksum", "part": 43, "bytes": 67108864, "ms": 285.6, "purpose": "sign"}
+{"t": 1795617321856, "seg": "start", "ev": "put", "part": 34, "bytes": 67108864, "ms": 1508.6, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"369f87c0e9a066f41d4d8f6e1f63f350\""}
+{"t": 1795617322003, "seg": "start", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 121.8}
+{"t": 1795617322009, "seg": "start", "ev": "part_urls", "signed": [38, 39, 40, 41, 42, 43], "registered": [31, 32, 33, 34]}
+{"t": 1795617322200, "seg": "start", "ev": "checksum", "part": 44, "bytes": 67108864, "ms": 346.3, "purpose": "sign"}
+{"t": 1795617322241, "seg": "start", "ev": "put", "part": 35, "bytes": 67108864, "ms": 1208.4, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"9461c7c792f02cc5b9641d7ca08cb2e7\""}
+{"t": 1795617322526, "seg": "start", "ev": "checksum", "part": 45, "bytes": 67108864, "ms": 321.8, "purpose": "sign"}
+{"t": 1795617322768, "seg": "start", "ev": "checksum", "part": 46, "bytes": 67108864, "ms": 238.4, "purpose": "sign"}
+{"t": 1795617322915, "seg": "start", "ev": "put", "part": 37, "bytes": 67108864, "ms": 1405.2, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"b6001f586d44d527f4179dbc7f46c8a5\""}
+{"t": 1795617323070, "seg": "start", "ev": "checksum", "part": 47, "bytes": 67108864, "ms": 296.7, "purpose": "sign"}
+{"t": 1795617323205, "seg": "start", "ev": "put", "part": 36, "bytes": 67108864, "ms": 1879.9, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"d3bd22f35f4089fab5cb4015f8da5706\""}
+{"t": 1795617323326, "seg": "start", "ev": "checksum", "part": 48, "bytes": 67108864, "ms": 250.3, "purpose": "sign"}
+{"t": 1795617323551, "seg": "start", "ev": "checksum", "part": 49, "bytes": 67108864, "ms": 220.5, "purpose": "sign"}
+{"t": 1795617323637, "seg": "start", "ev": "put", "part": 38, "bytes": 67108864, "ms": 1574.5, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"f8a261f9165c5c0197dd73224593bc6b\""}
+{"t": 1795617323799, "seg": "start", "ev": "api", "op": "POST part-urls (s\u00f3 registro)", "attempt": 1, "status": 200, "ms": 110.4}
+{"t": 1795617323804, "seg": "start", "ev": "part_urls", "signed": [], "registered": [35, 36, 37, 38]}
+{"t": 1795617323922, "seg": "start", "ev": "checksum", "part": 50, "bytes": 67108864, "ms": 364.5, "purpose": "sign"}
+{"t": 1795617324097, "seg": "start", "ev": "put", "part": 39, "bytes": 67108864, "ms": 1824.7, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"7d4b8aef15a7ae2493fe23d1c332060a\""}
+{"t": 1795617324296, "seg": "start", "ev": "checksum", "part": 51, "bytes": 67108864, "ms": 367.4, "purpose": "sign"}
+{"t": 1795617324610, "seg": "start", "ev": "checksum", "part": 52, "bytes": 67108864, "ms": 309.2, "purpose": "sign"}
+{"t": 1795617324951, "seg": "start", "ev": "checksum", "part": 53, "bytes": 67108864, "ms": 334.4, "purpose": "sign"}
+{"t": 1795617325083, "seg": "start", "ev": "put", "part": 40, "bytes": 67108864, "ms": 2115.7, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"bdcae4b10ba25e8e3a3c6bc2757c67ff\""}
+{"t": 1795617325166, "seg": "start", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 210.8}
+{"t": 1795617325171, "seg": "start", "ev": "part_urls", "signed": [44, 45, 46, 47, 48, 49, 50, 51, 52, 53], "registered": [39]}
+{"t": 1795617325455, "seg": "start", "ev": "checksum", "part": 54, "bytes": 67108864, "ms": 351.3, "purpose": "sign"}
+{"t": 1795617325539, "seg": "start", "ev": "put", "part": 41, "bytes": 67108864, "ms": 2297.2, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"a2758deb1fa6f00ca40e6c576f4f8176\""}
+{"t": 1795617327862, "seg": "start", "ev": "checksum", "part": 55, "bytes": 67108864, "ms": 2402.3, "purpose": "sign"}
+{"t": 1795617328072, "seg": "start", "ev": "put", "part": 42, "bytes": 67108864, "ms": 4384.4, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"e204dcc9ea221c165b595225effadc0a\""}
+{"t": 1795617328193, "seg": "start", "ev": "checksum", "part": 56, "bytes": 67108864, "ms": 320.3, "purpose": "sign"}
+{"t": 1795617328241, "seg": "start", "ev": "put", "part": 43, "bytes": 67108864, "ms": 4064.4, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"6632f36376410550d68f7275a79f7f9a\""}
+{"t": 1795617328410, "seg": "start", "ev": "api", "op": "POST part-urls (s\u00f3 registro)", "attempt": 1, "status": 200, "ms": 96.6}
+{"t": 1795617328415, "seg": "start", "ev": "part_urls", "signed": [], "registered": [40, 41, 42, 43]}
+{"t": 1795617328599, "seg": "start", "ev": "checksum", "part": 57, "bytes": 67108864, "ms": 399, "purpose": "sign"}
+{"t": 1795617328677, "seg": "start", "ev": "put", "part": 44, "bytes": 67108864, "ms": 3450.4, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"fe797206e61f4ce1974ee9fe3fb70139\""}
+{"t": 1795617328947, "seg": "start", "ev": "checksum", "part": 58, "bytes": 67108864, "ms": 339.1, "purpose": "sign"}
+{"t": 1795617329190, "seg": "start", "ev": "checksum", "part": 59, "bytes": 67108864, "ms": 237.4, "purpose": "sign"}
+{"t": 1795617329317, "seg": "start", "ev": "put", "part": 45, "bytes": 67108864, "ms": 3716.4, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"5a43c7e1ca359e219879532c7eee75de\""}
+{"t": 1795617329450, "seg": "start", "ev": "checksum", "part": 60, "bytes": 67108864, "ms": 257.6, "purpose": "sign"}
+{"t": 1795617329696, "seg": "start", "ev": "put", "part": 46, "bytes": 67108864, "ms": 1582.7, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"ea5a27f712bc0998997c0b313c4ae4f3\""}
+{"t": 1795617329796, "seg": "start", "ev": "checksum", "part": 61, "bytes": 67108864, "ms": 340.1, "purpose": "sign"}
+{"t": 1795617329805, "seg": "start", "ev": "put", "part": 47, "bytes": 67108864, "ms": 1492.3, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"d855e102436e5c3a6cacbfaab42dabcd\""}
+{"t": 1795617329871, "seg": "start", "ev": "api", "op": "POST part-urls (s\u00f3 registro)", "attempt": 1, "status": 200, "ms": 34.8}
+{"t": 1795617329877, "seg": "start", "ev": "part_urls", "signed": [], "registered": [44, 45, 46, 47]}
+{"t": 1795617330126, "seg": "start", "ev": "put", "part": 48, "bytes": 67108864, "ms": 1393.3, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"0ee938726a7892bc4843b9617585cfbd\""}
+{"t": 1795617330363, "seg": "start", "ev": "checksum", "part": 62, "bytes": 67108864, "ms": 561.5, "purpose": "sign"}
+{"t": 1795617330699, "seg": "start", "ev": "put", "part": 49, "bytes": 67108864, "ms": 1345, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"6dd59855634635cc1aa4df0f8a868115\""}
+{"t": 1795617330795, "seg": "start", "ev": "checksum", "part": 63, "bytes": 67108864, "ms": 424.4, "purpose": "sign"}
+{"t": 1795617330963, "seg": "start", "ev": "put", "part": 50, "bytes": 67108864, "ms": 1167.6, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"ae1ee0bc79a31ffdbf0385035f028d54\""}
+{"t": 1795617330998, "seg": "start", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 55.8}
+{"t": 1795617331003, "seg": "start", "ev": "part_urls", "signed": [54, 55, 56, 57, 58, 59, 60, 61, 62, 63], "registered": [48, 49]}
+{"t": 1795617331228, "seg": "start", "ev": "put", "part": 51, "bytes": 67108864, "ms": 1392.5, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"67dbdd81c68671974f414bcd96b0db9e\""}
+{"t": 1795617331685, "seg": "start", "ev": "checksum", "part": 64, "bytes": 67108864, "ms": 688.8, "purpose": "sign"}
+{"t": 1795617331701, "seg": "start", "ev": "put", "part": 52, "bytes": 67108864, "ms": 1538.5, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"6c7db84166b06206cc1b9d7a925f56f2\""}
+{"t": 1795617331989, "seg": "start", "ev": "put", "part": 53, "bytes": 67108864, "ms": 1258.8, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"03d62c7d9adc665f4fe8ec23be174f98\""}
+{"t": 1795617332086, "seg": "start", "ev": "api", "op": "POST part-urls (s\u00f3 registro)", "attempt": 1, "status": 200, "ms": 36.9}
+{"t": 1795617332094, "seg": "start", "ev": "part_urls", "signed": [], "registered": [50, 51, 52, 53]}
+{"t": 1795617332342, "seg": "start", "ev": "checksum", "part": 65, "bytes": 67108864, "ms": 646.6, "purpose": "sign"}
+{"t": 1795617332354, "seg": "start", "ev": "put", "part": 54, "bytes": 67108864, "ms": 1319.4, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"16ecdd2a22c76ea349bce564e464a157\""}
+{"t": 1795617332674, "seg": "start", "ev": "put", "part": 55, "bytes": 67108864, "ms": 1394.4, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"8829d970844b7ce672774f888b3f4e23\""}
+{"t": 1795617333011, "seg": "start", "ev": "checksum", "part": 66, "bytes": 67108864, "ms": 660.6, "purpose": "sign"}
+{"t": 1795617333058, "seg": "start", "ev": "put", "part": 56, "bytes": 67108864, "ms": 1317.3, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"42febe67bf505101b34c8e241eb7fe2c\""}
+{"t": 1795617333583, "seg": "start", "ev": "put", "part": 57, "bytes": 67108864, "ms": 1545.6, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"08070f4ceac3badf0f92bbdb27fe924d\""}
+{"t": 1795617333631, "seg": "start", "ev": "put", "part": 58, "bytes": 67108864, "ms": 1240.5, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"910786a07bee1f0412b50ebb797ced45\""}
+{"t": 1795617333664, "seg": "start", "ev": "api", "op": "POST part-urls (s\u00f3 registro)", "attempt": 1, "status": 200, "ms": 37.6}
+{"t": 1795617333668, "seg": "start", "ev": "part_urls", "signed": [], "registered": [54, 55, 56, 57]}
+{"t": 1795617333750, "seg": "start", "ev": "checksum", "part": 67, "bytes": 67108864, "ms": 727.7, "purpose": "sign"}
+{"t": 1795617334021, "seg": "start", "ev": "put", "part": 59, "bytes": 67108864, "ms": 1300.3, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"d69d60b0c6d5285a146f1081a8bf13da\""}
+{"t": 1795617334338, "seg": "start", "ev": "checksum", "part": 68, "bytes": 67108864, "ms": 580.5, "purpose": "sign"}
+{"t": 1795617336362, "seg": "start", "ev": "put", "part": 60, "bytes": 67108864, "ms": 3251.3, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"29eef5755dc0803ffa139f07804099cf\""}
+{"t": 1795617336549, "seg": "start", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 147.8}
+{"t": 1795617336552, "seg": "start", "ev": "part_urls", "signed": [64, 65, 66, 67, 68], "registered": [58, 59, 60]}
+{"t": 1795617336988, "seg": "start", "ev": "put", "part": 61, "bytes": 67108864, "ms": 3361.7, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"49cd7f27b6c5c938e7cfc78ea380f7b7\""}
+{"t": 1795617337026, "seg": "start", "ev": "put", "part": 62, "bytes": 67108864, "ms": 3366.1, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"568a40fa001b7521c19058e594c7c6e7\""}
+{"t": 1795617337104, "seg": "start", "ev": "checksum", "part": 69, "bytes": 67108864, "ms": 2755.9, "purpose": "sign"}
+{"t": 1795617337381, "seg": "start", "ev": "put", "part": 63, "bytes": 67108864, "ms": 3316, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"11267f4df6b94d3c22bf8612180a78da\""}
+{"t": 1795617337670, "seg": "start", "ev": "checksum", "part": 70, "bytes": 67108864, "ms": 558.5, "purpose": "sign"}
+{"t": 1795617338124, "seg": "start", "ev": "put", "part": 64, "bytes": 67108864, "ms": 1462, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"bedaba21b359af01e4147098c4cb49fe\""}
+{"t": 1795617338331, "seg": "start", "ev": "put", "part": 66, "bytes": 67108864, "ms": 1276.4, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"64eadfb520c9511eb177765f9ecf81d5\""}
+{"t": 1795617338475, "seg": "start", "ev": "checksum", "part": 71, "bytes": 67108864, "ms": 795.7, "purpose": "sign"}
+{"t": 1795617338483, "seg": "start", "ev": "api", "op": "POST part-urls (s\u00f3 registro)", "attempt": 1, "status": 200, "ms": 157.4}
+{"t": 1795617338489, "seg": "start", "ev": "part_urls", "signed": [], "registered": [61, 62, 63, 64]}
+{"t": 1795617338508, "seg": "start", "ev": "put", "part": 65, "bytes": 67108864, "ms": 1484.9, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"07a36d2202b0fd0386bbdb3eda364177\""}
+{"t": 1795617338731, "seg": "start", "ev": "put", "part": 67, "bytes": 67108864, "ms": 1295, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"f78d85b54779ec38f15913319b6a0c78\""}
+{"t": 1795617338814, "seg": "start", "ev": "checksum", "part": 72, "bytes": 67108864, "ms": 332.1, "purpose": "sign"}
+{"t": 1795617338963, "seg": "start", "ev": "checksum", "part": 73, "bytes": 67108864, "ms": 145.2, "purpose": "sign"}
+{"t": 1795617339134, "seg": "start", "ev": "checksum", "part": 74, "bytes": 67108864, "ms": 167.4, "purpose": "sign"}
+{"t": 1795617339285, "seg": "start", "ev": "checksum", "part": 75, "bytes": 67108864, "ms": 148.3, "purpose": "sign"}
+{"t": 1795617339453, "seg": "start", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 24.5}
+{"t": 1795617339456, "seg": "start", "ev": "part_urls", "signed": [69, 70, 71, 72, 73, 74, 75], "registered": [65, 66, 67]}
+{"t": 1795617339508, "seg": "start", "ev": "checksum", "part": 76, "bytes": 67108864, "ms": 218.6, "purpose": "sign"}
+{"t": 1795617339920, "seg": "start", "ev": "put", "part": 68, "bytes": 67108864, "ms": 1595, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"630de80b1fe3240f4efc480a68175954\""}
+{"t": 1795617340089, "seg": "start", "ev": "checksum", "part": 77, "bytes": 67108864, "ms": 577, "purpose": "sign"}
+{"t": 1795617340750, "seg": "start", "ev": "put", "part": 70, "bytes": 67108864, "ms": 1258, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"fa3de9a0f4130347f307cc237cdda679\""}
+{"t": 1795617340789, "seg": "start", "ev": "put", "part": 69, "bytes": 67108864, "ms": 1308.3, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"356adb052f0d107e331b3c7542245722\""}
+{"t": 1795617340816, "seg": "start", "ev": "put", "part": 71, "bytes": 67108864, "ms": 1314.2, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"d83613407b32abe732381989f9bc63b0\""}
+{"t": 1795617340858, "seg": "start", "ev": "api", "op": "POST part-urls (s\u00f3 registro)", "attempt": 1, "status": 200, "ms": 16.9}
+{"t": 1795617340864, "seg": "start", "ev": "part_urls", "signed": [], "registered": [68, 69, 70, 71]}
+{"t": 1795617340889, "seg": "start", "ev": "checksum", "part": 78, "bytes": 67108864, "ms": 790.7, "purpose": "sign"}
+{"t": 1795617341324, "seg": "start", "ev": "put", "part": 72, "bytes": 67108864, "ms": 1364.9, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"59c39d89361a962c09fee65e97a61b70\""}
+{"t": 1795617341410, "seg": "start", "ev": "checksum", "part": 79, "bytes": 67108864, "ms": 513.3, "purpose": "sign"}
+{"t": 1795617341884, "seg": "start", "ev": "checksum", "part": 80, "bytes": 67108864, "ms": 465.9, "purpose": "sign"}
+{"t": 1795617341938, "seg": "start", "ev": "put", "part": 74, "bytes": 67108864, "ms": 1121.6, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"f5ba75b59a14a034d242504c37aad235\""}
+{"t": 1795617341961, "seg": "start", "ev": "put", "part": 73, "bytes": 67108864, "ms": 1176.4, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"c8f611cf3069710158d9b81d9b327dd6\""}
+{"t": 1795617342110, "seg": "start", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 149.4}
+{"t": 1795617342114, "seg": "start", "ev": "part_urls", "signed": [76, 77, 78, 79, 80], "registered": [72, 74]}
+{"t": 1795617342163, "seg": "start", "ev": "put", "part": 75, "bytes": 67108864, "ms": 1321.8, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"8504d1a4a31056f38af9e7aa3ac40d7b\""}
+{"t": 1795617342370, "seg": "start", "ev": "interrupted", "signal": "SIGINT", "putDone": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75], "registered": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 74], "inFlight": [76, 77, 78, 79]}
+{"t": 1795617342377, "seg": "start", "ev": "load_end", "reason": "interrupted"}
+{"t": 1795617342402, "seg": "start", "ev": "put", "part": 76, "bytes": 67108864, "ms": 263.5, "attempt": 1, "outcome": "aborted"}
+{"t": 1795617342408, "seg": "start", "ev": "put", "part": 77, "bytes": 67108864, "ms": 253, "attempt": 1, "outcome": "aborted"}
+{"t": 1795617342414, "seg": "start", "ev": "put", "part": 78, "bytes": 67108864, "ms": 242.2, "attempt": 1, "outcome": "aborted"}
+{"t": 1795617342417, "seg": "start", "ev": "put", "part": 79, "bytes": 67108864, "ms": 217.1, "attempt": 1, "outcome": "aborted"}
+{"t": 1795617342466, "seg": "start", "ev": "checksum", "part": 81, "bytes": 67108864, "ms": 575.9, "purpose": "sign"}
+{"t": 1795617342471, "seg": "start", "ev": "segment_end", "outcome": "interrupted"}
+{"t": 1795617353487, "seg": "resume", "ev": "segment_start", "pid": 31628, "concurrency": 4, "signBatch": 10, "registerEvery": 4, "partUrlsIntervalMs": 1100, "storageConnect": false, "tokenExpiresAt": "2026-11-25T14:39:21.000Z"}
+{"t": 1795617353502, "seg": "resume", "ev": "load_start", "reason": "resume"}
+{"t": 1795617353562, "seg": "resume", "ev": "api", "op": "GET /videos/:publicId", "attempt": 1, "status": 200, "ms": 54.8}
+{"t": 1795617353613, "seg": "resume", "ev": "api", "op": "GET upload-session", "attempt": 1, "status": 200, "ms": 47}
+{"t": 1795617353618, "seg": "resume", "ev": "resume_classification", "confirmed": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 74], "missing": [76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150], "divergent": [], "unregistered": [73, 75]}
+{"t": 1795617353758, "seg": "resume", "ev": "checksum", "part": 1, "bytes": 67108864, "ms": 125.4, "purpose": "verify"}
+{"t": 1795617353888, "seg": "resume", "ev": "checksum", "part": 2, "bytes": 67108864, "ms": 125.1, "purpose": "verify"}
+{"t": 1795617354018, "seg": "resume", "ev": "checksum", "part": 3, "bytes": 67108864, "ms": 126.3, "purpose": "verify"}
+{"t": 1795617354150, "seg": "resume", "ev": "checksum", "part": 4, "bytes": 67108864, "ms": 128.3, "purpose": "verify"}
+{"t": 1795617354298, "seg": "resume", "ev": "checksum", "part": 5, "bytes": 67108864, "ms": 144.1, "purpose": "verify"}
+{"t": 1795617354468, "seg": "resume", "ev": "checksum", "part": 6, "bytes": 67108864, "ms": 165.8, "purpose": "verify"}
+{"t": 1795617354613, "seg": "resume", "ev": "checksum", "part": 7, "bytes": 67108864, "ms": 138.3, "purpose": "verify"}
+{"t": 1795617354738, "seg": "resume", "ev": "checksum", "part": 8, "bytes": 67108864, "ms": 121.5, "purpose": "verify"}
+{"t": 1795617354866, "seg": "resume", "ev": "checksum", "part": 9, "bytes": 67108864, "ms": 122, "purpose": "verify"}
+{"t": 1795617354992, "seg": "resume", "ev": "checksum", "part": 10, "bytes": 67108864, "ms": 122.7, "purpose": "verify"}
+{"t": 1795617355124, "seg": "resume", "ev": "checksum", "part": 11, "bytes": 67108864, "ms": 128.9, "purpose": "verify"}
+{"t": 1795617355257, "seg": "resume", "ev": "checksum", "part": 12, "bytes": 67108864, "ms": 128.6, "purpose": "verify"}
+{"t": 1795617355389, "seg": "resume", "ev": "checksum", "part": 13, "bytes": 67108864, "ms": 128.4, "purpose": "verify"}
+{"t": 1795617355520, "seg": "resume", "ev": "checksum", "part": 14, "bytes": 67108864, "ms": 127.7, "purpose": "verify"}
+{"t": 1795617355660, "seg": "resume", "ev": "checksum", "part": 15, "bytes": 67108864, "ms": 137.2, "purpose": "verify"}
+{"t": 1795617355786, "seg": "resume", "ev": "checksum", "part": 16, "bytes": 67108864, "ms": 122, "purpose": "verify"}
+{"t": 1795617355911, "seg": "resume", "ev": "checksum", "part": 17, "bytes": 67108864, "ms": 122.1, "purpose": "verify"}
+{"t": 1795617356051, "seg": "resume", "ev": "checksum", "part": 18, "bytes": 67108864, "ms": 135.9, "purpose": "verify"}
+{"t": 1795617356183, "seg": "resume", "ev": "checksum", "part": 19, "bytes": 67108864, "ms": 126.4, "purpose": "verify"}
+{"t": 1795617356314, "seg": "resume", "ev": "checksum", "part": 20, "bytes": 67108864, "ms": 127.8, "purpose": "verify"}
+{"t": 1795617356478, "seg": "resume", "ev": "checksum", "part": 21, "bytes": 67108864, "ms": 159.6, "purpose": "verify"}
+{"t": 1795617356612, "seg": "resume", "ev": "checksum", "part": 22, "bytes": 67108864, "ms": 130.6, "purpose": "verify"}
+{"t": 1795617356744, "seg": "resume", "ev": "checksum", "part": 23, "bytes": 67108864, "ms": 128.4, "purpose": "verify"}
+{"t": 1795617356871, "seg": "resume", "ev": "checksum", "part": 24, "bytes": 67108864, "ms": 123.6, "purpose": "verify"}
+{"t": 1795617357033, "seg": "resume", "ev": "checksum", "part": 25, "bytes": 67108864, "ms": 158.7, "purpose": "verify"}
+{"t": 1795617357157, "seg": "resume", "ev": "checksum", "part": 26, "bytes": 67108864, "ms": 121.2, "purpose": "verify"}
+{"t": 1795617357303, "seg": "resume", "ev": "checksum", "part": 27, "bytes": 67108864, "ms": 143, "purpose": "verify"}
+{"t": 1795617357436, "seg": "resume", "ev": "checksum", "part": 28, "bytes": 67108864, "ms": 129.2, "purpose": "verify"}
+{"t": 1795617357566, "seg": "resume", "ev": "checksum", "part": 29, "bytes": 67108864, "ms": 126.1, "purpose": "verify"}
+{"t": 1795617357692, "seg": "resume", "ev": "checksum", "part": 30, "bytes": 67108864, "ms": 123.5, "purpose": "verify"}
+{"t": 1795617357831, "seg": "resume", "ev": "checksum", "part": 31, "bytes": 67108864, "ms": 135.5, "purpose": "verify"}
+{"t": 1795617357978, "seg": "resume", "ev": "checksum", "part": 32, "bytes": 67108864, "ms": 144, "purpose": "verify"}
+{"t": 1795617358164, "seg": "resume", "ev": "checksum", "part": 33, "bytes": 67108864, "ms": 181.9, "purpose": "verify"}
+{"t": 1795617358366, "seg": "resume", "ev": "checksum", "part": 34, "bytes": 67108864, "ms": 198, "purpose": "verify"}
+{"t": 1795617358526, "seg": "resume", "ev": "checksum", "part": 35, "bytes": 67108864, "ms": 157.6, "purpose": "verify"}
+{"t": 1795617358673, "seg": "resume", "ev": "checksum", "part": 36, "bytes": 67108864, "ms": 143.8, "purpose": "verify"}
+{"t": 1795617358804, "seg": "resume", "ev": "checksum", "part": 37, "bytes": 67108864, "ms": 127.7, "purpose": "verify"}
+{"t": 1795617358954, "seg": "resume", "ev": "checksum", "part": 38, "bytes": 67108864, "ms": 147.7, "purpose": "verify"}
+{"t": 1795617359127, "seg": "resume", "ev": "checksum", "part": 39, "bytes": 67108864, "ms": 169.4, "purpose": "verify"}
+{"t": 1795617359292, "seg": "resume", "ev": "checksum", "part": 40, "bytes": 67108864, "ms": 159.6, "purpose": "verify"}
+{"t": 1795617359487, "seg": "resume", "ev": "checksum", "part": 41, "bytes": 67108864, "ms": 191.5, "purpose": "verify"}
+{"t": 1795617359665, "seg": "resume", "ev": "checksum", "part": 42, "bytes": 67108864, "ms": 174.1, "purpose": "verify"}
+{"t": 1795617359837, "seg": "resume", "ev": "checksum", "part": 43, "bytes": 67108864, "ms": 167.6, "purpose": "verify"}
+{"t": 1795617359989, "seg": "resume", "ev": "checksum", "part": 44, "bytes": 67108864, "ms": 147.7, "purpose": "verify"}
+{"t": 1795617360147, "seg": "resume", "ev": "checksum", "part": 45, "bytes": 67108864, "ms": 154.4, "purpose": "verify"}
+{"t": 1795617360329, "seg": "resume", "ev": "checksum", "part": 46, "bytes": 67108864, "ms": 177.3, "purpose": "verify"}
+{"t": 1795617360493, "seg": "resume", "ev": "checksum", "part": 47, "bytes": 67108864, "ms": 161.1, "purpose": "verify"}
+{"t": 1795617360629, "seg": "resume", "ev": "checksum", "part": 48, "bytes": 67108864, "ms": 133.2, "purpose": "verify"}
+{"t": 1795617360786, "seg": "resume", "ev": "checksum", "part": 49, "bytes": 67108864, "ms": 153.4, "purpose": "verify"}
+{"t": 1795617360922, "seg": "resume", "ev": "checksum", "part": 50, "bytes": 67108864, "ms": 131.2, "purpose": "verify"}
+{"t": 1795617361081, "seg": "resume", "ev": "checksum", "part": 51, "bytes": 67108864, "ms": 156, "purpose": "verify"}
+{"t": 1795617361213, "seg": "resume", "ev": "checksum", "part": 52, "bytes": 67108864, "ms": 129.3, "purpose": "verify"}
+{"t": 1795617361349, "seg": "resume", "ev": "checksum", "part": 53, "bytes": 67108864, "ms": 133.2, "purpose": "verify"}
+{"t": 1795617361486, "seg": "resume", "ev": "checksum", "part": 54, "bytes": 67108864, "ms": 132.2, "purpose": "verify"}
+{"t": 1795617361623, "seg": "resume", "ev": "checksum", "part": 55, "bytes": 67108864, "ms": 134.2, "purpose": "verify"}
+{"t": 1795617361825, "seg": "resume", "ev": "checksum", "part": 56, "bytes": 67108864, "ms": 199, "purpose": "verify"}
+{"t": 1795617361962, "seg": "resume", "ev": "checksum", "part": 57, "bytes": 67108864, "ms": 131.8, "purpose": "verify"}
+{"t": 1795617362145, "seg": "resume", "ev": "checksum", "part": 58, "bytes": 67108864, "ms": 179.6, "purpose": "verify"}
+{"t": 1795617362311, "seg": "resume", "ev": "checksum", "part": 59, "bytes": 67108864, "ms": 162.4, "purpose": "verify"}
+{"t": 1795617362451, "seg": "resume", "ev": "checksum", "part": 60, "bytes": 67108864, "ms": 136.5, "purpose": "verify"}
+{"t": 1795617362584, "seg": "resume", "ev": "checksum", "part": 61, "bytes": 67108864, "ms": 129.4, "purpose": "verify"}
+{"t": 1795617362719, "seg": "resume", "ev": "checksum", "part": 62, "bytes": 67108864, "ms": 132.7, "purpose": "verify"}
+{"t": 1795617362871, "seg": "resume", "ev": "checksum", "part": 63, "bytes": 67108864, "ms": 148.4, "purpose": "verify"}
+{"t": 1795617363006, "seg": "resume", "ev": "checksum", "part": 64, "bytes": 67108864, "ms": 131.7, "purpose": "verify"}
+{"t": 1795617363162, "seg": "resume", "ev": "checksum", "part": 65, "bytes": 67108864, "ms": 151.4, "purpose": "verify"}
+{"t": 1795617363309, "seg": "resume", "ev": "checksum", "part": 66, "bytes": 67108864, "ms": 143.8, "purpose": "verify"}
+{"t": 1795617363453, "seg": "resume", "ev": "checksum", "part": 67, "bytes": 67108864, "ms": 139.8, "purpose": "verify"}
+{"t": 1795617363632, "seg": "resume", "ev": "checksum", "part": 68, "bytes": 67108864, "ms": 176.2, "purpose": "verify"}
+{"t": 1795617363837, "seg": "resume", "ev": "checksum", "part": 69, "bytes": 67108864, "ms": 201.3, "purpose": "verify"}
+{"t": 1795617364019, "seg": "resume", "ev": "checksum", "part": 70, "bytes": 67108864, "ms": 179.9, "purpose": "verify"}
+{"t": 1795617364152, "seg": "resume", "ev": "checksum", "part": 71, "bytes": 67108864, "ms": 128.8, "purpose": "verify"}
+{"t": 1795617364313, "seg": "resume", "ev": "checksum", "part": 72, "bytes": 67108864, "ms": 157.8, "purpose": "verify"}
+{"t": 1795617364513, "seg": "resume", "ev": "checksum", "part": 73, "bytes": 67108864, "ms": 195.9, "purpose": "verify"}
+{"t": 1795617364709, "seg": "resume", "ev": "checksum", "part": 74, "bytes": 67108864, "ms": 192.2, "purpose": "verify"}
+{"t": 1795617364866, "seg": "resume", "ev": "checksum", "part": 75, "bytes": 67108864, "ms": 153.1, "purpose": "verify"}
+{"t": 1795617364911, "seg": "resume", "ev": "api", "op": "POST file-verifications", "attempt": 1, "status": 200, "ms": 40.7}
+{"t": 1795617364915, "seg": "resume", "ev": "file_verification", "parts": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 75], "bytes": 5033164800, "checksumMs": 11236.4, "requestMs": 40.7, "verifiedParts": 75}
+{"t": 1795617364919, "seg": "resume", "ev": "resend_plan", "parts": [73, 75, 76, 77, 78, 79, 80, 81, 82, 83, 84, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95, 96, 97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122, 123, 124, 125, 126, 127, 128, 129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147, 148, 149, 150]}
+{"t": 1795617364958, "seg": "resume", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 16.3}
+{"t": 1795617364963, "seg": "resume", "ev": "part_urls", "signed": [73, 75], "registered": []}
+{"t": 1795617365204, "seg": "resume", "ev": "checksum", "part": 76, "bytes": 67108864, "ms": 263.5, "purpose": "sign"}
+{"t": 1795617365417, "seg": "resume", "ev": "checksum", "part": 77, "bytes": 67108864, "ms": 208.8, "purpose": "sign"}
+{"t": 1795617365587, "seg": "resume", "ev": "checksum", "part": 78, "bytes": 67108864, "ms": 165.4, "purpose": "sign"}
+{"t": 1795617365802, "seg": "resume", "ev": "put", "part": 75, "bytes": 67108864, "ms": 786, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"8504d1a4a31056f38af9e7aa3ac40d7b\""}
+{"t": 1795617365919, "seg": "resume", "ev": "checksum", "part": 79, "bytes": 67108864, "ms": 328.5, "purpose": "sign"}
+{"t": 1795617366055, "seg": "resume", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 13.8}
+{"t": 1795617366060, "seg": "resume", "ev": "part_urls", "signed": [76, 77, 78, 79], "registered": [75]}
+{"t": 1795617366341, "seg": "resume", "ev": "put", "part": 73, "bytes": 67108864, "ms": 1341.7, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"c8f611cf3069710158d9b81d9b327dd6\""}
+{"t": 1795617366392, "seg": "resume", "ev": "checksum", "part": 80, "bytes": 67108864, "ms": 469.1, "purpose": "sign"}
+{"t": 1795617366879, "seg": "resume", "ev": "checksum", "part": 81, "bytes": 67108864, "ms": 481.7, "purpose": "sign"}
+{"t": 1795617369399, "seg": "resume", "ev": "put", "part": 78, "bytes": 67108864, "ms": 3291.7, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"68d19c853987970c7e332654d45518bc\""}
+{"t": 1795617369425, "seg": "resume", "ev": "put", "part": 76, "bytes": 67108864, "ms": 3341.9, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"da67bef66fe763c5ff61b4af4467ea3e\""}
+{"t": 1795617369445, "seg": "resume", "ev": "put", "part": 77, "bytes": 67108864, "ms": 3350.1, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"d0a7165c9b9c6de8ffa89b1507440caa\""}
+{"t": 1795617369462, "seg": "resume", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 40.5}
+{"t": 1795617369465, "seg": "resume", "ev": "part_urls", "signed": [80, 81], "registered": [73, 78]}
+{"t": 1795617369613, "seg": "resume", "ev": "put", "part": 79, "bytes": 67108864, "ms": 3226.1, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"bef305de691b77995be91cec1d2c3fda\""}
+{"t": 1795617369713, "seg": "resume", "ev": "checksum", "part": 82, "bytes": 67108864, "ms": 2828.3, "purpose": "sign"}
+{"t": 1795617369872, "seg": "resume", "ev": "checksum", "part": 83, "bytes": 67108864, "ms": 155.4, "purpose": "sign"}
+{"t": 1795617370106, "seg": "resume", "ev": "checksum", "part": 84, "bytes": 67108864, "ms": 230.4, "purpose": "sign"}
+{"t": 1795617370313, "seg": "resume", "ev": "checksum", "part": 85, "bytes": 67108864, "ms": 203.1, "purpose": "sign"}
+{"t": 1795617370529, "seg": "resume", "ev": "checksum", "part": 86, "bytes": 67108864, "ms": 210.3, "purpose": "sign"}
+{"t": 1795617370545, "seg": "resume", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 22.2}
+{"t": 1795617370549, "seg": "resume", "ev": "part_urls", "signed": [82, 83, 84, 85], "registered": [76, 77, 79]}
+{"t": 1795617370956, "seg": "resume", "ev": "put", "part": 81, "bytes": 67108864, "ms": 1457.1, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"7dbb0150acc23f4f5a958a0d1c3e2b6c\""}
+{"t": 1795617371032, "seg": "resume", "ev": "put", "part": 80, "bytes": 67108864, "ms": 1542.4, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"4981bb0a1817640ac56cc2fb9b86dfd4\""}
+{"t": 1795617371200, "seg": "resume", "ev": "checksum", "part": 87, "bytes": 67108864, "ms": 664.7, "purpose": "sign"}
+{"t": 1795617371589, "seg": "resume", "ev": "put", "part": 82, "bytes": 67108864, "ms": 1011.9, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"fd95dca9f981e4fe684eeff75e662730\""}
+{"t": 1795617371694, "seg": "resume", "ev": "checksum", "part": 88, "bytes": 67108864, "ms": 488.6, "purpose": "sign"}
+{"t": 1795617371711, "seg": "resume", "ev": "put", "part": 83, "bytes": 67108864, "ms": 1122.5, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"7c231f39c31f16189efd97682b411d3b\""}
+{"t": 1795617371739, "seg": "resume", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 117.1}
+{"t": 1795617371744, "seg": "resume", "ev": "part_urls", "signed": [86, 87], "registered": [80, 81, 82]}
+{"t": 1795617372036, "seg": "resume", "ev": "put", "part": 85, "bytes": 67108864, "ms": 960.8, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"9c6af76a3223c1996f7a62b394d14379\""}
+{"t": 1795617372197, "seg": "resume", "ev": "put", "part": 84, "bytes": 67108864, "ms": 1209.7, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"7e990b8c068daeebda87c20d31cd11f5\""}
+{"t": 1795617372313, "seg": "resume", "ev": "checksum", "part": 89, "bytes": 67108864, "ms": 608.3, "purpose": "sign"}
+{"t": 1795617372516, "seg": "resume", "ev": "checksum", "part": 90, "bytes": 67108864, "ms": 197.5, "purpose": "sign"}
+{"t": 1795617372785, "seg": "resume", "ev": "put", "part": 87, "bytes": 67108864, "ms": 1004.2, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"d7205a8196d9ec0a29a7e671975fc5f8\""}
+{"t": 1795617372806, "seg": "resume", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 71.1}
+{"t": 1795617372810, "seg": "resume", "ev": "part_urls", "signed": [88, 89, 90], "registered": [83, 84, 85]}
+{"t": 1795617373124, "seg": "resume", "ev": "checksum", "part": 91, "bytes": 67108864, "ms": 601.2, "purpose": "sign"}
+{"t": 1795617373143, "seg": "resume", "ev": "put", "part": 86, "bytes": 67108864, "ms": 1373.5, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"eba98aa5c3d40fd9e85d87666204e668\""}
+{"t": 1795617373462, "seg": "resume", "ev": "checksum", "part": 92, "bytes": 67108864, "ms": 329.8, "purpose": "sign"}
+{"t": 1795617373826, "seg": "resume", "ev": "put", "part": 88, "bytes": 67108864, "ms": 976.1, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"c683b6c577efd9db27a2c7a37c004f26\""}
+{"t": 1795617373846, "seg": "resume", "ev": "put", "part": 89, "bytes": 67108864, "ms": 976.8, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"7a3bec287b5d4731058333cc5ddbe599\""}
+{"t": 1795617373869, "seg": "resume", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 26.2}
+{"t": 1795617373873, "seg": "resume", "ev": "part_urls", "signed": [91, 92], "registered": [86, 87, 88]}
+{"t": 1795617374015, "seg": "resume", "ev": "put", "part": 90, "bytes": 67108864, "ms": 1127.6, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"35e29c4f561960ebac9a9845ded2b0fb\""}
+{"t": 1795617374066, "seg": "resume", "ev": "checksum", "part": 93, "bytes": 67108864, "ms": 599.1, "purpose": "sign"}
+{"t": 1795617374231, "seg": "resume", "ev": "checksum", "part": 94, "bytes": 67108864, "ms": 162, "purpose": "sign"}
+{"t": 1795617374414, "seg": "resume", "ev": "checksum", "part": 95, "bytes": 67108864, "ms": 176.3, "purpose": "sign"}
+{"t": 1795617374627, "seg": "resume", "ev": "checksum", "part": 96, "bytes": 67108864, "ms": 208.7, "purpose": "sign"}
+{"t": 1795617374865, "seg": "resume", "ev": "checksum", "part": 97, "bytes": 67108864, "ms": 231.3, "purpose": "sign"}
+{"t": 1795617375233, "seg": "resume", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 288.9}
+{"t": 1795617375236, "seg": "resume", "ev": "part_urls", "signed": [93, 94, 95, 96, 97], "registered": [89, 90]}
+{"t": 1795617375274, "seg": "resume", "ev": "put", "part": 92, "bytes": 67108864, "ms": 1305, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"dfeac0a3fbcd61fe28f67bd8a1a73499\""}
+{"t": 1795617375298, "seg": "resume", "ev": "put", "part": 91, "bytes": 67108864, "ms": 1342.2, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"f6bbaa279882e62c149c7e63db5e75c9\""}
+{"t": 1795617375498, "seg": "resume", "ev": "checksum", "part": 98, "bytes": 67108864, "ms": 629.5, "purpose": "sign"}
+{"t": 1795617375889, "seg": "resume", "ev": "checksum", "part": 99, "bytes": 67108864, "ms": 380.8, "purpose": "sign"}
+{"t": 1795617376375, "seg": "resume", "ev": "put", "part": 95, "bytes": 67108864, "ms": 1077.4, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"f28b797472eb4982057a1d61e5dd9629\""}
+{"t": 1795617376405, "seg": "resume", "ev": "put", "part": 94, "bytes": 67108864, "ms": 1134, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"bcc0875d7e59cb6b523a61ee12bb948d\""}
+{"t": 1795617376424, "seg": "resume", "ev": "put", "part": 96, "bytes": 67108864, "ms": 1101.5, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"f86c4668698e9bf9820e660a63ced247\""}
+{"t": 1795617376446, "seg": "resume", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 25.1}
+{"t": 1795617376450, "seg": "resume", "ev": "part_urls", "signed": [98, 99], "registered": [91, 92, 94, 95]}
+{"t": 1795617376679, "seg": "resume", "ev": "put", "part": 93, "bytes": 67108864, "ms": 1419.3, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"a3492bcf57910df1515ee17a498b1626\""}
+{"t": 1795617376786, "seg": "resume", "ev": "checksum", "part": 100, "bytes": 67108864, "ms": 892.7, "purpose": "sign"}
+{"t": 1795617377192, "seg": "resume", "ev": "put", "part": 98, "bytes": 67108864, "ms": 713.8, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"f37340695689e9124250435aa2474900\""}
+{"t": 1795617377228, "seg": "resume", "ev": "checksum", "part": 101, "bytes": 67108864, "ms": 436.4, "purpose": "sign"}
+{"t": 1795617377343, "seg": "resume", "ev": "put", "part": 97, "bytes": 67108864, "ms": 938.8, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"dac6c0a34531807bd8d15fae710c1f65\""}
+{"t": 1795617377482, "seg": "resume", "ev": "checksum", "part": 102, "bytes": 67108864, "ms": 249.7, "purpose": "sign"}
+{"t": 1795617377642, "seg": "resume", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 114.9}
+{"t": 1795617377645, "seg": "resume", "ev": "part_urls", "signed": [100, 101, 102], "registered": [93, 96, 97, 98]}
+{"t": 1795617377688, "seg": "resume", "ev": "put", "part": 99, "bytes": 67108864, "ms": 1198.2, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"3d76b1bd8ff3fd26229bdd958731f528\""}
+{"t": 1795617377961, "seg": "resume", "ev": "checksum", "part": 103, "bytes": 67108864, "ms": 475.2, "purpose": "sign"}
+{"t": 1795617378207, "seg": "resume", "ev": "checksum", "part": 104, "bytes": 67108864, "ms": 238, "purpose": "sign"}
+{"t": 1795617378409, "seg": "resume", "ev": "checksum", "part": 105, "bytes": 67108864, "ms": 196.8, "purpose": "sign"}
+{"t": 1795617378602, "seg": "resume", "ev": "put", "part": 102, "bytes": 67108864, "ms": 916.9, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"fbf30dce8414d7b8ee59438c776c4926\""}
+{"t": 1795617380938, "seg": "resume", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 2309.6}
+{"t": 1795617380942, "seg": "resume", "ev": "part_urls", "signed": [103, 104, 105], "registered": [99, 102]}
+{"t": 1795617381040, "seg": "resume", "ev": "put", "part": 100, "bytes": 67108864, "ms": 3374.3, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"1ca3e0123363aae9a3380db214c04e3d\""}
+{"t": 1795617381072, "seg": "resume", "ev": "put", "part": 101, "bytes": 67108864, "ms": 3396.2, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"3bfd8feac698e2551a3c4021a123d682\""}
+{"t": 1795617381196, "seg": "resume", "ev": "checksum", "part": 106, "bytes": 67108864, "ms": 2783.1, "purpose": "sign"}
+{"t": 1795617381219, "seg": "resume", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 19}
+{"t": 1795617381224, "seg": "resume", "ev": "part_urls", "signed": [106], "registered": [100, 101]}
+{"t": 1795617381618, "seg": "resume", "ev": "checksum", "part": 107, "bytes": 67108864, "ms": 418.3, "purpose": "sign"}
+{"t": 1795617382330, "seg": "resume", "ev": "put", "part": 105, "bytes": 67108864, "ms": 1258.8, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"d97c351698609e9dad0c36614490e3d3\""}
+{"t": 1795617382350, "seg": "resume", "ev": "put", "part": 104, "bytes": 67108864, "ms": 1313.8, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"033f7991f7cd34adfc937b1fb77fce98\""}
+{"t": 1795617382367, "seg": "resume", "ev": "put", "part": 106, "bytes": 67108864, "ms": 1114, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"e95df39240da2eab0fc6dfb8ff6290ed\""}
+{"t": 1795617382380, "seg": "resume", "ev": "put", "part": 103, "bytes": 67108864, "ms": 1364.6, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"d01caebd2abe6cd866225285470c9d41\""}
+{"t": 1795617382396, "seg": "resume", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 48.8}
+{"t": 1795617382399, "seg": "resume", "ev": "part_urls", "signed": [107], "registered": [105]}
+{"t": 1795617382453, "seg": "resume", "ev": "checksum", "part": 108, "bytes": 67108864, "ms": 830.5, "purpose": "sign"}
+{"t": 1795617382629, "seg": "resume", "ev": "checksum", "part": 109, "bytes": 67108864, "ms": 171.7, "purpose": "sign"}
+{"t": 1795617382784, "seg": "resume", "ev": "checksum", "part": 110, "bytes": 67108864, "ms": 152.2, "purpose": "sign"}
+{"t": 1795617382928, "seg": "resume", "ev": "checksum", "part": 111, "bytes": 67108864, "ms": 140.3, "purpose": "sign"}
+{"t": 1795617383143, "seg": "resume", "ev": "checksum", "part": 112, "bytes": 67108864, "ms": 210.5, "purpose": "sign"}
+{"t": 1795617383345, "seg": "resume", "ev": "checksum", "part": 113, "bytes": 67108864, "ms": 197.4, "purpose": "sign"}
+{"t": 1795617383471, "seg": "resume", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 21.6}
+{"t": 1795617383474, "seg": "resume", "ev": "part_urls", "signed": [108, 109, 110, 111, 112, 113], "registered": [103, 104, 106]}
+{"t": 1795617383783, "seg": "resume", "ev": "checksum", "part": 114, "bytes": 67108864, "ms": 434.2, "purpose": "sign"}
+{"t": 1795617383820, "seg": "resume", "ev": "put", "part": 107, "bytes": 67108864, "ms": 1399.3, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"05193b63d9f1f473157a03011f09a431\""}
+{"t": 1795617384286, "seg": "resume", "ev": "checksum", "part": 115, "bytes": 67108864, "ms": 493.9, "purpose": "sign"}
+{"t": 1795617384749, "seg": "resume", "ev": "put", "part": 109, "bytes": 67108864, "ms": 1236.2, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"4c706fa2d252b43e935df65a7d145277\""}
+{"t": 1795617384784, "seg": "resume", "ev": "put", "part": 110, "bytes": 67108864, "ms": 1261.2, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"fbc0abcc587441998b00345ffe964021\""}
+{"t": 1795617384808, "seg": "resume", "ev": "put", "part": 108, "bytes": 67108864, "ms": 1307.5, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"90a971b7838e86806a496ae3e1e6f4c3\""}
+{"t": 1795617384847, "seg": "resume", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 25.8}
+{"t": 1795617384853, "seg": "resume", "ev": "part_urls", "signed": [114, 115], "registered": [107, 108, 109, 110]}
+{"t": 1795617385007, "seg": "resume", "ev": "put", "part": 111, "bytes": 67108864, "ms": 1150.7, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"09a5117310e84be31e8845eb9c15822f\""}
+{"t": 1795617385211, "seg": "resume", "ev": "checksum", "part": 116, "bytes": 67108864, "ms": 918.3, "purpose": "sign"}
+{"t": 1795617385694, "seg": "resume", "ev": "checksum", "part": 117, "bytes": 67108864, "ms": 478.5, "purpose": "sign"}
+{"t": 1795617385717, "seg": "resume", "ev": "put", "part": 114, "bytes": 67108864, "ms": 715.9, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"24dfde833c6f7791c35a2fba4450847b\""}
+{"t": 1795617386026, "seg": "resume", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 104.2}
+{"t": 1795617386030, "seg": "resume", "ev": "part_urls", "signed": [116, 117], "registered": [111, 114]}
+{"t": 1795617386169, "seg": "resume", "ev": "checksum", "part": 118, "bytes": 67108864, "ms": 470.4, "purpose": "sign"}
+{"t": 1795617386309, "seg": "resume", "ev": "put", "part": 115, "bytes": 67108864, "ms": 1276.2, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"fad916406d46a45208ba48fc654d0908\""}
+{"t": 1795617386353, "seg": "resume", "ev": "put", "part": 112, "bytes": 67108864, "ms": 1572.3, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"413f6483ac53a75331109094667a7893\""}
+{"t": 1795617386368, "seg": "resume", "ev": "put", "part": 113, "bytes": 67108864, "ms": 1559.9, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"9e8c314d5a4e975feb05118bf758755e\""}
+{"t": 1795617386582, "seg": "resume", "ev": "checksum", "part": 119, "bytes": 67108864, "ms": 408.8, "purpose": "sign"}
+{"t": 1795617386911, "seg": "resume", "ev": "checksum", "part": 120, "bytes": 67108864, "ms": 325.1, "purpose": "sign"}
+{"t": 1795617386964, "seg": "resume", "ev": "put", "part": 116, "bytes": 67108864, "ms": 830.5, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"0b95fce28049beb4c519173ecc4dcd5e\""}
+{"t": 1795617387041, "seg": "resume", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 19.1}
+{"t": 1795617387045, "seg": "resume", "ev": "part_urls", "signed": [118, 119, 120], "registered": [112, 113, 115, 116]}
+{"t": 1795617387305, "seg": "resume", "ev": "put", "part": 117, "bytes": 67108864, "ms": 957.1, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"d874a85f66a3c02c0d8d3c62990a1691\""}
+{"t": 1795617387399, "seg": "resume", "ev": "checksum", "part": 121, "bytes": 67108864, "ms": 483.9, "purpose": "sign"}
+{"t": 1795617387694, "seg": "resume", "ev": "checksum", "part": 122, "bytes": 67108864, "ms": 284.7, "purpose": "sign"}
+{"t": 1795617387902, "seg": "resume", "ev": "put", "part": 120, "bytes": 67108864, "ms": 807.1, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"4cab540e24fcb892369c65cb30b3c9ef\""}
+{"t": 1795617388224, "seg": "resume", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 101.5}
+{"t": 1795617388229, "seg": "resume", "ev": "part_urls", "signed": [121, 122], "registered": [117, 120]}
+{"t": 1795617388272, "seg": "resume", "ev": "put", "part": 119, "bytes": 67108864, "ms": 1187, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"be0866819a13fa50769b8a57e29a3988\""}
+{"t": 1795617388284, "seg": "resume", "ev": "put", "part": 118, "bytes": 67108864, "ms": 1210.5, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"dcc5356687b4ff6ab7e08fc0836c369f\""}
+{"t": 1795617388386, "seg": "resume", "ev": "checksum", "part": 123, "bytes": 67108864, "ms": 687.3, "purpose": "sign"}
+{"t": 1795617388654, "seg": "resume", "ev": "checksum", "part": 124, "bytes": 67108864, "ms": 264.5, "purpose": "sign"}
+{"t": 1795617388850, "seg": "resume", "ev": "checksum", "part": 125, "bytes": 67108864, "ms": 191.2, "purpose": "sign"}
+{"t": 1795617389266, "seg": "resume", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 31.6}
+{"t": 1795617389269, "seg": "resume", "ev": "part_urls", "signed": [123, 124, 125], "registered": [118, 119]}
+{"t": 1795617389307, "seg": "resume", "ev": "put", "part": 121, "bytes": 67108864, "ms": 1048.9, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"10b7a7b2dbc954d22a9671fa249610dd\""}
+{"t": 1795617389335, "seg": "resume", "ev": "put", "part": 122, "bytes": 67108864, "ms": 1066.6, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"912ef60c6865ce5ae115947301c17370\""}
+{"t": 1795617389368, "seg": "resume", "ev": "checksum", "part": 126, "bytes": 67108864, "ms": 514.5, "purpose": "sign"}
+{"t": 1795617389661, "seg": "resume", "ev": "checksum", "part": 127, "bytes": 67108864, "ms": 288.4, "purpose": "sign"}
+{"t": 1795617389939, "seg": "resume", "ev": "checksum", "part": 128, "bytes": 67108864, "ms": 273.1, "purpose": "sign"}
+{"t": 1795617390197, "seg": "resume", "ev": "put", "part": 124, "bytes": 67108864, "ms": 892.2, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"87472631fa657f9a1a951ccd61f3014b\""}
+{"t": 1795617390358, "seg": "resume", "ev": "checksum", "part": 129, "bytes": 67108864, "ms": 415.1, "purpose": "sign"}
+{"t": 1795617390369, "seg": "resume", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 27.9}
+{"t": 1795617390372, "seg": "resume", "ev": "part_urls", "signed": [126, 127, 128], "registered": [121, 122, 124]}
+{"t": 1795617390500, "seg": "resume", "ev": "put", "part": 125, "bytes": 67108864, "ms": 1165.4, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"5e4a372c78f2017d87496288ef3bd077\""}
+{"t": 1795617390546, "seg": "resume", "ev": "put", "part": 123, "bytes": 67108864, "ms": 1254.3, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"04ab5b5ef670141179e4f3b048649700\""}
+{"t": 1795617390757, "seg": "resume", "ev": "checksum", "part": 130, "bytes": 67108864, "ms": 396, "purpose": "sign"}
+{"t": 1795617391062, "seg": "resume", "ev": "checksum", "part": 131, "bytes": 67108864, "ms": 300.3, "purpose": "sign"}
+{"t": 1795617391265, "seg": "resume", "ev": "put", "part": 126, "bytes": 67108864, "ms": 868.3, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"d2a2fab22dd90a1db686171eb67a9753\""}
+{"t": 1795617391413, "seg": "resume", "ev": "put", "part": 127, "bytes": 67108864, "ms": 913.1, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"ac377fadb2768a74a6e3af8e8830b245\""}
+{"t": 1795617391465, "seg": "resume", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 23.4}
+{"t": 1795617391468, "seg": "resume", "ev": "part_urls", "signed": [129, 130, 131], "registered": [123, 125, 126, 127]}
+{"t": 1795617391658, "seg": "resume", "ev": "checksum", "part": 132, "bytes": 67108864, "ms": 589.2, "purpose": "sign"}
+{"t": 1795617391667, "seg": "resume", "ev": "put", "part": 128, "bytes": 67108864, "ms": 1145.9, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"3416cd1d3e5e0769b7889e0ded306d76\""}
+{"t": 1795617392004, "seg": "resume", "ev": "checksum", "part": 133, "bytes": 67108864, "ms": 338.9, "purpose": "sign"}
+{"t": 1795617392223, "seg": "resume", "ev": "put", "part": 129, "bytes": 67108864, "ms": 731.1, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"8440e5d9c9bdca717c9cb8ad5301777a\""}
+{"t": 1795617394445, "seg": "resume", "ev": "checksum", "part": 134, "bytes": 67108864, "ms": 2435.5, "purpose": "sign"}
+{"t": 1795617394467, "seg": "resume", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 1909.9}
+{"t": 1795617394471, "seg": "resume", "ev": "part_urls", "signed": [132, 133], "registered": [128, 129]}
+{"t": 1795617394510, "seg": "resume", "ev": "put", "part": 130, "bytes": 67108864, "ms": 3006.3, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"5e11a0d0bc2dcf976268ab8c2f4bf5b2\""}
+{"t": 1795617394694, "seg": "resume", "ev": "put", "part": 131, "bytes": 67108864, "ms": 3179.2, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"e8e8a37da69ea7f947ccb8fb5af4f490\""}
+{"t": 1795617394724, "seg": "resume", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 199.9}
+{"t": 1795617394728, "seg": "resume", "ev": "part_urls", "signed": [134], "registered": [130]}
+{"t": 1795617394956, "seg": "resume", "ev": "checksum", "part": 135, "bytes": 67108864, "ms": 503.7, "purpose": "sign"}
+{"t": 1795617395242, "seg": "resume", "ev": "checksum", "part": 136, "bytes": 67108864, "ms": 281.8, "purpose": "sign"}
+{"t": 1795617395374, "seg": "resume", "ev": "put", "part": 133, "bytes": 67108864, "ms": 864.5, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"bde340e438395797c0e7eb1fb39f2bc8\""}
+{"t": 1795617395552, "seg": "resume", "ev": "put", "part": 132, "bytes": 67108864, "ms": 1055.4, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"d1e01be7a69fd2143eead78c37c13c1c\""}
+{"t": 1795617395598, "seg": "resume", "ev": "checksum", "part": 137, "bytes": 67108864, "ms": 350.3, "purpose": "sign"}
+{"t": 1795617395640, "seg": "resume", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 15.2}
+{"t": 1795617395643, "seg": "resume", "ev": "part_urls", "signed": [135, 136, 137], "registered": [131, 132, 133]}
+{"t": 1795617395936, "seg": "resume", "ev": "put", "part": 134, "bytes": 67108864, "ms": 1170.7, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"186bce36cc683be7b4eb8e776ca8cf11\""}
+{"t": 1795617395974, "seg": "resume", "ev": "checksum", "part": 138, "bytes": 67108864, "ms": 372.4, "purpose": "sign"}
+{"t": 1795617396292, "seg": "resume", "ev": "checksum", "part": 139, "bytes": 67108864, "ms": 310.4, "purpose": "sign"}
+{"t": 1795617396660, "seg": "resume", "ev": "put", "part": 135, "bytes": 67108864, "ms": 993.9, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"eb967bef293729c1eb0dac10c3ed8160\""}
+{"t": 1795617396688, "seg": "resume", "ev": "put", "part": 137, "bytes": 67108864, "ms": 1001.8, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"2df3931c3dcf6dc804d11154d62b3d3e\""}
+{"t": 1795617396736, "seg": "resume", "ev": "checksum", "part": 140, "bytes": 67108864, "ms": 439.9, "purpose": "sign"}
+{"t": 1795617396741, "seg": "resume", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 17.2}
+{"t": 1795617396746, "seg": "resume", "ev": "part_urls", "signed": [138, 139], "registered": [134, 135, 137]}
+{"t": 1795617396931, "seg": "resume", "ev": "put", "part": 136, "bytes": 67108864, "ms": 1254.2, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"a295434e85fa26deaa5dd9b151e629ef\""}
+{"t": 1795617397110, "seg": "resume", "ev": "checksum", "part": 141, "bytes": 67108864, "ms": 369.5, "purpose": "sign"}
+{"t": 1795617397332, "seg": "resume", "ev": "checksum", "part": 142, "bytes": 67108864, "ms": 214.7, "purpose": "sign"}
+{"t": 1795617397571, "seg": "resume", "ev": "checksum", "part": 143, "bytes": 67108864, "ms": 236.3, "purpose": "sign"}
+{"t": 1795617397743, "seg": "resume", "ev": "put", "part": 139, "bytes": 67108864, "ms": 957.7, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"e24ab3e7ac1653a1517e261f0c839f9e\""}
+{"t": 1795617397833, "seg": "resume", "ev": "put", "part": 138, "bytes": 67108864, "ms": 1060.8, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"63a3053ac2faa1610dc8d915ad199cf9\""}
+{"t": 1795617397852, "seg": "resume", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 27.4}
+{"t": 1795617397855, "seg": "resume", "ev": "part_urls", "signed": [140, 141, 142, 143], "registered": [136, 139]}
+{"t": 1795617398050, "seg": "resume", "ev": "checksum", "part": 144, "bytes": 67108864, "ms": 475, "purpose": "sign"}
+{"t": 1795617398453, "seg": "resume", "ev": "checksum", "part": 145, "bytes": 67108864, "ms": 399, "purpose": "sign"}
+{"t": 1795617398808, "seg": "resume", "ev": "put", "part": 143, "bytes": 67108864, "ms": 896.7, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"156ff12c97c6d5bcf770f93d012c7e35\""}
+{"t": 1795617398834, "seg": "resume", "ev": "put", "part": 142, "bytes": 67108864, "ms": 933, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"d4779aa86121de2d229a75d4b6e250de\""}
+{"t": 1795617399030, "seg": "resume", "ev": "checksum", "part": 146, "bytes": 67108864, "ms": 572.3, "purpose": "sign"}
+{"t": 1795617399081, "seg": "resume", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 152.2}
+{"t": 1795617399085, "seg": "resume", "ev": "part_urls", "signed": [144, 145], "registered": [138, 142, 143]}
+{"t": 1795617399154, "seg": "resume", "ev": "put", "part": 141, "bytes": 67108864, "ms": 1262.9, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"c61c8f4f9faa9349dde86f36d80e68db\""}
+{"t": 1795617399174, "seg": "resume", "ev": "put", "part": 140, "bytes": 67108864, "ms": 1292.8, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"afb0771286c17bfe7083f229632a783a\""}
+{"t": 1795617399350, "seg": "resume", "ev": "checksum", "part": 147, "bytes": 67108864, "ms": 315.5, "purpose": "sign"}
+{"t": 1795617399552, "seg": "resume", "ev": "checksum", "part": 148, "bytes": 67108864, "ms": 197.6, "purpose": "sign"}
+{"t": 1795617399797, "seg": "resume", "ev": "checksum", "part": 149, "bytes": 67108864, "ms": 239.7, "purpose": "sign"}
+{"t": 1795617399808, "seg": "resume", "ev": "checksum", "part": 150, "bytes": 779264, "ms": 5.9, "purpose": "sign"}
+{"t": 1795617400119, "seg": "resume", "ev": "put", "part": 144, "bytes": 67108864, "ms": 1007.9, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"32237a4cabfa45428365f461b8c81a75\""}
+{"t": 1795617400134, "seg": "resume", "ev": "api", "op": "POST part-urls", "attempt": 1, "status": 200, "ms": 94.4}
+{"t": 1795617400138, "seg": "resume", "ev": "part_urls", "signed": [146, 147, 148, 149, 150], "registered": [140, 141]}
+{"t": 1795617400185, "seg": "resume", "ev": "put", "part": 145, "bytes": 67108864, "ms": 1063.3, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"3d0e40c4873752d8d6d64987bf4a029f\""}
+{"t": 1795617401160, "seg": "resume", "ev": "put", "part": 146, "bytes": 67108864, "ms": 997, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"67e62bfb18bc11698f8551e53679eaf6\""}
+{"t": 1795617401206, "seg": "resume", "ev": "put", "part": 149, "bytes": 67108864, "ms": 997, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"8ceb4a3a4fe3d6831aa121eb24b39427\""}
+{"t": 1795617401226, "seg": "resume", "ev": "put", "part": 148, "bytes": 67108864, "ms": 1041.5, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"8228f4399007eca17517fe1864d85298\""}
+{"t": 1795617401252, "seg": "resume", "ev": "api", "op": "POST part-urls (s\u00f3 registro)", "attempt": 1, "status": 200, "ms": 26.2}
+{"t": 1795617401257, "seg": "resume", "ev": "part_urls", "signed": [], "registered": [144, 145, 146, 149]}
+{"t": 1795617401297, "seg": "resume", "ev": "put", "part": 150, "bytes": 779264, "ms": 92.4, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"7b844af6f73d00364dc69272e5b76f1e\""}
+{"t": 1795617401484, "seg": "resume", "ev": "put", "part": 147, "bytes": 67108864, "ms": 1310, "attempt": 1, "status": 200, "outcome": "ok", "etag": "\"7e8d435ac49ea58b986121194c0647c6\""}
+{"t": 1795617402334, "seg": "resume", "ev": "api", "op": "POST part-urls (s\u00f3 registro)", "attempt": 1, "status": 200, "ms": 8.7}
+{"t": 1795617402339, "seg": "resume", "ev": "part_urls", "signed": [], "registered": [147, 148, 150]}
+{"t": 1795617402357, "seg": "resume", "ev": "load_end", "reason": "hold"}
+{"t": 1795617402360, "seg": "resume", "ev": "hold_start"}
+{"t": 1795617411325, "seg": "resume", "ev": "hold_end"}
+{"t": 1795617411331, "seg": "resume", "ev": "load_start", "reason": "hold-released"}
+{"t": 1795617411387, "seg": "resume", "ev": "completion_start"}
+{"t": 1795617411746, "seg": "resume", "ev": "api", "op": "POST completion", "attempt": 1, "status": 202, "ms": 341.4}
+{"t": 1795617411754, "seg": "resume", "ev": "completion", "status": 202, "ms": 341.4, "videoStatus": "processing"}
+{"t": 1795617411764, "seg": "resume", "ev": "load_end", "reason": "completion"}
+{"t": 1795617411812, "seg": "resume", "ev": "api", "op": "GET /videos/:publicId (polling)", "attempt": 1, "status": 200, "ms": 12}
+{"t": 1795617411820, "seg": "resume", "ev": "poll_state", "status": "processing", "errorCode": null, "polls": 1}
+{"t": 1795617413840, "seg": "resume", "ev": "api", "op": "GET /videos/:publicId (polling)", "attempt": 1, "status": 200, "ms": 5.4}
+{"t": 1795617413845, "seg": "resume", "ev": "poll_state", "status": "error", "errorCode": "MEDIA_INVALID", "polls": 2}
+{"t": 1795617413848, "seg": "resume", "ev": "final", "status": "error", "errorCode": "MEDIA_INVALID", "errorMessage": "http://storage:9000/streamtube/originals/6c862d88-c914-41c2-9d8a-55da539d4e66/74b0593a-80a5-4554-995f-8b9fdf48a1a7: Invalid data found when processing input", "polls": 2}
+{"t": 1795617413906, "seg": "resume", "ev": "segment_end", "outcome": "ok"}

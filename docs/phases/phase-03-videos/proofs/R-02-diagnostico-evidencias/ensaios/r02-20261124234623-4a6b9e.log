@@ -1,0 +1,263 @@
+=== R-02 ensaios — runId 20261124234623-4a6b9e (23:46:23Z); fases de 60 s
+livre em C: 42431053824
+API pronta em 12 s
+$ support account --email r02-20261124234623-4a6b9e-uploader@proofs.streamtube.test --credentials /tmp/r02-20261124234623-4a6b9e/uploader.json
+CONTA | r02-20261124234623-4a6b9e-uploader@proofs.streamtube.test | register 201, confirm-email 204 (link do Mailpit), login 200 | credenciais em /tmp/r02-20261124234623-4a6b9e/uploader.json (0600)
+$ support account --email r02-20261124234623-4a6b9e-control@proofs.streamtube.test --credentials /tmp/r02-20261124234623-4a6b9e/control.json
+CONTA | r02-20261124234623-4a6b9e-control@proofs.streamtube.test | register 201, confirm-email 204 (link do Mailpit), login 200 | credenciais em /tmp/r02-20261124234623-4a6b9e/control.json (0600)
+$ support control-video --credentials /tmp/r02-20261124234623-4a6b9e/control.json --state /tmp/r02-20261124234623-4a6b9e/control-state.json --file-name r02-20261124234623-4a6b9e-control.mp4
+CONTROLE | vídeo Jt5eztzXCtA em draft, sessão 4e0336bc-ba1f-49fc-a042-d9707998f77f, nenhuma parte enviada
+instrumentação da API: 8 requisições registradas até aqui
+$ client generate --file /tmp/r02-20261124234623-4a6b9e/f.bin --size 1000000000 --seed r02-20261124234623-4a6b9e
+ARQUIVO | f.bin | 1000000000 bytes | sha256 00e6352bc9d0d93ad7ff98adee8f47f43116ad04cada8f667b66d1c9d846e8e2 | gerado em 6445.5 ms (148 MiB/s)
+sondas prontas: 4
+MARCA | A0-repouso | inicio | 1795564050234
+MARCA | A0-repouso | fim | 1795564110401
+MARCA | A1-sha256-cache | inicio | 1795564116427
+$ api node /tmp/r02-20261124234623-4a6b9e/stress.js warm 60 /tmp/r02-20261124234623-4a6b9e/f.bin
+passada 1 | warm | 402.5 MiB/s | 2369 ms
+passada 2 | warm | 473.0 MiB/s | 2016 ms
+passada 3 | warm | 450.6 MiB/s | 2117 ms
+passada 4 | warm | 466.5 MiB/s | 2044 ms
+passada 5 | warm | 496.6 MiB/s | 1920 ms
+passada 6 | warm | 485.1 MiB/s | 1966 ms
+passada 7 | warm | 493.6 MiB/s | 1932 ms
+passada 8 | warm | 477.4 MiB/s | 1998 ms
+passada 9 | warm | 478.8 MiB/s | 1992 ms
+passada 10 | warm | 475.6 MiB/s | 2005 ms
+passada 11 | warm | 493.0 MiB/s | 1935 ms
+passada 12 | warm | 493.5 MiB/s | 1932 ms
+passada 13 | warm | 485.0 MiB/s | 1966 ms
+passada 14 | warm | 452.5 MiB/s | 2108 ms
+passada 15 | warm | 476.4 MiB/s | 2002 ms
+passada 16 | warm | 465.5 MiB/s | 2049 ms
+passada 17 | warm | 496.1 MiB/s | 1923 ms
+passada 18 | warm | 479.3 MiB/s | 1990 ms
+passada 19 | warm | 470.3 MiB/s | 2028 ms
+passada 20 | warm | 494.6 MiB/s | 1928 ms
+passada 21 | warm | 501.3 MiB/s | 1902 ms
+passada 22 | warm | 492.9 MiB/s | 1935 ms
+passada 23 | warm | 485.6 MiB/s | 1964 ms
+passada 24 | warm | 492.8 MiB/s | 1935 ms
+passada 25 | warm | 495.9 MiB/s | 1923 ms
+passada 26 | warm | 498.7 MiB/s | 1912 ms
+passada 27 | warm | 487.2 MiB/s | 1957 ms
+passada 28 | warm | 495.5 MiB/s | 1925 ms
+passada 29 | warm | 475.0 MiB/s | 2008 ms
+passada 30 | warm | 496.4 MiB/s | 1921 ms
+passada 31 | warm | 2538.7 MiB/s | 376 ms
+fim | warm | 31 passadas em 60.0 s
+MARCA | A1-sha256-cache | fim | 1795564176802
+MARCA | A2-sha256-frio | inicio | 1795564176957
+$ api node /tmp/r02-20261124234623-4a6b9e/stress.js cold 60 /tmp/r02-20261124234623-4a6b9e/f.bin
+passada 1 | cold | 359.6 MiB/s | 2652 ms
+passada 2 | cold | 195.5 MiB/s | 4879 ms
+passada 3 | cold | 469.5 MiB/s | 2031 ms
+passada 4 | cold | 460.7 MiB/s | 2070 ms
+passada 5 | cold | 493.2 MiB/s | 1934 ms
+passada 6 | cold | 478.2 MiB/s | 1994 ms
+passada 7 | cold | 497.5 MiB/s | 1917 ms
+passada 8 | cold | 492.1 MiB/s | 1938 ms
+passada 9 | cold | 504.2 MiB/s | 1891 ms
+passada 10 | cold | 468.2 MiB/s | 2037 ms
+passada 11 | cold | 475.5 MiB/s | 2006 ms
+passada 12 | cold | 491.6 MiB/s | 1940 ms
+passada 13 | cold | 492.7 MiB/s | 1936 ms
+passada 14 | cold | 481.5 MiB/s | 1981 ms
+passada 15 | cold | 496.7 MiB/s | 1920 ms
+passada 16 | cold | 507.7 MiB/s | 1879 ms
+passada 17 | cold | 489.8 MiB/s | 1947 ms
+passada 18 | cold | 452.8 MiB/s | 2106 ms
+passada 19 | cold | 476.2 MiB/s | 2003 ms
+passada 20 | cold | 502.7 MiB/s | 1897 ms
+passada 21 | cold | 501.5 MiB/s | 1902 ms
+passada 22 | cold | 481.3 MiB/s | 1981 ms
+passada 23 | cold | 485.6 MiB/s | 1964 ms
+passada 24 | cold | 488.0 MiB/s | 1954 ms
+passada 25 | cold | 490.3 MiB/s | 1945 ms
+passada 26 | cold | 494.1 MiB/s | 1930 ms
+passada 27 | cold | 488.9 MiB/s | 1950 ms
+passada 28 | cold | 904.3 MiB/s | 1055 ms
+fim | cold | 28 passadas em 60.0 s
+MARCA | A2-sha256-frio | fim | 1795564237357
+A3-sha256-frio-outro-container: outro container (r02-20261124234623-4a6b9e-stress), com o próprio arquivo de 1 GB
+INICIO 1795564243988
+passada 1 | cold | 451.6 MiB/s | 2112 ms
+passada 2 | cold | 472.2 MiB/s | 2020 ms
+passada 3 | cold | 514.1 MiB/s | 1855 ms
+passada 4 | cold | 477.5 MiB/s | 1997 ms
+passada 5 | cold | 475.0 MiB/s | 2008 ms
+passada 6 | cold | 459.8 MiB/s | 2074 ms
+passada 7 | cold | 506.4 MiB/s | 1883 ms
+passada 8 | cold | 496.7 MiB/s | 1920 ms
+passada 9 | cold | 415.9 MiB/s | 2293 ms
+passada 10 | cold | 503.3 MiB/s | 1895 ms
+passada 11 | cold | 500.4 MiB/s | 1906 ms
+passada 12 | cold | 485.7 MiB/s | 1964 ms
+passada 13 | cold | 513.7 MiB/s | 1856 ms
+passada 14 | cold | 476.7 MiB/s | 2000 ms
+passada 15 | cold | 488.3 MiB/s | 1953 ms
+passada 16 | cold | 488.3 MiB/s | 1953 ms
+passada 17 | cold | 494.0 MiB/s | 1931 ms
+passada 18 | cold | 467.4 MiB/s | 2040 ms
+passada 19 | cold | 480.9 MiB/s | 1983 ms
+passada 20 | cold | 487.0 MiB/s | 1958 ms
+passada 21 | cold | 488.6 MiB/s | 1952 ms
+passada 22 | cold | 488.6 MiB/s | 1952 ms
+passada 23 | cold | 480.3 MiB/s | 1986 ms
+passada 24 | cold | 469.4 MiB/s | 2032 ms
+passada 25 | cold | 470.6 MiB/s | 2027 ms
+passada 26 | cold | 484.8 MiB/s | 1967 ms
+passada 27 | cold | 501.2 MiB/s | 1903 ms
+passada 28 | cold | 482.8 MiB/s | 1975 ms
+passada 29 | cold | 497.8 MiB/s | 1916 ms
+passada 30 | cold | 157967.6 MiB/s | 6 ms
+fim | cold | 30 passadas em 60.1 s
+FIM 1795564304105
+MARCA | A4 | inicio | 1795564304836
+$ client start --file /tmp/r02-20261124234623-4a6b9e/f.bin --file-name r02-20261124234623-4a6b9e-A4.mp4 --credentials /tmp/r02-20261124234623-4a6b9e/uploader.json --state /tmp/r02-20261124234623-4a6b9e/state-A4.json --events /tmp/r02-20261124234623-4a6b9e/events-A4.jsonl --progress /tmp/r02-20261124234623-4a6b9e/progress-A4.json --storage-connect localhost:9000=storage:9000
+INÍCIO | vídeo OzXa7gkiTKo (draft) | sessão 6c75df8e-12aa-45d7-9a33-8b79c31612b9 | 1000000000 bytes em 15 partes de 67108864 (última com 60475904) | SHA256
+CHECKSUM | parte 1 | 67108864 bytes | 159.3 ms | antes da assinatura
+CHECKSUM | parte 2 | 67108864 bytes | 179.8 ms | antes da assinatura
+CHECKSUM | parte 3 | 67108864 bytes | 218.2 ms | antes da assinatura
+PUT | parte 1 | 67108864 bytes | 555.6 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 4 | 67108864 bytes | 295.3 ms | antes da assinatura
+CHECKSUM | parte 5 | 67108864 bytes | 169.1 ms | antes da assinatura
+CHECKSUM | parte 6 | 67108864 bytes | 168.3 ms | antes da assinatura
+CHECKSUM | parte 7 | 67108864 bytes | 286.8 ms | antes da assinatura
+CHECKSUM | parte 8 | 67108864 bytes | 1007.4 ms | antes da assinatura
+PUT | parte 5 | 67108864 bytes | 1199.6 ms | HTTP 200 | tentativa 1
+PUT | parte 3 | 67108864 bytes | 1212.5 ms | HTTP 200 | tentativa 1
+PUT | parte 2 | 67108864 bytes | 1216 ms | HTTP 200 | tentativa 1
+PUT | parte 4 | 67108864 bytes | 1214.6 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 9 | 67108864 bytes | 364.2 ms | antes da assinatura
+PUT | parte 6 | 67108864 bytes | 886.3 ms | HTTP 200 | tentativa 1
+PUT | parte 7 | 67108864 bytes | 854 ms | HTTP 200 | tentativa 1
+PUT | parte 8 | 67108864 bytes | 853.4 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 10 | 67108864 bytes | 648.4 ms | antes da assinatura
+CHECKSUM | parte 11 | 67108864 bytes | 136.7 ms | antes da assinatura
+CHECKSUM | parte 12 | 67108864 bytes | 343.5 ms | antes da assinatura
+PUT | parte 10 | 67108864 bytes | 852.3 ms | HTTP 200 | tentativa 1
+PUT | parte 9 | 67108864 bytes | 858.5 ms | HTTP 200 | tentativa 1
+PUT | parte 11 | 67108864 bytes | 856.3 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 13 | 67108864 bytes | 610.9 ms | antes da assinatura
+CHECKSUM | parte 14 | 67108864 bytes | 148 ms | antes da assinatura
+CHECKSUM | parte 15 | 60475904 bytes | 300.6 ms | antes da assinatura
+PUT | parte 12 | 67108864 bytes | 3553.5 ms | HTTP 200 | tentativa 1
+PUT | parte 13 | 67108864 bytes | 3621.9 ms | HTTP 200 | tentativa 1
+PUT | parte 14 | 67108864 bytes | 3681.7 ms | HTTP 200 | tentativa 1
+PUT | parte 15 | 60475904 bytes | 827.1 ms | HTTP 200 | tentativa 1
+ENVIO | 15 partes enviadas e registradas
+COMPLETION | HTTP 202 em 157.7 ms | vídeo processing
+POLLING | processing | consulta 1
+POLLING | error MEDIA_INVALID | consulta 2
+MARCA | A4 | fim | 1795564318913
+MARCA | troca-de-modo | inicio | 1795564319129
+processos da API restantes: 0
+API pronta em 4 s
+MARCA | troca-de-modo | fim | 1795564345191
+MARCA | B0-repouso | inicio | 1795564345366
+MARCA | B0-repouso | fim | 1795564405519
+MARCA | B2-sha256-frio | inicio | 1795564405670
+$ api node /tmp/r02-20261124234623-4a6b9e/stress.js cold 60 /tmp/r02-20261124234623-4a6b9e/f.bin
+passada 1 | cold | 406.5 MiB/s | 2346 ms
+passada 2 | cold | 474.6 MiB/s | 2009 ms
+passada 3 | cold | 456.6 MiB/s | 2089 ms
+passada 4 | cold | 471.3 MiB/s | 2024 ms
+passada 5 | cold | 482.3 MiB/s | 1977 ms
+passada 6 | cold | 465.4 MiB/s | 2049 ms
+passada 7 | cold | 494.3 MiB/s | 1929 ms
+passada 8 | cold | 460.4 MiB/s | 2072 ms
+passada 9 | cold | 464.1 MiB/s | 2055 ms
+passada 10 | cold | 474.4 MiB/s | 2010 ms
+passada 11 | cold | 480.8 MiB/s | 1984 ms
+passada 12 | cold | 510.6 MiB/s | 1868 ms
+passada 13 | cold | 486.6 MiB/s | 1960 ms
+passada 14 | cold | 485.1 MiB/s | 1966 ms
+passada 15 | cold | 466.7 MiB/s | 2043 ms
+passada 16 | cold | 500.7 MiB/s | 1905 ms
+passada 17 | cold | 494.9 MiB/s | 1927 ms
+passada 18 | cold | 495.8 MiB/s | 1923 ms
+passada 19 | cold | 489.6 MiB/s | 1948 ms
+passada 20 | cold | 491.5 MiB/s | 1940 ms
+passada 21 | cold | 483.2 MiB/s | 1974 ms
+passada 22 | cold | 502.3 MiB/s | 1899 ms
+passada 23 | cold | 491.5 MiB/s | 1940 ms
+passada 24 | cold | 493.0 MiB/s | 1934 ms
+passada 25 | cold | 476.8 MiB/s | 2000 ms
+passada 26 | cold | 503.8 MiB/s | 1893 ms
+passada 27 | cold | 510.9 MiB/s | 1867 ms
+passada 28 | cold | 499.7 MiB/s | 1909 ms
+passada 29 | cold | 498.1 MiB/s | 1915 ms
+passada 30 | cold | 2159.7 MiB/s | 442 ms
+fim | cold | 30 passadas em 60.0 s
+MARCA | B2-sha256-frio | fim | 1795564466065
+MARCA | B4 | inicio | 1795564466411
+$ client start --file /tmp/r02-20261124234623-4a6b9e/f.bin --file-name r02-20261124234623-4a6b9e-B4.mp4 --credentials /tmp/r02-20261124234623-4a6b9e/uploader.json --state /tmp/r02-20261124234623-4a6b9e/state-B4.json --events /tmp/r02-20261124234623-4a6b9e/events-B4.jsonl --progress /tmp/r02-20261124234623-4a6b9e/progress-B4.json --storage-connect localhost:9000=storage:9000
+INÍCIO | vídeo sua01z1MyQ4 (draft) | sessão a76bb164-630f-4c04-a477-0ba54e7cf6e2 | 1000000000 bytes em 15 partes de 67108864 (última com 60475904) | SHA256
+CHECKSUM | parte 1 | 67108864 bytes | 201.2 ms | antes da assinatura
+CHECKSUM | parte 2 | 67108864 bytes | 215.7 ms | antes da assinatura
+PUT | parte 1 | 67108864 bytes | 538.1 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 3 | 67108864 bytes | 362.7 ms | antes da assinatura
+CHECKSUM | parte 4 | 67108864 bytes | 134.4 ms | antes da assinatura
+CHECKSUM | parte 5 | 67108864 bytes | 149.3 ms | antes da assinatura
+CHECKSUM | parte 6 | 67108864 bytes | 153.5 ms | antes da assinatura
+CHECKSUM | parte 7 | 67108864 bytes | 216.7 ms | antes da assinatura
+CHECKSUM | parte 8 | 67108864 bytes | 4741 ms | antes da assinatura
+PUT | parte 4 | 67108864 bytes | 4944.8 ms | HTTP 200 | tentativa 1
+PUT | parte 3 | 67108864 bytes | 4953.7 ms | HTTP 200 | tentativa 1
+PUT | parte 5 | 67108864 bytes | 4953.4 ms | HTTP 200 | tentativa 1
+PUT | parte 2 | 67108864 bytes | 4960 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 9 | 67108864 bytes | 457.5 ms | antes da assinatura
+PUT | parte 6 | 67108864 bytes | 850.1 ms | HTTP 200 | tentativa 1
+PUT | parte 8 | 67108864 bytes | 801.7 ms | HTTP 200 | tentativa 1
+PUT | parte 7 | 67108864 bytes | 805.4 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 10 | 67108864 bytes | 564.7 ms | antes da assinatura
+CHECKSUM | parte 11 | 67108864 bytes | 128.9 ms | antes da assinatura
+CHECKSUM | parte 12 | 67108864 bytes | 357.4 ms | antes da assinatura
+PUT | parte 11 | 67108864 bytes | 914.3 ms | HTTP 200 | tentativa 1
+PUT | parte 9 | 67108864 bytes | 917.6 ms | HTTP 200 | tentativa 1
+PUT | parte 10 | 67108864 bytes | 917 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 13 | 67108864 bytes | 788 ms | antes da assinatura
+CHECKSUM | parte 14 | 67108864 bytes | 366.7 ms | antes da assinatura
+PUT | parte 13 | 67108864 bytes | 693.7 ms | HTTP 200 | tentativa 1
+PUT | parte 12 | 67108864 bytes | 871.8 ms | HTTP 200 | tentativa 1
+CHECKSUM | parte 15 | 60475904 bytes | 843.1 ms | antes da assinatura
+PUT | parte 14 | 67108864 bytes | 496.5 ms | HTTP 200 | tentativa 1
+PUT | parte 15 | 60475904 bytes | 419.3 ms | HTTP 200 | tentativa 1
+ENVIO | 15 partes enviadas e registradas
+COMPLETION | HTTP 202 em 55.5 ms | vídeo processing
+POLLING | processing | consulta 1
+POLLING | error MEDIA_INVALID | consulta 2
+MARCA | B4 | fim | 1795564482688
+=== limpeza
+SONDA | latência das respostas ok (ms): p50 3.8 | p95 9.9 | p99 92.4 | máx 452.5
+SONDA | latência das respostas ok (ms): p50 3.4 | p95 12.5 | p99 91.9 | máx 1650.3
+SONDA | latência das respostas ok (ms): p50 3.2 | p95 13.9 | p99 38.5 | máx 1067.5
+SONDA | latência das respostas ok (ms): p50 3.4 | p95 6.3 | p99 25.8 | máx 1050.4
+processos da API restantes: 0
+containers r02 restantes: 0
+$ support cleanup --emails r02-20261124234623-4a6b9e-uploader@proofs.streamtube.test,r02-20261124234623-4a6b9e-control@proofs.streamtube.test
+LIMPEZA | 2 e-mails de prova | 2 usuários, 3 vídeos, 3 sessões
+LIMPEZA | multiparts abortados: 3 (os demais já estavam concluídos ou abortados)
+LIMPEZA | jobs de processamento removidos: 1
+LIMPEZA prefixo originals/2b7675a7-cfd2-4bc4-a892-8823b3d24aa6/: 0 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA prefixo thumbnails/2b7675a7-cfd2-4bc4-a892-8823b3d24aa6/: 0 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA prefixo originals/f8bc03cd-1733-4c6e-92e2-0d2875cc9b7c/: 1 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA prefixo thumbnails/f8bc03cd-1733-4c6e-92e2-0d2875cc9b7c/: 0 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA prefixo originals/9cf307dd-dc48-4a90-afee-f46038b643d1/: 1 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA prefixo thumbnails/9cf307dd-dc48-4a90-afee-f46038b643d1/: 0 objeto(s) removido(s), 0 multipart abortado(s); restam 0 objeto(s) e 0 multipart
+LIMPEZA | e-mails removidos do Mailpit: 2
+PASSOU | linhas de prova no banco (usuários, vídeos e sessões) | esperado: 0 | observado: 0
+PASSOU | objetos de prova no bucket | esperado: 0 restantes | observado: 0 restantes
+PASSOU | multiparts das sessões de prova | esperado: 0 | observado: 0
+PASSOU | jobs de processamento dos vídeos de prova | esperado: 0 | observado: 0
+PASSOU | e-mails de prova no Mailpit | esperado: 0 | observado: 0
+LIMPEZA | 5 itens, 0 com falha
+diretório de ensaio presente: não
+arquivos no db restantes: 0
+lixeira do storage: 56 KiB depois de 190 s
+temporários do Silo: lista igual antes e depois (5 diretórios), nenhum novo
+retratos iguais
+livre em C: 42402091008
+código: 0

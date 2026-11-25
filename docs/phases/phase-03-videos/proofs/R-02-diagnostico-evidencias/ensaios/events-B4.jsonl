@@ -1,0 +1,60 @@
+{"t":1795564468515,"seg":"start","ev":"segment_start","pid":43547,"concurrency":4,"signBatch":10,"registerEvery":4,"partUrlsIntervalMs":1100,"storageConnect":true,"tokenExpiresAt":"2026-11-25T00:01:44.000Z"}
+{"t":1795564468604,"seg":"start","ev":"api","op":"POST /videos","attempt":1,"status":201,"ms":84.9}
+{"t":1795564468604,"seg":"start","ev":"plan","publicId":"sua01z1MyQ4","sessionId":"a76bb164-630f-4c04-a477-0ba54e7cf6e2","sizeBytes":1000000000,"partSize":67108864,"partCount":15,"lastPartSize":60475904,"checksumAlgorithm":"SHA256","sessionExpiresAt":"2026-11-25T23:54:28.598Z"}
+{"t":1795564468806,"seg":"start","ev":"checksum","part":1,"bytes":67108864,"ms":201.2,"purpose":"sign"}
+{"t":1795564468807,"seg":"start","ev":"load_start","reason":"part-urls"}
+{"t":1795564468835,"seg":"start","ev":"api","op":"POST part-urls","attempt":1,"status":200,"ms":26.3}
+{"t":1795564468835,"seg":"start","ev":"part_urls","signed":[1],"registered":[]}
+{"t":1795564469023,"seg":"start","ev":"checksum","part":2,"bytes":67108864,"ms":215.7,"purpose":"sign"}
+{"t":1795564469375,"seg":"start","ev":"put","part":1,"bytes":67108864,"ms":538.1,"attempt":1,"status":200,"outcome":"ok","etag":"\"7196ef1b6c6b2087830ef91b055bba7f\""}
+{"t":1795564469386,"seg":"start","ev":"checksum","part":3,"bytes":67108864,"ms":362.7,"purpose":"sign"}
+{"t":1795564469521,"seg":"start","ev":"checksum","part":4,"bytes":67108864,"ms":134.4,"purpose":"sign"}
+{"t":1795564469671,"seg":"start","ev":"checksum","part":5,"bytes":67108864,"ms":149.3,"purpose":"sign"}
+{"t":1795564469822,"seg":"start","ev":"checksum","part":6,"bytes":67108864,"ms":153.5,"purpose":"sign"}
+{"t":1795564469936,"seg":"start","ev":"api","op":"POST part-urls","attempt":1,"status":200,"ms":26.5}
+{"t":1795564469936,"seg":"start","ev":"part_urls","signed":[2,3,4,5,6],"registered":[1]}
+{"t":1795564470039,"seg":"start","ev":"checksum","part":7,"bytes":67108864,"ms":216.7,"purpose":"sign"}
+{"t":1795564474780,"seg":"start","ev":"checksum","part":8,"bytes":67108864,"ms":4741,"purpose":"sign"}
+{"t":1795564474887,"seg":"start","ev":"put","part":4,"bytes":67108864,"ms":4944.8,"attempt":1,"status":200,"outcome":"ok","etag":"\"940df3bfec4f08cfab8878e626de0178\""}
+{"t":1795564474893,"seg":"start","ev":"put","part":3,"bytes":67108864,"ms":4953.7,"attempt":1,"status":200,"outcome":"ok","etag":"\"9a97c45167bcf74f1cffcbec92c64ea2\""}
+{"t":1795564474896,"seg":"start","ev":"put","part":5,"bytes":67108864,"ms":4953.4,"attempt":1,"status":200,"outcome":"ok","etag":"\"b56588c70026f92b2bf4c16da8e7b875\""}
+{"t":1795564474897,"seg":"start","ev":"put","part":2,"bytes":67108864,"ms":4960,"attempt":1,"status":200,"outcome":"ok","etag":"\"d7154589922a48ab1582eb6ca7db5303\""}
+{"t":1795564474946,"seg":"start","ev":"api","op":"POST part-urls","attempt":1,"status":200,"ms":51.9}
+{"t":1795564474946,"seg":"start","ev":"part_urls","signed":[7,8],"registered":[3,4]}
+{"t":1795564475238,"seg":"start","ev":"checksum","part":9,"bytes":67108864,"ms":457.5,"purpose":"sign"}
+{"t":1795564475739,"seg":"start","ev":"put","part":6,"bytes":67108864,"ms":850.1,"attempt":1,"status":200,"outcome":"ok","etag":"\"16b8d55d61c9dd0c5d77b5a0318a5452\""}
+{"t":1795564475750,"seg":"start","ev":"put","part":8,"bytes":67108864,"ms":801.7,"attempt":1,"status":200,"outcome":"ok","etag":"\"f499ffd1018abac6d6ea5d2416d97275\""}
+{"t":1795564475753,"seg":"start","ev":"put","part":7,"bytes":67108864,"ms":805.4,"attempt":1,"status":200,"outcome":"ok","etag":"\"3ae6e4886991066ee1ce63f54b66a862\""}
+{"t":1795564475804,"seg":"start","ev":"checksum","part":10,"bytes":67108864,"ms":564.7,"purpose":"sign"}
+{"t":1795564475933,"seg":"start","ev":"checksum","part":11,"bytes":67108864,"ms":128.9,"purpose":"sign"}
+{"t":1795564476019,"seg":"start","ev":"api","op":"POST part-urls","attempt":1,"status":200,"ms":23.3}
+{"t":1795564476019,"seg":"start","ev":"part_urls","signed":[9,10,11],"registered":[2,5,6,7,8]}
+{"t":1795564476291,"seg":"start","ev":"checksum","part":12,"bytes":67108864,"ms":357.4,"purpose":"sign"}
+{"t":1795564476937,"seg":"start","ev":"put","part":11,"bytes":67108864,"ms":914.3,"attempt":1,"status":200,"outcome":"ok","etag":"\"1380419a278f97c7727bd1f114adbcdc\""}
+{"t":1795564476938,"seg":"start","ev":"put","part":9,"bytes":67108864,"ms":917.6,"attempt":1,"status":200,"outcome":"ok","etag":"\"76714a0feda8d2212a9f17512605e03f\""}
+{"t":1795564476939,"seg":"start","ev":"put","part":10,"bytes":67108864,"ms":917,"attempt":1,"status":200,"outcome":"ok","etag":"\"4c1be4609dcd316d904b142cdf73f6e9\""}
+{"t":1795564477081,"seg":"start","ev":"checksum","part":13,"bytes":67108864,"ms":788,"purpose":"sign"}
+{"t":1795564477113,"seg":"start","ev":"api","op":"POST part-urls","attempt":1,"status":200,"ms":15.9}
+{"t":1795564477113,"seg":"start","ev":"part_urls","signed":[12,13],"registered":[9,10,11]}
+{"t":1795564477450,"seg":"start","ev":"checksum","part":14,"bytes":67108864,"ms":366.7,"purpose":"sign"}
+{"t":1795564477812,"seg":"start","ev":"put","part":13,"bytes":67108864,"ms":693.7,"attempt":1,"status":200,"outcome":"ok","etag":"\"45c8d9e8dbbac1211928c5003813a930\""}
+{"t":1795564477988,"seg":"start","ev":"put","part":12,"bytes":67108864,"ms":871.8,"attempt":1,"status":200,"outcome":"ok","etag":"\"ade7f01665817ffb567bf41a4dcc0a5a\""}
+{"t":1795564478230,"seg":"start","ev":"api","op":"POST part-urls","attempt":1,"status":200,"ms":30.7}
+{"t":1795564478230,"seg":"start","ev":"part_urls","signed":[14],"registered":[12,13]}
+{"t":1795564478296,"seg":"start","ev":"checksum","part":15,"bytes":60475904,"ms":843.1,"purpose":"sign"}
+{"t":1795564478727,"seg":"start","ev":"put","part":14,"bytes":67108864,"ms":496.5,"attempt":1,"status":200,"outcome":"ok","etag":"\"6e34d4bb0cc69e61522e7b9344268aeb\""}
+{"t":1795564479312,"seg":"start","ev":"api","op":"POST part-urls","attempt":1,"status":200,"ms":13.9}
+{"t":1795564479312,"seg":"start","ev":"part_urls","signed":[15],"registered":[14]}
+{"t":1795564479732,"seg":"start","ev":"put","part":15,"bytes":60475904,"ms":419.3,"attempt":1,"status":200,"outcome":"ok","etag":"\"c15a837971f88f0d5814d22161d322d4\""}
+{"t":1795564480406,"seg":"start","ev":"api","op":"POST part-urls (só registro)","attempt":1,"status":200,"ms":5.6}
+{"t":1795564480406,"seg":"start","ev":"part_urls","signed":[],"registered":[15]}
+{"t":1795564480406,"seg":"start","ev":"completion_start"}
+{"t":1795564480462,"seg":"start","ev":"api","op":"POST completion","attempt":1,"status":202,"ms":55.5}
+{"t":1795564480462,"seg":"start","ev":"completion","status":202,"ms":55.5,"videoStatus":"processing"}
+{"t":1795564480462,"seg":"start","ev":"load_end","reason":"completion"}
+{"t":1795564480466,"seg":"start","ev":"api","op":"GET /videos/:publicId (polling)","attempt":1,"status":200,"ms":3.2}
+{"t":1795564480466,"seg":"start","ev":"poll_state","status":"processing","errorCode":null,"polls":1}
+{"t":1795564482471,"seg":"start","ev":"api","op":"GET /videos/:publicId (polling)","attempt":1,"status":200,"ms":4.3}
+{"t":1795564482471,"seg":"start","ev":"poll_state","status":"error","errorCode":"MEDIA_INVALID","polls":2}
+{"t":1795564482471,"seg":"start","ev":"final","status":"error","errorCode":"MEDIA_INVALID","errorMessage":"http://storage:9000/streamtube/originals/9cf307dd-dc48-4a90-afee-f46038b643d1/a76bb164-630f-4c04-a477-0ba54e7cf6e2: Invalid data found when processing input","polls":2}
+{"t":1795564482472,"seg":"start","ev":"segment_end","outcome":"ok"}

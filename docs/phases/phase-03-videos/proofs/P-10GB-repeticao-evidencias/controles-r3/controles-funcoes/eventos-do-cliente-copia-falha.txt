@@ -1,0 +1,2 @@
+CONTROLE | falha injetada: cópia dos eventos do cliente
+FALHA | cópia de events.jsonl do cliente para o nestjs-api (código 2)

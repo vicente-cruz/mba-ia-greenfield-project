@@ -8,23 +8,27 @@ More info in the project overview: [docs/project-plan.md](docs/project-plan.md)
 
 ## Repository Structure
 
-This is a monorepo with two main areas:
+This is a monorepo with these main areas:
 
-- `nestjs-project/` — Backend API (NestJS 11, TypeScript, Express). Contains modules for users, channels, videos, comments, etc.
+- `nestjs-project/` — Backend API and video worker (NestJS 11, TypeScript, Express), with the modules `auth`, `users`, `channels`, `mail`, `videos`, `storage` and `worker` (the worker is a second entry point, `src/worker.ts`). Comments, likes and subscriptions do not exist yet.
+- `next-frontend/` — Frontend (Next.js 16.2.6, App Router, React 19): auth screens under `app/(auth)/`, BFF Route Handlers under `app/api/auth/`, Vitest and Playwright. Details in `next-frontend/CLAUDE.md`.
 - `docs/` — Project documentation, architecture diagrams, and planning.
-- `next-frontend/` (Next.js) — not yet initialized
+- `scripts/sync-openapi.sh` — copies `nestjs-project/openapi.json` to `next-frontend/openapi.json`; runs on the host.
+- `.github/workflows/` — CI (see "CI" below).
 
 ## Architecture (C4 Container Diagram)
 
 See `docs/diagrams/software-arch.mermaid` for the full diagram. Key containers:
 
-- **Frontend** (Next.js) → calls API via REST, streams from Object Storage
-- **API** (Nest.js) → business rules, auth, reads/writes DB, uploads to storage, publishes jobs to queue, sends emails
-- **Video Worker** (FFmpeg) → consumes jobs from queue, processes videos, updates DB and storage
-- **Database** (PostgreSQL) → users, channels, videos, comments, likes
-- **Object Storage** (S3/MinIO) → video files and thumbnails
-- **Message Queue** (TBD) → video processing job queue
-- **Email Service** (SMTP) → account confirmation and password recovery
+- **Frontend** (Next.js) → calls API via REST; sends the upload parts and streams directly to/from Object Storage through presigned URLs (the bytes never pass through the API)
+- **API** (Nest.js) → business rules, auth, reads/writes DB, orchestrates the multipart upload and signs storage URLs, publishes jobs to queue, sends emails
+- **Video Worker** (Nest.js + FFmpeg) → consumes jobs from queue, probes and validates videos, extracts the thumbnail, updates DB and storage; also runs the maintenance jobs (upload session sweep, processing reconciliation, storage cleanup)
+- **Database** (PostgreSQL) → users, channels, videos, upload sessions and parts; comments and likes come in later phases
+- **Object Storage** (S3-compatible: Silo, a community fork of MinIO) → video originals and thumbnails
+- **Message Queue** (BullMQ + Redis) → video processing and maintenance job queues
+- **Email Service** (SMTP; Mailpit in development) → account confirmation and password recovery
+
+In development, every container above runs in the `nestjs-project/` Compose stack (`nestjs-api`, `video-worker`, `db`, `storage`, `storage-init`, `redis`, `mailpit`), except the frontend, which has its own stack in `next-frontend/`. Readiness checks for each service, and the exception that `video-worker` starts with `docker compose up`, are in `nestjs-project/CLAUDE.md`.
 
 ## Docker Networking
 
@@ -66,6 +70,25 @@ If any of these fails, the task is not done — fix the underlying issue before 
   - `main` — stable, production-ready code 
   - `dev` — integration branch; all feature/bugfix/hotfix branches start from `dev` and merge back into `dev`
   - When `dev` is stable, it is merged into `main`
+
+## CI
+
+The only workflow is `.github/workflows/openapi-freshness.yml` (`next-frontend-openapi-typing/TD-03`). It runs on every `pull_request` (default activity types `opened`, `synchronize` and `reopened`, to any base branch), on `push` to `main` and `dev`, and manually (`workflow_dispatch`).
+
+It does four things:
+
+1. checks that `nestjs-project/openapi.json`, `next-frontend/openapi.json` and `next-frontend/lib/api/types.gen.ts` are tracked by Git;
+2. runs `npm ci` in `next-frontend/` and `bash scripts/sync-openapi.sh`;
+3. runs `npm run openapi:types`;
+4. fails on any diff in the two frontend artifacts, printing the commands that update them.
+
+It consumes the committed backend contract and does not regenerate it. It runs no test suite and no proof.
+
+**Status (2026-11-24):** validated locally only, in throwaway repositories (Phase 03, SI-03.29 review adjustment). No run on GitHub Actions has been observed. Once the workflow is committed and pushed, it runs only on these events:
+
+- a pull request opened, updated with new commits (`synchronize`) or reopened; GitHub skips it while the pull request has a merge conflict;
+- a push to `main` or `dev`. A push to any other branch, such as `feature/*`, does not trigger it;
+- a manual run (`workflow_dispatch`), available only when the workflow file exists on the repository's default branch.
 
 ## Testing Policy
 

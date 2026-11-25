@@ -1,0 +1,9 @@
+INÍCIO | vídeo UaaveBejRrU (draft) | sessão 5c2cee16-31c0-4c31-ab27-b663a4962a57 | 93092031 bytes em 2 partes de 67108864 (última com 25983167) | SHA256
+CHECKSUM | parte 1 | 67108864 bytes | 161.6 ms | antes da assinatura
+CHECKSUM | parte 2 | 25983167 bytes | 74.5 ms | antes da assinatura
+PUT | parte 1 | 67108864 bytes | 586.5 ms | HTTP 200 | tentativa 1
+PUT | parte 2 | 25983167 bytes | 322.3 ms | HTTP 200 | tentativa 1
+ENVIO | 2 partes enviadas e registradas
+COMPLETION | HTTP 202 em 111.7 ms | vídeo processing
+POLLING | processing | consulta 1
+POLLING | ready | consulta 2

@@ -1,0 +1,79 @@
+# Perfil de CPU da API — perfil-B1
+
+- perfil: 11396 amostras; alinhamento por fim (wallStopMs contra endTime; erro = latência do callback do stop); intervalo de amostragem pedido de 1 ms
+- alinhamento antigo (pelo início, wallStartMs do callback): a última amostra caía 523 ms depois de wallStopMs; é o arranque do perfil entre startTime e o callback, deslocando todas as amostras
+- realinhado pelo fim: primeira amostra em 1795568939722, última em 1795568952744; wallStartMs (callback do start) = 1795568939707, ou seja, 523 ms depois do startTime realinhado
+
+## perfil inteiro
+- janela: 1795568939722 a 1795568952744 (13.02 s); amostras: 11396
+- tempo coberto pelas amostras: 13560 ms; maiores intervalos entre amostras: 538.5 ms, 95.5 ms, 19.8 ms
+- por categoria (tempo próprio):
+  - (idle): 12549 ms (92.5%)
+  - JS/nativo: node:inspector: 538 ms (4.0%)
+  - (program): 149 ms (1.1%)
+  - (garbage collector): 73 ms (0.5%)
+  - JS/nativo: typeorm: 46 ms (0.3%)
+  - JS/nativo: (nativo/V8): 35 ms (0.3%)
+  - JS/nativo: node:internal: 34 ms (0.3%)
+  - JS/nativo: @smithy/core: 29 ms (0.2%)
+- funções com mais tempo próprio:
+  -   12549 ms  (idle)
+  -     538 ms  post [node:inspector:115]
+  -     149 ms  (program)
+  -      73 ms  (garbage collector)
+  -       9 ms  writev [(nativo/V8):0]
+  -       8 ms  replacePropertyNamesForTheWholeQuery [typeorm:432]
+  -       7 ms  runMicrotasks [(nativo/V8):0]
+  -       5 ms  init [(nativo/V8):0]
+  -       4 ms  createPublicKey [node:internal:776]
+  -       3 ms  match [path-to-regexp:245]
+  -       3 ms  wrappedFn [node:internal:541]
+  -       3 ms  update [(nativo/V8):0]
+- pilhas mais frequentes (fora de idle e program), da função para quem chamou:
+  -     538 ms  post [node:inspector:115] ← (anônima) [file:///tmp/r02c-20261125010724-84efe2/preload-perfil.js:102] ← #onMessage [node:inspector:84] ← (anônima) [node:inspector:66] ← post [node:inspector:115] ← (anônima) [file:///tmp/r02c-20261125010724-84efe2/preload-perfil.js:101] ← #onMessage [node:inspector:84] ← (anônima) [node:inspector:66]
+  -      73 ms  (garbage collector)
+  -       8 ms  writev [(nativo/V8):0] ← writevGeneric [node:internal:121] ← Socket._writeGeneric [node:net:994] ← Socket._writev [node:net:1031] ← doWrite [node:internal:585] ← clearBuffer [node:internal:742] ← Writable.uncork [node:internal:518] ← submit [pg:152]
+  -       7 ms  runMicrotasks [(nativo/V8):0] ← processTicksAndRejections [node:internal:72]
+  -       4 ms  createPublicKey [node:internal:776] ← (anônima) [jsonwebtoken:101] ← getSecret [jsonwebtoken:96] ← module.exports [jsonwebtoken:21] ← (anônima) [@nestjs/jwt:74] ← runMicrotasks [(nativo/V8):0] ← processTicksAndRejections [node:internal:72]
+- pausas de GC na janela: 3, somando 48.3 ms, maior 26.9 ms; tipos corrigidos pelas constantes: {'minor': 1, 'incremental': 1, 'major': 1}
+  - 26.9 ms em 1795568947576: rótulo gravado 'minor' → minor
+  - 17.1 ms em 1795568947636: rótulo gravado 'incremental' → major
+  - 4.4 ms em 1795568947603: rótulo gravado 'weakcb' → incremental
+# Perfil de CPU da API — perfil-B2
+
+- perfil: 11187 amostras; alinhamento por fim (wallStopMs contra endTime; erro = latência do callback do stop); intervalo de amostragem pedido de 1 ms
+- alinhamento antigo (pelo início, wallStartMs do callback): a última amostra caía 136 ms depois de wallStopMs; é o arranque do perfil entre startTime e o callback, deslocando todas as amostras
+- realinhado pelo fim: primeira amostra em 1795568973921, última em 1795568986566; wallStartMs (callback do start) = 1795568973900, ou seja, 137 ms depois do startTime realinhado
+
+## perfil inteiro
+- janela: 1795568973921 a 1795568986566 (12.64 s); amostras: 11187
+- tempo coberto pelas amostras: 12802 ms; maiores intervalos entre amostras: 157.7 ms, 31.4 ms, 12.6 ms
+- por categoria (tempo próprio):
+  - (idle): 12346 ms (96.4%)
+  - JS/nativo: node:inspector: 158 ms (1.2%)
+  - (program): 117 ms (0.9%)
+  - JS/nativo: (nativo/V8): 40 ms (0.3%)
+  - JS/nativo: typeorm: 33 ms (0.3%)
+  - JS/nativo: node:internal: 28 ms (0.2%)
+  - JS/nativo: pg: 19 ms (0.1%)
+  - JS/nativo: file:///tmp/r02c-20261125010724-84efe2/preload-perfil.js: 8 ms (0.1%)
+- funções com mais tempo próprio:
+  -   12346 ms  (idle)
+  -     158 ms  post [node:inspector:115]
+  -     117 ms  (program)
+  -      15 ms  addFields [pg:82]
+  -       9 ms  writev [(nativo/V8):0]
+  -       7 ms  onStreamRead [node:internal:166]
+  -       6 ms  runMicrotasks [(nativo/V8):0]
+  -       5 ms  init [(nativo/V8):0]
+  -       2 ms  run [(nativo/V8):0]
+  -       2 ms  fireHitCount [@nestjs/throttler:43]
+  -       2 ms  (anônima) [(nativo/V8):0]
+  -       2 ms  (anônima) [file:///tmp/r02c-20261125010724-84efe2/preload-perfil.js:69]
+- pilhas mais frequentes (fora de idle e program), da função para quem chamou:
+  -     158 ms  post [node:inspector:115] ← (anônima) [file:///tmp/r02c-20261125010724-84efe2/preload-perfil.js:102] ← #onMessage [node:inspector:84] ← (anônima) [node:inspector:66] ← post [node:inspector:115] ← (anônima) [file:///tmp/r02c-20261125010724-84efe2/preload-perfil.js:101] ← #onMessage [node:inspector:84] ← (anônima) [node:inspector:66]
+  -      15 ms  addFields [pg:82] ← handleRowDescription [pg:76] ← _handleRowDescription [pg:412] ← emit [node:events:455] ← (anônima) [pg:110] ← parse [pg-protocol:26] ← (anônima) [pg-protocol:11] ← emit [node:events:455]
+  -       7 ms  writev [(nativo/V8):0] ← writevGeneric [node:internal:121] ← Socket._writeGeneric [node:net:994] ← Socket._writev [node:net:1031] ← doWrite [node:internal:585] ← clearBuffer [node:internal:742] ← Writable.uncork [node:internal:518] ← submit [pg:152]
+  -       7 ms  onStreamRead [node:internal:166]
+  -       6 ms  runMicrotasks [(nativo/V8):0] ← processTicksAndRejections [node:internal:72]
+- pausas de GC na janela: 0, somando 0.0 ms, maior 0.0 ms; tipos corrigidos pelas constantes: {}

@@ -1,0 +1,3 @@
+intervalo 1 (start): 1795582949142 a 1795582953239 (4097 ms), fecha em load_end
+intervalo 2 (resume): 1795582964330 a 1795582968935 (4605 ms), fecha em load_end
+intervalo 3 (resume): 1795582977132 a 1795582977221 (89 ms), fecha em load_end

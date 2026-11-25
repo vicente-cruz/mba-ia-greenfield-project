@@ -1,0 +1,2 @@
+CONTROLE | falha injetada: uso do storage
+FALHA | uso do storage (código 2)

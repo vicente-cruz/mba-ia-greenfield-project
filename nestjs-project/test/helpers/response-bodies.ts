@@ -36,3 +36,60 @@ export function currentUserBody(res: Response): JwtPayload {
 export function errorBody(res: Response): ApiErrorEnvelope {
   return res.body as ApiErrorEnvelope;
 }
+
+/** Body of `POST /videos` (201), with the date as it arrives in JSON. */
+export interface VideoUploadSessionBody {
+  publicId: string;
+  status: string;
+  uploadSession: {
+    id: string;
+    status: string;
+    partSize: number;
+    partCount: number;
+    checksumAlgorithm: string;
+    expiresAt: string;
+  };
+}
+
+export function videoUploadSessionBody(res: Response): VideoUploadSessionBody {
+  return res.body as VideoUploadSessionBody;
+}
+
+/** Body of `POST /videos/:publicId/upload-sessions/:sessionId/part-urls` (200). */
+export interface PartUrlsBody {
+  parts: {
+    partNumber: number;
+    url: string;
+    method: string;
+    expectedSize: number;
+    headers: Record<string, string>;
+    expiresAt: string;
+  }[];
+  registeredParts: number[];
+}
+
+export function partUrlsBody(res: Response): PartUrlsBody {
+  return res.body as PartUrlsBody;
+}
+
+/** Body of `GET /videos/:publicId/upload-sessions/:sessionId` (200). */
+export interface UploadSessionBody {
+  id: string;
+  status: string;
+  expired: boolean;
+  fileMismatch: boolean;
+  partSize: number;
+  partCount: number;
+  checksumAlgorithm: string;
+  expiresAt: string;
+  parts: {
+    partNumber: number;
+    state: string;
+    checksumSha256: string | null;
+    etag: string | null;
+  }[];
+}
+
+export function uploadSessionBody(res: Response): UploadSessionBody {
+  return res.body as UploadSessionBody;
+}

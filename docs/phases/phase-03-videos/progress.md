@@ -1,0 +1,3190 @@
+# phase-03-videos — Progress
+
+**Status:** completed (2026-11-25)
+**SIs:** 33/33 aprovadas. A SI-03.33 foi aprovada na revisão de 2026-11-25, pela repetição formal da P-10GB (registro prévio r3, execução `20261125142232-bc4b5d`, `aprovada`). A P-10GB original (2026-11-24) continua `reprovada` no histórico. A pendência do R-02 está encerrada para o cenário efetivamente validado (ver "Aprovação e encerramento da Fase 03", na SI-03.33).
+
+### SI-03.1 — Infra: storage, inicialização do bucket, Redis e FFmpeg no ambiente
+- **Status:** completed
+- **Tests:** no tests (Infra; critérios de aceite verificados manualmente em 2026-11-17)
+- **Observations:**
+  - **Critérios de aceite:** (1) `docker compose ps` com `db`, `storage` e `redis` healthy e `storage-init` com `Exited (0)`. (2) GET anônimo sem assinatura a um objeto existente do bucket → `403` (da rede do Compose e do host sem proxy); listagem anônima → `403`; o mesmo objeto por URL assinada → `200`. (3) `redis-cli CONFIG GET maxmemory-policy` → `noeviction`. (4) `ffmpeg` e `ffprobe` 5.1.9-0+deb12u1 (pacote `7:5.1.9-0+deb12u1`, Debian 12 bookworm). (5) Hosts de conexão no `.env` visto pelo container: `DB_HOST=db`, `S3_ENDPOINT=http://storage:9000`, `REDIS_HOST=redis`; `db`, `storage` e `redis` resolvem e respondem a partir do `nestjs-api`.
+  - **Única ocorrência de localhost:** `S3_PUBLIC_ENDPOINT=http://localhost:9000`, que pela TD-07 só assina URLs entregues ao navegador e nunca é usado para conexão entre containers. `MINIO_API_CORS_ALLOW_ORIGIN=http://localhost:3001` também é origem do navegador.
+  - **Silo:** o binário é `silo`, iniciado pelo entrypoint com `server /data --console-address ":9001"`. O healthcheck usa `curl` em `/minio/health/ready`; a imagem traz `curl` e `mc`.
+  - **storage-init:** o script fica em `nestjs-project/docker/storage-init.sh`, montado somente leitura. A imagem `pgsty/mc` não tem `grep` nem `sed`.
+  - **Correção na revisão:** a verificação por `case` procurava `APP_POLICY` no JSON inteiro de `mc admin user info`. Como `S3_ACCESS_KEY_ID` e `APP_POLICY` valem ambos `streamtube-app`, ela encontrava o `accessKey` e pulava o `policy attach` mesmo sem política vinculada. A busca foi removida, e o script executa `mc admin policy attach "$ALIAS" "$APP_POLICY" --user "$S3_ACCESS_KEY_ID"` sempre, já que o Silo aceita repetir o vínculo com código 0. No ambiente real, o usuário `streamtube-app` já tinha a política porque a primeira execução, antes da correção, fez o vínculo.
+  - **Validação da correção na imagem fixada:** feita com bucket e usuário temporários e o usuário com o mesmo nome da política (`si031tmp-abd5b048` e `si031tmp-abd5b048-app`). Na pré-condição, o usuário e o bucket não existiam.
+    - **(1) Primeira execução:** código 0, com `policyName` vinculada igual à política e o bucket `private`.
+    - **(2) Acesso da credencial temporária:** `PutObject`, `GetObject` (conteúdo idêntico) e `ListBucket` no bucket funcionaram.
+    - **(3) Bloqueios:** GET anônimo do objeto e da listagem → `403`. Com a credencial temporária, foram negados listar e gravar no bucket `streamtube`, criar bucket, tornar o bucket público e operações administrativas.
+    - **(4) Segunda execução:** código 0, com a política ainda vinculada.
+    - **Limpeza:** bucket, vínculo, usuário e política temporários removidos e confirmados como inexistentes. O bucket `streamtube`, o usuário `streamtube-app` (com a política `streamtube-app`) e os volumes foram preservados.
+    - **Serviço real:** o `storage-init` foi executado de novo com o script final, terminou com código 0 e mostrou `Attached Policies: [streamtube-app]`.
+  - **Credencial da aplicação:** usuário `streamtube-app` com a política `streamtube-app`, restrita ao bucket: `GetBucketLocation`, `ListBucket` e `ListBucketMultipartUploads` no bucket; `GetObject`, `PutObject`, `DeleteObject`, `AbortMultipartUpload` e `ListMultipartUploadParts` nos objetos. Criar outro bucket e tornar o bucket público foram negados. As senhas locais de root e da aplicação foram geradas aleatoriamente no `.env`, que é ignorado pelo git; o `.env.example` traz placeholders.
+  - **Origem da página de prova da V-08:** ainda não incluída em `MINIO_API_CORS_ALLOW_ORIGIN`, porque essa origem só é definida pelo serviço `proof-browser` da SI-03.5. A ação 1 da SI-03.5 já prevê incluí-la; a variável vem do `.env`.
+  - **Evidência informativa para a V-01, não a prova:** `mc admin config get api --json` mostra `envOverride` com `MINIO_API_CORS_ALLOW_ORIGIN=http://localhost:3001` e `MINIO_API_STALE_UPLOADS_EXPIRY=48h`. O preflight da origem do frontend recebe `Access-Control-Allow-Origin`; o de uma origem estranha, não. A V-01 continua pendente (SI-03.3).
+  - **Redis:** porta não publicada no host, porque o plano não pede; o acesso é pela rede do Compose.
+  - **Proxy do host:** o host tem `http_proxy`/`HTTPS_PROXY` corporativos, e `NO_PROXY` não inclui `localhost`. Um `curl` do host para `localhost:9000` recebe `503` do proxy, então é preciso usar `--noproxy '*'`. Isso afeta as provas executadas no host (SIs 03.3 a 03.5). Os containers não recebem variáveis de proxy.
+  - **Build:** a primeira montagem da imagem falhou por timeout transitório no download de pacotes de `deb.debian.org`; a segunda passou sem nenhuma mudança.
+  - **Fora do escopo, a resolver antes da SI-03.8:** o texto de dependências da SI-03.8 descreve a D-08 ao contrário ("lê `DB_DATABASE` em vez de `DB_NAME`"). Os Entregáveis e o código confirmam o sentido correto: `src/test/create-test-data-source.ts` lê `DB_DATABASE`, mas a chave do projeto é `DB_NAME`. Resolvido em 2026-11-20: o texto foi reescrito com o sentido explícito, e a correção está registrada em "Tarefa separada D-08".
+
+### SI-03.2 — Infra: bibliotecas da fase e estrutura das provas
+- **Status:** completed
+- **Tests:** no tests (Infra; critérios de aceite verificados em 2026-11-18)
+- **Observations:**
+  - **Registry:** consultado no container (`npm view`). As versões decididas existem: 3.1170.0, 6.7.7 e 11.0.5. Dentro das faixas, as mais novas eram `@aws-sdk/*` 3.1171.0, `bullmq` 6.7.7 e `@nestjs/bullmq` 11.0.5. Por isso, um `npm install pacote@^3.1170.0` resolveria 3.1171.0 e reprovaria o critério de 3.1170.x. A peer dependency do `@nestjs/bullmq` 11.0.5 aceita `bullmq ^6.0.0`.
+  - **Instalação:** `docker compose exec nestjs-api npm install @aws-sdk/client-s3@3.1170.0 @aws-sdk/s3-request-presigner@3.1170.0 bullmq@6.7.7 @nestjs/bullmq@11.0.5`, com o `save-prefix` padrão `^`. Resultado: código 0, 37 pacotes adicionados e 1 alterado.
+  - **Faixas no `package.json`:** `@aws-sdk/client-s3 ^3.1170.0`, `@aws-sdk/s3-request-presigner ^3.1170.0`, `bullmq ^6.7.7` e `@nestjs/bullmq ^11.0.5`, como na ação 1.
+  - **Versões resolvidas no `package-lock.json` (critério 1):** `@aws-sdk/client-s3` 3.1170.0, `@aws-sdk/s3-request-presigner` 3.1170.0, `bullmq` 6.7.7, `@nestjs/bullmq` 11.0.5 e `@nestjs/bull-shared` 11.0.5. O `bullmq` do `@nestjs-modules/mailer` foi deduplicado para a 6.7.7.
+  - **Pacote existente alterado:** `semver` 7.7.4 → 7.8.6, puxado pelo `bullmq`, que fixa essa versão. O `npm ls` mostra `ts-jest` e `ts-loader` deduplicados nela. Nenhum pacote foi removido.
+  - **`npm audit`:** 64 alertas (1 low, 33 moderate, 27 high e 3 critical), todos anteriores a esta SI. Nenhum envolve `@aws-sdk/*`, `@smithy/*`, `bullmq`, `@nestjs/bull*`, `msgpackr` ou `cron-parser`. A correção fica fora do escopo.
+  - **Carga dos módulos:** `require` de `bullmq`, `@nestjs/bullmq`, `@aws-sdk/client-s3` e `@aws-sdk/s3-request-presigner` funciona no container (Node v25.6.0, npm 11.8.0).
+  - **Cliente Redis do BullMQ (pendência resolvida em 2026-11-18):**
+    - **Causa:** no `bullmq` 6.7.7, `ioredis`, `redis`, `pg` e `bullmq-otel` são peer dependencies opcionais. O `pg` já constava no projeto (8.20.0, do TypeORM, deduplicado para o `bullmq`); ausentes estavam os clientes Redis, `ioredis` e `redis`. Sem eles, uma `Queue` com `connection: { host: 'redis', port: 6379 }` falhava com "BullMQ could not load the optional 'ioredis' package. Install it with `npm install ioredis`, or provide a different Redis client instance (e.g. node-redis) via the connection option". A fila descartável `si032-probe` não chegou a criar chaves (0 restantes). O changelog oficial da 6.0.0 registra a mudança: o `ioredis` deixou de ser dependência direta e virou peer dependency opcional. O `library-refs.md` não tratava de instalação.
+    - **Decisão do usuário:** `ioredis`, na versão estável mais recente da linha 5.x, como dependência de produção com versão exata. `bullmq` 6.7.7 e `@nestjs/bullmq` 11.0.5 mantidos.
+    - **Registry (`npm view`, no container):** 36 versões estáveis 5.x; a mais recente é a 5.11.1, de 2026-06-04. A `latest` é a 6.0.0, fora da linha escolhida. A 5.11.1 é CommonJS (`main: ./built/index.js`, sem `type`) e exige Node ≥ 12.22.0.
+    - **Instalação:** `docker compose exec nestjs-api npm install --save-exact --save-prod ioredis@5.11.1`. Resultado: código 0, 7 pacotes adicionados (`ioredis` e 6 dependências dele), nenhum alterado ou removido. O `npm audit` continua com os mesmos 64 alertas anteriores.
+    - **Manifestos:** o `package.json` tem `"ioredis": "5.11.1"` em `dependencies`, sem `^`, e o lock resolve `ioredis` 5.11.1 como dependência de produção. `bullmq` 6.7.7, `@nestjs/bullmq` 11.0.5 e `@nestjs/bull-shared` 11.0.5 continuam iguais. No `npm ls`, o `ioredis` do `bullmq` e o do `typeorm` aparecem deduplicados na 5.11.1.
+    - **Verificação no Redis real:** script passado por stdin ao `node --no-experimental-require-module` no container. Host e porta lidos do `.env` (`redis:6379`); fila descartável `si032-ioredis-2ef6f12e`.
+      - **CommonJS:** com `require(esm)` desligado (`process.features.require_module: false`), o `require` de `ioredis`, `bullmq` e `@nestjs/bullmq` funciona. Os três pacotes não declaram `type`, e `require('ioredis')` devolve a classe, não um namespace ESM.
+      - **Conexão:** `PING` → `PONG` no Redis 8.8.4, e `queue.waitUntilReady()` e `getJobCounts` responderam. A conexão do `Worker` aparece no `CLIENT LIST` com `lib-name=ioredis` e `lib-ver=5.11.1`.
+      - **Job:** `queue.add('soma', { a: 2, b: 3 }, { jobId: 'si032-job-1' })` foi processado pelo `Worker`, que retornou `{"sum":5}`. O job salvo ficou `completed`, com `attemptsMade` 1, e não houve evento de erro.
+      - **Encerramento e limpeza:** `worker.close()`, `queue.obliterate({ force: true })`, `queue.close()` e `quit()` da conexão de inspeção. Restaram 0 chaves `bull:si032-ioredis-2ef6f12e*`, o `DBSIZE` foi 0 antes e depois, e só o `redis-cli` da conferência seguia conectado. O processo terminou sozinho, com código 0 e em 2 s, sem conexão pendente.
+      - Esta verificação não substitui nem aprova a V-06 e a V-11.
+    - **`tsc` e build:** `npx tsc --noEmit` terminou com código 0. `npm run build` também, com `dist/main.js` presente e nada de `proofs` em `dist/`.
+    - **Documentos:** revisão de 2026-11-18 na TD-09, com `ioredis@5.11.1` em `**Libraries:**`, espelhada no índice e no detalhe do `context.md`. O `library-refs.md` ganhou a seção `ioredis`. No plano, a ação 1 e o critério 1 desta SI agora incluem o `ioredis`. A linha "BullMQ" do modelo de relatório passou a pedir a versão do `ioredis`.
+  - **Estrutura das provas:** criada `nestjs-project/proofs/phase-03/` com um `README.md`, e incluído `proofs` no `exclude` do `tsconfig.build.json`. O `tsconfig.json`, sem `include`, já cobre a pasta.
+  - **Critério 2, com arquivo temporário em `proofs/phase-03/`:**
+    - **Com erro de tipo:** `npx tsc --noEmit` terminou com código 2, com `proofs/phase-03/tsc-coverage.probe.ts(1,7): error TS2322`.
+    - **Com o arquivo válido:** `tsc` terminou com código 0, e `tsc --listFilesOnly` lista 1 arquivo de `proofs/` no `tsconfig.json` e 0 no `tsconfig.build.json`. O `npm run build` terminou com código 0, sem nenhum arquivo de `proofs` em `dist/`, e com `dist/main.js` no lugar de sempre.
+    - **Estado final, sem o arquivo temporário:** `npx tsc --noEmit` e `npm run build` terminaram com código 0, e `dist/` continua sem nada de `proofs`.
+  - **Modelo de relatório:** criado `docs/phases/phase-03-videos/proofs/README.md`, com as seções prova, TDs afetadas, SI, data, versões efetivas (digests, AWS SDK, BullMQ, Node e FFmpeg), procedimento reproduzível, evidências, resultado e consequência.
+    - **Resultados e consequências (critério 3):** `aprovada` satisfaz a condição da TD e libera as SIs dependentes, com os valores fixados pela prova. `reprovada` reabre as TDs afetadas sem fallback automático e bloqueia as SIs dependentes até uma nova decisão (ação 4).
+    - **Outros conteúdos:** prova não executada continua pendente; tabela dos 12 relatórios previstos, com as TDs e a SI de cada um; V-05 adiada; segredos fora dos relatórios; `--noproxy` para requisições do host.
+  - **Lint:** `npm run lint` não foi executado, porque aplica `--fix` e nenhum arquivo coberto por ele mudou. Em 2026-11-18, `npx eslint "{src,apps,libs,test}/**/*.ts"`, sem `--fix`, terminou com código 0. Os padrões de `lint` e `format` (`src`, `apps`, `libs` e `test`) não incluem `proofs/`; incluí-los seria decisão à parte, fora desta SI.
+
+### SI-03.3 — Prova V-01 e V-03: configuração do Silo e URLs do AWS SDK
+- **Status:** completed
+- **Tests:** no tests (prova de viabilidade; os relatórios `proofs/V-01.md` e `proofs/V-03.md` são o entregável). V-01 e V-03 `aprovadas` em 2026-11-18.
+- **Observations:**
+  - **Conciliação do rastreamento (antes da SI, em 2026-11-18):**
+    - **Delta conferido:** o transcrito das sessões registra todas as edições. Revertidas numa cópia, mostram que, desde os `sources_mtime` registrados, a TD-09 (`ioredis@5.11.1` em `**Libraries:**` e a revisão de 2026-11-18) foi a única mudança no documento de decisões.
+      - No `context.md`, mudaram só o espelho dela no índice e no detalhe; a linha da revisão é idêntica à do documento de decisões.
+      - No `library-refs.md`, a seção `ioredis` e a frase de abertura.
+      - No plano, a ação 1 e o critério 1 da SI-03.2.
+      - Nenhuma outra parte do plano cita versões de biblioteca da fila.
+    - **`sources_mtime` sincronizados:**
+      - `context.md` e `library-refs.md`: o documento de decisões, para `2026-11-18T11:03:23-03:00`;
+      - plano: o `context.md` e o `library-refs.md`, para `2026-11-18T14:15:49-03:00`, e o documento de decisões, para `2026-11-18T11:03:23-03:00`.
+      - Uma conferência por `stat` não acusa defasagem nos três.
+    - **Specs:** os 10 cobrem as SIs 03.12 a 03.28, nenhum a SI-03.2. As mudanças do plano depois do `Last sync` (`2026-11-18T01:49:22Z`) ficaram na SI-03.2 e no frontmatter, então os cenários não mudam.
+      - Só as 55 linhas `**Last sync:**` foram atualizadas, para `2026-11-18T17:16:02Z`. Uma comparação com cópias anteriores mostra 0 outras linhas alteradas.
+      - O preflight de specs do `/implement` não acusa PENDING, MISSING nem STALE.
+    - **`validation.md` não alterado:** nenhuma nova validação foi executada. Os `sources_mtime` dele continuam com os valores da validação de 2026-11-17, mais antigos que o `context.md` e o documento de decisões. Por isso, `/plan-build` e `/plan-resolve` vão acusar defasagem até um `/plan-validate` real.
+    - **Fora da conciliação:** a tabela "Fontes e versões consultadas", do documento de decisões e do espelho no `context.md`, é o retrato da pesquisa de 2026-11-17 e ficou como estava.
+  - **Scripts (`nestjs-project/proofs/phase-03/`):**
+    - **`v01-storage-config.ts` e `v03-presigned-urls.ts`:** rodam no `nestjs-api` com `npx ts-node`.
+    - **`v01-roteiro.sh` e `v03-roteiro.sh`:** rodam no host e orquestram o Docker, o `mc` e o curl.
+    - **`proof-support.ts`:** leitura do `.env` sem imprimir valores, cliente S3 da aplicação, registro de itens e retrato do bucket.
+    - **`README.md`:** ganhou a tabela dos scripts.
+  - **V-01 (`20261118172639-d84cb2`): aprovada.**
+    - **Principal, só leitura:** `mc admin config get` mostra os overrides `MINIO_API_CORS_ALLOW_ORIGIN=http://localhost:3001` e `MINIO_API_STALE_UPLOADS_EXPIRY=48h`. Preflight da origem permitida: `204` com `Access-Control-Allow-Origin`. Preflight de `http://cors-foreign.invalid`: `204` sem ele. O `Etag` aparece em `Access-Control-Expose-Headers`.
+    - **Isolada:** mesma imagem e mesmas variáveis, com expiração de 60 s, intervalo de limpeza de 10 s, volume temporário e credencial gerada na hora. O `mc` funcionou (`mb`, `cp`, `stat`, `cat`, `ls` e `rm`), e o `PUT`/`GET` assinado expôs o `ETag`.
+    - **Idade do multipart:** conta a partir da criação (`Initiated`) e não se renova com partes. A, B e C sumiram a 64,4 s da criação; B, que recebeu a parte 2 a 36,3 s, sumiu 28,1 s depois dela.
+    - **Q-08:** `UPLOAD_SESSION_TTL=24h` e `MINIO_API_STALE_UPLOADS_EXPIRY=48h` confirmados sem ajuste. As duas condições ficaram registradas na `V-01.md`:
+      - o TTL da sessão continua absoluto, contado da ativação;
+      - o override de 48h continua explícito, porque o padrão do Silo é 24h.
+  - **V-03 (`20261118172834-779385`): aprovada.**
+    - **Query:** com `WHEN_REQUIRED`, as 6 URLs (público e interno × `PutObject`, `UploadPart` e `GetObject`) saíram sem parâmetro de checksum e com só o `host` assinado.
+    - **Respostas:** o curl recebeu `200` nas 6. ETag, tamanho e SHA-256 conferem com `HeadObject`, `ListParts` e `GetObject`. A URL vencida recebeu `403 AccessDenied` (`Request has expired`).
+    - **Achado para a V-09:** o controle com os padrões do SDK traz `x-amz-checksum-crc32`/`x-amz-sdk-checksum-algorithm` (e `x-amz-checksum-mode` no `GET`). O Silo aceitou com `200` um `PUT` de 1 MiB cuja query declarava o CRC32 de corpo vazio.
+      - A V-09 precisa mostrar que o checksum como header assinado é de fato verificado (`BadDigest`).
+      - A falta do `WHEN_REQUIRED` não apareceria como erro no Silo.
+  - **Reexecução:** as duas provas rodaram de novo com a versão final dos scripts, depois da formatação pelo Prettier (`20261118173347-658044` e `20261118173510-0c3768`), com os mesmos resultados.
+  - **Correção na revisão: propagação de erros dos roteiros.**
+    - **Defeito:** em `v01-roteiro.sh` e `v03-roteiro.sh`, o `step()` registrava o código da etapa em `STATUS` e terminava com sucesso. O `cleanup()` saía com o código de quando o roteiro terminou, ignorando as falhas da limpeza. Uma etapa ou uma limpeza com falha terminava com 0.
+    - **Correção:**
+      - **`step()`:** continua registrando cada etapa e seguindo para as próximas, e agora guarda o código da primeira que falha.
+      - **`cleanup()`:** roda com `set +e`, tenta todos os passos e confere o resultado.
+        - **v01:** confere o container e o volume isolados, comparando os nomes exatos na listagem do Docker, e as credenciais temporárias.
+        - **v03:** confere o `cleanup` do prefixo e as pastas temporárias do host e do container. O retrato final do bucket passou a contar como etapa.
+      - **Código final:** a interrupção do roteiro vem primeiro; depois, a primeira etapa com falha; depois, a limpeza. A falha original prevalece mesmo quando a limpeza passa.
+      - O cabeçalho de cada roteiro documenta esses códigos. Nada mais mudou nos roteiros nem nos scripts TypeScript.
+    - **Verificação com falhas controladas, sem tocar no ambiente:**
+      - **Método:** um `docker` falso, num diretório de rascunho fora do repositório, foi posto na frente do PATH. Ele responde aos comandos dos roteiros, guarda estado num diretório temporário e injeta falhas. As requisições de curl do host foram para `127.0.0.1:1`. Antes e depois dos testes, não havia nenhum recurso real com o rótulo `streamtube.proof`, e o retrato do bucket principal não mudou.
+      - **Antes da correção:** os dois roteiros terminaram com 0 nos cenários de etapa com falha, limpeza com falha e as duas juntas. O defeito foi reproduzido.
+      - **Depois da correção (v01 e v03):**
+        - (1) uma etapa falha com 7 e a limpeza funciona: código 7;
+        - (2) as etapas passam e a limpeza falha (volume isolado que não sai, no v01; pasta temporária que continua no container, no v03): código 1;
+        - (3) tudo passa: código 0;
+        - etapa e limpeza falham juntas: código 7;
+        - interrupção fora de etapa, com 9: código 9, com a limpeza executada.
+    - **Reexecução real com os roteiros corrigidos:** as duas provas terminaram com código final 0.
+      - **V-01 (`20261118175327-120f3b`):** as 12 etapas e a limpeza com 0, e os itens 4/4, 5/5 e 9/9. B recebeu a parte 2 a 36,5 s, e A, B e C sumiram a 62,5 s da criação, 26,2 s depois da última parte de B. A regra continua sendo a da criação.
+      - **V-03 (`20261118175457-dae433`):** as 5 etapas e as 2 partes da limpeza (prefixo e pastas) com 0, e o `verify` 16/16. 3 objetos removidos e 2 multipart abortados, restando 0 e 0.
+      - **Ambiente:** retratos do bucket principal iguais e nenhum recurso de prova restante.
+    - Os relatórios `V-01.md` e `V-03.md` registram a correção, o código de saída e esta execução. As execuções anteriores tinham todas as etapas e a limpeza com código 0 nos logs, por isso seus resultados continuam válidos.
+  - **Ambiente principal preservado:**
+    - **Bucket `streamtube`:** o retrato antes e depois de cada execução é igual (0 objetos, 0 bytes, mesmo hash).
+    - **V-03:** o prefixo temporário terminou com 0 objetos e 0 multipart.
+    - **V-01:** o container e o volume isolados foram removidos (0 e 0).
+    - **Verificação final:** `docker ps -a` e `docker volume ls` com o rótulo `streamtube.proof` não listam nada; `storage running healthy` e o volume `nestjs-project_storage-data` presente.
+  - **Verificações:**
+    - `npx tsc --noEmit` terminou com código 0, com os 3 arquivos de `proofs/` incluídos.
+    - `npm run build` terminou com código 0, com `dist/main.js` presente e nada de `proofs` em `dist/`.
+    - `npx eslint` sem `--fix` terminou com código 0, tanto nos padrões do projeto quanto em `proofs/phase-03/*.ts`.
+    - O Prettier foi aplicado só aos 3 `.ts` novos.
+    - A suíte de testes não foi executada: nenhum código de `src/` ou `test/` mudou, e a SI não tem Tests.
+  - **Ferramentas:** não há `jq` no host nem no container, então os roteiros trocam dados em TSV. O host precisa de `--noproxy '*'`, já aplicado nos roteiros.
+  - **Liberação:** a SI-03.4 e a SI-03.6 podem começar. A TD-02 segue condicionada à V-09 e à V-10; a TD-07 e a TD-08, à V-09. A SI-03.8 continua atrás do portão das provas.
+
+### SI-03.4 — Prova V-02, V-09 (servidor) e V-10: tamanho assinado, checksum e Complete
+- **Status:** completed
+- **Tests:** no tests (prova de viabilidade; os relatórios `proofs/V-02.md`, `proofs/V-09.md` (parte de servidor) e `proofs/V-10.md` são o entregável). V-02, V-09 (servidor) e V-10 `aprovadas` em 2026-11-18; a V-09 continua pendente como um todo até a parte de navegador (SI-03.5).
+- **Observations:**
+  - **Scripts (`nestjs-project/proofs/phase-03/`):**
+    - **`v02-content-length.ts`, `v09-checksum-server.ts` e `v10-complete-retry.ts`:** subcomandos `run`, `cleanup` e `snapshot`, no `nestjs-api`.
+    - **`storage-proof-roteiro.sh <v02|v09|v10>`:** roteiro comum, no host. Segue a regra de código de saída corrigida na SI-03.3 e compara automaticamente os retratos do bucket antes e depois, numa etapa obrigatória.
+    - **`proof-support.ts`:** ganhou `Checks.info`, o `PUT` HTTP com `Expect: 100-continue` (`rawPut`), `sdkError`, `cleanupPrefix` e `runProofCli`. As funções que a V-01 e a V-03 usam não mudaram.
+    - **`README.md`:** ganhou as três provas.
+  - **Ambiente usado:** o storage real, com a credencial da aplicação e o bucket `streamtube`, sob prefixos temporários `proofs/<prova>-<runId>/`.
+    - **V-10:** as chaves seguem `originals/{videoId}/{sessionId}` abaixo do prefixo.
+    - **Endpoint:** URLs assinadas para o endpoint interno. O público foi provado na V-03, e o navegador fica para a SI-03.5.
+    - **Expect:** os `PUT` usam `Expect: 100-continue`, de modo que "corpo enviado: não" prova recusa antes de receber o corpo.
+  - **V-02 (`20261118184419-ca048e`): aprovada, 8 de 8.**
+    - **Assinatura:** `X-Amz-SignedHeaders=content-length;host`.
+    - **Corpo maior ou menor:** `403 SignatureDoesNotMatch` sem receber o corpo, e a parte ausente do `ListParts`.
+    - **Tamanho exato:** `200`, com ETag igual ao MD5 do corpo.
+    - **Reenvio com outro tamanho:** recusado, e a parte gravada ficou inalterada (tamanho, ETag e data).
+    - **Stream sem `Content-Length`:** `411 MissingContentLength`.
+    - **TD-03:** segue condicionada só à V-08.
+  - **V-09, parte de servidor (`20261118184601-52b80f`): aprovada, 11 de 11.**
+    - **Assinatura:** `WHEN_REQUIRED` com o checksum em `unhoistableHeaders` dá uma query sem checksum e `X-Amz-SignedHeaders=content-length;host;x-amz-checksum-sha256`.
+    - **Corpo divergente:** `400 XAmzContentChecksumMismatch`, depois de receber o corpo, sem registrar a parte.
+    - **Header ausente ou trocado:** sem o header, `400 AccessDenied`; com outro checksum, `403 SignatureDoesNotMatch`. Os dois sem receber o corpo.
+    - **Checksums:** o `ListParts` devolve o `ChecksumSHA256` de cada parte.
+    - **Complete:** sem os checksums, `400 InvalidRequest` ("must include the checksum for each part"); com checksum errado, `400 InvalidPart`. Com os checksums do registro, `200` e checksum composto `…-2` (`COMPOSITE`), conferido no `HeadObject` e no conteúdo.
+    - **Controle do achado da V-03:** com o checksum na query (sem `unhoistableHeaders`), o Silo aceitou um corpo divergente com `200` e gravou o checksum do que recebeu. O `unhoistableHeaders` é, portanto, obrigatório na SI-03.9.
+  - **Divergência registrada para revisão (V-09):**
+    - **Código:** o plano espera `BadDigest`, e o Silo responde `XAmzContentChecksumMismatch` para o mesmo caso, com a mensagem da AWS.
+    - **Primeira execução:** a `20261118184436-f24b9e` exigia o código literal e falhou só por isso. O roteiro terminou com código 1, a limpeza funcionou e os retratos ficaram iguais.
+    - **Ajuste:** o item passou a exigir a garantia (`400` por checksum divergente, avaliado sobre o corpo recebido, sem a parte), aceitando os dois códigos e registrando o observado. A garantia da TD-02 está demonstrada; a API não recebe a resposta do `PUT`.
+    - **Classificação:** os dois casos de Complete foram escritos como informativos e passaram a obrigatórios, porque o plano lista "o Complete exigindo os checksums". Passaram.
+  - **V-10 (`20261118184705-6476b7`): aprovada, 7 de 7 itens obrigatórios.**
+    - **Repetição:** o segundo Complete depois do sucesso dá `404 NoSuchUpload`, e o `HeadObject` da chave da sessão confirma o objeto (tamanho e ETag do Complete original).
+    - **Fora de ordem:** as sessões 2 e 3 do mesmo vídeo, concluídas fora de ordem, não se sobrescrevem; a conclusão atrasada grava só na própria chave.
+    - **Sessão abortada:** `NoSuchUpload` e `HeadObject` com `404`.
+  - **Guardas opcionais (V-10):**
+    - **`If-None-Match: *`: suportado.**
+      - Chave nova: `200`.
+      - Chave existente: `412 PreconditionFailed`, com o objeto preservado.
+      - **Repetição do Complete depois do sucesso, com o guarda:** responde `412` em vez de `NoSuchUpload`.
+    - **`x-amz-mp-object-size`: não suportado.** O valor errado é ignorado: o Complete dá `200` e o objeto é criado.
+    - **Proposta da primeira entrega:** não usar o `x-amz-mp-object-size`. O `If-None-Match` só poderia ser usado se a P2 tratasse o `412` como o `NoSuchUpload`, e a recomendação foi não adotá-lo. A decisão foi tomada na revisão (ver "Ajustes da revisão").
+  - **Correção fora das provas novas:** o `tsc --noEmit` passou a acusar `TS2345` no `v03-presigned-urls.ts` com os scripts novos no projeto.
+    - **Causa:** o `getSignedUrl` recebia uma união de comandos, e a inferência dos genéricos depende da ordem dos tipos no programa.
+    - **Correção:** uma função de assinatura com um ramo por tipo, sem mudança de comportamento. O `V-03.md` registra a correção.
+    - **Regressão:** V-03 (`20261118184748-b24a15`, 16 de 16) e V-01 (`20261118184905-1e43d7`, 4/5/9 itens, regra da criação), as duas com código final 0.
+  - **Roteiro com falhas controladas, sem tocar no ambiente:** o mesmo `docker` falso da SI-03.3 (fora do repositório), estendido para os subcomandos novos. Os cenários abaixo valem para v02, v09 e v10:
+    - (1) a prova falha com 7 e a limpeza funciona: código 7;
+    - (2) a prova passa e a limpeza falha: código 1;
+    - (3) tudo passa: código 0;
+    - prova e limpeza falham juntas: código 7;
+    - retratos do bucket diferentes: código 1;
+    - argumento inválido: código 64, sem executar nada.
+  - **Ambiente principal preservado:**
+    - **Retratos:** iguais antes e depois em todas as execuções (0 objetos, 0 bytes, mesmo hash).
+    - **Prefixos temporários:** 0 objetos e 0 multipart restantes em cada um.
+    - **Docker:** nenhum recurso com o rótulo `streamtube.proof`.
+  - **Verificações:**
+    - `npx tsc --noEmit` terminou com código 0.
+    - `npx eslint proofs/phase-03/*.ts` sem `--fix` terminou com código 0, depois de corrigir 2 asserções desnecessárias e 1 template com `string | string[]`.
+    - O Prettier foi aplicado aos `.ts` novos e alterados.
+    - `bash -n` passou nos roteiros.
+    - `npx eslint "{src,apps,libs,test}/**/*.ts"` sem `--fix` terminou com código 0.
+    - `npm run build` terminou com código 0, com `dist/main.js` presente e nada de `proofs` em `dist/`.
+    - A suíte de testes não foi executada: nenhum código de `src/` ou `test/` mudou, e a SI não tem Tests.
+  - **Liberação:** a SI-03.5 pode começar. A TD-03 depende da V-08; a TD-02, a TD-07 e a TD-08, da parte de navegador da V-09. A SI-03.8 continua atrás do portão das provas (SI-03.5, SI-03.6, SI-03.7 e a tarefa D-08).
+  - **Ajustes da revisão (2026-11-18):**
+    - **Decisões:**
+      - **(a) Código do checksum:** `XAmzContentChecksumMismatch` é aceito como o código observado no Silo fixado. Continuam exigidos HTTP 400, corpo divergente recebido e parte ausente do `ListParts`, e nenhum outro 4xx equivale a ele. O `v09-checksum-server.ts` já aplica essa regra e não mudou: aceita `BadDigest` (AWS) ou `XAmzContentChecksumMismatch`, sempre com essas três condições.
+      - **(b) Complete:** os casos de Complete com checksum errado e sem checksums continuam obrigatórios.
+      - **(c) Guardas:** a P2 não usa `If-None-Match` nem `x-amz-mp-object-size` nesta fase. As demais verificações continuam como previstas.
+    - **Correção do `v10-complete-retry.ts`:**
+      - **`head()`:** só um HTTP 404 `NotFound` (ou `NoSuchKey`) com `x-minio-error-code: NoSuchKey`, quando o storage o envia, vira `exists: false`. Os demais erros são propagados.
+      - **`uploadStillOpen()`:** só um HTTP 404 `NoSuchUpload` indica upload encerrado.
+      - **Sessão abortada:** o item exige HTTP 404 e `NoSuchUpload` (predicado `isNoSuchUpload`, também usado na repetição).
+      - **Testabilidade:** as funções são exportadas, e o CLI só roda quando o arquivo é executado diretamente.
+      - **Texto:** o texto da decisão no script segue a revisão.
+    - **Sonda no Silo, só leitura:**
+      - `HeadObject` de chave inexistente: `404 NotFound` com `x-minio-error-code: NoSuchKey`;
+      - bucket sem permissão: `403` (`Unknown` no SDK), que a regra antiga trataria como ausência;
+      - `ListParts` de upload inexistente: `404 NoSuchUpload`.
+    - **Falhas controladas:** um servidor HTTP local, no container, imita o storage. O teste ficou fora do repositório e não toca nenhum serviço. Resultado: 20 casos, 0 falhas.
+      - `403`, `500`, timeout, conexão recusada e `404 NoSuchBucket` propagam o erro no `head()` e no `uploadStillOpen()`, e não satisfazem `isNoSuchUpload` no Complete.
+      - `404 NoSuchKey` continua dando ausência, e `404 NoSuchUpload` continua dando encerramento.
+      - **Timeout no SDK:** o `@smithy/node-http-handler` só lança o timeout com `throwOnRequestTimeout: true`; sem isso, apenas avisa. O cliente dos scripts de prova não define timeout, então um storage que não responde deixaria a prova parada, sem aprovação. Não mudei isso.
+      - **Processo interrompido:** a primeira tentativa do teste, sem essa opção, ficou parada. Foi interrompida, e o processo que restou no container foi encerrado.
+    - **Reexecução real da V-10:** a `20261118191133-6ca076` (código corrigido) e a `20261118191222-f088d5` (versão final) passaram 7 de 7 obrigatórios, com código final 0.
+      - **Limpeza:** 6 objetos e 1 multipart removidos, restando 0 e 0.
+      - **Bucket:** retratos iguais antes e depois.
+      - **Docker:** nenhum recurso de prova restante.
+    - **Verificações do arquivo alterado:**
+      - `npx tsc --noEmit`: código 0;
+      - `npx eslint proofs/phase-03/v10-complete-retry.ts`, sem `--fix`: código 0;
+      - `prettier --check`: sem diferenças.
+    - **Documentos:**
+      - **TD-02:** ganhou a revisão de 2026-11-18, espelhada no detalhe e no índice ("Last revision") do `context.md`.
+      - **Plano, em linhas pontuais:**
+        - SI-03.4: ação 2, ação 4 e critério sobre a `V-09.md`;
+        - SI-03.9: `CompleteMultipartUpload` sem os guardas;
+        - passo 2 da P2: sem os guardas, com o motivo;
+        - regra de validação do `checksumSha256`: os dois códigos.
+      - **Relatórios:** `V-09.md` e `V-10.md`.
+    - **Rastreamento:**
+      - **`sources_mtime`:**
+        - `context.md` e `library-refs.md`: o documento de decisões, para `2026-11-18T16:13:15-03:00`; o conteúdo do `library-refs.md` não cita guardas nem `BadDigest` e não mudou;
+        - plano: o `context.md` e o `library-refs.md`, para `2026-11-18T16:13:58-03:00`, e o documento de decisões, para `2026-11-18T16:13:15-03:00`;
+        - uma conferência por `stat` não acusa defasagem.
+      - **Specs:** antes destes ajustes, o plano estava como no último sync (mtime 14:15:50 -03, anterior ao `Last sync` de 17:16:02Z). As seis linhas alteradas não são citadas por nenhum spec; o `part-urls` 2.2 trata do conflito no registro da API.
+        - Só as 55 linhas `**Last sync:**` foram atualizadas, para `2026-11-18T19:14:08Z`, com 0 outras linhas alteradas.
+        - Preflight: STALE 0 e PENDING 0.
+      - **`validation.md`:** não foi alterado, porque nenhuma nova validação foi executada.
+    - **V-09 completa:** continua pendente da parte de navegador (SI-03.5).
+
+### SI-03.5 — Prova V-08 e V-09 (navegador): PUT em navegador real e custo do SHA-256
+- **Status:** completed
+- **Tests:** no tests (prova técnica de infraestrutura; `proofs/V-08.md` e a seção de navegador de `proofs/V-09.md` são o entregável). V-08 `aprovada`; V-09 `aprovada` como um todo (servidor na SI-03.4 e navegador nesta SI), em 2026-11-18.
+- **Observations:**
+  - **Serviço `proof-browser`:**
+    - **Compose:** no perfil `proofs` do `compose.yaml` (não sobe com o ambiente), com `init: true`, `ipc: host` e `proofs/phase-03/browser/` montado somente leitura, como recomenda a documentação do Playwright 1.60 consultada no Context7.
+    - **Imagem:** `mcr.microsoft.com/playwright:v1.60.0-noble@sha256:9bd26ad9…`, a versão do `@playwright/test` resolvido em `next-frontend/package-lock.json` (1.60.0).
+    - **Dependência:** a imagem não traz o pacote npm do Playwright. O `browser/package.json` e o `browser/package-lock.json` fixam o `playwright-core` 1.60.0, com o mesmo integrity do `next-frontend`, e o `run.sh` o instala em `/tmp` do container a cada execução.
+  - **CORS:** `MINIO_API_CORS_ALLOW_ORIGIN` passou a `http://localhost:3001,http://localhost:4173` (frontend primeiro e página de prova), no `.env` e no `.env.example`, com comentário.
+    - **Storage recriado sozinho** (`docker compose up -d --no-deps storage`), sem afetar os outros serviços.
+    - **Dados preservados:** o volume é o mesmo (`CreatedAt` igual), o retrato do bucket ficou igual e o usuário `streamtube-app` continua com a política `streamtube-app`.
+    - **Configuração:** `mc admin config get` mostra o override com a lista.
+  - **Página de prova em `http://localhost:4173`:**
+    - **Contexto seguro:** o Web Crypto (`crypto.subtle`) só existe em contexto seguro, e `http://proof-browser:4173` não seria um. Por isso a página é servida em localhost, dentro do próprio container, como o frontend em `localhost:3001`.
+    - **Storage:** é acessado pelo nome do serviço (`storage:9000`), e as URLs são assinadas para esse endpoint. O endpoint público foi provado na V-03.
+    - **Origem de controle:** `http://127.0.0.1:4174`, fora do CORS.
+  - **Scripts:**
+    - **`v08-browser-urls.ts`:** no `nestjs-api`: `presign`, `verify`, `cleanup` e `snapshot`. As URLs são assinadas como a SI-03.9, com `content-length` assinado, checksum em `unhoistableHeaders` e `WHEN_REQUIRED`.
+    - **`browser/`:** `run.sh`, `run-browser.cjs`, `page/index.html`, `page/proof.js` e `page/sha256-worker.js`, em JavaScript fora do `tsc`.
+    - **`browser-proof-roteiro.sh`:** no host, com a regra de código de saída das SIs anteriores. Tem limite de 900 s para os navegadores, remove containers `proof-browser` que sobrarem e compara os retratos do bucket.
+  - **V-08 (`20261118193525-44f42d`; confirmada pela `20261118193321-1b00bb`): aprovada nos dois navegadores, Chromium 148.0.7778.96 e Firefox 150.0.2.**
+    - **(a) `Blob` exato:** `200`, com o ETag legível pelo script e igual ao do `ListParts`, e a parte gravada com o checksum assinado.
+    - **(b) `Blob` com 1 byte a mais ou a menos:** o navegador envia o `Content-Length` do `Blob`, e a recusa é **no storage** (`403 SignatureDoesNotMatch`). A parte não aparece.
+    - **(c) `ReadableStream`:**
+      - **Chromium:** recusa **no navegador**. O preflight passou, mas o `PUT` saiu sem `Content-Length` e falhou com `net::ERR_ALPN_NEGOTIATION_FAILED`, porque o Chromium só envia corpo em stream por HTTP/2.
+      - **Firefox:** recusa **no storage**. O Firefox não envia o stream: o `PUT` saiu com `Content-Length: 23` e corpo de 23 bytes, o tamanho do texto `[object ReadableStream]` (inferência pelo tamanho), e recebeu `403`.
+      - Nos dois, nada foi gravado.
+    - **(d) PUT com `x-amz-checksum-sha256`:** `200` nos dois. O Chromium (DevTools) mostra o preflight `204` com `Allow-Origin: http://localhost:4173`. O preflight direto devolve `Allow-Headers: x-amz-checksum-sha256`.
+    - **Controle:** da origem fora do CORS, o `PUT` é barrado pelo navegador: no Chromium, `PreflightMissingAllowOriginHeader`; no Firefox, `NS_ERROR_DOM_BAD_URI`. A parte não é gravada.
+  - **V-09, parte de navegador: aprovada.**
+    - **Medição:** SHA-256 de 1 GiB num Worker, 64 MiB por vez, com os digests das 16 partes iguais aos do Node em todas as rodadas (2 rodadas por navegador em cada execução).
+    - **Projeção para 10.000.000.000 bytes, nas três execuções:** Chromium de 49,7 a 170,3 s; Firefox de 57,3 a 62,7 s. Só o hash, de 31 a 108 s. O maior atraso da thread principal foi de 44 ms num timer de 50 ms.
+    - **Ambiente:** i7-10700, WSL2, navegadores headless, arquivo no cache.
+    - **V-09 completa aprovada:** TD-02, TD-07 e TD-08 não têm mais prova pendente. Com a V-02, a TD-03 também não; a TD-01 também não, pela V-08.
+  - **Implicações registradas na `V-08.md`:**
+    - o cliente deve enviar partes como `Blob`, nunca como `ReadableStream`;
+    - com HTTP/2 em produção, o stream chegaria ao storage, e a proteção passa a ser a do servidor (V-02: `411` e `content-length` assinado).
+  - **Ajuste da V-01 e da V-03, que liam a origem como valor único:**
+    - **Mudança:** os roteiros passaram a usar a primeira origem da lista nas verificações; a instância isolada da V-01 recebe a lista completa.
+    - **Regressão:** V-03 (`20261118193715-908c0b`, 16/16) e V-01 (`20261118193831-b36d6e`, 4/5/9, regra da criação), as duas com código final 0. Os relatórios registram isso.
+  - **Roteiro com falhas controladas, sem tocar no ambiente:** um `docker` falso num diretório temporário fora do repositório:
+
+    | Cenário | Código |
+    |---|---|
+    | Tudo passa | 0 |
+    | Conferência falha | 7 |
+    | Navegador falha | 5 |
+    | Limpeza do prefixo falha | 1 |
+    | Container `proof-browser` restante | 1 |
+    | Conferência e limpeza falham juntas | 7 |
+
+  - **Ambiente preservado:**
+    - **Bucket e prefixos:** retratos do bucket iguais em todas as execuções, e 0 objetos e 0 multipart nos prefixos temporários.
+    - **Containers:** 0 containers `proof-browser` e 0 recursos `streamtube.proof`.
+    - **`next-frontend/`:** sem nenhum arquivo criado ou alterado (`git status` vazio).
+  - **Verificações:**
+    - **Tipos e lint:** `npx tsc --noEmit` terminou com código 0. `npx eslint` sem `--fix` terminou com código 0, nos padrões do projeto e em `proofs/phase-03/*.ts`. O Prettier não acusa diferenças nos `.ts`.
+    - **Build:** `npm run build` terminou com código 0, sem nada de `proofs` em `dist/`.
+    - **Scripts e Compose:** `node --check` nos JS de `browser/`, `bash -n` nos roteiros e `docker compose config` com e sem o perfil passaram.
+    - **Suíte de testes:** não foi executada, porque nenhum código de `src/` ou `test/` mudou.
+  - **Incidente:** durante a preparação, um `grep -B1` no `.env` exibiu por engano o valor de `MINIO_ROOT_PASSWORD` (a senha administrativa local do storage) na saída de um comando da sessão. Tratamento na correção pontual abaixo.
+  - **Correção pontual da revisão (2026-11-18):**
+    - **Critérios da V-08:** os casos (b) e (c) aceitavam qualquer status diferente de 200 com a parte ausente. Agora cada caso exige a evidência específica, por funções puras e exportadas do `v08-browser-urls.ts`:
+      - **(b):** `403 SignatureDoesNotMatch` lido pelo script, com o `PUT` enviado com o `Content-Length` do `Blob`, e sem falha de rede;
+      - **(c) no Chromium:** recusa no navegador. `TypeError`, `PUT` sem `Content-Length`, uma falha `net::ERR_ALPN_NEGOTIATION_FAILED` ou `net::ERR_H2_OR_QUIC_REQUIRED` e nenhuma resposta;
+      - **(c) no Firefox:** recusa no storage. `403 SignatureDoesNotMatch` com `Content-Length` diferente do assinado;
+      - **(a) e (d):** também exigem o `Content-Length` assinado no `PUT`.
+    - **Evidência estruturada:** o `run-browser.cjs` passou a registrar, em campos próprios, se os headers foram lidos, o `Content-Length`, o `Transfer-Encoding`, o tamanho do corpo, o status e o código de falha. Também guarda as referências aos eventos, para que a leitura assíncrona dos headers entre no resultado.
+    - **Medição da V-09:** passou a ser um item obrigatório por navegador. Exige 2 rodadas, 16 hashes esperados, 16 partes por rodada com os índices 0 a 15 sem repetição, cada hash igual ao esperado, execução em Worker e tempo total finito e positivo. As quantidades são constantes do script, não vêm do manifesto. O número de rodadas vai no manifesto só para o navegador.
+    - **Entradas controladas:** 39 resultados montados à mão, contra as funções reais, num teste fora do repositório. Nenhum ficou diferente do esperado.
+      - **Reprovaram:** HTTP 500, `403` com outro código, erros de rede não esperados, timeouts, `Content-Length` igual ao assinado, parte presente, headers não lidos, a evidência de um navegador no outro, navegador desconhecido, dados ausentes, nenhuma rodada, uma rodada, listas vazias, 15 partes, índice repetido, hash divergente, parte sem hash, fora de Worker e tempo 0, `NaN` ou infinito.
+      - **Passaram:** os resultados completos e corretos.
+    - **Reexecução real:** `20261118195556-7e71ae`, com código final 0 e 12 de 12 itens obrigatórios (5 casos e a medição completa por navegador).
+      - **Observações:** as mesmas das execuções anteriores.
+      - **Limpeza:** 2 multipart abortados, restando 0 e 0, sem containers restantes e com os retratos do bucket iguais.
+      - **SHA-256:** a primeira rodada do Chromium foi mais lenta (18,3 s, com 11,6 s de hash), e a projeção conservadora do Chromium passou a cerca de 3 minutos.
+    - **Troca da senha administrativa local (`MINIO_ROOT_PASSWORD`):**
+      - **Execução:** a nova senha foi gerada aleatoriamente, sem exibir o valor antigo nem o novo, e o container `storage` foi recriado sozinho. A documentação consultada (Context7, `/minio/docs`) indica que a troca das credenciais de root é feita só pelas variáveis de ambiente e por um reinício.
+      - **Resultado:**
+        - acesso administrativo com a nova senha: código 0;
+        - acesso com a senha antiga: recusado por credencial (código 1);
+        - volume `nestjs-project_storage-data` preservado (`CreatedAt` igual) e bucket `streamtube` igual (mesmo retrato);
+        - usuário `streamtube-app` ativo, com a política `streamtube-app`;
+        - credencial da aplicação funcionando: listagem, e escrita e abort de multipart na reexecução da prova;
+        - `storage-init` com a nova senha: código 0.
+      - **Temporários:** a cópia temporária do `.env` e o arquivo com a senha antiga foram apagados.
+    - **Documentos:** a afirmação não comprovada de que a senha não foi enviada a serviço externo foi removida deste registro.
+  - **Saídas temporárias:** como a pasta de rascunho da sessão deixou de estar disponível, os logs desta SI ficaram em diretórios `mktemp` em `/tmp` (`si035-provas-*`, `si035-regressao-*` e `si035-falhas-*`).
+
+### SI-03.6 — Prova V-04: FFmpeg 5.1 sobre URL assinada, formatos e timeouts
+- **Status:** completed
+- **Tests:** no tests (prova de viabilidade; `proofs/V-04.md` é o entregável, e as fixtures servem às SIs 03.21, 03.22, 03.27 e 03.28). V-04 `aprovada` em 2026-11-18.
+- **Observations:**
+  - **Fixtures:** `test/fixtures/videos/generate.sh` gera, com o FFmpeg 5.1.9 da imagem, 7 fixtures versionadas, todas com menos de 1.000.000 bytes:
+    - `h264-aac-faststart.mp4` (34.363 bytes) e `h264-aac-moov-end.mp4` (34.363);
+    - `h264-no-audio.mp4` (16.524) e `vp9-opus.webm` (47.252);
+    - `qt-brand.mov` (34.418), `invalid.mp4` (4.214) e `truncated.mp4` (17.181).
+
+    As fontes são sintéticas, sem metadados e com `bitexact`. A posição do `moov` foi conferida nos dois MP4 com áudio.
+  - **Script:**
+    - **`proofs/phase-03/v04-ffmpeg-signed-url.ts`:** classificador pelo Error Catalog e processos com timeout por chamada (`SIGKILL`). Tem um proxy HTTP transparente local (`-http_proxy`) que registra as requisições Range sem mudar a assinatura e um servidor que aceita a conexão sem enviar bytes. Na limpeza, confere processos e temporários.
+    - **`storage-proof-roteiro.sh`:** ganhou a opção `v04`, com a mesma regra de código de saída e a comparação do bucket.
+  - **V-04 (`20261118203411-b0c445`): aprovada, 30 de 30 itens, código final 0.**
+    - **Formatos:** os quatro MP4 e WebM foram aceitos por URL pré-assinada interna, com duração, dimensões e codecs, e com frame JPEG 320x240 válido (`-ss 1` antes de `-i`). A leitura HTTP recebeu `206` em todas as requisições.
+    - **Recusas:**
+      - MOV: `MEDIA_CONTAINER_MISMATCH` pelo `major_brand qt  `;
+      - inválido: `MEDIA_INVALID` por "Invalid data found when processing input";
+      - truncado: `MEDIA_INVALID` por "moov atom not found" e "Invalid data found…".
+
+      Em todas, a leitura HTTP foi bem-sucedida, e a mesma classificação saiu direto e pelo proxy.
+    - **Objeto grande:** 303 MB com `moov` no fim. O ffprobe leu 1,6% do objeto e buscou o `moov` com `bytes=303186303-`. O frame em `-ss 30` leu 4,6%, com um salto para `bytes=153757608-`.
+    - **Timeouts contra um servidor parado:**
+      - sem `-rw_timeout`, o processo só termina morto pelo timeout por chamada;
+      - com `-rw_timeout` de 2 s, sai sozinho em 2,2 s;
+      - com reconexão (`reconnect_delay_max` 4), em 12,5 s, com 4 conexões;
+      - com os **valores adotados**, ffprobe e ffmpeg saem sozinhos em **44,6 s**, classificados como transitórios;
+      - com o `reconnect_delay_max` padrão (120 s), ainda reconectava aos 20 s;
+      - nenhum processo restou.
+  - **Valores adotados (G-09):**
+    - `-rw_timeout 10000000`;
+    - `-reconnect 1 -reconnect_on_network_error 1 -reconnect_delay_max 4`;
+    - limite contra um storage parado de cerca de 44 s (verificado: abaixo de 50 s);
+    - timeout por chamada de 60 s, que mata o processo, para o ffprobe e para o frame.
+  - **Primeira execução (`20261118203014-96c000`):** código final 1, com a limpeza correta.
+    - **Falha:** só o item do objeto grande, que tinha 2,4 MB. A busca por Range ocorreu, mas a primeira requisição aberta cabia inteira nos buffers de rede, e a medida de bytes não distinguia leitura parcial de download completo.
+    - **Ajuste:** o critério foi mantido e endurecido (menos de 10% do objeto), e o objeto subiu para 303 MB.
+  - **Divergências e lacunas registradas:**
+    - a documentação do FFmpeg no Context7 é de uma versão mais nova e cita `reconnect_max_retries` e `reconnect_delay_total_max`, que a 5.1.9 não tem;
+    - não há fixture de `MEDIA_UNSUPPORTED_CODEC` no plano; a regra está no classificador e fica para os testes unitários da SI-03.21;
+    - as mensagens de erro do FFmpeg trazem a URL pré-assinada completa, então a SI-03.21 não deve registrar o stderr sem remover a query.
+  - **Correção pontual da revisão (2026-11-18):**
+    - **Classificação:** as evidências de transporte agora prevalecem sobre as mensagens de parsing: "Stream ends prematurely", "Connection timed out/refused/reset", "Broken pipe", "Server returned" com código ou `4XX`/`5XX` e erro de E/S. O processo morto pelo timeout por chamada é `TRANSITÓRIO`, e `MEDIA_INVALID` só vale sem evidência de transporte.
+    - **Cenário adotado:** `assessAdoptedStall` exige saída espontânea, "Connection timed out" sem outra falha, 4 conexões, de 40 a 50 s, `TRANSITÓRIO` e nenhum processo restante.
+    - **Entradas controladas:** 13 de classificação e 11 do cenário adotado, contra as funções reais. Elas acharam um defeito real: o FFmpeg escreve "Server returned 5XX …", e a expressão só aceitava códigos numéricos. A expressão foi corrigida e conferida com 4 entradas focadas.
+    - **Reprodução local na imagem atual:** um servidor fecha a transferência de `h264-aac-moov-end.mp4` em 10.000 de 34.363 bytes. O stderr traz "Stream ends prematurely" e as mensagens de parsing, e a classificação foi `TRANSITÓRIO`; a anterior daria `MEDIA_INVALID`.
+    - **Reexecução:** `20261118204858-6293af`, com código final 0 e 31 de 31 itens. As evidências anteriores estão preservadas no `V-04.md`.
+  - **TD-11:** não houve reprovação de MP4 nem de WebM, então nada há a reabrir. A Option A, leitura por Range sem download para disco, fica confirmada.
+  - **Ambiente preservado:**
+    - retratos do bucket iguais nas duas execuções;
+    - 0 objetos e 0 multipart no prefixo;
+    - 0 processos ffmpeg ou ffprobe e 0 arquivos `v04-*` no `/tmp` do container;
+    - a imagem do `nestjs-api` e as decisões fechadas não mudaram.
+  - **Verificações:**
+    - `npx tsc --noEmit` terminou com código 0;
+    - `npx eslint` sem `--fix` terminou com código 0, nos padrões do projeto e em `proofs/phase-03/*.ts`;
+    - o Prettier não acusa diferenças nos `.ts` de prova;
+    - `sh -n` no `generate.sh` e `bash -n` no roteiro passaram;
+    - nenhuma assinatura de URL aparece no `V-04.md` nem neste registro;
+    - nenhum arquivo de `next-frontend/` foi alterado;
+    - a suíte de testes não foi executada, porque nenhum código de `src/` mudou.
+
+### SI-03.7 — Prova V-06 e V-11: BullMQ no stack real
+- **Status:** completed
+- **Tests:** no tests (prova de viabilidade; `proofs/V-06.md` e `proofs/V-11.md` são os entregáveis). V-06 e V-11 `aprovadas` em 2026-11-18 (horário local; execuções em 2026-11-19, entre 02:56Z e 02:59Z). Revisão da SI-03.7 aprovada em 2026-11-20, sem ajustes.
+- **Observations:**
+  - **Retomada:** a sessão anterior parou por limite de contexto. Os arquivos da V-06 em `proofs/phase-03/v06/` (módulo, processor e spec) foram aproveitados sem mudança. O script da V-11, o roteiro, os relatórios e este registro foram feitos nesta sessão.
+  - **Código de saída do Jest (pendência da sessão anterior):** o código capturado antes era o do `tail`.
+    - **Execução direta (02:38Z):** com a saída redirecionada para arquivo, deu `JEST_EXIT=0`;
+    - **Roteiro:** confirmou 0 pelo `PIPESTATUS[0]`.
+  - **Arquivos:**
+    - **`proofs/phase-03/v11-bullmq-behavior.ts`:** subcomandos `core`, `maintenance`, `child` (interno), `cleanup` e `snapshot`. Os workers que recebem `SIGKILL`, `SIGSTOP` ou `SIGTERM` reais rodam em processos Node filhos.
+    - **`proofs/phase-03/bullmq-proof-roteiro.sh <v06|v11>`:** roteiro do host. Na V-11, para e religa o `redis` quando a manutenção imprime o marcador. Na limpeza, garante o Redis saudável, apaga o prefixo, encerra processos da prova, faz `SAVE` (só na V-11) e compara o Redis antes e depois.
+    - **`proofs/phase-03/README.md`:** a tabela de scripts ganhou a V-06 e a V-11.
+  - **V-06 (`20261119025647-d9e179`): aprovada, código final 0.**
+    - `bullmq` 6.7.7, `@nestjs/bullmq` 11.0.5 e `ioredis` 5.11.1 resolvem por entradas CommonJS, e a spec compila para CommonJS (`ts-jest`, `module: nodenext`, sem `"type"`);
+    - `forRootAsync` com `ConfigService`, `registerQueue` e `WorkerHost` processaram um job contra o Redis 8.8.4 real;
+    - o `--detectOpenHandles` não acusou handles, e não restou nenhuma chave do prefixo.
+  - **V-11 (`20261119025715-a2e8f7`): aprovada, núcleo 31/31, manutenção 5/5 e código final 0.**
+    - **Padrões efetivos da 6.7.7:** `lockDuration` 30000, `lockRenewTime` 15000, `stalledInterval` 30000 e `maxStalledCount` 1, iguais pelo `Worker` direto e pelo `@nestjs/bullmq`. As opções do `@Processor` chegam ao `Worker` sem transformação.
+    - **Medidas no Redis:**
+      - TTL do lock 29899 ms;
+      - renovações aos 15,2 s e aos 22,6 s, pelo temporizador de `lockRenewTime/2`, com menor TTL de 15 s;
+      - `stalled-check` com 29894 ms.
+    - **Entrega:**
+      - reentrega após `SIGKILL`, com `stalled` e `attemptsStarted` 1 → 2;
+      - a segunda parada falha o job com `failedReason` `job stalled more than allowable limit`, sem chamar o processor e sem retentativa, mesmo com `attempts: 3`;
+      - `attemptsMade` 0, 1 e 2 nas entregas, com a última tentativa identificada só na terceira;
+      - `SIGTERM` → `close()` esperou o job de 2 s, e o processo saiu com código 0 sem buscar jobs novos.
+    - **Geração e retenção:**
+      - `attemptsStarted` `[1, 2, 3]` na entrega, no `backoff` e no stall;
+      - retenção com `removeOn*: false`, com controle por `removeOnComplete: true`;
+      - `remove()` recusado para `active` ("could not be removed because it is locked");
+      - `add` duplicado ignorado em `waiting`, `delayed`, `active`, `completed` e `failed`;
+      - contadores reiniciados no job readicionado;
+      - a entrega antiga de um job removido (congelada por `SIGSTOP`) não conclui nem falha: `Missing key for job … moveToFinished`.
+    - **Manutenção:**
+      - dois `upsertJobScheduler` simultâneos dão 1 scheduler e o mesmo primeiro job;
+      - repetição sem duplicação, com no máximo 1 iteração pendente;
+      - reinício por `SIGKILL` e `SIGTERM` sem acúmulo;
+      - depois do `docker compose stop redis` e `start`, as instâncias seguiram vivas, o scheduler persistiu sem novo registro e a repetição voltou 0,8 s depois.
+  - **Achados para as SIs seguintes** (detalhes em `V-11.md`, "Observações para as SIs seguintes"):
+    - o objeto devolvido por um `add` duplicado traz os dados da chamada, não os gravados (SI-03.11 e P5);
+    - a entrega antiga roda o processor até o fim, então os efeitos dependem da guarda de P3 (SI-03.22);
+    - entre a detecção do stall acima do limite e a falha, o job fica em `wait`. Isso vem do código; o estado intermediário não foi amostrado (SI-03.25);
+    - a persistência do Redis é só RDB (`appendonly no`), e uma queda abrupta não foi testada;
+    - a reconexão do BullMQ espera até 20 s, e paradas longas não foram medidas.
+  - **Informativos:**
+    - `Job.retry()` move para `waiting` sem zerar os contadores; não condiciona a TD-12;
+    - `UnrecoverableError` não é retentado;
+    - o evento `duplicated` é emitido;
+    - por leitura do código, um job de Job Scheduler nunca falha por stall.
+  - **Execução preliminar:** o `core` rodou direto com o runId `pre-025328` e passou em 31/31; a limpeza removeu 101 chaves.
+    - **Ajustes antes da execução oficial:** o 2.5 passou a ler o estado logo depois do novo `add`, exigindo `waiting`, e a limpeza passou a encerrar `core` e `maintenance` órfãos.
+    - **`dump.rdb`:** um BGSAVE automático dessa execução gravou um `dump.rdb` com chaves da prova, e o `SAVE` final da execução oficial o restaurou.
+  - **TDs:** nenhuma prova reprovada, então nenhuma TD é reaberta. O documento de decisões não foi alterado nesta SI.
+  - **Ambiente preservado:**
+    - Redis antes e depois com 0 chaves (hash `e3b0c442…b855`), `maxmemory-policy noeviction` e 1 cliente;
+    - `dump.rdb` de volta a 88 bytes, com `rdb_changes_since_last_save:0`;
+    - `redis` religado e saudável, e todos os serviços saudáveis no fim;
+    - no `nestjs-api`, só o processo 1 (`tail -f /dev/null`);
+    - 113 chaves da V-11 removidas, e 0 da V-06, que a própria spec já tinha removido.
+  - **Verificações:**
+    - `npx tsc --noEmit` terminou com código 0;
+    - `npx eslint` sem `--fix` terminou com código 0, nos padrões do projeto e em `proofs/phase-03/**/*.ts`;
+    - o Prettier não acusa diferenças no script novo nem na V-06;
+    - `bash -n` no roteiro passou;
+    - suíte completa: `npm test -- --runInBand` com 23 suítes e 144 testes, código 0; `npm run test:e2e` com 3 suítes e 52 testes, código 0;
+    - nenhum código de `src/` nem arquivo de `next-frontend/` foi alterado.
+  - **Revisão (2026-11-20): aprovada, sem ajustes no código nem nos relatórios.**
+    - **Relatórios:** `V-06.md` e `V-11.md` ganharam a linha **Revisão** no cabeçalho.
+    - **TDs:** revisões de 2026-11-20 nas TD-09, TD-10 e TD-12, com as evidências (runIds e relatórios) e as condições que as provas não cobrem:
+      - **TD-09:** sem prova pendente. A queda abrupta do Redis e as indisponibilidades longas ficam registradas como limitações.
+      - **TD-10:** sem prova pendente, com a V-04 (SI-03.6) e a V-11. Continuam valendo os requisitos de implementação (SI-03.8, SI-03.20 e SI-03.21), a parada pelo `docker compose stop video-worker`, o job ativo durante a indisponibilidade do Redis (TD-12, T-12) e a regra da DG-1.
+      - **TD-12:** sem prova pendente. Continuam valendo o protocolo da aplicação (T-09 na SI-03.25 e T-11 na SI-03.22), a releitura do job depois de um `add` duplicado, a guarda de P3 sobre a entrega antiga e as limitações do Redis.
+    - **Mantidos como estavam:** a linha `**Decision:**`, o "Decisions Summary" e a tabela "Situação das decisões e provas" (retrato de 2026-11-17). É o mesmo tratamento dado às aprovações anteriores das TD-02, TD-07, TD-08, TD-11 e TD-13, cujas linhas continuam "condicionada". Atualizar essas tabelas para todas as TDs seria uma tarefa à parte.
+    - **Espelho e rastreamento:** feitos junto com a D-08 (ver abaixo).
+
+### Tarefa separada D-08 — `createTestDataSource` passa a ler `DB_NAME`
+- **Status:** completed (2026-11-20). É pré-requisito da SI-03.8 ("Portão das provas").
+- **Tests:** `src/test/create-test-data-source.spec.ts` (unitário, 2 testes, sem I/O)
+- **Observations:**
+  - **Sentido da correção:** o auxiliar lia `DB_DATABASE`, uma chave que o projeto não define, e **passou a ler `DB_NAME`**, a chave de `src/config/database.config.ts`, `src/config/env.validation.ts` e `.env.example`.
+    - Antes, ele só funcionava porque o padrão `'streamtube'` coincidia com o `DB_NAME=streamtube` do `.env` do container, que não define `DB_DATABASE`.
+    - A mudança é uma linha: `database: process.env.DB_NAME ?? 'streamtube'`.
+    - O resto do auxiliar foi preservado:
+      - os demais campos e padrões (`DB_HOST`, `DB_PORT`, `DB_USERNAME` e `DB_PASSWORD`);
+      - o operador `??`;
+      - `synchronize` com padrão `true`;
+      - `migrations` com `migrationsRun: false`;
+      - `cleanAllTables`.
+  - **Teste de regressão:**
+    - **Primeiro caso:** `DB_NAME=d08_name_from_db_name` e `DB_DATABASE=d08_name_from_db_database`. O `dataSource.options` deve ter `type: 'postgres'` e `database: 'd08_name_from_db_name'`.
+    - **Segundo caso:** `DB_NAME` ausente e `DB_DATABASE` definido. O `database` deve ser o padrão `'streamtube'`, o que mostra que `DB_DATABASE` não é mais lido.
+    - **Sem conexão:** o `DataSource` é só construído, sem `initialize()`, e os dois casos conferem `isInitialized === false`. Nos tipos do TypeORM instalado, só `initialize()` conecta.
+    - **Variáveis de ambiente:** `DB_NAME` e `DB_DATABASE` são salvas no `beforeEach` e restauradas no `afterEach`; uma variável que não existia antes é removida.
+  - **Vermelho antes da correção:** a spec rodou contra o auxiliar antigo e falhou nos 2 casos, com código 1. Nos dois, recebeu `database: 'd08_name_from_db_database'`.
+  - **Verificações depois da correção:**
+    - regressão (`npx jest src/test/create-test-data-source.spec.ts`): 2/2, código 0;
+    - as 11 suítes que usam o auxiliar (`npx jest --runInBand` com os arquivos de `auth`, `channels`, `users` e `database` que importam `createTestDataSource`): 11 suítes e 65 testes, código 0;
+    - suíte completa (`npm test -- --runInBand`): 24 suítes e 146 testes, código 0. Antes eram 23 e 144; a diferença é a spec nova;
+    - `npm run test:e2e`: 3 suítes e 52 testes, código 0;
+    - `npx tsc --noEmit`: código 0;
+    - `npx eslint`, sem `--fix`, nos 2 arquivos alterados: código 0;
+    - `prettier --check` nos 2 arquivos: código 0.
+  - **Documentos:**
+    - **Plano:**
+      - a dependência da SI-03.8 foi reescrita com o sentido explícito ("o `createTestDataSource` passa a ler `DB_NAME` (a chave do projeto) em vez de `DB_DATABASE`"), com a data da conclusão;
+      - a caixa da D-08 em "Pré-requisitos e itens fora da fase" foi marcada.
+    - **Não alterados:** a tabela "Divergências encontradas" do documento de decisões, com a linha D-08 "Tarefa separada", e o espelho dela no `context.md`. São retratos de 2026-11-17.
+  - **Rastreamento (D-08 e revisão da SI-03.7):**
+    - **`context.md`:** espelho das três revisões de 2026-11-20 no detalhe e no índice ("Last revision") das TD-09, TD-10 e TD-12, com linhas idênticas às do documento de decisões.
+    - **`sources_mtime`:**
+      - `context.md` e `library-refs.md`: o documento de decisões, para `2026-11-20T23:41:45-03:00`; o conteúdo do `library-refs.md` não mudou;
+      - plano: o `context.md` e o `library-refs.md`, para `2026-11-20T23:42:22-03:00`, e o documento de decisões, para `2026-11-20T23:41:45-03:00`;
+      - uma conferência por `stat` não acusa defasagem.
+    - **Specs:** nenhum dos 10 cita a D-08, `DB_NAME`, `DB_DATABASE`, `createTestDataSource`, a SI-03.7 ou a SI-03.8.
+      - Só as 55 linhas `**Last sync:**` foram atualizadas, para `2026-11-21T02:43:13Z`, com 0 outras linhas alteradas.
+      - Os specs ficaram mais novos que o plano: STALE 0.
+    - **`validation.md`:** não foi alterado, porque nenhuma nova validação foi executada. Como antes, `/plan-build` e `/plan-resolve` vão acusar defasagem até um `/plan-validate` real.
+
+### SI-03.8 — Configuração de storage, fila, vídeo e manutenção
+- **Status:** completed (2026-11-21). A revisão de 2026-11-21 aprovou a SI e confirmou as configurações, os testes, os valores escolhidos e os dez specs. O ajuste final do `MAIL_FROM` no `.env.example` foi aplicado (ver "Ajuste final da revisão").
+- **Tests:**
+  - `src/config/env.validation.integration-spec.ts`, o teste previsto pela SI, ampliado: chaves obrigatórias, padrões e recusa de valores inválidos;
+  - `src/config/video.config.spec.ts` e `src/config/storage.config.spec.ts`, unitários no padrão do `swagger.config.spec.ts`: conversão de `UPLOAD_SESSION_TTL` para segundos, padrões e path-style.
+- **Observations:**
+  - **Arquivos novos em `src/config/`:**
+    - **`storage.config.ts` (`registerAs('storage')`):** `endpoint` e `publicEndpoint` separados (TD-07), `region`, credenciais, `bucket` e `forcePathStyle`.
+    - **`queue.config.ts` (`registerAs('queue')`):** `redis` (`host`, `port`), `videoProcessing` (`attempts`, `backoffMs`, `concurrency`, `timeoutMs`) e `worker` (`lockDurationMs`, `stalledIntervalMs`, `maxStalledCount`).
+    - **`video.config.ts` (`registerAs('video')`):** limites de upload, `uploadSessionTtlSeconds` (convertido de `UPLOAD_SESSION_TTL`), TTLs do claim e das URLs, ação pendente, recuperações, alerta, carências e `maintenance` (intervalos e lote).
+    - **`config.constants.ts`:** os padrões compartilhados pelo schema e pelos namespaces, para não duplicar valores (`nestjs-common-conventions`), mais os limites S3 e o `STORAGE_STALE_UPLOADS_EXPIRY_SECONDS` (48 h).
+    - **`env.utils.ts`:** `parseDurationSeconds` (`<inteiro positivo><s|m|h|d>`) e `readIntEnv`.
+  - **Arquivos alterados:**
+    - **`env.validation.ts`:** 32 chaves novas (7 de storage, 9 de fila e 16 de vídeo e manutenção), com as chaves existentes intactas, e duas regras entre campos:
+      - no máximo 10.000 partes (`ceil(VIDEO_MAX_SIZE_BYTES / UPLOAD_PART_SIZE_BYTES)`);
+      - `UPLOAD_SESSION_TTL` mais `UPLOAD_SESSION_CLAIM_TTL_SECONDS` estritamente abaixo das 48 h do storage (TD-02, G-10).
+
+      Cada regra só roda quando as chaves que ela lê são válidas individualmente.
+    - **`app.module.ts`:** `storageConfig`, `queueConfig` e `videoConfig` no `load` do `ConfigModule.forRoot`.
+    - **`.env.example`:** 23 chaves novas, com os valores de desenvolvimento iguais aos padrões.
+    - O `.env` local não foi alterado: as chaves obrigatórias S3 já estavam lá desde a SI-03.1, e as demais usam os padrões.
+  - **Valores e origem:**
+    - **Confirmados pelas provas:**
+      - `UPLOAD_SESSION_TTL=24h`, absoluto e contado da ativação (V-01). Os 48 h do storage continuam no `compose.yaml`, contados da criação do upload; o schema recusa TTL mais claim que chegue a 48 h;
+      - `VIDEO_PROCESSING_TIMEOUT_MS=60000`, o timeout por chamada da V-04, que mata o processo;
+      - `QUEUE_LOCK_DURATION_MS=30000`, `QUEUE_STALLED_INTERVAL_MS=30000` e `QUEUE_MAX_STALLED_COUNT=1`, os padrões efetivos da 6.7.7 (V-11), aplicados aos workers das duas filas.
+    - **Fixados pelo plano e pelas TDs:** `VIDEO_MAX_SIZE_BYTES=10000000000` e `UPLOAD_PART_SIZE_BYTES=67108864`, que dão 150 partes (TD-03), e `PROCESSING_MAX_RECOVERIES=2` (TD-12).
+    - **Escolhidos nesta SI, dentro das restrições do plano, sem valor fixado antes:**
+      - storage: `S3_REGION=us-east-1` e `S3_FORCE_PATH_STYLE=true`;
+      - fila: `REDIS_HOST=redis`, com nome de serviço, `REDIS_PORT=6379`, `VIDEO_PROCESSING_ATTEMPTS=3`, `VIDEO_PROCESSING_BACKOFF_MS=5000` e `VIDEO_PROCESSING_CONCURRENCY=1`;
+      - sessão e URLs: `UPLOAD_SESSION_CLAIM_TTL_SECONDS=300`, `UPLOAD_PART_URL_TTL_SECONDS=900`, `PLAYBACK_URL_TTL_SECONDS=3600` e `DOWNLOAD_URL_TTL_SECONDS=300`;
+      - processamento: `PROCESSING_JOB_ACTION_TTL_SECONDS=120`, `PROCESSING_STUCK_ALERT_MS=600000` e `PROCESSING_RECONCILE_GRACE_MS=300000`;
+      - manutenção: `STORAGE_CLEANUP_GRACE_MS=3600000`, `MAINTENANCE_SWEEP_INTERVAL_MS=60000`, `MAINTENANCE_RECONCILE_INTERVAL_MS=60000`, `MAINTENANCE_CLEANUP_INTERVAL_MS=3600000` e `MAINTENANCE_BATCH_SIZE=100`, o lote do payload do plano.
+    - **Nomes escolhidos:** as chaves de lock e stall não tinham nome no plano e ficaram `QUEUE_LOCK_DURATION_MS`, `QUEUE_STALLED_INTERVAL_MS` e `QUEUE_MAX_STALLED_COUNT`.
+  - **Restrições aplicadas pela validação:**
+    - S3: parte entre 5 MiB e 5 GiB, no máximo 10.000 partes e objeto de até 5 TiB;
+    - URLs pré-assinadas de até 604.800 s (SigV4);
+    - endpoints só `http` ou `https`;
+    - inteiros positivos para tentativas, prazos, intervalos e lote;
+    - zero permitido em `PROCESSING_MAX_RECOVERIES`, `QUEUE_MAX_STALLED_COUNT` e nas carências, que são só margem adicional (P4, P5);
+    - `UPLOAD_SESSION_TTL` no formato `24h`, `90m` ou `3600s`.
+  - **Teste existente ajustado:** o `requiredEnv` da spec do schema ganhou as 5 chaves S3 obrigatórias. Sem isso, os testes de `SWAGGER_ENABLED` falhariam com "is required".
+  - **Critérios de aceite:**
+    - **Sem `S3_BUCKET`, `S3_ENDPOINT` ou `S3_PUBLIC_ENDPOINT`, a aplicação não inicia:**
+      - pela spec: `"<chave>" is required` para cada uma das 5 chaves S3 obrigatórias;
+      - **com o build real:** `node dist/main.js` rodou num diretório temporário do container, com uma cópia do `.env` sem a chave. Nas três chaves, o código de saída foi 1, com `Config validation error: "<chave>" is required` e 0 linhas de aplicação iniciada;
+      - as cópias foram removidas: 0 diretórios restantes e só o processo 1 no container.
+    - **Padrões:** sem valor definido, `VIDEO_MAX_SIZE_BYTES` é `10000000000` e `UPLOAD_PART_SIZE_BYTES` é `67108864`, no schema e no namespace `video`.
+    - **`PROCESSING_MAX_RECOVERIES`:** `-1`, `1.5` e `abc` são recusados; `0` é aceito.
+    - **Prazos de 24h e 48h:** ficam como a V-01 confirmou, e o schema recusa combinações que cheguem aos 48 h (`48h` com 300 s; `47h` com 3600 s). `47h` com 3599 s é aceito.
+    - **`.env.example`:** as 23 chaves novas usam só `[A-Za-z0-9_.:/,-]`, o `dotenv` lê todas, o schema as aceita, e os valores são iguais aos padrões. Na entrega, o `docker compose --env-file` só leu, com código 0, uma cópia sem a linha `MAIL_FROM`. Depois do ajuste final, o arquivo completo também é lido (ver "Ajuste final da revisão").
+  - **Verificações executadas, todas no container `nestjs-api`:**
+    - `npx jest --runInBand src/config`: 4 suítes e 74 testes, código 0;
+    - `npm test -- --runInBand`: 26 suítes e 213 testes, código 0. Antes eram 24 e 146; entraram as 2 specs novas e 58 testes da spec do schema;
+    - `npm run test:e2e`: 3 suítes e 52 testes, código 0;
+    - `npx tsc --noEmit`: código 0;
+    - `npm run build`: código 0. Os 5 arquivos novos estão em `dist/config/`, e não há nada de `proofs/` em `dist/`;
+    - `npx eslint`, sem `--fix`: código 0 nos 10 arquivos TypeScript tocados e em `"{src,apps,libs,test}/**/*.ts"` mais `proofs/phase-03/**/*.ts`. A primeira passada apontou só formatação em 3 arquivos novos ou alterados, corrigida com `prettier --write` nesses três;
+    - `prettier --check` nos 10 arquivos: código 0;
+    - `npm run lint` não foi executado, porque aplica `--fix`.
+  - **Pendentes, verificados nas SIs que consomem a configuração:**
+    - uso do namespace `storage` pelo cliente S3 e pelo presigner (SI-03.9);
+    - uso de `queue` no `BullModule` e nos workers, incluindo os valores de lock e stall, a concorrência e o `stop_grace_period` maior que o timeout de um job (SI-03.20, SI-03.22 e SI-03.23);
+    - efeito real dos TTLs das URLs contra o storage (SI-03.13, SI-03.27 e SI-03.28);
+    - prazos curtos nos testes de integração das SIs de manutenção (SI-03.24 a SI-03.26);
+    - os valores escolhidos sem valor fixado antes foram confirmados na revisão de 2026-11-21.
+  - **Pendência do `MAIL_FROM` (encerrada no ajuste final):** a linha `MAIL_FROM="StreamTube" <noreply@streamtube.com>` do `.env.example`, que vem da SI-02.1 (commit `3557916`), tinha `<` fora de aspas. O `docker compose --env-file .env.example config` falhava nela ("unexpected character "<""). O `.env` local não tinha o problema. Era o formato que o `nestjs-project/CLAUDE.md` aponta como errado.
+  - **Ajuste final da revisão (2026-11-21):**
+    - **Mudança:** só a delimitação, para `MAIL_FROM='"StreamTube" <noreply@streamtube.com>'`, preservando o nome e o endereço. O `.env.example` continua com 81 linhas, e nenhuma foi removida.
+    - **Verificações, no arquivo completo:**
+      - `docker compose --env-file .env.example config --quiet`, dentro de `nestjs-project/`: código 0;
+      - `docker compose --env-file .env.example config --environment`: código 0. O `MAIL_FROM` interpretado pelo Compose é `"StreamTube" <noreply@streamtube.com>`;
+      - `docker compose exec -T nestjs-api npx ts-node --transpile-only -e …`, com o `parse` do `dotenv` e o `envValidationSchema` de `src/config/env.validation.ts`: código 0. O `dotenv` leu 51 chaves, e o `MAIL_FROM` é exatamente `"StreamTube" <noreply@streamtube.com>`. O schema é válido, e o `MAIL_FROM` validado tem o mesmo valor exato.
+    - **Fora desta verificação:** suíte, `tsc`, build e lint não foram executados de novo, porque só mudou a delimitação de um valor no arquivo de exemplo.
+    - **`.env` local preservado:** ignorado pelo Git e não alterado (mtime de 2026-11-18 16:51).
+  - **Documentos:** o plano e o documento de decisões não mudaram, então os `sources_mtime` e os `Last sync` dos specs não precisaram de sincronização.
+
+### SI-03.9 — Módulo de storage
+- **Status:** completed (2026-11-21). A revisão de 2026-11-22 aprovou a SI, incluindo os timeouts escolhidos (conexão de 5 s e socket ocioso de 60 s) e os tratamentos dos comportamentos observados no Silo (achados 1 a 3 abaixo).
+- **Tests:**
+  - **Previstos pela SI:**
+    - `src/storage/storage.module.spec.ts`: compilação, 4 testes;
+    - `src/storage/storage.service.integration-spec.ts`: storage real do Compose e falhas simuladas, 19 testes;
+    - `src/storage/storage.presign.integration-spec.ts`: storage real, 7 testes.
+  - **Acrescentado:** `src/storage/storage-errors.spec.ts`, unitário, 30 testes, para a classificação de erros, que é lógica pura com ramificações.
+- **Observations:**
+  - **Arquivos novos em `src/storage/`:**
+    - **`storage.module.ts`:** dois `S3Client` injetáveis, o interno (`STORAGE_INTERNAL_CLIENT`, em `S3_ENDPOINT`), para as operações, e o público (`STORAGE_PUBLIC_CLIENT`, em `S3_PUBLIC_ENDPOINT`), só para assinar URLs do navegador. Ambos vêm do namespace `storage` da SI-03.8. O módulo exporta só o `StorageService` e chama `destroy()` nos clientes em `onModuleDestroy`.
+    - **`storage.clients.ts` (`createStorageClient`):** `forcePathStyle`, região, credencial da aplicação e `requestChecksumCalculation`/`responseChecksumValidation` em `WHEN_REQUIRED` (TD-07, V-03, V-09). Também define os timeouts HTTP de `storage.constants.ts`: conexão de 5 s e socket ocioso de 60 s.
+      - **Por que timeouts:** sem eles, um storage que aceita a conexão e para de responder trava a chamada e nunca vira `STORAGE_UNAVAILABLE`.
+      - **Por que socket ocioso, e não o tempo total da requisição:** não limita um `CompleteMultipartUpload` longo que mantém a conexão ativa.
+      - Os valores são constantes do módulo, sem chave nova de ambiente, e ficam para a revisão.
+    - **`storage.service.ts`:**
+      - **Multipart:** `createMultipartUpload` com `ChecksumAlgorithm: 'SHA256'`, `listParts` paginado por `PartNumberMarker` e `completeMultipartUpload` com `PartNumber`, `ETag` e `ChecksumSHA256` em ordem crescente, sem `If-None-Match` nem `x-amz-mp-object-size` (V-10, revisão de 2026-11-18). Também `abortMultipartUpload` e `listMultipartUploads(prefix)`.
+      - **Objetos:** `headObject`, `putObject`, `deleteObject`, idempotente, e `listObjects`, que devolve uma página com `nextContinuationToken`.
+      - **`presignUploadPart`:** cliente público, com `content-length` em `signableHeaders` e `x-amz-checksum-sha256` em `unhoistableHeaders`. Devolve `url`, `method: 'PUT'`, `expectedSize`, `headers` só com o checksum (V-08) e `expiresAt`.
+      - **`presignGet`:** `audience` `browser`, no cliente público, ou `internal`, para o worker e o FFmpeg (SI-03.21), com `ResponseContentType` ou `ResponseContentDisposition` opcionais.
+      - **Prazos:** os TTLs chegam do chamador (`expiresInSeconds`), para o módulo depender só do namespace `storage`. A assinatura usa um `signingDate` em segundo inteiro, então o `expiresAt` coincide com `X-Amz-Date` mais `X-Amz-Expires`.
+    - **`storage-errors.ts`:**
+      - **Transitório:** espelha o `isTransientError` e o `isThrottlingError` do `@smithy/core` 3.x, resolvido pelo SDK 3.1170: status 500/502/503/504 e qualquer outro 5xx, como pede o critério de aceite; 429 e nomes de throttling; `TimeoutError`/`RequestTimeout`; códigos de rede do Node; e a cadeia `cause`. `AbortError` fica de fora;
+      - **`isNoSuchUpload`:** só 404 `NoSuchUpload`;
+      - **`isNoSuchKey`:** 404 `NoSuchKey`, ou `NotFound` de HEAD cujo `x-minio-error-code`, quando presente, seja `NoSuchKey`. Um 404 de bucket ausente não conta (V-10).
+    - **`storage.exceptions.ts`:** `StorageUnavailableException`, com `STORAGE_UNAVAILABLE` e 503, sobre a `DomainException` existente, guardando `operation` e `cause`.
+    - **Mapeamento no serviço:** transitório vira `StorageUnavailableException`, com um aviso no log contendo nome, status e código, sem a URL. `NoSuchUpload` e `NoSuchKey` viram resultados explícitos (`no-such-upload` e `not-found`). Os demais erros chegam ao chamador sem mudança.
+    - **`storage.types.ts`:** os resultados em uniões discriminadas e as entradas e saídas das assinaturas.
+  - **Helpers em `src/test/storage.ts`:**
+    - **`createStorageTestPrefix`:** prefixo `tests/<suite>-<tempo>-<aleatório>/` por suíte.
+    - **`createStorageTestingModule`:** `ConfigModule` global com o `.env` e o `StorageModule`, com os clientes substituíveis.
+    - **`cleanupStoragePrefix`:** usa um cliente próprio, independente do `StorageService` testado. Recusa prefixos fora de `tests/`, aborta os multiparts e apaga os objetos do prefixo, e lança erro se sobrar algo. As suítes o chamam no `afterAll`, num `try/finally` com o `module.close()`.
+    - **`requestPresignedUrl`:** de dentro do container, conecta em `S3_ENDPOINT` e mantém o `Host` assinado da URL do navegador (`S3_PUBLIC_ENDPOINT`), como o navegador alcança o storage pela porta publicada.
+    - **`sha256Base64`.**
+  - **Critérios de aceite, contra o Silo fixado do Compose, com corpos de 1 KiB a 64 KiB:**
+    - **PUT pela URL de `presignUploadPart`:** com exatamente `expectedSize` bytes e o header devolvido, recebeu `200`, e o `listParts` mostra a parte com o tamanho, o ETag do PUT e o `ChecksumSHA256` declarado;
+    - **corpo de outro tamanho na mesma URL:** 1 byte a mais e 1 a menos receberam `403` antes do envio correto, sem parte registrada; 1 byte a mais depois do envio correto também recebeu `403`, e a parte 1 continuou com o mesmo tamanho e ETag;
+    - **`presignGet` do navegador com `Range: bytes=0-1023`:** `206`, `Content-Range: bytes 0-1023/4096`, os primeiros 1024 bytes e o `Content-Type` assinado. A URL interna também responde `206`, e o `Content-Disposition` assinado volta no download;
+    - **`GET` anônimo sem assinatura, com e sem `Range`:** `403`;
+    - **erro de rede:** a conexão recusada em `http://storage:1` chega como `StorageUnavailableException` (`STORAGE_UNAVAILABLE`, 503) em `HeadObject`, `ListParts` e `CreateMultipartUpload`;
+    - **5xx:** um stub local que responde HTTP 500, 502, 503 ou 504 dá o mesmo resultado em `ListParts` e `HeadObject`;
+    - **storage que para de responder:** cai no timeout de socket ocioso e chega como `STORAGE_UNAVAILABLE`, com `TimeoutError` na causa.
+  - **Outros comportamentos verificados:**
+    - `listParts` com `pageSize: 2` sobre 3 partes enviou 2 `ListPartsCommand` e devolveu as 3 partes em ordem;
+    - Complete com as partes registradas: `HeadObject` com o tamanho e o `ContentType`; segundo Complete e `listParts` depois dele: `no-such-upload`;
+    - depois do abort, `listParts` e Complete: `no-such-upload`, e `HeadObject`: `not-found`;
+    - um stub com 404 `NoSuchUpload` dá `no-such-upload` em `listParts`, Complete e abort;
+    - 403 `AccessDenied` chega sem mudança, e um 404 de HEAD com `x-minio-error-code: NoSuchBucket` não vira `not-found`;
+    - `put`, `head`, `list` e `delete`: o `delete` repetido não falha, e `listObjects` pagina com o token;
+    - a URL é recusada (`403`) depois do `expiresAt`;
+    - a URL de `UploadPart` tem `X-Amz-SignedHeaders=content-length;host;x-amz-checksum-sha256`, nenhum parâmetro de checksum na query (V-09) e o host público; a de `GetObject` não tem parâmetro de checksum.
+  - **Achados no Silo fixado, sondados nesta SI com prefixos descartáveis já removidos:**
+    - **(1) `ListMultipartUploads` só filtra por chave exata.** Com `Prefix` igual à chave do objeto, devolve os uploads, e a paginação por `UploadIdMarker` funciona. Com prefixo de diretório (`originals/`, `originals/v1/`), prefixo parcial ou a raiz de um prefixo, devolve 0 uploads e nenhum erro, mesmo com uploads abertos. Sem `Prefix`, devolve todos os uploads numa página, sem truncar e ignorando `MaxUploads`.
+      - **Consequência:** `listMultipartUploads(prefix)` lista o bucket inteiro e filtra no cliente, o que também é correto no S3. O mecanismo da P4 continua o `ListMultipartUploads`; só o filtro saiu do servidor.
+      - **SIs afetadas:** os usos com prefixo igual a `object_key` (SI-03.17, P1 e varredura) funcionariam no servidor; o "percorre `originals/`" da P4 (SI-03.26) depende deste filtro.
+    - **(2) O abort não confirma ausência.** `AbortMultipartUpload` devolve `204` para um upload já abortado, já concluído ou com `uploadId` inventado, enquanto `ListParts` devolve `404 NoSuchUpload` nos mesmos casos.
+      - **O que já está compatível:** o plano diz "abort repetido até o `ListParts` responder `NoSuchUpload`" na SI-03.17 (ação 2) e no passo de P1.
+      - **O que fica para as SIs seguintes:** as formas curtas "abort repetido até `NoSuchUpload`" da SI-03.24 (ação 1), do contrato de DELETE e da varredura precisam ser implementadas com a confirmação pelo `ListParts`, porque a resposta do abort sozinha faria o laço não terminar.
+      - **Na SI-03.9:** o `AbortMultipartUploadResult` documenta isso, e a spec caracteriza o comportamento observado. O plano não foi alterado.
+    - **(3) No Jest, os erros de rede do Node perdem o `code`.** Eles vêm de outro *realm*, e o `asSdkError` do `@smithy/core` os troca por `new Error('AWS SDK error wrapper for …')`. A classificação passou a reconhecer esse embrulho pelo prefixo exato e por um código da lista. No Node puro, sondado no container, o erro chega com `code: 'ECONNREFUSED'`.
+  - **Primeira execução das specs:** 52 de 57 testes passaram. As 5 falhas eram os achados (2) e (3): a expectativa do abort repetido e a classificação do erro de rede embrulhado. Depois dos ajustes, 60 de 60. A limpeza do `afterAll` também rodou na execução com falhas: 0 objetos e 0 multiparts em `tests/` depois das duas execuções.
+  - **Verificações executadas, todas no container `nestjs-api`:**
+    - `npx jest --runInBand --verbose src/storage`: 4 suítes e 60 testes, código 0;
+    - `npm test -- --runInBand`: 30 suítes e 273 testes, código 0. Antes eram 26 e 213;
+    - `npm run test:e2e`: 3 suítes e 52 testes, código 0;
+    - `npx tsc --noEmit`: código 0;
+    - `npm run build`: código 0, com os 7 módulos de `src/storage` em `dist/storage`, nenhuma spec e nada de `proofs/`;
+    - `npx eslint`, sem `--fix`, nos 12 arquivos novos e em `"{src,apps,libs,test}/**/*.ts"` mais `proofs/phase-03/**/*.ts`: código 0. A primeira passada apontou formatação em 3 arquivos novos, corrigida com `prettier --write` neles, e um `no-unsafe-return` real na spec, corrigido com o tipo de retorno `unknown`;
+    - `prettier --check` nos 12 arquivos: código 0;
+    - storage depois das execuções: 0 objetos e 0 multiparts em `tests/`, e 0 objetos no bucket;
+    - `npm run lint` não foi executado, porque aplica `--fix`.
+  - **Pertence às próximas etapas, não verificado aqui:**
+    - uso do `StorageService` pela API: P1 em `POST /videos` (SI-03.12), part-urls (SI-03.13), retomada (SI-03.14 e SI-03.15), conclusão (SI-03.16), abort e reinício (SI-03.17 e SI-03.18);
+    - uso pelo worker: URL interna para o FFmpeg (SI-03.21) e `putObject` da thumbnail (SI-03.22);
+    - uso pela manutenção: SI-03.24 e SI-03.26;
+    - a montagem do `Content-Disposition` RFC 6266 a partir do nome original (SI-03.28);
+    - o PUT por navegador real, já coberto pela V-08;
+    - partes de 64 MiB e o Complete de muitas partes nas provas grandes (SI-03.32 e SI-03.33);
+    - o `StorageModule` ainda não é importado pelo `AppModule` nem por outro módulo, e entra pelo `VideosModule` (SI-03.11) e pelo `WorkerModule` (SI-03.20).
+  - **Fora do escopo, só registrado:** o `npm run build` emite os helpers de `src/test/` (`mailpit`, `create-test-data-source` e agora `storage`) em `dist/test/`, porque o `tsconfig.build.json` exclui só a pasta `test/` da raiz. Isso já acontecia antes desta SI, e nenhum código da aplicação importa esses helpers.
+  - **Documentos:** o plano e o documento de decisões não mudaram, então os `sources_mtime` e os `Last sync` dos specs não precisaram de sincronização.
+
+### SI-03.10 — Entidades e migration de vídeos, sessões e partes
+- **Status:** completed (2026-11-22). A revisão de 2026-11-22 aprovou a SI, incluindo as escolhas documentadas (PK de `upload_sessions` sem default, `checksum_sha256` com `update: false`, `duration_seconds` como string, nomes explícitos, tokens de fencing sem `select: false` e `updated_at` explícito em SQL puro) e a antecipação do `VideosModule` mínimo.
+- **Tests:**
+  - **Previstos pela SI:**
+    - `src/videos/entities/video.entity.integration-spec.ts`: 8 testes;
+    - `src/videos/entities/upload-session.entity.integration-spec.ts`: 12 testes;
+    - `src/videos/entities/upload-part.entity.integration-spec.ts`: 6 testes;
+    - `src/database/migrations.integration-spec.ts`: ampliada de 2 para 5 testes.
+  - **Acrescentados:**
+    - `src/database/bigint-number.transformer.spec.ts`: unitário, 4 testes, para o transformer de `bigint`, que tem ramificações;
+    - `src/videos/videos.module.spec.ts`: compilação, 1 teste, junto com a antecipação do `VideosModule` (ver abaixo).
+- **Observations:**
+  - **Entidades em `src/videos/entities/`, conforme o Data Model:**
+    - **`video.entity.ts` (`videos`):** todos os campos do Data Model; os enums `VideoStatus` (`videos_status_enum`, padrão `draft`) e `VideoPendingJobAction` (`videos_pending_job_action_enum`, sem `retry`); o check `CHK_videos_size_bytes_positive`; e os índices `IDX_videos_channel_id`, `IDX_videos_status_processing_started_at` e o parcial `IDX_videos_pending_job_expires_at` (`WHERE pending_job_action IS NOT NULL`).
+      - **Relações:** `channel` (ManyToOne, `ON DELETE RESTRICT`); `upload_sessions` (OneToMany); `current_upload_session` (ManyToOne opcional, `ON DELETE SET NULL`).
+    - **`upload-session.entity.ts` (`upload_sessions`):** enum `UploadSessionStatus` (`upload_sessions_status_enum`, padrão `initiating`), `object_key` único, `checksum_algorithm` com padrão `SHA256`, os índices de varredura e o índice único parcial `UQ_upload_sessions_video_id_active` (`WHERE status = 'active'`).
+      - **Relações:** `video` (ManyToOne, `ON DELETE CASCADE`) e `parts` (OneToMany).
+    - **`upload-part.entity.ts` (`upload_parts`):** a restrição única `UQ_upload_parts_session_part_number`, o check `CHK_upload_parts_part_number_min` (`part_number >= 1`) e `upload_session` (ManyToOne, `ON DELETE CASCADE`).
+    - **`Channel`:** ganhou só o lado inverso `videos` (OneToMany), sem mudança na tabela `channels`.
+    - **`src/database/bigint-number.transformer.ts`:** lê o `bigint`, que o `pg` devolve como string, como `number`. Um valor fora de `Number.MAX_SAFE_INTEGER` lança `RangeError` em vez de arredondar. É usado em `videos.size_bytes` e `upload_sessions.size_bytes`.
+  - **Escolhas desta SI, para a revisão:**
+    - **PK de `upload_sessions` sem default no banco (`@PrimaryColumn`):** o Data Model diz que o id é gerado no servidor no T1 de P1, porque a `object_key` (`originals/{videoId}/{sessionId}`) vai no mesmo `INSERT`. Sem default, uma sessão sem id explícito é recusada (`23502`), e isso tem teste. `videos` e `upload_parts` mantêm `uuid_generate_v4()`, como o Data Model pede.
+    - **`checksum_sha256` com `update: false`:** é a forma de "imutável depois de gravado" no ORM; o `save()` não reescreve o valor, e isso tem teste. Um `UPDATE` explícito ainda pode alterá-lo; a regra de recusa (`UPLOAD_FILE_MISMATCH`) é do service (SI-03.13).
+    - **`duration_seconds` como `string | null`:** o `numeric(12,3)` vem do `pg` como string, e o plano pede transformer só para `bigint`. A conversão para o `durationSeconds: number` do contrato fica no mapeamento da resposta (SI-03.19).
+    - **Nomes explícitos:** checks, índices e a restrição única composta têm nomes legíveis, usados nos testes. PK, FKs e os `unique` de coluna única seguem os nomes gerados pelo TypeORM, como nas migrations anteriores.
+    - **`claim_token` e `pending_job_token` sem `select: false`:** são tokens de fencing internos, lidos pelos protocolos P1 a P5, e não credenciais.
+    - **`updated_at`:** é `@UpdateDateColumn`, atualizado pelo `save()` e pelo `update` do QueryBuilder. Um `UPDATE` em SQL puro nas SIs seguintes precisa gravá-lo explicitamente.
+  - **Migration `src/database/migrations/1795372377927-CreateVideosAndUploadSessions.ts`:**
+    - gerada por `npm run migration:generate -- src/database/migrations/CreateVideosAndUploadSessions`, com o banco nas duas migrations anteriores. Depois, só `prettier --write`, porque o CLI usa aspas duplas e indentação de 4, como já acontecia nas migrations anteriores. O SQL não foi editado, e as migrations existentes não mudaram;
+    - **SQL conferido:** os 3 enums; os 2 checks; as 4 FKs, incluindo a circular (`upload_sessions.video_id → videos` `CASCADE` e `videos.current_upload_session_id → upload_sessions` `SET NULL`), criadas depois das 3 tabelas; o índice único parcial e o parcial de `pending_job_expires_at`; e `timestamptz` em todas as datas das novas tabelas;
+    - **`down()`:** remove as FKs, os índices, as tabelas e os enums em ordem inversa;
+    - **coerência com as entidades:** um segundo `migration:generate` depois do `migration:run` respondeu "No changes in database schema were found" (código 1, esperado, sem arquivo criado);
+    - como as anteriores, a saída do CLI não tem guardas `IF NOT EXISTS`.
+  - **Helpers de teste:**
+    - **`cleanAllTables`:** apaga `upload_parts`, `upload_sessions` e `videos` antes das tabelas existentes, porque `videos.channel_id` é `RESTRICT`.
+    - **`migrations.integration-spec.ts`:** `MANAGED_TABLES` com as 3 tabelas novas, drop dos 3 enums novos e da `verification_tokens_type_enum`, a migration nova na lista, e o `afterAll` reaplica as migrations e limpa os dados semeados.
+    - **Novos em `src/test/`:**
+      - `video-entity-fixtures.ts`: canal de teste e builders de vídeo, sessão (id e chave gerados antes do `INSERT`) e parte. O tamanho de parte vem do `VIDEO_DEFAULTS`;
+      - `query-error.ts` (`captureQueryError`): devolve `code`, `constraint`, `detail`, `table` e `column` do erro do Postgres, para os testes afirmarem qual restrição recusou a escrita.
+    - **Registros de entidades das specs existentes:** as 10 specs que montam um `DataSource` com `ALL_ENTITIES` ganharam `Video`, `UploadSession` e `UploadPart`. Sem isso, a relação `Channel.videos` quebra a construção dos metadados: `auth.module.spec`, `auth.service.integration-spec`, `refresh-token.entity.integration-spec`, `verification-token.entity.integration-spec`, `channels.module.spec`, `channels.service.integration-spec`, `channel.entity.integration-spec`, `users.module.spec`, `users.service.integration-spec` e `user.entity.integration-spec`.
+  - **Antecipação de parte da SI-03.11 (decisão do usuário em 2026-11-22):**
+    - **Motivo:** com `autoLoadEntities: true`, o TypeORM só conhece as entidades registradas por `forFeature`. Com o `Channel.videos` e sem módulo que registrasse `Video`, a aplicação não iniciava: `TypeORMError: Entity metadata for Channel#videos was not found`. Isso quebrava o servidor, os e2e (`app.e2e-spec` falhou na sondagem) e a exportação OpenAPI.
+    - **Antecipado só o mínimo:** `src/videos/videos.module.ts`, só com `TypeOrmModule.forFeature([Video, UploadSession, UploadPart])`; a importação do `VideosModule` no `AppModule`; e o teste de compilação `src/videos/videos.module.spec.ts`.
+    - **Continua na SI-03.11:** `StorageModule`, `BullModule.registerQueue`, `BullModule.forRootAsync` no `AppModule`, serviços, throttling e helpers. O módulo existente será complementado, e a spec de compilação, ampliada.
+  - **Critérios de aceite:**
+    - **`public_id` repetido:** o segundo `INSERT` é recusado com `23505` na chave `(public_id)`;
+    - **sessões `active`:** uma segunda sessão `active` do mesmo vídeo é recusada com `23505` em `UQ_upload_sessions_video_id_active`, tanto no `INSERT` quanto ao ativar por `UPDATE`. Uma `aborted` e uma `active` convivem, e 6 sessões com uma só `active` também;
+    - **vídeo recém-criado:** `status = 'draft'`, com `processing_run`, `processing_dispatch` e `processing_recoveries` em 0, lidos de volta do banco;
+    - **`size_bytes = 10000000000`:** lido como o número exato `10000000000`, inteiro seguro, e guardado como `'10000000000'` no banco;
+    - **reversão:** pela spec, a reversão remove as 3 tabelas e os 3 enums da fase e mantém `users`, `channels`, `refresh_tokens`, `verification_tokens`, a `verification_tokens_type_enum` e as linhas de usuário e canal. Pelo CLI (`npm run migration:revert`, código 0), o banco ficou com as 4 tabelas anteriores e só a `verification_tokens_type_enum`.
+  - **Outros comportamentos verificados:** check de `size_bytes` (0 e -1, `23514`); FK de canal inexistente e `RESTRICT` ao apagar canal com vídeos (`23503`); `channel.videos` carregado pela relação inversa; `object_key` único; FKs circulares (ponteiro para sessão inexistente e sessão de vídeo inexistente, `23503`; `SET NULL` ao apagar a sessão vigente; `CASCADE` de sessões e partes ao apagar o vídeo, inclusive com a sessão vigente); `part_number` repetido na mesma sessão (`23505`) e permitido em outra; check de `part_number` (0 e -1, `23514`); `CASCADE` das partes ao apagar a sessão; e o checksum preservado com o ETag atualizado pelo `save()`.
+  - **Migrations no ambiente de testes:**
+    - **pela spec, sobre o banco limpo (tabelas, `migrations` e enums removidos no `beforeAll`):** sobem as 3 migrations; as FKs têm as regras esperadas, conferidas no `information_schema`; os índices parciais estão no `pg_indexes`; a fase reverte; a fase reaplica, com 1 migration executada; e a reversão desce até a primeira migration;
+    - **pelo CLI:** `migration:revert` e `migration:run`, ambos com código 0;
+    - **estado final restaurado:** as 3 migrations aplicadas (`CreateUsersAndChannels1775687773260`, `CreateAuthTokens1777579850478` e `CreateVideosAndUploadSessions1795372377927`), as 7 tabelas e os 4 enums, com as tabelas vazias.
+  - **Primeira execução das specs da SI:** 35 de 35 testes passaram. O ESLint apontou depois 13 erros nos arquivos novos, todos corrigidos sem `--fix`:
+    - formatação em 3 arquivos, corrigida com `prettier --write`;
+    - `no-unsafe-assignment` nos `expect.stringContaining`, trocados pelo `captureQueryError`;
+    - `no-unsafe-return` no transformer, tipado com `satisfies ValueTransformer` em vez da anotação com `any`.
+  - **Verificações executadas, todas no container `nestjs-api`:**
+    - `npx jest --runInBand --verbose src/videos src/database`: 6 suítes e 36 testes, código 0;
+    - `npm test -- --runInBand`: 35 suítes e 307 testes, código 0. Antes eram 30 e 273;
+    - `npm run test:e2e`: 3 suítes e 52 testes, código 0. Antes do `VideosModule`, o `app.e2e-spec` falhava com o erro de metadados;
+    - **exportação OpenAPI:** `exportSpec('/tmp/openapi-si0310.json')` por `ts-node`, código 0. O arquivo gerado é idêntico ao `openapi.json` commitado (`diff -q`, código 0) e foi removido. A `openapi-export.integration-spec` também passou na suíte;
+    - **inicialização da aplicação, sem servidor:** `NestFactory.create(AppModule)` mais `app.init()` sobre o `dist/`, código 0. Os metadados têm as 7 tabelas, e `Channel.videos` aponta para `videos`;
+    - `npx tsc --noEmit`: código 0;
+    - `npm run build`: código 0, com as entidades, o módulo, o transformer e a migration em `dist/` e nenhuma spec;
+    - `npx eslint`, sem `--fix`, nos 27 arquivos novos ou alterados e em `"{src,apps,libs,test}/**/*.ts"` mais `proofs/phase-03/**/*.ts`: código 0;
+    - `prettier --check` nos 27 arquivos: código 0;
+    - `npm run lint` não foi executado, porque aplica `--fix`.
+  - **Pertence às próximas etapas, não verificado aqui:**
+    - geração do `public_id` e retentativa em colisão (SI-03.11);
+    - bloqueio da linha do vídeo e transições condicionais de P1 a P5 (SI-03.11 a SI-03.25);
+    - `content_type` limitado a `video/mp4` e `video/webm`, tamanho até `VIDEO_MAX_SIZE_BYTES` e `part_number ≤ part_count` (services das SIs 03.12 e 03.13);
+    - uso real dos índices de varredura e reconciliação (SI-03.24 e SI-03.25).
+  - **Fora do escopo, só registrado:** as specs de entidade usam o `synchronize: true` padrão do `createTestDataSource`, como as anteriores. O segundo `migration:generate` sem mudanças mostra que o schema delas é o mesmo da migration.
+  - **Documentos:** o plano e o documento de decisões não mudaram, então os `sources_mtime` e os `Last sync` dos specs não precisaram de sincronização. Nenhum dos 10 specs cita entidades, migrations ou `bigint`.
+
+### SI-03.11 — Base do módulo de vídeos: exceções, publicId, bloqueio e dispatch de jobs
+- **Status:** completed (2026-11-22). A revisão de 2026-11-22 aprovou a SI, incluindo as escolhas documentadas (nome `VideoJobDispatcherService`, prefixo Redis isolado na spec do dispatcher, `withLockedVideo` com `Video | null`, espera padrão dos helpers de fila e ausência de testes para exceções e limites).
+- **Tests:**
+  - **Previstos pela SI:**
+    - `src/videos/public-id.spec.ts`: unitário, 7 testes;
+    - `src/videos/video-lock.service.integration-spec.ts`: Postgres real, 4 testes;
+    - `src/videos/jobs/video-job-dispatcher.service.integration-spec.ts`: Redis e Postgres reais, 9 testes;
+    - `src/videos/videos.module.spec.ts`: compilação, ampliada; continua com 1 teste.
+  - **Acrescentados:**
+    - `src/videos/jobs/video-job-id.spec.ts`: unitário, 15 testes, para a montagem e a leitura do `jobId`, que são lógica pura com ramificações;
+    - `src/videos/public-id.integration-spec.ts`: Postgres real, 1 teste, para a retentativa dentro de uma transação real, que depende de SAVEPOINT (`typeorm-queries`).
+- **Observations:**
+  - **Parte antecipada na SI-03.10 (2026-11-22):** o `VideosModule` mínimo, o import no `AppModule` e a spec de compilação já existiam. Esta SI complementou o módulo e ampliou a spec, sem recriá-los.
+  - **Arquivos novos em `src/videos/`:**
+    - **`exceptions/video.exceptions.ts`:** uma subclasse de `DomainException` para cada código HTTP do Error Catalog, 18 no total. Os 404 (`CHANNEL_NOT_FOUND`, `VIDEO_NOT_FOUND`, `UPLOAD_SESSION_NOT_FOUND`), o 413 com o limite em bytes na mensagem, o 415, os 10 de 409, o 410 e os 2 de 400. O `STORAGE_UNAVAILABLE` (503) continua sendo a `StorageUnavailableException` da SI-03.9, reutilizada e não redefinida. As constantes dos códigos persistidos ficam em `VIDEO_ERROR_CODES`, com o tipo `VideoErrorCode`.
+    - **`public-id.ts`:**
+      - `generatePublicId`: 8 bytes de `node:crypto` em base64url, 11 caracteres;
+      - `PUBLIC_ID.PATTERN`, para a validação de path das rotas;
+      - `isPublicIdCollision`: só `23505` na restrição de `videos.public_id`. O nome da restrição vem do `DefaultNamingStrategy` do TypeORM e é o mesmo `UQ_39a1f0fe7991162aace659078ec` da migration da SI-03.10;
+      - `withPublicIdRetry`: gera um novo `publicId` a cada colisão, até 5 tentativas, sem erro para o chamador. Outros erros, ou a colisão na última tentativa, sobem sem mudança. Com o `manager` de uma transação ativa, cada tentativa roda num SAVEPOINT, porque o Postgres aborta a transação depois de um comando com falha.
+    - **`video-lock.service.ts` (`VideoLockService.withLockedVideo`):**
+      - transação curta com `SELECT … FROM videos WHERE id = :id FOR UPDATE` (`lock: pessimistic_write`), que entrega `Video | null` e o `EntityManager` ao trabalho;
+      - commit quando o trabalho termina e rollback quando ele lança;
+      - o serviço não depende do storage, e o JSDoc fixa a regra de que o trabalho não chama o storage (G-01).
+    - **`jobs/video-job-id.ts`:** `buildVideoJobId` monta `video-{videoId}-{run}-{dispatch}`, sem `:`, e recusa UUID inválido e `run` ou `dispatch` que não sejam inteiros positivos. `parseVideoJobId` é o inverso e devolve `null` para qualquer id que a montagem não produziria, inclusive os jobs de Job Scheduler.
+    - **`jobs/video-job-dispatcher.service.ts` (`VideoJobDispatcherService`):**
+      - **`publish` (R2):** `add('process-video', { videoId, run }, …)`, com a geração recebida da ação, `attempts` e `backoff` exponencial do namespace `queue`, e `removeOnComplete: false` e `removeOnFail: false`. Depois do `add`, relê o job pela fila (`getJob` e `getState`) e devolve só a versão gravada, com dados, estado, `attemptsStarted` e opções, ou `stored: null` se o job não existir mais.
+      - **`confirm` (R3):** limpa os quatro campos `pending_job_*` só com `pending_job_token` e `pending_job_dispatch` iguais. Devolve `true` com uma linha afetada e `false` com zero, que é um desfecho previsto.
+    - **`videos.constants.ts`:** as filas `video-processing` e `video-maintenance` e o nome do job `process-video`.
+    - **`videos-throttle.ts` (`VIDEOS_THROTTLE`):** o limite de cada uma das 10 rotas de "API Contracts", com a chave `default` do throttler global, para `@Throttle(VIDEOS_THROTTLE.<ROTA>)` nas SIs das rotas.
+  - **Módulo e aplicação:**
+    - **`videos.module.ts`:** `TypeOrmModule.forFeature`, `StorageModule` e `BullModule.registerQueue({ name: 'video-processing' })`. Provê e exporta `VideoLockService` e `VideoJobDispatcherService`, e também exporta o `TypeOrmModule`, para o `WorkerModule` da SI-03.20, que importa este módulo.
+    - **`app.module.ts`:** `BullModule.forRootAsync` registrado uma única vez, com `connection: { host, port }` do namespace `queue` (`REDIS_HOST=redis`).
+    - **`src/test/storage.ts`:** `listUploadsUnder` e `listKeysUnder` passaram a ser exportados, sem mudança de comportamento, para os fixtures reutilizarem a listagem com o filtro do achado (1) da SI-03.9.
+  - **Helpers dos E2E da fase (`test/helpers/`):**
+    - **`queues.ts` (`VideoQueuesControl`):** usa conexões próprias com o Redis do `.env`, sem depender da aplicação testada. Os métodos e onde cada um entra:
+      - `pauseAll()`, no `beforeAll`: pausa globalmente as duas filas e espera `getActiveCount()` chegar a 0 em cada uma;
+      - `prepareScenario()`, antes de cada cenário: garante as duas filas pausadas e ociosas e limpa só a `video-processing` (`drain(true)` e `clean(0, 1000, …)` de `completed` e `failed`, repetidos enquanto voltarem 1000). A `video-maintenance` nunca é limpa;
+      - `resumeProcessing()`: retoma só a `video-processing`;
+      - `restore()`, no `afterAll`: pausa, espera, limpa a `video-processing`, retoma as duas filas e fecha as conexões, mesmo se a limpeza falhar.
+      - A espera padrão é de 3 × `VIDEO_PROCESSING_TIMEOUT_MS` (180 s), então as suítes que usarem o helper precisam de timeout do Jest compatível. O JSDoc registra que uma execução interrompida deixa as filas pausadas.
+    - **`video-fixtures.ts`:** grava estados consistentes com o Data Model, com o cliente S3 interno quando o estado exige.
+      - `seedDraftVideo` e `seedUploadSession`: vídeo `draft`, com ou sem sessão vigente, em qualquer estado. Sessões em `initiating`, `completing` e `aborting` recebem claim; `initiating` expira junto com o claim; `active`, `completing` e `aborting` recebem um multipart real com SHA-256. Também aceitam `fileMismatchAt`.
+      - `seedUploadParts`: registra as partes com o `expected_size` do plano e, com bytes, envia a parte ao multipart e registra o ETag devolvido.
+      - `seedProcessingVideo`: o estado da finalização de P2, com o original concluído por multipart real em `original_key` e a parte registrada. `seedReadyVideo` acrescenta a thumbnail em `thumbnails/{videoId}/{attemptId}.jpg`, a tentativa vigente com cerca (1, 1) e os metadados por tipo; `seedErrorVideo` acrescenta o `error_code`.
+      - `removeVideoStorage`: aborta os multiparts e apaga os objetos de `originals/{videoId}/` e `thumbnails/{videoId}/`.
+  - **Pontos preservados:**
+    - **(1) bloqueio curto, sem storage:** o `VideoLockService` só recebe o `DataSource`;
+    - **(2) geração da ação:** o `publish` usa a geração recebida, e o `confirm` é condicionado ao token e à geração;
+    - **(3) retenção:** `removeOnComplete` e `removeOnFail` desligados, conferidos no job gravado;
+    - **(4) releitura depois do `add`:** o resultado do `publish` vem sempre do `getJob`. A spec mostra a diferença: o `add` duplicado devolve `attempts: 9`, os da chamada, enquanto o `publish` devolve `attempts: 1`, os gravados;
+    - **(5) filas dos E2E:** a `video-maintenance` só é pausada e retomada, e as duas filas terminam retomadas.
+  - **Critérios de aceite:**
+    - **`publicId`:** 200 ids gerados casam com `^[A-Za-z0-9_-]{11}$`, decodificam para 8 bytes e são distintos. Uma colisão forçada leva a nova tentativa sem erro para o chamador, no unitário e numa transação real do Postgres, com uma colisão de verdade e a transação usável depois;
+    - **bloqueio:** a segunda transação fica bloqueada no Postgres (`pg_blocking_pids`) enquanto a primeira segura a linha. Só depois do commit da primeira ela obtém a linha e já lê a escrita da primeira (`processing_run = 1`). Ordem dos eventos: `first:locked`, `first:committing` e `second:locked`;
+    - **dois `add` da geração 1:** um único job `video-{videoId}-1-1` na `video-processing`;
+    - **retenção:** o job gravado tem `removeOnComplete: false` e `removeOnFail: false`;
+    - **`jobId` lido de volta:** `parseVideoJobId(job.id)` devolve o mesmo `videoId`, `run` e `dispatch` da montagem.
+  - **Outros comportamentos verificados:**
+    - a geração 2 cria outro job, e os dois ficam retidos;
+    - R3 com token errado, com geração errada ou repetido depois da confirmação afeta zero linhas, e os campos pendentes continuam intactos;
+    - bloqueios de vídeos diferentes não se esperam;
+    - o rollback desfaz a escrita e libera a linha;
+    - vídeo inexistente entrega `null` ao trabalho;
+    - sem retentativa para outros erros ou outra restrição única, e a colisão sobe depois da última tentativa;
+    - SAVEPOINT, ROLLBACK TO e RELEASE só dentro de transação.
+  - **Primeira execução das specs da SI:** as 4 da `video-lock` falharam por timeout. A espera pelo bloqueio procurava `FOR UPDATE` em `pg_stat_activity.query`, que o Postgres trunca em 1024 bytes, e o SELECT do TypeORM, com todas as colunas, passa disso. Os testes seguintes travaram no lock que ficou aberto.
+    - **Correção:** a detecção passou a usar `pg_blocking_pids`, e os testes liberam a primeira transação num `finally`.
+    - **O teste detecta a falta do bloqueio:** sem o `lock: pessimistic_write` no serviço, o teste de serialização falha com "No transaction was blocked on the video lock"; com o lock restaurado, passa.
+  - **Verificação dos helpers E2E, com Redis, Postgres e storage reais:** foi feita com uma spec temporária, rodada pelo config dos E2E, que nenhum E2E da fase usa ainda. A spec foi removida depois da execução, com código 0.
+    - **Filas:**
+      - depois do `pauseAll`, as duas filas ficaram pausadas, com 0 ativos;
+      - o `prepareScenario` removeu um job `waiting` e um `delayed` da `video-processing`, e a contagem de todos os estados foi a 0. O marcador da `video-maintenance` continuou `waiting`;
+      - o `resumeProcessing` retomou só a `video-processing`;
+      - o `restore` deixou as duas filas retomadas, a `video-processing` vazia e o marcador intacto, removido depois pela própria verificação.
+    - **Fixtures:**
+      - os estados `draft` sem sessão, `initiating`, `active`, `completing`, `aborting` e `aborted` foram gravados com 10.000.000.000 bytes (150 partes), com claims e `upload_id` conforme o estado;
+      - uma parte enviada teve ETag, checksum e tamanho iguais aos do `ListParts`;
+      - em `processing`: run 1, geração 1, original de 8192 bytes no `HeadObject` em `original_key` e a sessão `completed` com a parte registrada;
+      - em `ready`: thumbnail `image/jpeg` na chave da tentativa e cerca (1, 1); em `error`: `MEDIA_INVALID`;
+      - o `removeVideoStorage` deixou 0 objetos e 0 multiparts nos prefixos dos 10 vídeos.
+    - **Estado restaurado:**
+      - **Redis:** a verificação criou chaves auxiliares das filas reais (`events`, `id` e `marker`, e o `meta` da `video-maintenance`), que foram removidas. Ficou só `bull:video-processing:meta`, como antes, sem `paused`;
+      - **storage:** 0 objetos e 0 multiparts no bucket;
+      - **banco:** sem vídeos, sessões ou usuários.
+  - **Escolhas desta SI, para a revisão:**
+    - **Nome `VideoJobDispatcherService`:** o plano e os specs chamam o artefato de `VideoJobDispatcher`. A classe segue a convenção do projeto para `*.service.ts` (`nestjs-common-conventions`), com métodos `publish` (R2) e `confirm` (R3).
+    - **Prefixo Redis isolado na spec do dispatcher:** a fila é a `video-processing` real, mas num keyspace próprio (`test-dispatcher-<pid>`), apagado no início de cada teste e no fim. Assim, um `video-worker` do ambiente, a partir da SI-03.20, não consome esses jobs.
+    - **`withLockedVideo` entrega `Video | null`:** cada chamador decide o que a ausência significa: 404 nas rotas, ou pular na varredura.
+    - **Sem testes das classes de exceção e do `VIDEOS_THROTTLE`:** são dados, e um teste deles só repetiria os valores. O mapeamento HTTP já é coberto pelo `DomainExceptionFilter`, e os limites entram nos E2E das rotas.
+  - **Verificações executadas, todas no container `nestjs-api`:**
+    - `npx jest --runInBand --verbose src/videos`: 9 suítes e 63 testes, código 0;
+    - `npm test -- --runInBand`: 40 suítes e 343 testes, código 0. Antes eram 35 e 307;
+    - `npm run test:e2e`: 3 suítes e 52 testes, código 0, agora com a aplicação conectada ao Redis pelo `BullModule`;
+    - **inicialização a partir do `dist/`, sem servidor:** `NestFactory.create(AppModule)` mais `app.init()`, código 0, com a fila `video-processing` pronta e não pausada, os dois serviços resolvidos e o `app.close()` concluído;
+    - **exportação OpenAPI:** `exportSpec('/tmp/openapi-si0311.json')`, código 0. O arquivo é idêntico ao `openapi.json` commitado e foi removido;
+    - `npx tsc --noEmit`: código 0;
+    - `npm run build`: código 0, com os novos arquivos em `dist/videos/`, nenhuma spec e nada de `test/helpers`;
+    - `npx eslint`, sem `--fix`, nos 18 arquivos novos ou alterados e em `"{src,apps,libs,test}/**/*.ts"` mais `proofs/phase-03/**/*.ts`: código 0. A primeira passada apontou só formatação em `public-id.spec.ts`, corrigida com `prettier --write` nele;
+    - `prettier --check` nos 18 arquivos: código 0;
+    - `npm run lint` não foi executado, porque aplica `--fix`.
+  - **Pertence às próximas etapas, não verificado aqui:**
+    - uso das exceções, do `withPublicIdRetry`, do `withLockedVideo` e do `VIDEOS_THROTTLE` pelas rotas (SI-03.12 a SI-03.19, SI-03.27 e SI-03.28);
+    - R2 e R3 depois do T2 de P2 (SI-03.16) e na reconciliação (SI-03.25), com as tabelas de evidência de P5;
+    - uso dos helpers pelos E2E das rotas, com o `video-worker` real a partir da SI-03.20;
+    - **`add` com o Redis indisponível:** o `BullModule` usa as opções padrão de conexão do BullMQ, sem ajuste nesta SI. Quanto tempo o `add` leva para falhar quando o Redis cai não foi medido; o cenário de publicação recusada da SI-03.16 vai exercitar esse caminho;
+    - o `WorkerModule`, com o próprio `BullModule.forRootAsync` e a `video-maintenance` (SI-03.20 e SI-03.23).
+  - **Documentos:** o plano e o documento de decisões não mudaram, então os `sources_mtime` e os `Last sync` dos specs não precisaram de sincronização. Os specs citam `test/helpers/queues.ts`, `test/helpers/video-fixtures.ts` e o `VideoJobDispatcher`; os estados que eles pedem aos fixtures estão cobertos.
+
+### SI-03.12 — Endpoint POST /videos
+- **Status:** completed (2026-11-22). A revisão de 2026-11-22 aprovou a SI, incluindo as escolhas documentadas (`UploadSessionsRepository`, `ChannelsService.findByUserId`, prazos pelo relógio do banco, `contentType` em minúsculas, erro não transitório com 500 e falha da compensação só no log). A pendência do export OpenAPI continua na SI-03.29.
+- **Tests:**
+  - **Previstos pela SI e pelo spec `specs/videos-create.plan.md`:**
+    - `src/videos/upload-sessions.service.spec.ts`: unitário, 15 testes, com storage, repositório, canais e configuração mockados;
+    - `src/videos/upload-sessions.create.integration-spec.ts`: Postgres e storage reais, 5 testes;
+    - `test/videos-create.e2e-spec.ts`: os 6 cenários do spec (1.1 a 1.4, 2.1 e 2.2), com Postgres, storage e Redis reais.
+  - **Acrescentados ou ampliados:**
+    - `src/videos/upload-plan.spec.ts`: unitário, 8 testes;
+    - `src/channels/channels.service.integration-spec.ts`: mais 2 testes para `findByUserId`;
+    - `src/videos/videos.module.spec.ts`: a compilação passa a resolver também o service e o controller; continua com 1 teste.
+- **Observations:**
+  - **Arquivos novos em `src/videos/`:**
+    - **`dto/upload-declaration.dto.ts` (`UploadDeclarationDto`):** só validação estrutural:
+      - `fileName` de 1 a 255 caracteres, sem `/`, `\` nem caracteres de controle (`\p{Cc}`);
+      - `sizeBytes` inteiro entre 1 e `Number.MAX_SAFE_INTEGER`, sem `@Max` de domínio;
+      - `contentType` `tipo/subtipo` com os caracteres da RFC 6838, até 100, sem `@IsIn`.
+
+      O DTO vai ser reutilizado pelo reinício da SI-03.18.
+    - **`dto/video-upload-session-response.dto.ts`:** `VideoUploadSessionResponseDto` (`publicId`, `status: draft` e `uploadSession`) e `StartedUploadSessionDto` (`id`, `status: active`, `partSize`, `partCount`, `checksumAlgorithm: SHA256` e `expiresAt`), com `@ApiProperty` em todos os campos. O mesmo formato serve à SI-03.18.
+    - **`upload-plan.ts` (`planUpload`):** `part_count = ceil(size_bytes / part_size)`, que dá 150 partes para 10.000.000.000 bytes.
+    - **`storage-keys.ts` (`originalObjectKey`):** `originals/{videoId}/{sessionId}`.
+    - **`upload-sessions.repository.ts` (`UploadSessionsRepository`):** as transições de P1 no banco, cada uma numa transação curta ou num comando condicional, e nenhuma com chamada ao storage:
+      - **`recordCreationIntent` (T1):** numa transação, o vídeo em `draft` (com `withPublicIdRetry` e SAVEPOINT), a sessão `initiating` com `id` e `object_key` gerados antes do `INSERT`, `claim_token` e `claim_expires_at = now() + UPLOAD_SESSION_CLAIM_TTL_SECONDS`, e o ponteiro do vídeo para ela. O `expires_at` acompanha o claim enquanto a sessão está em `initiating`;
+      - **`activateSession` (T2):** `UPDATE … SET status = 'active', upload_id, expires_at = now() + UPLOAD_SESSION_TTL, claim_token = NULL, claim_expires_at = NULL WHERE id AND status = 'initiating' AND claim_token = :token RETURNING expires_at`. Devolve `null` quando nenhuma linha é afetada;
+      - **`compensateCreation`:** com o vídeo bloqueado (`VideoLockService`), apaga a sessão só enquanto ela ainda está em `initiating` com o mesmo token e, então, o vídeo em `draft`. Devolve `false`, sem apagar nada, se outro processo assumiu a sessão.
+    - **`upload-sessions.service.ts` (`UploadSessionsService.createVideoWithSession`):**
+      - as regras de domínio vêm antes de qualquer acesso: 413 com o limite em bytes na mensagem, depois 415;
+      - o canal vem do `sub` (`ChannelsService.findByUserId`), e sem ele a resposta é `CHANNEL_NOT_FOUND`;
+      - depois: T1; `CreateMultipartUpload` com SHA-256 fora de qualquer transação; e T2;
+      - **recuperação:**
+        - falha do `CreateMultipartUpload`: compensação e o erro original relançado;
+        - T2 com zero linhas: aborta o próprio upload, mantém o rascunho sem compensação e responde `STORAGE_UNAVAILABLE`;
+        - falha do próprio T2: aborta o próprio upload e relança o erro.
+    - **`videos.controller.ts` (`VideosController`):** `POST /videos`, com `@HttpCode(201)`, `@Throttle(VIDEOS_THROTTLE.CREATE_VIDEO)` e `@ApiBearerAuth('access-token')`. A rota é protegida pelo guard JWT global, sem `@Public()`. Documentada com `@ApiOperation` e um `@ApiResponse` para cada status: 201 com o DTO e 400, 401, 404, 413, 415 e 503 com o `ApiErrorEnvelope`.
+  - **Arquivos alterados:**
+    - **`videos.module.ts`:** importa o `ChannelsModule`, registra o `VideosController`, o `UploadSessionsRepository` e o `UploadSessionsService`.
+    - **`videos.constants.ts`:** `ACCEPTED_VIDEO_CONTENT_TYPES` (`video/mp4` e `video/webm`) e `UPLOAD_CHECKSUM_ALGORITHM`.
+    - **`src/channels/channels.service.ts`:** `findByUserId`. A leitura do canal fica no módulo dono da entidade (`CLAUDE.md`, Single Responsibility).
+    - **`src/test/storage.ts`:** `realCreateMultipartUpload`, que chama a implementação real pelo protótipo quando o método da instância está espionado. Ele existe porque, com `strictBindCallApply: false` no `tsconfig`, o `.bind` devolve `any`, e o ESLint recusou a chamada.
+    - **`test/helpers/response-bodies.ts`:** o acessor `videoUploadSessionBody`.
+    - **Novo `test/helpers/auth.ts` (`registerConfirmedUser`):** registra, confirma e autentica pelos endpoints de auth, como o `auth.e2e-spec.ts`, e devolve o access token.
+  - **Pontos preservados:**
+    - **(1)** o 400 vem do DTO; o 413 e o 415 vêm do service, que os aplica antes do canal e de T1;
+    - **(2)** o canal sai do usuário autenticado (`@CurrentUser().sub`);
+    - **(3)** a intenção é gravada antes do storage, numa transação curta. A spec de integração mostra que, no momento do `CreateMultipartUpload`, outra conexão já vê a sessão `initiating`, com o claim de 300 s e `upload_id` nulo. Nenhuma chamada ao storage acontece dentro de transação ou de callback de bloqueio;
+    - **(4)** a ativação é condicionada ao token;
+    - **(5)** a compensação só apaga enquanto a sessão tem o mesmo token. Se a sessão foi assumida antes da falha, nada é apagado, e o vídeo fica em `draft` com a sessão `aborting`;
+    - **(6)** quando a ativação perde a posse, o próprio upload é abortado (0 uploads na chave), o rascunho fica em `draft` e a resposta é 503;
+    - **(7)** a resposta tem o `publicId` e o `id` da sessão, nunca o UUID do vídeo, como o E2E confere percorrendo o corpo;
+    - **(8)** no E2E, o `beforeAll` pausa as filas e espera os ativos. O `beforeEach` roda `prepareScenario` antes de apagar os objetos e as tabelas, e o `afterAll` restaura as filas num `finally`.
+  - **Critérios de aceite:**
+    - **criação de 10 GB:** `201` com `status: "draft"`, `publicId` de 11 caracteres base64url e `uploadSession` `active`, `partSize: 67108864`, `partCount: 150` e `checksumAlgorithm: "SHA256"`. O `expiresAt` cai 24 h depois da requisição, com tolerância de 5 s. O banco tem o vídeo no canal do usuário, apontando para a sessão `active`, com `object_key` `originals/{videoId}/{sessionId}` e `upload_id`, e o `ListMultipartUploads` acha exatamente um upload nessa chave;
+    - **`sizeBytes: 10000000001`:** `413` `VIDEO_TOO_LARGE`, com `10000000000` na mensagem, sem vídeo e sem `CreateMultipartUpload`;
+    - **tipos:** `video/quicktime` recebe `415` `UNSUPPORTED_VIDEO_TYPE`. `contentType: "abc"`, a falta de `sizeBytes` e `sizeBytes: 1.5` recebem `400` `VALIDATION_ERROR`, sem vídeo;
+    - **sem token:** `401`, sem vídeo;
+    - **falha do `CreateMultipartUpload`:** `503` `STORAGE_UNAVAILABLE`, com 0 vídeos e 0 sessões. Na integração, a falha é real: o cliente interno aponta para `http://storage:1`;
+    - **ativação que perde a posse:** `503` `STORAGE_UNAVAILABLE` e 0 uploads na chave da sessão. O vídeo continua em `draft`, apontando para a sessão `aborting` com o token simulado, e nenhuma sessão está `active` ou em `initiating` no prazo;
+    - **UUID interno:** nenhuma resposta o contém.
+  - **Escolhas desta SI, para a revisão:**
+    - **`UploadSessionsRepository`:** concentra o SQL das transições de P1, para a spec unitária mockar os repositórios, como a SI pede, enquanto a integração cobre o SQL real. As transições de P1 e P2 das próximas SIs entram nele.
+    - **Prazos pelo relógio do banco:** `now() + make_interval(secs => …)`, como os predicados da varredura (`claim_expires_at <= now()`). O `expiresAt` da resposta vem do `RETURNING` do T2.
+    - **`contentType`:** comparado sem diferenciar maiúsculas (os tipos MIME não diferenciam) e gravado em minúsculas, como `video/mp4` ou `video/webm`.
+    - **Erro não transitório do storage na criação (por exemplo, `AccessDenied`):** também há compensação, mas o erro original sobe sem mudança, então a resposta é 500. Pelo Error Catalog, o `STORAGE_UNAVAILABLE` é só para falha transitória, como na SI-03.9.
+    - **Falha da própria compensação:** é registrada no log e não substitui a falha do storage, que é a resposta. A sessão fica em `initiating` até o claim vencer e a varredura assumi-la.
+    - **Perda de posse:** responde com `StorageUnavailableException('ActivateUploadSession')`. O abort do próprio upload é uma tentativa única, sem garantia, como em P1: se ele falhar, a varredura ou a limpeza de P4 removem o upload.
+  - **Primeira execução:** as specs de integração e unitária passaram, 34 de 34, e o E2E também, 6 de 6.
+    - O ESLint apontou 15 erros: formatação em 3 arquivos, corrigida com `prettier --write`, e 9 do `.bind(storage)` tipado como `any`, corrigidos com o `realCreateMultipartUpload`.
+    - Depois das correções, as specs rodaram de novo e passaram.
+  - **Verificações executadas, todas no container `nestjs-api`:**
+    - `npx jest --runInBand --verbose src/videos/upload-sessions src/videos/upload-plan src/videos/videos.module src/channels/channels.service.integration-spec.ts`: 5 suítes e 34 testes, código 0;
+    - `npx jest --config ./test/jest-e2e.json --runInBand --verbose test/videos-create.e2e-spec.ts`: 1 suíte e 6 testes, código 0;
+    - `npm test -- --runInBand`: 43 suítes e 373 testes, código 0. Antes eram 40 e 343;
+    - `npm run test:e2e -- --runInBand`: 4 suítes e 58 testes, código 0. Antes eram 3 e 52;
+    - **inicialização a partir do `dist/`, sem servidor:** `NestFactory.create(AppModule)` mais `app.init()`, código 0, com o `VideosController` resolvido e o `app.close()` concluído;
+    - **exportação OpenAPI para um arquivo temporário** (`exportSpec`), código 0. O `POST /videos` tem tag `videos`, `security` `access-token`, as respostas 201, 400, 401, 404, 413, 415 e 503 (as de erro com `$ref` ao `ApiErrorEnvelope`) e o 201 com `$ref` ao `VideoUploadSessionResponseDto`. O arquivo temporário foi removido, e o `openapi.json` commitado não mudou, porque a regeneração é da SI-03.29;
+    - `npx tsc --noEmit`: código 0;
+    - `npm run build`: código 0, sem specs no `dist/`;
+    - `npx eslint`, sem `--fix`, nos 19 arquivos da SI e em `"{src,apps,libs,test}/**/*.ts"` mais `proofs/phase-03/**/*.ts`: código 0;
+    - `prettier --check` nos 19 arquivos: código 0;
+    - `npm run lint` não foi executado, porque aplica `--fix`.
+  - **Estado do ambiente depois das execuções:**
+    - storage com 0 objetos e 0 multiparts no bucket;
+    - banco sem vídeos, sessões ou usuários;
+    - as duas filas sem `paused`. No Redis ficam só `meta` e `events` das duas filas, criados pela pausa e pela retomada dos helpers e que voltam a cada execução dos E2E.
+  - **Achado para a SI-03.29, fora do escopo:** o `npm run openapi:export` roda por `ts-node`, sem o plugin do `@nestjs/swagger`.
+    - Por isso, os DTOs de entrada saem sem propriedades no documento exportado: o `UploadDeclarationDto` e também o `RegisterDto`, já no `openapi.json` commitado.
+    - Pelo `dist/`, onde o plugin roda no `nest build`, o `UploadDeclarationDto` sai completo, com descrições, limites e `required`. O `sizeBytes` sai como `number`, e não `integer`, porque o plugin não distingue `@IsInt`.
+    - A SI-03.29 precisa regenerar o contrato por um caminho que aplique o plugin.
+  - **Pertence às próximas etapas, não verificado aqui:**
+    - o reinício (P1 com sessão anterior), que reutiliza o DTO, a resposta e o repositório (SI-03.18);
+    - a varredura real que assume a sessão `initiating` vencida, aqui simulada no banco (SI-03.24);
+    - o 429 do `@Throttle` da rota, que o spec não prevê;
+    - a assinatura das partes (SI-03.13).
+  - **Documentos:** o plano e o documento de decisões não mudaram, então os `sources_mtime` e os `Last sync` dos specs não precisaram de sincronização. O E2E segue os passos e os nomes dos cenários de `specs/videos-create.plan.md`.
+
+### SI-03.13 — Endpoint POST part-urls (assinatura e registro em lote)
+- **Status:** completed (2026-11-22). A primeira revisão de 2026-11-22 encontrou uma falha de validação, já corrigida (ver "Correção da revisão"). A revisão da correção, em 2026-11-22, aprovou a SI. A pendência do export OpenAPI continua na SI-03.29.
+- **Tests:**
+  - **Previstos pela SI e pelo spec `specs/videos-upload-part-urls.plan.md`:**
+    - `src/videos/upload-parts.service.spec.ts`: unitário, 16 testes, com a sessão, os repositórios, o storage e a configuração mockados;
+    - `src/videos/upload-parts.sign.integration-spec.ts`: Postgres e storage reais, 6 testes;
+    - `test/videos-upload-part-urls.e2e-spec.ts`: os 6 cenários do spec (1.1, 1.2, 2.1, 2.2, 2.3 e 3.1), com Postgres, storage e Redis reais.
+    - **Regressão da revisão**, no mesmo arquivo: 6 testes de itens que não são objetos e de um pedido válido depois deles, fora do spec.
+  - **Acrescentados:**
+    - `src/videos/upload-plan.spec.ts`: mais 6 testes para `expectedPartSize`, agora 14;
+    - `src/videos/upload-sessions.service.spec.ts`: mais 5 testes para `getOwnedSession`, agora 20. O `describe` de topo passou a se chamar `UploadSessionsService`.
+- **Observations:**
+  - **Arquivos novos em `src/videos/`:**
+    - **`dto/part-urls.dto.ts`:**
+      - `PartToSignDto`: `partNumber` inteiro ≥ 1, com o teto `partCount` verificado no service, e `checksumSha256` com o regex `^[A-Za-z0-9+/]{43}=$`;
+      - `CompletedPartDto`: `partNumber` inteiro ≥ 1 e `etag` de 1 a 255 caracteres;
+      - `PartUrlsRequestDto`: `parts` com até 50 itens e `completedParts` com até 150, com validação aninhada. Um validador próprio exige que pelo menos um dos dois arrays tenha itens; ele também roda quando os dois faltam, por um `@ValidateIf` em `parts`.
+    - **`dto/part-urls-response.dto.ts`:** `PartUrlsResponseDto` (`parts` e `registeredParts`), `SignedPartDto` (`partNumber`, `url`, `method: PUT`, `expectedSize`, `headers` e `expiresAt`) e `PartUploadHeadersDto`, só com `x-amz-checksum-sha256`.
+    - **`upload-parts.repository.ts` (`UploadPartsRepository`):**
+      - **`registerChecksums`:** `INSERT … ON CONFLICT DO NOTHING` na restrição única (`upload_session_id`, `part_number`), seguido da releitura dos checksums gravados. Uma linha nunca é sobrescrita, nem por pedidos concorrentes, e quem registrou primeiro prevalece;
+      - **`registerEtags`:** confere que todas as partes do lote têm checksum registrado e, então, grava `etag`, `etag_registered_at` e `updated_at` num único `UPDATE … FROM unnest(...)`. O `updated_at` é explícito porque o SQL é puro (SI-03.10). Se uma parte não foi assinada, nada do lote é gravado.
+    - **`upload-parts.service.ts` (`UploadPartsService`):**
+      - **`requestPartUrls`:** resolve a sessão do dono e exige que ela seja a vigente, `active`, não vencida e sem `file_mismatch_at`. Confere os números de parte dos dois arrays (≤ `partCount` e sem repetição) e só então registra os ETags e assina as partes;
+      - **`signParts`:** calcula o `expected_size`, registra os checksums e compara com os gravados. Se algum diverge, grava `file_mismatch_at` e responde `UPLOAD_FILE_MISMATCH`, sem assinar nada. Senão, assina cada parte com `StorageService.presignUploadPart`, com o TTL `UPLOAD_PART_URL_TTL_SECONDS`;
+      - **`registerEtags`:** responde `UPLOAD_PART_NOT_SIGNED` quando falta checksum e devolve as partes registradas em ordem crescente.
+    - **`upload-sessions.controller.ts` (`UploadSessionsController`, `videos/:publicId/upload-sessions`):**
+      - `POST :sessionId/part-urls`, com `@HttpCode(200)`, `@Throttle(VIDEOS_THROTTLE.SIGN_PART_URLS)` e `@ApiBearerAuth('access-token')`;
+      - OpenAPI com `@ApiParam` de `publicId` e `sessionId` e respostas 200 (com o DTO) e 400, 401, 404, 409 e 410 (com o `ApiErrorEnvelope`).
+  - **Arquivos alterados:**
+    - **`upload-plan.ts`:** `expectedPartSize` (`min(part_size, size_bytes - (part_number - 1) * part_size)`), que recusa parte fora de `1..partCount`.
+    - **`upload-sessions.repository.ts`:**
+      - **`findOwnedSession`:** lê sem bloqueio o vídeo do `publicId` no canal do usuário e a sessão desse vídeo. Junto vem `expires_at <= now()`, avaliado no banco;
+      - **`markFileMismatch`:** comando autocommit e isolado, condicionado a `file_mismatch_at IS NULL`.
+    - **`upload-sessions.service.ts`:** `getOwnedSession`, a resolução de acesso de dono que as SIs 03.14 a 03.18 vão reutilizar:
+      - `publicId` malformado, vídeo inexistente ou de outro canal → `VIDEO_NOT_FOUND`, sem distinguir os casos;
+      - `sessionId` malformado ou de outro vídeo → `UPLOAD_SESSION_NOT_FOUND`;
+      - o `sessionId` é procurado em minúsculas.
+    - **`videos.module.ts`:** registra o `UploadSessionsController`, o `UploadPartsRepository` e o `UploadPartsService`.
+    - **`test/helpers/response-bodies.ts`:** o acessor `partUrlsBody`.
+  - **Pontos preservados:**
+    - **(1) dono:** outro usuário recebe `404 VIDEO_NOT_FOUND`, e nenhuma linha é criada (E2E 3.1); sem token, `401`.
+    - **(2) estado da sessão:** só a sessão vigente, `active`, não vencida e não bloqueada é aceita. Fora disso, as respostas são `UPLOAD_SESSION_NOT_ACTIVE`, `UPLOAD_SESSION_EXPIRED` (410) e `UPLOAD_FILE_MISMATCH`, todas sem escrita, como o unitário confere.
+    - **(3) lotes:** o DTO valida os limites de 50 e 150, o regex do checksum e a exigência de pelo menos um array com itens (400 `VALIDATION_ERROR`). Número acima de `partCount` ou repetido recebe `400 INVALID_PART_NUMBER`, antes de qualquer escrita.
+    - **(4) checksum registrado uma vez:** na integração, dois pedidos concorrentes com checksums diferentes para a mesma parte terminam com exatamente um `200` e um `409 UPLOAD_FILE_MISMATCH`. Fica uma única linha, com o checksum do vencedor, e a sessão bloqueada; cinco pedidos concorrentes com o mesmo checksum terminam todos com `200` e uma linha.
+      - **O teste detecta a regressão:** com o `ON CONFLICT DO NOTHING` trocado temporariamente por um upsert que sobrescreve o checksum, os dois testes de checksum único falham. Com o código restaurado, passam.
+    - **(5) divergência:** o checksum original é mantido e o `file_mismatch_at` é gravado por um comando próprio antes da resposta `409`. Uma releitura nova confirma a marca, e o pedido seguinte, com outra parte, também recebe `409` sem gravar nada (integração e E2E 2.2).
+    - **(6) ETag:** só para parte com checksum registrado. Sem ele, `409 UPLOAD_PART_NOT_SIGNED`, e nada do lote é gravado: num lote com uma parte assinada e outra não, o ETag da assinada continua nulo.
+    - **(7) `expectedSize`:** a parte 150 de 10.000.000.000 bytes tem 779.264 bytes. As duas partes de 134.217.728 bytes têm 67.108.864 bytes, nenhuma vazia. Um arquivo pequeno tem uma única parte com o tamanho total.
+    - **(8) cabeçalhos:** as chaves de `headers` são exatamente `["x-amz-checksum-sha256"]`, com o checksum declarado. Na URL, `X-Amz-SignedHeaders=content-length;host;x-amz-checksum-sha256`, e um corpo com 1 byte a mais recebe `403` do storage.
+    - **(9) endpoint público:** a origem da URL é a de `S3_PUBLIC_ENDPOINT`, na integração e no E2E.
+    - **(10) filas:** o `beforeAll` pausa as filas e espera os ativos. O `beforeEach` roda `prepareScenario` antes de remover os objetos e as tabelas, e o `afterAll` restaura as filas num `finally`.
+  - **PUT real e ETag persistido (integração):**
+    - a URL assinada aceitou o PUT de 3.072 bytes com o header devolvido (`200`, com ETag);
+    - o ETag registrado por `completedParts` persiste em `upload_parts`, com `etag_registered_at`;
+    - o `ListParts` do storage mostra a parte com o mesmo ETag, o checksum declarado e o tamanho.
+  - **Critérios de aceite:**
+    - **sessão de 10.000.000.000 bytes, parte 150:** `200` com `expectedSize: 779264`, `headers` só com `x-amz-checksum-sha256`, `method: "PUT"`, `expiresAt` igual a agora + `UPLOAD_PART_URL_TTL_SECONDS` e a linha `expected_size = 779264` com o checksum;
+    - **sessão de 134217728 bytes:** a parte 2 vem com `expectedSize: 67108864`;
+    - **`partNumber: 151` em 150 partes:** `400 INVALID_PART_NUMBER`, sem linha nova; `parts: []` com `completedParts: []` recebe `400 VALIDATION_ERROR`;
+    - **parte 3 reassinada com outro checksum:** `409 UPLOAD_FILE_MISMATCH`, com `file_mismatch_at` gravado e o checksum original mantido; o pedido seguinte da sessão também recebe `409 UPLOAD_FILE_MISMATCH`;
+    - **`completedParts` de parte nunca assinada:** `409 UPLOAD_PART_NOT_SIGNED`. Depois de assinar a parte 1, o ETag dela é aceito com `registeredParts: [1]` e gravado com `etag_registered_at`;
+    - **usuário que não é dono:** `404 VIDEO_NOT_FOUND`.
+  - **Escolhas desta SI, para a revisão:**
+    - **Ordem das escritas:** primeiro os ETags, que se referem a partes assinadas em pedidos anteriores, depois a assinatura das partes novas. A sessão e os números de parte dos dois arrays são conferidos antes de qualquer escrita. Uma divergência de checksum descoberta na assinatura deixa gravados os ETags do mesmo pedido, sem efeito, porque a sessão fica bloqueada.
+    - **Repetição em `completedParts`:** também recebe `INVALID_PART_NUMBER`, como em `parts`, pelo texto do Error Catalog ("repetido no lote").
+    - **Teto de `partNumber`:** o DTO não tem teto, então todo número acima de `partCount` chega ao service e recebe `INVALID_PART_NUMBER`, como o contrato pede.
+    - **`getOwnedSession`:** fica no `UploadSessionsService` para as próximas SIs de sessão. O vencimento é avaliado pelo relógio do banco, como os demais prazos (SI-03.12).
+  - **Primeira execução:**
+    - **Specs:** as unitárias e de integração passaram, 62 de 62, e o E2E também, 6 de 6.
+    - **`tsc`:** recusou 2 usos de `headers` como `Record<string, string>` na integração, corrigidos com um objeto espalhado. Os testes não acusaram, porque o `isolatedModules` faz o `ts-jest` compilar sem checagem de tipos.
+    - **ESLint:** apontou só formatação, em 4 arquivos, corrigida com `prettier --write`.
+  - **Verificações executadas, todas no container `nestjs-api`:**
+    - `npx jest --runInBand --verbose src/videos/upload-parts src/videos/upload-plan src/videos/upload-sessions src/videos/videos.module`: 6 suítes e 62 testes, código 0;
+    - `npx jest --config ./test/jest-e2e.json --runInBand --verbose test/videos-upload-part-urls.e2e-spec.ts`: 1 suíte e 6 testes, código 0;
+    - **regressão temporária** (`orIgnore` trocado por `orUpdate`) em `upload-parts.sign.integration-spec.ts -t "checksum registered once"`: código 1, com 2 testes falhando, como esperado. O arquivo foi restaurado;
+    - `npm test -- --runInBand`: 45 suítes e 406 testes, código 0. Antes eram 43 e 373;
+    - `npm run test:e2e -- --runInBand`: 5 suítes e 64 testes, código 0. Antes eram 4 e 58;
+    - **inicialização a partir do `dist/`, sem servidor:** código 0, com o `UploadSessionsController` resolvido e o `app.close()` concluído;
+    - **documento OpenAPI gerado do `dist/`:** a rota tem tag `videos`, `security` `access-token`, parâmetros de path `publicId` e `sessionId`, e respostas 200, 400, 401, 404, 409 e 410 (as de erro com `$ref` ao `ApiErrorEnvelope`). O `PartUrlsRequestDto` e o `PartUploadHeadersDto` vêm documentados. O `openapi.json` commitado não mudou; a regeneração fica na SI-03.29, com a pendência registrada na SI-03.12;
+    - `npx tsc --noEmit`: código 0;
+    - `npm run build`: código 0, sem specs no `dist/`;
+    - `npx eslint`, sem `--fix`, nos 15 arquivos da SI e em `"{src,apps,libs,test}/**/*.ts"` mais `proofs/phase-03/**/*.ts`: código 0;
+    - `prettier --check` nos 15 arquivos: código 0;
+    - `npm run lint` não foi executado, porque aplica `--fix`.
+  - **Estado do ambiente depois das execuções:** storage com 0 objetos e 0 multiparts, banco sem vídeos, sessões, partes ou usuários, e as duas filas sem `paused`.
+  - **Pertence às próximas etapas, não verificado aqui:**
+    - a classificação das partes contra o `ListParts` na retomada (SI-03.14) e na conferência (SI-03.15);
+    - a conferência da conclusão com o registro (G-04, SI-03.16);
+    - o PUT por navegador real, já coberto pela V-08;
+    - o 429 do `@Throttle` da rota, que o spec não prevê.
+  - **Fora do escopo, só registrado:** `test/helpers/video-fixtures.ts` (SI-03.11) mantém a própria função `partPlan`, equivalente a `planUpload` e `expectedPartSize`. A troca não foi feita aqui, para não misturar refatoração com a SI.
+  - **Correção da revisão (2026-11-22): itens que não são objetos.**
+    - **Falha:** `{"parts":[[]]}`, `{"completedParts":[[]]}` e arrays aninhados com objetos válidos (`[[{…}]]`) passavam pelo `ValidationPipe`. O `ValidateNested({ each: true })` com `@Type` aceita um array como item e valida os elementos dele. Contra o código anterior, os testes de regressão receberam `500` em 4 casos e `409` em 2, em vez de `400`:
+      - nos casos de `parts` e no pedido combinado, o `expectedPartSize` do service recebia `partNumber` indefinido;
+      - nos dois casos de `completedParts`, o registro de ETags não achava a parte e respondia `UPLOAD_PART_NOT_SIGNED`.
+    - **Correção, só em `src/videos/dto/part-urls.dto.ts`:** `@IsObject({ each: true })` em `parts` e em `completedParts`, mantendo o `ValidateNested`, o `@Type`, os limites de tamanho e a exigência de pelo menos um array com itens. O `IsObject` do `class-validator` recusa arrays, então cada item precisa ser um objeto.
+    - **Testes de regressão:** ficam em `test/videos-upload-part-urls.e2e-spec.ts`, cuja aplicação usa o `ValidationPipe` de `main.ts` (`whitelist`, `forbidNonWhitelisted` e `transform`). Não há spec separada do DTO, pelo guia de testes do projeto.
+      - **Preparação de cada teste:** a parte 1 assinada com o checksum A e o ETag `"etag-1"` registrado.
+      - **Casos inválidos:** `{"parts":[[]]}`, `{"completedParts":[[]]}`, `parts` aninhado com objeto válido (parte 1 com outro checksum), `completedParts` aninhado com objeto válido (parte 1 com outro ETag) e `parts: [[]]` combinado com `completedParts` válido da parte 1, já registrada.
+      - **Asserção de cada caso:** `400` com `error: "VALIDATION_ERROR"`. Os checksums, os ETags, os `etag_registered_at` e o `file_mismatch_at` ficam iguais aos de antes do pedido: checksum A, `"etag-1"` e nenhuma marca.
+      - **Pedido válido depois de um inválido:** a parte 2 assinada e o ETag da parte 1 atualizado, com `200`, `registeredParts: [1]` e a sessão sem `file_mismatch_at`.
+      - Os 6 cenários do spec continuam passando.
+    - **Verificações executadas, todas no container `nestjs-api`:**
+      - `npx jest --config ./test/jest-e2e.json --runInBand --verbose test/videos-upload-part-urls.e2e-spec.ts -t "Regressão"`, antes da correção: código 1, com os 6 testes de regressão falhando;
+      - o mesmo arquivo inteiro, depois da correção: 12 testes, código 0;
+      - testes da SI-03.13 (`npx jest --runInBand --verbose src/videos/upload-parts src/videos/upload-plan src/videos/upload-sessions src/videos/videos.module`): 6 suítes e 62 testes, código 0;
+      - `npm test -- --runInBand`: 45 suítes e 406 testes, código 0;
+      - `npm run test:e2e -- --runInBand`: 5 suítes e 70 testes, código 0. Antes eram 64, e entraram os 6 de regressão;
+      - `npx tsc --noEmit`: código 0;
+      - `npm run build`: código 0, sem specs no `dist/`;
+      - `npx eslint`, sem `--fix`, nos 2 arquivos alterados e em `"{src,apps,libs,test}/**/*.ts"` mais `proofs/phase-03/**/*.ts`: código 0;
+      - `prettier --check` nos 2 arquivos: código 0.
+    - **Estado do ambiente depois das execuções:** storage com 0 objetos e 0 multiparts, banco sem vídeos, partes ou usuários, e as duas filas sem `paused`.
+    - **Spec:** `specs/videos-upload-part-urls.plan.md` não foi alterado. Os testes de regressão ficam fora dele, num `describe` próprio.
+  - **Documentos:** o plano e o documento de decisões não mudaram, então os `sources_mtime` e os `Last sync` dos specs não precisaram de sincronização. O E2E segue os passos e os nomes dos cenários de `specs/videos-upload-part-urls.plan.md`.
+
+### SI-03.14 — Endpoint GET da sessão (retomada)
+- **Status:** completed (2026-11-22). A revisão de 2026-11-22 aprovou a SI, incluindo a extração do `UploadSessionAccessService` e as escolhas documentadas. A pendência do export OpenAPI continua na SI-03.29.
+- **Tests:**
+  - **Previstos pela SI e pelo spec `specs/videos-upload-session-get.plan.md`:**
+    - `src/videos/upload-parts.classify.spec.ts`: unitário, 15 testes, com o storage e o registro mockados. Cobre as quatro classes, o tamanho da última parte, checksum e ETag divergentes, a página de 1.000 e a página menor repassada, o `no-such-upload` e o erro transitório;
+    - `src/videos/upload-parts.classify.integration-spec.ts`: Postgres e storage reais, 3 testes:
+      - **T-07:** parte reenviada com outro conteúdo depois do registro, pelo cliente S3 interno, sai `divergent`; parte enviada sem registro sai `unregistered`. No mesmo cenário, uma parte `confirmed`, uma assinada e não enviada (`missing`, com checksum) e uma nunca assinada (`missing`, com checksum nulo);
+      - **paginação:** 5 partes listadas com página de 2 geram 3 `ListPartsCommand`, e a parte da terceira página é classificada;
+      - **upload removido do storage:** `no-such-upload`, com o `uploadId` consultado;
+    - `test/videos-upload-session-get.e2e-spec.ts`: os 5 cenários do spec (1.1 a 1.4 e 2.1), com Postgres, storage e Redis reais e PUTs reais de partes de 5 MiB.
+  - **Acrescentados:**
+    - `src/videos/upload-sessions.service.spec.ts`: mais 13 testes do `getSession`, agora 28 (os 5 do `getOwnedSession` saíram, ver "Extração");
+    - `src/videos/upload-sessions.get.integration-spec.ts`: Postgres e storage reais, 4 testes:
+      - **F-10:** a sessão termina `aborted`, sem token, e a resposta é `UPLOAD_SESSION_EXPIRED`; o vídeo continua em `draft`, apontando para a sessão;
+      - **transição concorrente:** uma conclusão segura o bloqueio do vídeo e passa a sessão a `completing`. O GET espera o bloqueio (detectado por `pg_blocking_pids`), relê a sessão e devolve `completing` com `parts: []`, sem alterá-la; o token da conclusão é preservado;
+      - **erro transitório:** com o storage inalcançável (`http://storage:1`), a resposta é `STORAGE_UNAVAILABLE`, e a linha da sessão fica idêntica;
+      - **prazo vencido:** `expires_at` no passado dá `expired: true` pelo relógio do banco, com as partes classificadas e a sessão ainda `active`;
+    - `src/videos/upload-session-access.service.spec.ts`: os 5 testes movidos do `getOwnedSession`, sem mudança nas asserções.
+  - **Atualizados pela extração:** `upload-parts.service.spec.ts` (o mock passa a ser o `UploadSessionAccessService`), `upload-parts.sign.integration-spec.ts` e `upload-sessions.create.integration-spec.ts` (providers do módulo de teste) e `videos.module.spec.ts` (resolve também o `UploadSessionAccessService`, o `UploadPartsService` e o `UploadSessionsController`).
+- **Observations:**
+  - **Extração do `getOwnedSession` (autorizada na revisão de 2026-11-22):**
+    - **Motivo:** o plano pede `UploadSessionsService.getSession` chamando `UploadPartsService.classifyParts`, e o `UploadPartsService` da SI-03.13 já injetava o `UploadSessionsService` para usar o `getOwnedSession`. Os dois nomes do plano criariam uma dependência circular entre os services. A alternativa com `forwardRef` foi descartada, e a de mover o `getSession` desviaria do plano.
+    - **O que mudou:** o `getOwnedSession` foi movido sem alteração para `src/videos/upload-session-access.service.ts` (`UploadSessionAccessService`), com o `UUID_PATTERN`. Continuam iguais a validação dos identificadores, a autorização pelo dono, os códigos de erro (`VIDEO_NOT_FOUND` e `UPLOAD_SESSION_NOT_FOUND`) e a consulta com o vencimento avaliado pelo banco (`findOwnedSession`).
+    - **Quem usa:** o `UploadSessionsService` e o `UploadPartsService` injetam o novo provider, registrado no `VideosModule`. Os 6 testes do `upload-parts.sign.integration-spec.ts` e o E2E de part-urls passam sem mudança de asserção.
+  - **Arquivos novos em `src/videos/`:**
+    - **`upload-part-classification.ts`:** o enum `UploadPartState` e o `classifyPlanParts`, que monta uma entrada por parte do plano, de 1 a `partCount`:
+      - ausente no storage → `missing`, assinada ou não;
+      - presente sem linha ou sem ETag registrado → `unregistered`;
+      - presente com ETag registrado → `confirmed` se ETag, checksum e tamanho (`expected_size`) forem iguais; senão, `divergent`.
+    - **`dto/upload-session-response.dto.ts`:** `UploadSessionResponseDto` (`id`, `status`, `expired`, `fileMismatch`, `partSize`, `partCount`, `checksumAlgorithm`, `expiresAt` e `parts`) e `UploadSessionPartDto` (`partNumber`, `state`, `checksumSha256` e `etag`, os dois últimos anuláveis).
+    - **`upload-session-access.service.ts`:** ver "Extração".
+  - **Arquivos alterados:**
+    - **`upload-parts.service.ts`:** `classifyParts(session, { pageSize? })`. Lista o storage primeiro, em páginas de `LIST_PARTS_PAGE_SIZE` (1.000), e só então lê o registro. O `no-such-upload` vem com o `uploadId` consultado, a evidência usada no claim. Um erro transitório chega como `STORAGE_UNAVAILABLE` e nunca vira `no-such-upload`.
+    - **`upload-parts.repository.ts`:** `findBySession`, que lê o registro da sessão sem bloqueio.
+    - **`upload-sessions.repository.ts`:**
+      - **`claimVanishedUpload`:** sob o bloqueio do vídeo, relê a sessão. Só se ela ainda estiver `active` faz `active → aborting`, com novo `claim_token` e `claim_expires_at`, condicionado também ao `upload_id` do `NoSuchUpload`. Sessão movida por outra operação é devolvida sem escrita;
+      - **`markAborted`:** `aborting → aborted` condicionado ao token, limpando token e prazo. Serve também ao abort da SI-03.17.
+    - **`upload-sessions.service.ts`:** `getSession` e o fluxo de F-10:
+      - sessão fora de `active` → `200` com `parts: []` e `expired: false`, sem chamar o storage;
+      - sessão `active` → classificação, com o `expired` da consulta (`expires_at <= now()` no banco). Prazo vencido não aborta a sessão;
+      - `NoSuchUpload` → claim sob o bloqueio, `aborted` pelo token e `410 UPLOAD_SESSION_EXPIRED`;
+      - claim recusado porque outra operação mudou a sessão antes → `200` com o estado atual e `parts: []`; sessão inexistente no claim → `UPLOAD_SESSION_NOT_FOUND`;
+      - o `getOwnedSession` saiu (ver "Extração").
+    - **`upload-sessions.controller.ts`:** `GET :sessionId`, com `@Throttle(VIDEOS_THROTTLE.GET_UPLOAD_SESSION)` (30 por 60 s), `@ApiBearerAuth('access-token')`, `@ApiParam` de `sessionId` e respostas 200 (com o DTO), 401, 404, 410 e 503 (com o `ApiErrorEnvelope`).
+    - **`videos.module.ts`:** provider `UploadSessionAccessService`.
+    - **`videos.constants.ts`:** `LIST_PARTS_PAGE_SIZE = 1_000`.
+  - **Helpers de teste:**
+    - **`src/test/locks.ts` (novo):** `gate` e `waitForBlockedVideoLock`, para os testes de concorrência sob o bloqueio do vídeo;
+    - **`test/helpers/response-bodies.ts`:** `uploadSessionBody` / `UploadSessionBody`.
+  - **Escolhas de implementação, para a revisão:**
+    - **Claim de F-10 em dois passos:** a tabela de estados da TD-02 não tem `active → aborted`. O claim é `active → aborting` sob o bloqueio, e a marcação é `aborting → aborted` pelo token, fora do bloqueio. A confirmação desta segunda transição é o `NoSuchUpload` já recebido para o `upload_id` da sessão, que é definitivo; por isso não há nova chamada ao storage entre os passos. Se a marcação afetar zero linhas (outro processo assumiu a sessão depois do prazo do claim), a resposta continua `410`, com aviso no log.
+    - **Sessão `active` com outro `upload_id` sob o bloqueio:** o `upload_id` só é gravado na ativação, então isso viola uma invariante e vira erro interno (500), sem escrita.
+    - **ETag comparado exatamente**, com as aspas, como o cliente informou e como o `ListParts` devolve. Um ETag registrado sem aspas sai `divergent`. Uma parte listada sem checksum também sai `divergent`.
+    - **Partes listadas fora do plano** não geram entrada. A recusa de partes extras na conclusão fica com a SI-03.16.
+    - **`checksumAlgorithm`** vem da constante `UPLOAD_CHECKSUM_ALGORITHM`, como em `POST /videos`.
+    - **Erros não transitórios do storage** (por exemplo, `403`) seguem sem mudança e respondem `500`, como nas SIs 03.12 e 03.13.
+  - **Configuração temporária do E2E:** o spec pede `UPLOAD_PART_SIZE_BYTES=5242880`. O `beforeAll` guarda o valor anterior, define 5 MiB antes de compilar o `AppModule` (o namespace `video` lê o ambiente na compilação) e o `afterAll` restaura o valor ao final, no último `finally`. O `.env` não foi alterado. O `POST /videos` de cada cenário confirma `partSize: 5242880`.
+  - **Verificações em vermelho, com os arquivos restaurados depois de cada uma e conferidos com `cmp`:**
+    - **re-leitura retirada do claim** (sem o teste de `active` e sem a condição de estado no `UPDATE`), em `upload-sessions.get.integration-spec.ts`: código 1, com o teste de transição concorrente falhando, porque a sessão `completing` foi sobrescrita e abortada;
+    - **erro do `ListParts` tratado como `no-such-upload`**, em `upload-sessions.get.integration-spec.ts` e `upload-parts.classify.spec.ts`: código 1, com 2 testes falhando (o de storage inalcançável e o de erro transitório);
+    - **`pageSize` ignorado**, em `upload-parts.classify.integration-spec.ts`: código 1, com o teste de paginação recebendo 1 `ListPartsCommand` em vez de 3.
+  - **Verificações executadas, todas no container `nestjs-api`:**
+    - testes da SI (`npx jest --runInBand --verbose src/videos/upload-parts src/videos/upload-session src/videos/videos.module`): 9 suítes e 83 testes, código 0;
+    - `npx jest --config ./test/jest-e2e.json --runInBand --verbose test/videos-upload-session-get.e2e-spec.ts`: 5 testes, código 0;
+    - `npm test -- --runInBand`: 49 suítes e 441 testes, código 0. Antes eram 45 e 406;
+    - `npm run test:e2e -- --runInBand`: 6 suítes e 75 testes, código 0. Antes eram 5 e 70;
+    - `npx tsc --noEmit`: código 0;
+    - `npm run build`: código 0, sem specs no `dist/`;
+    - **inicialização a partir do `dist/`, sem servidor:** código 0, com o `UploadSessionsController` resolvido e o `app.close()` concluído;
+    - **documento OpenAPI gerado do `dist/`:** a rota tem tag `videos`, `security` `access-token`, parâmetros de path `publicId` e `sessionId`, e respostas 200 (`$ref` ao `UploadSessionResponseDto`) e 401, 404, 410 e 503 (`$ref` ao `ApiErrorEnvelope`). Os enums `UploadPartState` e `UploadSessionStatus` saem como schemas nomeados, e `checksumSha256` e `etag` como `nullable`. O `openapi.json` commitado não mudou; a regeneração fica na SI-03.29;
+    - `npx eslint`, sem `--fix`, nos 22 arquivos de código da SI e em `"{src,apps,libs,test}/**/*.ts"` mais `proofs/phase-03/**/*.ts`: código 0. A primeira passada apontou um `no-unsafe-return` real em `upload-parts.classify.spec.ts` (`expect.objectContaining` dentro de um `map`), trocado por `toMatchObject` com as entradas explícitas;
+    - `prettier --check` nos 22 arquivos: código 0. A primeira passada apontou formatação em 3 arquivos, só em trechos desta SI, corrigida com `prettier --write` neles;
+    - `npm run lint` não foi executado, porque aplica `--fix`.
+  - **Estado do ambiente depois das execuções:** storage com 0 objetos e 0 multiparts, banco sem vídeos, sessões, partes, usuários ou canais, e as duas filas sem `paused`.
+  - **Já existente, só registrado:** as suítes de integração emitem o `DeprecationWarning` do `pg` "Calling client.query() when the client is already executing a query". Ele já aparecia 19 vezes na suíte completa da SI-03.13; agora são 21, com as duas suítes novas.
+  - **Pertence às próximas etapas, não verificado aqui:**
+    - o uso da classificação na conferência da retomada (SI-03.15) e na conclusão, com a recusa de partes extras (SI-03.16);
+    - o abort explícito e o reinício (SI-03.17 e SI-03.18), que vão reutilizar o `UploadSessionAccessService` e o `markAborted`;
+    - o 429 do `@Throttle` da rota, que o spec não prevê.
+  - **Fora do escopo, só registrado:** `src/videos/video-lock.service.integration-spec.ts` (SI-03.11) mantém as próprias cópias de `gate` e da espera do bloqueio, equivalentes às de `src/test/locks.ts`. A troca não foi feita aqui, para não misturar refatoração com a SI.
+  - **Documentos:** o plano, o documento de decisões e o spec `specs/videos-upload-session-get.plan.md` não mudaram, então os `sources_mtime` e os `Last sync` não precisaram de sincronização. O E2E segue os passos e os nomes dos cenários do spec.
+
+### SI-03.15 — Endpoint file-verifications (conferência na retomada)
+- **Status:** completed (2026-11-22). A revisão de 2026-11-22 aprovou a SI, incluindo as escolhas documentadas (ordem das recusas, `NoSuchUpload` com `410` sem alterar a sessão e a constante compartilhada do checksum). A pendência do export OpenAPI continua na SI-03.29.
+- **Tests:**
+  - **Previstos pela SI e pelo spec `specs/videos-upload-file-verifications.plan.md`:**
+    - `src/videos/upload-parts.verify.spec.ts`: unitário, 25 testes, com o acesso, o storage e os repositórios mockados. Cobre:
+      - o conjunto obrigatório (`confirmed` e `unregistered`), a lista vazia, as partes `missing` e `divergent` com checksum registrado;
+      - as partes sem checksum registrado ou fora do plano;
+      - a ordem das recusas e a divergência com bloqueio;
+      - a sessão já bloqueada e os estados da sessão (404, não vigente, cada estado fora de `active`, prazo vencido, `NoSuchUpload` e erro transitório);
+    - `src/videos/upload-parts.verify.integration-spec.ts`: Postgres e storage reais, com PUTs reais de partes de 1 KiB, 5 testes:
+      - **1 byte alterado numa parte confirmada (F-11, G-11):** `UPLOAD_FILE_MISMATCH`, `file_mismatch_at` gravado e lido numa consulta nova, os checksums registrados ainda os do arquivo original, e o `part-urls` da parte 3 recusado com `UPLOAD_FILE_MISMATCH`, sem linha nova em `upload_parts`;
+      - **conferência posterior com o arquivo original:** continua `UPLOAD_FILE_MISMATCH`, e o `file_mismatch_at` fica com o mesmo valor;
+      - **mesmo arquivo:** `match` com as partes `confirmed` e `unregistered` (2), e também incluindo a parte `missing` assinada (3);
+      - **storage inalcançável** (`http://storage:1`): `STORAGE_UNAVAILABLE`, com a linha da sessão idêntica;
+      - **upload removido do storage:** `UPLOAD_SESSION_EXPIRED`, com a linha da sessão idêntica;
+    - `test/videos-upload-file-verifications.e2e-spec.ts`: os 4 cenários do spec (1.1, 1.2, 1.3 e 2.1), com Postgres, storage e Redis reais e PUTs reais de partes de 5 MiB.
+  - **Acrescentados no mesmo E2E, fora do spec, num `describe` próprio:** 13 testes da validação do corpo:
+    - **corpos inválidos (12):** sem `parts`, `parts` nulo, `parts` que não é array, item que é array vazio (`[[]]`), array aninhado com objeto válido do arquivo alterado, item nulo, `partNumber` repetido, 151 itens, checksum sem padding, `partNumber` zero, `partNumber` em texto e propriedade desconhecida;
+    - **asserção de cada caso:** `400` com `VALIDATION_ERROR`, e o registro (checksums, ETags, `etag_registered_at`) e o `file_mismatch_at` iguais aos de antes do pedido;
+    - **pedido válido depois de um inválido:** `200` com `match`, sem bloqueio.
+- **Observations:**
+  - **Arquivos novos em `src/videos/dto/`:**
+    - **`file-verifications.dto.ts`:**
+      - `FileVerificationsRequestDto`: `parts` obrigatório, array de 0 a 150 itens, cada item um objeto (`@IsObject({ each: true })`, a proteção da SI-03.13 contra arrays aninhados), validação aninhada e `@ArrayUnique` por `partNumber`. A repetição é erro de validação, como pede a ação 1 da SI;
+      - `RecalculatedPartChecksumDto`: `partNumber` inteiro ≥ 1 e `checksumSha256` com o formato da "Validation Rules". O plano (`partCount`) e o checksum registrado ficam com o service.
+    - **`file-verifications-response.dto.ts`:** `FileVerificationsResponseDto` (`result: "match"` e `verifiedParts`).
+  - **Arquivos alterados:**
+    - **`upload-parts.service.ts`:** `verifyFile`, que reutiliza o `UploadSessionAccessService`, as pré-condições da assinatura (`assertSignable`), a checagem de números de parte e a classificação da SI-03.14:
+      - **pré-condições:** a sessão precisa ser a vigente, `active`, sem prazo vencido e sem `file_mismatch_at`. Uma sessão já bloqueada responde `UPLOAD_FILE_MISMATCH` antes de listar o storage, qualquer que seja o corpo, então uma conferência posterior nunca remove o bloqueio. Uma parte acima de `partCount` é recusada com `INVALID_PART_NUMBER`, também antes do storage;
+      - **depois da classificação, antes de qualquer escrita:** parte sem checksum registrado → `INVALID_PART_NUMBER`; parte `confirmed` ou `unregistered` fora do corpo → `UPLOAD_VERIFICATION_INCOMPLETE`. Partes `missing` ou `divergent` com checksum registrado podem vir no corpo e são conferidas;
+      - **checksum diferente do registrado:** `markFileMismatch`, um comando autocommit, antes da resposta `409 UPLOAD_FILE_MISMATCH`. Nenhum checksum do registro é alterado;
+      - **resposta:** `{ "result": "match", "verifiedParts": <partes do corpo> }`.
+    - **`upload-sessions.controller.ts`:** `POST :sessionId/file-verifications`, com `@HttpCode(200)`, `@Throttle(VIDEOS_THROTTLE.VERIFY_UPLOAD_FILE)` (10 por 60 s), `@ApiBearerAuth('access-token')`, `@ApiParam` de `sessionId` e respostas 200 (com o DTO) e 400, 401, 404, 409, 410 e 503 (com o `ApiErrorEnvelope`).
+    - **`videos.constants.ts`:** `CHECKSUM_SHA256_FORMAT` (regex e mensagem do checksum) e `FILE_VERIFICATION_MATCH`.
+    - **`dto/part-urls.dto.ts`:** o regex e a mensagem do checksum passam a vir de `CHECKSUM_SHA256_FORMAT`, sem mudança de comportamento. Assim os dois DTOs não duplicam a regra. Os 12 testes do E2E de part-urls, incluindo as regressões da SI-03.13, passam sem mudança.
+  - **Escolhas de implementação, para a revisão:**
+    - **Ordem das recusas:** as recusas `400` (`INVALID_PART_NUMBER` e depois `UPLOAD_VERIFICATION_INCOMPLETE`) vêm antes da comparação. Um pedido recusado com `400` não grava nada, mesmo que traga um checksum diferente; o bloqueio só acontece num pedido completo. Isso segue a regra do part-urls de conferir tudo antes de escrever.
+    - **`NoSuchUpload` na conferência:** responde `410 UPLOAD_SESSION_EXPIRED`, como o catálogo de erros associa a F-10, sem alterar a sessão. O claim para abort fica com o GET da sessão (SI-03.14), e o reinício (SI-03.18) substitui a sessão. Fazer o claim aqui exigiria repetir no `UploadPartsService` a orquestração do `UploadSessionsService`, ou criar um provider novo, o que mudaria a arquitetura aprovada.
+    - **Parte presente no storage sem nenhuma linha no registro:** fica no conjunto obrigatório (`unregistered`) e não pode ser conferida (`INVALID_PART_NUMBER`). Pela API isso não acontece, porque a assinatura registra o checksum antes; a sessão precisaria de reinício.
+    - **`verifiedParts`** conta todas as partes do corpo, incluindo as `missing` com checksum registrado.
+  - **Configuração temporária do E2E:** `UPLOAD_PART_SIZE_BYTES=5242880`, como na SI-03.14. O valor anterior é guardado no `beforeAll` e restaurado no último `finally` do `afterAll`. O arquivo A tem duas partes de 5 MiB e um resto de 1 MiB; A' difere de A em 1 byte da parte 1, e o teste confere que só o checksum da parte 1 muda.
+  - **Verificações em vermelho, com os arquivos restaurados depois de cada uma e conferidos com `cmp`:**
+    - **sem `@IsObject({ each: true })`:** código 1, com os 2 casos de array aninhado falhando. Eles chegaram ao service e receberam `400 INVALID_PART_NUMBER` em vez de `VALIDATION_ERROR`;
+    - **sem `@ArrayUnique`:** código 1, com o caso de `partNumber` repetido recebendo `INVALID_PART_NUMBER` em vez de `VALIDATION_ERROR`;
+    - **sem o `markFileMismatch` no `verifyFile`:** código 1, com os 2 testes de integração do bloqueio falhando;
+    - **conjunto obrigatório só com `confirmed`:** código 1, com 2 testes unitários falhando (parte `unregistered` omitida e a ordem das recusas).
+  - **Verificações executadas, todas no container `nestjs-api`:**
+    - testes da SI e das SIs 03.13 e 03.14 (`npx jest --runInBand --verbose src/videos/upload-parts src/videos/upload-session src/videos/videos.module`): 11 suítes e 113 testes, código 0;
+    - `npx jest --config ./test/jest-e2e.json --runInBand --verbose test/videos-upload-file-verifications.e2e-spec.ts`: 17 testes, código 0;
+    - `npm test -- --runInBand`: 51 suítes e 471 testes, código 0. Antes eram 49 e 441;
+    - `npm run test:e2e -- --runInBand`: 7 suítes e 92 testes, código 0. Antes eram 6 e 75;
+    - `npx tsc --noEmit`: código 0;
+    - `npm run build`: código 0, sem specs no `dist/`;
+    - **inicialização a partir do `dist/`, sem servidor:** código 0, com o `UploadSessionsController` resolvido e o `app.close()` concluído;
+    - **documento OpenAPI gerado do `dist/`:**
+      - a rota tem tag `videos`, `security` `access-token`, parâmetros de path `publicId` e `sessionId`, corpo `FileVerificationsRequestDto` e respostas 200 (`$ref` ao `FileVerificationsResponseDto`) e 400, 401, 404, 409, 410 e 503 (`$ref` ao `ApiErrorEnvelope`);
+      - o plugin do Swagger gerou o `FileVerificationsRequestDto` com `parts` obrigatório e `uniqueItems`, e o `RecalculatedPartChecksumDto` com `minimum: 1`. Ele não emite `maxItems` nem `pattern`, como já acontece no `PartUrlsRequestDto` e no `PartToSignDto`;
+      - o `openapi.json` commitado não mudou; a regeneração fica na SI-03.29;
+    - `npx eslint`, sem `--fix`, nos 9 arquivos de código da SI e em `"{src,apps,libs,test}/**/*.ts"` mais `proofs/phase-03/**/*.ts`: código 0;
+    - `prettier --check` nos 9 arquivos: código 0. O `prettier --write` foi aplicado só aos arquivos novos e ao trecho novo do `upload-parts.service.ts`;
+    - `npm run lint` não foi executado, porque aplica `--fix`.
+  - **Estado do ambiente depois das execuções:** storage com 0 objetos e 0 multiparts, banco sem vídeos, sessões, partes, usuários ou canais, e as duas filas sem `paused`.
+  - **Já existente, só registrado:** o `DeprecationWarning` do `pg` ("Calling client.query() when the client is already executing a query") aparece 22 vezes na suíte completa; eram 21 na SI-03.14, e a suíte nova de integração acrescentou uma.
+  - **Para a SI-03.29:** o plugin do Swagger não documenta `maxItems` nem `pattern` dos DTOs de pedido da fase (`ArrayMaxSize` e `Matches`). A regeneração do contrato pode precisar de `@ApiProperty` explícito nesses campos, ou de uma decisão de manter só a descrição.
+  - **Pertence às próximas etapas, não verificado aqui:**
+    - a conclusão bloqueada pelo `file_mismatch_at` (SI-03.16) e o reinício explícito, que cria uma sessão nova sem bloqueio (SI-03.18), com o fluxo T-06 completo no spec da SI-03.18;
+    - o 429 do `@Throttle` da rota, que o spec não prevê.
+  - **Documentos:** o plano, o documento de decisões e o spec `specs/videos-upload-file-verifications.plan.md` não mudaram, então os `sources_mtime` e os `Last sync` não precisaram de sincronização. O E2E segue os passos e os nomes dos cenários do spec.
+
+### SI-03.16 — Endpoint completion (conclusão do upload, P2)
+- **Status:** completed (2026-11-22). A revisão de 2026-11-22 aprovou a SI, incluindo o limite de 5 s do `add` (R2), as escolhas documentadas e o ajuste do E2E 2.2 (`listen` numa porta efêmera local). A pendência do export OpenAPI continua na SI-03.29.
+- **Tests:**
+  - **Previstos pela SI e pelo spec `specs/videos-upload-completion.plan.md`:**
+    - `src/videos/upload-completion.service.spec.ts`: unitário, 43 testes, com o acesso, o repositório, a classificação, o storage e o dispatcher mockados. Cobre:
+      - o caminho completo, com a ordem claim → conferência → Complete → T2 → R2 → R3, e a retomada de claim vencido;
+      - cada recusa do claim e o `200` de sessão já `completed`;
+      - cada falha da conferência, com reversão pelo token, e a releitura quando a reversão afeta zero linhas;
+      - o `NoSuchUpload` no `ListParts` e no Complete, com `HeadObject` do tamanho declarado, sem objeto ou com outro tamanho, e a releitura quando o abort afeta zero linhas;
+      - o erro transitório em cada chamada ao storage;
+      - cada linha da tabela de releitura do passo 5, incluindo os casos que nunca dão `200`;
+      - a publicação que falha, que não responde dentro do limite, cujo job não é relido, e a confirmação recusada ou com erro;
+    - `src/videos/upload-completion.integration-spec.ts`: Postgres e storage reais, com a fila num prefixo próprio do Redis, 10 testes:
+      - **T-01:** Complete feito pelo SDK antes da chamada → `202`, sessão `completed`, vídeo em `processing` com o `original_key` da sessão, objeto com o tamanho declarado e o job `video-{videoId}-1-1`;
+      - **T-04:** a chamada A fica retida antes do Complete; o claim dela vence, e B o assume e conclui. A, liberada, faz o Complete, perde o token no T2, relê e encontra a conclusão registrada, então responde `200`. Uma única transição e um único job;
+      - **T-07 e G-04:** parte reenviada com outro conteúdo, parte presente sem nenhum registro e parte além do plano → `UPLOAD_PART_MISMATCH`; parte enviada sem ETag registrado → `UPLOAD_INCOMPLETE`. Em todos, a sessão volta a `active` sem claim, e o vídeo fica em `draft`, sem job;
+      - **`NoSuchUpload`** sem objeto na chave, ou com objeto de outro tamanho → `UPLOAD_SESSION_EXPIRED`, sessão `aborted` e vídeo em `draft`;
+      - **G-02:** com o storage inalcançável, `STORAGE_UNAVAILABLE` e a sessão em `completing` com o claim; a chamada seguinte no prazo do claim → `UPLOAD_SESSION_COMPLETING`; com o claim vencido, a retomada conclui com `202`;
+      - **sessão `active` vencida** → `UPLOAD_SESSION_EXPIRED`, sem claim;
+    - `src/videos/upload-completion.publish.integration-spec.ts`: Postgres, storage e Redis reais, 3 testes:
+      - **publicação normal:** job da geração 1 com `attempts` da configuração e `removeOnComplete`/`removeOnFail` desligados, e a ação confirmada (R3);
+      - **`add` rejeitado:** `202`, vídeo em `processing` com `pending_job_action = 'publish'`, `pending_job_dispatch = 1`, token e prazo futuro, e sem o job da geração 1;
+      - **Redis inalcançável** (porta 1): a resposta chega dentro do limite (5,2 s), com o mesmo estado pendente e sem job, nem no prefixo da suíte nem na fila do ambiente;
+    - `test/videos-upload-completion.e2e-spec.ts`: os 8 cenários do spec (1.1 a 1.3, 2.1, 2.2 e 3.1 a 3.3), com Postgres, storage e Redis reais e partes de 5 MiB.
+  - **Atualizados:**
+    - `upload-parts.classify.spec.ts` e `upload-parts.classify.integration-spec.ts`: o resultado `found` traz `extraPartNumbers`; o teste das partes fora do plano passou a conferir também a lista de extras, em ordem;
+    - `upload-sessions.service.spec.ts`: os mocks seguem o novo formato, e um teste novo confere que o GET não expõe as partes extras (agora 29 testes);
+    - `videos.module.spec.ts`: resolve também o `UploadCompletionService`.
+- **Observations:**
+  - **Arquivos novos em `src/videos/`:**
+    - **`upload-completion.repository.ts` (`UploadCompletionRepository`):** as transições de P2, cada uma numa transação curta sob o bloqueio do vídeo, sem chamadas ao storage:
+      - **`claimCompletion` (passo 1):** relê a sessão sob o bloqueio, com os prazos avaliados pelo banco. `active` no prazo e sem `file_mismatch_at` → `completing` com novo token e prazo; `completing` com claim vencido → nova posse (G-02); `completing` no prazo → recusa (F-06); `completed` registrada pelo vídeo → `completed` (G-03). As condições de prazo e de `file_mismatch_at` também estão no `UPDATE`, porque a marca de divergência é gravada sem o bloqueio (SIs 03.13 e 03.15). Se o `UPDATE` afetar zero linhas, a sessão é relida e recusada pelo motivo encontrado;
+      - **`revertCompletion` e `abortCompletion`:** `completing → active` e `completing → aborted`, condicionados ao token, sob o bloqueio;
+      - **`finalizeCompletion` (T2):** numa transação, a sessão vai para `completed` pelo token, e o vídeo vai de `draft` a `processing` com `current_upload_session_id = S`. Grava `original_key`, `processing_run + 1`, `processing_started_at`, `processing_dispatch = 1`, a cerca e a tentativa nulas, `processing_recoveries = 0` e a ação `publish` com `pending_job_dispatch = 1`, token novo e prazo `PROCESSING_JOB_ACTION_TTL_SECONDS`. Se uma das transições afetar zero linhas, a transação é revertida;
+      - **`readCompletionState` (passo 5):** sessão e vídeo numa única consulta, para virem do mesmo retrato;
+      - **`isCompletionOf`:** sessão `completed`, vigente do vídeo e com `original_key` igual à `object_key`. Só ela permite `200`, no claim e na releitura.
+    - **`upload-completion.service.ts` (`UploadCompletionService.completeUpload`):** o protocolo P2 completo:
+      - **passo 2, fora de transação:** a classificação da SI-03.14 é a conferência (G-04). Com tudo `confirmed` e sem extras, o Complete é montado pelo registro (PartNumber, ETag e ChecksumSHA256), sem `If-None-Match` nem `x-amz-mp-object-size` (V-10). Um `NoSuchUpload`, no `ListParts` ou no Complete, é resolvido por `HeadObject` na chave da sessão: objeto do tamanho declarado → T2; senão, abort pelo token e `410`;
+      - **passos 3 a 5:** T2; depois do commit, R2 e R3 pelo `VideoJobDispatcherService`; e a releitura sempre que T2, a reversão ou o abort afetam zero linhas.
+    - **`dto/upload-completion-response.dto.ts`:** `UploadCompletionResponseDto` (`publicId` e `status`), usado no `202` e no `200`.
+  - **Arquivos alterados:**
+    - **`upload-part-classification.ts`:** `listedOutsidePlan`, que devolve em ordem os números listados além do plano.
+    - **`upload-parts.service.ts`:** o resultado `found` do `classifyParts` traz `extraPartNumbers`. O GET e a conferência de arquivo continuam usando só `parts`, então o contrato do GET não muda; o OpenAPI gerado confirma o mesmo `UploadSessionResponseDto`.
+    - **`upload-sessions.repository.ts`:** `NOW_PLUS_SECONDS` passa a ser exportado, para o repositório da conclusão gravar os prazos pelo relógio do banco.
+    - **`upload-sessions.controller.ts`:** `POST :sessionId/completion`, com `@HttpCode(202)`, `@Throttle(VIDEOS_THROTTLE.COMPLETE_UPLOAD)` (20 por 60 s), `@ApiBearerAuth('access-token')`, `@ApiParam` de `sessionId` e respostas 200 e 202 (com o DTO) e 401, 404, 409, 410 e 503 (com o `ApiErrorEnvelope`). O `200` usa `@Res({ passthrough: true })`. No código instalado, o `@HttpCode` é aplicado antes do handler e não é reaplicado na resposta, então o `res.status(200)` prevalece.
+    - **`videos.module.ts`:** providers `UploadCompletionRepository` e `UploadCompletionService`.
+    - **`videos.constants.ts`:** `VIDEO_JOB_PUBLISH_TIMEOUT_MS` (5.000) e `FIRST_JOB_DISPATCH` (1).
+  - **Helpers de teste:**
+    - **`src/test/storage.ts`:** `realCompleteMultipartUpload`, que chama o Complete real de dentro de um spy, como o `realCreateMultipartUpload`;
+    - **`test/helpers/video-fixtures.ts`:** `blockSessionByFileMismatch`, que grava só o `file_mismatch_at`, como uma conferência reprovada deixa (cenário 3.3).
+  - **Achado: o `add` do BullMQ não falha com o Redis fora.** Sondado no container contra `redis:1`: o `add` não terminou em 120 s (código 124 do `timeout`). O `close()` da fila resolve na hora, e o `add` pendente continua pendente. Sem limite, a conclusão não responderia `202` com o Redis fora, como pede o critério de aceite.
+    - **Tratamento:** R2 tem um limite de `VIDEO_JOB_PUBLISH_TIMEOUT_MS` (5 s), uma constante sem chave de ambiente. Ao vencer, a resposta é `202` e a ação `publish` fica pendente (F-02). Um `add` que termine depois é inofensivo: o job existe, a ação continua pendente e a reconciliação a confirma pela tabela de P5.
+    - **Para a SI-03.25:** a reconciliação usa o mesmo `add` e precisará do próprio limite.
+  - **Escolhas de implementação, para a revisão:**
+    - **Classes da conferência:** parte `missing` ou enviada sem ETag registrado → `UPLOAD_INCOMPLETE` (critério de aceite 3 e cenário 3.1). Parte `divergent`, parte presente sem nenhuma linha no registro e parte além do plano → `UPLOAD_PART_MISMATCH` ("parte presente sem registro" do contrato). Com as duas situações ao mesmo tempo, vale `UPLOAD_PART_MISMATCH`, a afirmação mais forte sobre o storage.
+    - **`NoSuchUpload` já no `ListParts`:** é o caso T-01, em que um concluidor anterior já fez o Complete. Vale a mesma resolução por `HeadObject`, sem novo Complete.
+    - **Objeto de outro tamanho na chave da sessão:** tratado como ausente (`aborted` e `410`). O objeto fica para a limpeza de P4.
+    - **Retomada de `completing` vencido:** não confere prazo da sessão nem `file_mismatch_at`, como P2 e a varredura; só o token anterior e o claim vencido.
+    - **Reversão e abort sob o bloqueio do vídeo,** como pede a regra de "Coordenação e fencing" para abortar uma sessão; os dois também são condicionados ao token.
+    - **Ordem da releitura:** sessão `completed` → `200` só com `isCompletionOf`, senão registra a inconsistência e responde `409 UPLOAD_SESSION_NOT_ACTIVE`; vídeo apontando para outra sessão → `409 UPLOAD_SESSION_NOT_ACTIVE`; `completing` → `409 UPLOAD_SESSION_COMPLETING`; `active` → `409 UPLOAD_COMPLETION_INTERRUPTED`; `aborting` ou `aborted` → `410` com prazo vencido, senão `409 UPLOAD_SESSION_NOT_ACTIVE`.
+    - **R3 só depois de reler o job:** se o job não for encontrado logo depois do `add`, a ação fica pendente para a reconciliação. Uma falha ou recusa da confirmação também mantém o `202`.
+    - **Erros não transitórios do storage** (por exemplo, um `InvalidPart` no Complete) respondem `500`, e o claim vence para a próxima chamada ou a varredura (G-02).
+    - **Novo `UploadCompletionRepository`,** que o plano não nomeia: separa as transições de P2 do repositório das sessões, como nas SIs 03.12 e 03.13.
+  - **Achado no E2E 2.2 (infraestrutura de teste):** o cenário travava até o timeout. Com o servidor sem `listen`, o supertest abre a porta no primeiro pedido e chama `server.close()` ao terminá-lo. O `close()` espera todas as conexões, incluindo a de B, retida na barreira até A responder, o que forma um ciclo. A resposta de A (`409 UPLOAD_SESSION_COMPLETING`, confirmada com marcadores temporários já removidos) nunca chegava ao teste.
+    - **Correção, só neste E2E:** `app.listen(0, '127.0.0.1')` no `beforeAll`, numa porta efêmera local; o `app.close()` fecha o servidor no fim.
+    - **Também no E2E:** a barreira falha com a resposta recebida quando uma chamada responde antes de chegar a ela, em vez de esperar indefinidamente.
+  - **Execução isolada de `upload-completion.publish.integration-spec.ts`:** o Jest avisa que não saiu 1 s depois do fim e encerra sozinho, com código 0, cerca de 2 s depois. O tempo medido foi de 6,5 a 6,8 s no Jest e 9 s no relógio. O `--detectOpenHandles` não encontra nada, e sem o teste do Redis inalcançável o aviso some, então vem do cliente desse Redis fechado durante a reconexão. Na suíte completa o aviso não aparece.
+  - **Configuração temporária e filas no E2E:**
+    - `UPLOAD_PART_SIZE_BYTES=5242880` é guardado e restaurado como nas SIs 03.14 e 03.15;
+    - o `prepareScenario` pausa as filas, espera os jobs ativos e limpa os jobs da `video-processing` antes de cada cenário;
+    - o `restore()` do `afterAll` remove os jobs da suíte e só então retoma as filas;
+    - as integrações usam prefixos próprios do Redis, removidos com `obliterate`.
+  - **Verificações em vermelho, com os arquivos restaurados depois de cada uma e conferidos com `cmp`:**
+    - **T2 sem o token da sessão:** código 1 no E2E 2.2, com A recebendo `202` em vez de `409`;
+    - **perda do token tratada como sucesso** (T2 com zero linhas responde `200`): código 1, com 11 testes unitários da releitura falhando;
+    - **conferência sem as partes extras:** código 1 no teste de integração da parte além do plano;
+    - **falha da publicação relançada:** código 1 no teste de integração do `add` rejeitado;
+    - **claim sem a condição de `file_mismatch_at`:** código 1 no E2E 3.3, que recebeu `202`;
+    - **`HeadObject` aceito com qualquer tamanho:** código 1 no teste de integração do objeto de outro tamanho.
+  - **Verificações executadas, todas no container `nestjs-api`:**
+    - testes da SI e das SIs 03.13 a 03.15 (`npx jest --runInBand --verbose src/videos/upload-completion src/videos/upload-parts src/videos/upload-session src/videos/videos.module`): 14 suítes e 170 testes, código 0;
+    - `npx jest --config ./test/jest-e2e.json --runInBand --verbose test/videos-upload-completion.e2e-spec.ts`: 8 testes, código 0;
+    - `npm test -- --runInBand`: 54 suítes e 528 testes, código 0. Antes eram 51 e 471;
+    - `npm run test:e2e -- --runInBand`: 8 suítes e 100 testes, código 0. Antes eram 7 e 92;
+    - `npx tsc --noEmit`: código 0;
+    - `npm run build`: código 0, sem specs no `dist/`;
+    - **inicialização a partir do `dist/`, sem servidor:** código 0, com o `UploadSessionsController` e o `UploadCompletionService` resolvidos e o `app.close()` concluído;
+    - **documento OpenAPI gerado do `dist/`:**
+      - a rota tem tag `videos`, `security` `access-token`, parâmetros de path `publicId` e `sessionId`, nenhum corpo e respostas 200 e 202 (`$ref` ao `UploadCompletionResponseDto`, com `status` em `processing`, `ready` ou `error`) e 401, 404, 409, 410 e 503 (`$ref` ao `ApiErrorEnvelope`);
+      - o `UploadSessionResponseDto` do GET continua com as mesmas 9 propriedades;
+      - o `openapi.json` commitado não mudou; a regeneração fica na SI-03.29;
+    - `npx eslint`, sem `--fix`, nos 19 arquivos de código da SI e em `"{src,apps,libs,test}/**/*.ts"` mais `proofs/phase-03/**/*.ts`: código 0;
+    - `prettier --check` nos 19 arquivos: código 0. O `prettier --write` foi aplicado só aos arquivos novos e aos trechos novos;
+    - `npm run lint` não foi executado, porque aplica `--fix`.
+  - **Estado do ambiente depois das execuções:**
+    - storage com 0 objetos e 0 multiparts, e banco sem vídeos, sessões, partes, usuários ou canais;
+    - as duas filas sem `paused`, nenhum job na `video-processing` e nenhuma chave dos prefixos de teste;
+    - continuam no Redis as chaves internas `bull:video-processing:events`, `:id` e `:meta`, que o BullMQ cria em qualquer uso real da fila. Elas voltam a cada execução do E2E e não são jobs.
+  - **Já existente, só registrado:** o `DeprecationWarning` do `pg` continua aparecendo nas suítes de integração.
+  - **Pertence às próximas etapas, não verificado aqui:**
+    - o consumo do job pelo `video-worker` (SIs 03.20 a 03.22);
+    - a retomada da ação `publish` pendente pela reconciliação, reutilizando a geração 1 (SI-03.25), com o próprio limite do `add`;
+    - a retomada de `completing` vencido pela varredura (SI-03.24);
+    - o abort e o reinício, que recusam `completing` (SIs 03.17 e 03.18), e o T-06 completo, com a conclusão bloqueada e o reinício (spec da SI-03.18);
+    - o 429 do `@Throttle` da rota, que o spec não prevê.
+  - **Documentos:** o plano, o documento de decisões e o spec `specs/videos-upload-completion.plan.md` não mudaram, então os `sources_mtime` e os `Last sync` não precisaram de sincronização. O E2E segue os passos e os nomes dos cenários do spec.
+
+### SI-03.17 — Endpoint DELETE da sessão (abort)
+- **Status:** completed (2026-11-22). A revisão de 2026-11-22 aprovou a SI, incluindo as escolhas documentadas (limite de 3 tentativas, `204` com a sessão em `aborting` para a varredura e a marcação pelo token sem o bloqueio). A pendência do export OpenAPI continua na SI-03.29.
+- **Tests:**
+  - **Previstos pela SI e pelo spec `specs/videos-upload-session-abort.plan.md`:**
+    - `src/videos/upload-sessions.abort.spec.ts`: unitário, 26 testes:
+      - **cada estado de origem**, pela função de decisão do claim (`decideAbort`): `active`; `initiating` e `aborting` com claim vencido e no prazo; `aborted`; `completing` com claim no prazo e vencido; e `completed`;
+      - **o service**, com o acesso, o repositório e o storage mockados: a ordem claim → abort → `ListParts` → marcação; a sessão sem `upload_id`, pela chave exata, com e sem uploads; a repetição até o `NoSuchUpload`; o limite de tentativas (F-09); um dos uploads sem confirmação; o erro transitório no abort e no `ListParts`; o erro não transitório; a marcação recusada pelo token; o "nada a fazer"; cada recusa; e o 404 do acesso;
+    - `src/videos/upload-sessions.abort.integration-spec.ts`: Postgres e storage reais, 7 testes:
+      - **T-05:** a sessão só termina `aborted` depois de o `ListParts` responder `NoSuchUpload`, conferido pela ordem das chamadas. Um PUT posterior pela URL já assinada recebe `404 NoSuchUpload` do Silo, e o upload continua inexistente. O vídeo fica em `draft`, apontando para a sessão;
+      - **perda do token:** A fica retida antes do abort; o claim dela vence, e B o assume com outro token e também fica retida. Liberada, A confirma o `NoSuchUpload`, mas a marcação dela afeta zero linhas, e a sessão continua `aborting` com o token de B. Só B a leva a `aborted`;
+      - **sessão sem `upload_id`:** com uma sessão `initiating` de claim vencido e o multipart aberto na chave dela (criador morto entre o Create e o T2 de P1), o upload é achado pela chave exata e abortado. O upload de outra sessão continua aberto;
+      - **F-09:** com o `ListParts` sempre listando o upload, a sessão fica `aborting` com o claim, e a requisição termina depois das tentativas. Vencido o claim, o próximo DELETE o assume e conclui;
+      - **storage inalcançável:** a sessão fica `aborting` com o claim, e o multipart continua aberto para a varredura;
+      - **`completing` com claim vencido:** `UPLOAD_SESSION_COMPLETING`, com sessão, token e multipart intactos;
+      - **`aborting` no prazo do claim de outra operação:** a linha fica idêntica, e o multipart não é tocado;
+    - `test/videos-upload-session-abort.e2e-spec.ts`: os 3 cenários do spec (1.1, 1.2 e 1.3), com Postgres, storage e Redis reais e partes de 5 MiB. O 1.1 também confere que nenhum job de processamento foi criado.
+- **Observations:**
+  - **Arquivos alterados em `src/videos/`:**
+    - **`upload-sessions.repository.ts`:**
+      - **`claimAbort`:** com o vídeo bloqueado, relê a sessão, com o prazo do claim avaliado pelo banco, e aplica `decideAbort`. As saídas:
+        - `active`, ou `initiating`/`aborting` com claim vencido → `aborting` com novo token e prazo `UPLOAD_SESSION_CLAIM_TTL_SECONDS`;
+        - `aborted`, ou `aborting` no prazo → nada a fazer;
+        - `initiating` no prazo → `initiating`; `completing`, com qualquer prazo → `completing`; `completed` → `completed`.
+        O `UPDATE` repete o estado de origem e, numa retomada, o token anterior e o prazo vencido. Zero linhas sob o bloqueio só vêm das transições sem bloqueio que encerram um claim (a ativação de P1 e o `markAborted`). Por isso a sessão é relida e avaliada mais uma vez; uma segunda vez com zero linhas é erro interno;
+      - **`decideAbort`:** a tabela de estados, exportada para o teste unitário.
+    - **`upload-sessions.service.ts` (`abortSession`):**
+      - **claim:** pelo `UploadSessionAccessService` e pelo `claimAbort`;
+      - **storage, fora de transação:** o `abortInStorage` localiza os uploads pelo `upload_id` ou, sem ele, pela chave exata da sessão no `listMultipartUploads`, que lista o bucket inteiro (achado 1 da SI-03.9). Para cada upload, o `abortUntilGone` faz `AbortMultipartUpload` seguido de `ListParts`, até o `NoSuchUpload`. A resposta do abort não conta como confirmação (achado 2 da SI-03.9);
+      - **marcação:** só com todos os uploads confirmados, pelo `markAborted` da SI-03.14, condicionado ao token;
+      - **sem confirmação:** a sessão fica `aborting` com o claim, e a varredura conclui (F-09).
+    - **`upload-sessions.controller.ts`:** `DELETE :sessionId`, com `@HttpCode(204)`, `@Throttle(VIDEOS_THROTTLE.ABORT_UPLOAD_SESSION)` (10 por 60 s), `@ApiBearerAuth('access-token')`, `@ApiParam` de `sessionId` e respostas 204 e 401, 404 e 409 (com o `ApiErrorEnvelope`).
+    - **`videos.constants.ts`:** `ABORT_CONFIRMATION` (3 tentativas, 250 ms entre elas).
+  - **Helper de teste:** `claimSessionForCompletion` em `test/helpers/video-fixtures.ts`, que põe a sessão em `completing` com token e prazo futuro (cenário 1.3).
+  - **Escolhas de implementação, para a revisão:**
+    - **Limite da confirmação:** 3 tentativas de abort e `ListParts`, com 250 ms entre elas, o que soma no máximo cerca de 0,5 s de espera. Depois disso a sessão fica `aborting`, e a requisição responde `204`. Uma parte em trânsito de 64 MiB pode levar mais que isso, e a varredura conclui.
+    - **Falha transitória do storage depois do claim:** responde `204`, com a sessão em `aborting` para a varredura e um aviso no log. O contrato da rota não prevê `503`, e o `204` já vale para a sessão em `aborting` (F-09). Um erro não transitório (por exemplo, `AccessDenied`) segue sem mudança e responde `500`, com o claim deixado para a varredura.
+    - **Localização dos uploads:** pela chave exata só quando o `upload_id` é nulo. Uploads duplicados na chave de uma sessão com `upload_id`, que só existiriam por uma repetição do Create, ficam para a varredura e a P4.
+    - **Marcação sem o bloqueio:** reutiliza o `markAborted` da SI-03.14, condicionado ao token, como o T2 de P1. Com zero linhas (outro processo assumiu depois do prazo), nada é sobrescrito, e a resposta continua `204`.
+    - **`aborting` no prazo do claim de outra operação:** `204` sem nenhuma ação, como o contrato ("nada a fazer"), para não atrapalhar a operação em andamento.
+    - **Sessão não vigente:** a rota não exige a sessão vigente; o contrato só distingue pelo estado.
+    - **Vídeo:** não é alterado; continua em `draft`, apontando para a sessão abortada e reiniciável (SI-03.18).
+  - **Comportamento do Silo confirmado:** um PUT pela URL assinada antes do abort recebe `404 NoSuchUpload` depois dele, e o upload não reaparece no `ListParts`.
+  - **Configuração temporária e filas no E2E:** `UPLOAD_PART_SIZE_BYTES=5242880` é guardado e restaurado como nas SIs anteriores. O `prepareScenario` pausa as filas e espera os jobs ativos antes de cada cenário, e o `restore()` do `afterAll` limpa os jobs e retoma as duas filas.
+  - **Verificações em vermelho, com os arquivos restaurados depois de cada uma e conferidos com `cmp`:**
+    - **resposta do abort aceita como confirmação** (sem `ListParts`): código 1, com 7 testes falhando, entre eles o T-05 e o F-09;
+    - **`completing` com claim vencido assumido:** código 1, com o teste de integração e a linha da tabela unitária falhando;
+    - **marcação sem a condição do token:** código 1 no teste da perda do token, porque A sobrescreveu a sessão de B;
+    - **sessão sem `upload_id` sem a busca pela chave:** código 1, com o multipart deixado aberto;
+    - **`aborting` no prazo assumido:** código 1 no teste da operação em andamento.
+  - **Verificações executadas, todas no container `nestjs-api`:**
+    - testes das SIs 03.13 a 03.17 (`npx jest --runInBand --verbose src/videos/upload-completion src/videos/upload-parts src/videos/upload-session src/videos/videos.module`): 16 suítes e 203 testes, código 0;
+    - `npx jest --config ./test/jest-e2e.json --runInBand --verbose test/videos-upload-session-abort.e2e-spec.ts`: 3 testes, código 0;
+    - `npm test -- --runInBand`: 56 suítes e 561 testes, código 0. Antes eram 54 e 528;
+    - `npm run test:e2e -- --runInBand`: 9 suítes e 103 testes, código 0. Antes eram 8 e 100;
+    - `npx tsc --noEmit`: código 0;
+    - `npm run build`: código 0, sem specs no `dist/`;
+    - **inicialização a partir do `dist/`, sem servidor:** código 0, com o `UploadSessionsController` resolvido e o `app.close()` concluído;
+    - **documento OpenAPI gerado do `dist/`:** o path da sessão tem `get` e `delete`. O `delete` tem tag `videos`, `security` `access-token`, parâmetros de path `publicId` e `sessionId`, nenhum corpo e respostas 204 (sem corpo) e 401, 404 e 409 (`$ref` ao `ApiErrorEnvelope`). O `openapi.json` commitado não mudou; a regeneração fica na SI-03.29;
+    - `npx eslint`, sem `--fix`, nos 8 arquivos de código da SI e em `"{src,apps,libs,test}/**/*.ts"` mais `proofs/phase-03/**/*.ts`: código 0;
+    - `prettier --check` nos 8 arquivos: código 0. O `prettier --write` foi aplicado só aos arquivos novos e aos trechos novos;
+    - `npm run lint` não foi executado, porque aplica `--fix`.
+  - **Estado do ambiente depois das execuções:** storage com 0 objetos e 0 multiparts, banco sem vídeos, sessões, partes, usuários ou canais, as duas filas sem `paused`, nenhum job na `video-processing` e nenhuma chave dos prefixos de teste.
+  - **Pertence às próximas etapas, não verificado aqui:**
+    - a conclusão do `aborting` pela varredura (SI-03.24), que deve confirmar pelo `ListParts` como aqui;
+    - o reinício (SI-03.18), cujo passo de storage para a sessão anterior é o mesmo abort confirmado;
+    - o 429 do `@Throttle` da rota, que o spec não prevê.
+  - **Documentos:** o plano, o documento de decisões e o spec `specs/videos-upload-session-abort.plan.md` não mudaram, então os `sources_mtime` e os `Last sync` não precisaram de sincronização. O E2E segue os passos e os nomes dos cenários do spec.
+
+### SI-03.18 — Endpoint POST upload-sessions (reinício)
+- **Status:** completed (2026-11-22). A revisão de 2026-11-22 aprovou a SI, incluindo as escolhas documentadas e as extrações compartilhadas com as SIs 03.12 e 03.17. A pendência do export OpenAPI continua na SI-03.29.
+- **Tests:**
+  - **Previstos pela SI e pelo spec `specs/videos-upload-session-restart.plan.md`:**
+    - `src/videos/upload-sessions.restart.spec.ts`: unitário, 27 testes:
+      - **cada estado da sessão vigente**, pela função de decisão do T1 (`decideRestart`): `active`; `initiating` com claim vencido e no prazo; `completing` com claim no prazo e vencido; `aborting` com claim no prazo e vencido; `aborted`; e `completed`;
+      - **o service**, com o acesso, o repositório e o storage mockados: a ordem T1 → Create → abort da anterior → `ListParts` → marcação pelo token de T1 → T2; o reinício sem sessão a reivindicar; o 404 do acesso; as regras 413 e 415 antes do T1; cada recusa do T1 (vídeo inexistente, fora de `draft` ou inconsistente, `completing` e `initiating`); a falha do Create, com a nova sessão abandonada pelo token e a anterior ainda abortada; o abandono recusado ou com erro; o abort da anterior sem confirmação (F-09), sem `upload_id` ou com erro, sem impedir a ativação; e o T2 com zero linhas ou com erro, abortando o próprio upload;
+    - `src/videos/upload-sessions.restart.integration-spec.ts`: Postgres, storage e Redis reais (fila num prefixo próprio), 13 testes. Os testes retêm o `createMultipartUpload` real depois do T1 e o `completeMultipartUpload` real depois do claim da conclusão:
+      - **T-03, dois reinícios:** com o primeiro retido depois do T1 (S2 em `initiating`, claim no prazo, ponteiro em S2 e S1 em `aborting`), o segundo recebe `UPLOAD_SESSION_INITIATING`. Liberado, o primeiro devolve S2, e o vídeo fica com S1 `aborted` e S2 `active`;
+      - **reinício depois da ativação do primeiro:** é legítimo; a sessão criada pelo primeiro termina `aborted`, sem o upload no storage, e só a nova fica `active`;
+      - **reinício e conclusão, nas duas ordens:** com a conclusão retida depois do claim, o reinício recebe `UPLOAD_SESSION_COMPLETING`, e a conclusão vence (vídeo em `processing`, uma única sessão). Com o reinício retido depois do T1, a conclusão recebe `UPLOAD_SESSION_NOT_ACTIVE`, e o reinício vence (vídeo em `draft`, sessão anterior `aborted`, nenhum job);
+      - **`completing` com claim vencido:** `UPLOAD_SESSION_COMPLETING`, sem nenhuma escrita;
+      - **rascunhos:** com a sessão vencida (Q-04) o reinício a aborta; com a sessão `aborting` no prazo do claim de outra operação, o reinício segue e não toca o claim dela; com a sessão `aborted`, segue; com a sessão `initiating` de claim vencido e o multipart aberto na chave dela, ela é assumida e o multipart é abortado;
+      - **falha do Create:** `STORAGE_UNAVAILABLE`, a nova sessão `aborted` pelo token, o vídeo em `draft` apontando para ela, a anterior `aborted`, e um novo reinício aceito;
+      - **T2 com zero linhas:** com a nova sessão assumida por outra operação durante a retenção, a resposta é `UPLOAD_SESSION_NOT_ACTIVE`, o upload criado é abortado, e a sessão fica como a outra operação a deixou;
+      - **abandono depois de falha do Create:** não sobrescreve a nova sessão assumida por outra operação;
+      - **T-06, bloqueio preservado:** a nova sessão começa sem `file_mismatch_at`, e a antiga fica `aborted`, com o `file_mismatch_at` e o registro de partes intactos;
+    - `test/videos-upload-session-restart.e2e-spec.ts`: os 8 cenários do spec (1.1 a 1.4, 2.1 a 2.3 e 3.1), com Postgres, storage e Redis reais e partes de 5 MiB:
+      - o 1.4 retém o `createMultipartUpload` de `POST /videos` enquanto simula a tomada de posse pela varredura;
+      - o 2.3 cobre as duas ordens de reinício e conclusão no mesmo cenário;
+      - o 3.1 é o T-06 completo: conferência reprovada com o arquivo A', conclusão bloqueada sem job, reinício explícito com a declaração de A', GET com `fileMismatch: false`, sessão antiga `aborted` e assinatura aceita na nova.
+  - **Acrescentados:** `src/videos/upload-session-access.service.spec.ts` ganhou 3 testes do `getOwnedVideo`, agora 8.
+- **Observations:**
+  - **Arquivos alterados em `src/videos/`:**
+    - **`upload-sessions.repository.ts`:**
+      - **`recordRestartIntent` (T1 do reinício):** com o vídeo bloqueado, exige o vídeo em `draft` e examina a sessão vigente C pelo `decideRestart`:
+        - `completing`, com qualquer prazo → recusa;
+        - `initiating` no prazo → recusa;
+        - `initiating` vencida, ou `active` → C vai para `aborting` com token próprio;
+        - `aborting`, `aborted` ou nenhuma → segue, sem tocar C;
+        - `completed` com o vídeo em `draft` → inconsistência, recusada.
+        Na mesma transação, grava a nova sessão S em `initiating`, com novo id, nova chave e novo token, e atualiza o ponteiro e as declarações do vídeo (`original_filename`, `content_type`, `size_bytes`);
+      - **`abortInitiatingSession`:** compensação da falha do Create. Sob o bloqueio, S vai de `initiating` a `aborted` só com o token dela;
+      - **`findOwnedVideo`:** o vídeo do dono, reutilizado pelo `findOwnedSession`;
+      - **trechos compartilhados, sem mudança de comportamento:**
+        - `claimForAbortUnderLock`, o claim para abort sob o bloqueio com a releitura depois de zero linhas, usado pelo DELETE (SI-03.17) e pelo reinício;
+        - `insertInitiatingSession`, a inserção da sessão `initiating`, usada pela criação (SI-03.12) e pelo reinício.
+    - **`upload-sessions.service.ts` (`restartSession`):**
+      - **antes do T1:** o acesso de dono (`getOwnedVideo`) e as mesmas regras de domínio da criação (413 e 415);
+      - **T1:** pelo `recordRestartIntent`;
+      - **storage, fora de transação:** o Create da nova chave e, nos dois caminhos, o abort de C pelo mesmo abort confirmado da SI-03.17, com o token de T1. Sem confirmação, ou com qualquer falha, C fica `aborting` para a varredura, e o reinício não depende disso;
+      - **falha do Create:** S vai para `aborted` pelo token, e a resposta é `503`;
+      - **T2:** pelo `activateSession`. Com zero linhas, o próprio upload é abortado e a resposta é `409 UPLOAD_SESSION_NOT_ACTIVE`; com erro, o upload é abortado e o erro é relançado;
+      - **reutilizações:** o `activateOrAbort` da criação recebeu a exceção da posse perdida como parâmetro (`503` em `POST /videos`, `409` no reinício), e a resposta `201` dos dois sai de `startedSessionResponse`.
+    - **`upload-session-access.service.ts`:** `getOwnedVideo`, com a validação do `publicId` e o `VIDEO_NOT_FOUND` sem distinguir os casos.
+    - **`upload-sessions.controller.ts`:** `POST` em `videos/:publicId/upload-sessions`, com `@HttpCode(201)`, `@Throttle(VIDEOS_THROTTLE.RESTART_UPLOAD_SESSION)` (10 por 60 s), `@ApiBearerAuth('access-token')`, o `UploadDeclarationDto` e respostas 201 (`VideoUploadSessionResponseDto`) e 400, 401, 404, 409, 413, 415 e 503 (com o `ApiErrorEnvelope`).
+  - **Escolhas de implementação, para a revisão:**
+    - **Ordem das verificações:** acesso (404), depois as regras de domínio (413 e 415), e por fim o T1, sob o bloqueio (409 `VIDEO_INVALID_STATE`, `UPLOAD_SESSION_COMPLETING` e `UPLOAD_SESSION_INITIATING`).
+    - **Sessão `completed` com vídeo em `draft`:** não ocorre pelo protocolo, porque o T2 de P2 é atômico. É tratada como inconsistência, com `409 VIDEO_INVALID_STATE`.
+    - **Sessão `aborting` no prazo do claim de outra operação:** o reinício segue sem tocar nela, como pede a tabela de P1 ("aborting, aborted ou nula → segue"). A operação dela conclui o abort.
+    - **Ordem do passo de storage:** o Create de S, depois o abort de C e, por fim, o T2. O abort de C pode somar até cerca de 0,5 s (limite da SI-03.17), dentro do prazo do claim de S.
+    - **Reutilizações e extrações:** as extrações nos arquivos aprovados (`claimForAbortUnderLock`, `insertInitiatingSession`, `findOwnedVideo`, o parâmetro do `activateOrAbort` e o `startedSessionResponse`) evitam duplicar a lógica das SIs 03.12 e 03.17. As specs dessas SIs passaram sem mudança antes e depois.
+  - **Verificações em vermelho, com o repositório restaurado depois de cada uma e conferido com `cmp`:**
+    - **`completing` com claim vencido assumido:** código 1, com o teste de integração e a linha da tabela unitária falhando;
+    - **`initiating` no prazo assumido:** código 1 no teste dos dois reinícios;
+    - **T2 sem condições** (sem estado e sem token): código 1, porque o reinício ativou uma sessão já assumida;
+    - **abandono sem condições:** código 1, porque o abandono sobrescreveu a sessão assumida;
+    - **ponteiro do vídeo não atualizado no T1:** código 1, com 2 testes de integração falhando.
+    - **Achado:** retirar só o token do T2 ou do abandono não é detectado pelos cenários do protocolo, porque toda tomada de posse muda o estado para `aborting`, e a condição de estado já basta. O token fica como defesa adicional; por isso as mutações significativas retiram as duas condições.
+  - **Configuração temporária e filas no E2E:**
+    - `UPLOAD_PART_SIZE_BYTES=5242880` é guardado e restaurado como nas SIs anteriores;
+    - o servidor ouve em `127.0.0.1:0` desde o `beforeAll`, como no E2E da SI-03.16, e o `app.close()` fecha o servidor no fim;
+    - as barreiras falham com a resposta recebida quando a requisição retida responde antes de chegar a elas;
+    - o `prepareScenario` pausa as filas e espera os jobs ativos antes de cada cenário, e o `restore()` do `afterAll` limpa os jobs e retoma as duas filas;
+    - a integração usa um prefixo próprio do Redis, removido com `obliterate`.
+  - **Verificações executadas, todas no container `nestjs-api`:**
+    - testes das SIs 03.13 a 03.18 (`npx jest --runInBand --verbose src/videos/upload-completion src/videos/upload-parts src/videos/upload-session src/videos/videos.module`): 18 suítes e 246 testes, código 0;
+    - `npx jest --config ./test/jest-e2e.json --runInBand test/videos-upload-session-restart.e2e-spec.ts`: 8 testes, código 0;
+    - `npm test -- --runInBand`: 58 suítes e 604 testes, código 0. Antes eram 56 e 561;
+    - `npm run test:e2e -- --runInBand`: 10 suítes e 111 testes, código 0. Antes eram 9 e 103;
+    - `npx tsc --noEmit`: código 0;
+    - `npm run build`: código 0, sem specs no `dist/`;
+    - **inicialização a partir do `dist/`, sem servidor:** código 0, com o `UploadSessionsController` resolvido e o `app.close()` concluído;
+    - **documento OpenAPI gerado do `dist/`:** a rota tem tag `videos`, `security` `access-token`, parâmetro de path `publicId`, o mesmo corpo de `POST /videos` (`UploadDeclarationDto`) e respostas 201 (`$ref` ao `VideoUploadSessionResponseDto`) e 400, 401, 404, 409, 413, 415 e 503 (`$ref` ao `ApiErrorEnvelope`). O `openapi.json` commitado não mudou; a regeneração fica na SI-03.29;
+    - `npx eslint`, sem `--fix`, nos 8 arquivos de código da SI e em `"{src,apps,libs,test}/**/*.ts"` mais `proofs/phase-03/**/*.ts`: código 0. A primeira passada apontou 2 `no-unsafe-enum-comparison` reais no E2E (comparação do enum com o texto `'active'`), trocados por `UploadSessionStatus.ACTIVE`;
+    - `prettier --check` nos 8 arquivos: código 0. O `prettier --write` foi aplicado só aos arquivos novos e aos trechos novos;
+    - `npm run lint` não foi executado, porque aplica `--fix`.
+  - **Estado do ambiente depois das execuções:** storage com 0 objetos e 0 multiparts, banco sem vídeos, sessões, partes, usuários ou canais, as duas filas sem `paused`, nenhum job na `video-processing` e nenhuma chave dos prefixos de teste.
+  - **Pertence às próximas etapas, não verificado aqui:**
+    - a conclusão, pela varredura, das sessões deixadas em `aborting` e das `initiating` vencidas (SI-03.24);
+    - a limpeza de uploads órfãos na chave de sessões abortadas (P4, SI-03.26);
+    - o 429 do `@Throttle` da rota, que o spec não prevê.
+  - **Documentos:** o plano, o documento de decisões e o spec `specs/videos-upload-session-restart.plan.md` não mudaram, então os `sources_mtime` e os `Last sync` não precisaram de sincronização. O E2E segue os passos e os nomes dos cenários do spec.
+
+### SI-03.19 — Endpoint GET /videos/:publicId (estado e metadados)
+- **Status:** completed (2026-11-22). A revisão de 2026-11-22 aprovou a SI, incluindo as escolhas e as limitações documentadas. A pendência do export OpenAPI continua na SI-03.29.
+- **Tests:**
+  - **Previstos pela SI e pelo spec `specs/videos-get.plan.md`:**
+    - `src/videos/videos.service.integration-spec.ts`: Postgres real, 7 testes:
+      - **dono:** rascunho com a sessão vigente `active` e os metadados nulos, com a resposta inteira conferida e só os 16 campos do contrato, e a sessão só com `id`, `status` e `expiresAt`;
+      - **vídeo `ready`:** metadados preenchidos, `durationSeconds` convertido de `'125.375'` para o número `125.375`, `hasThumbnail: true`, `sizeBytes` de 10.000.000.000 exato e a sessão vigente `completed`. Os campos internos (`media_format`, `original_key` e os do processamento) ficam fora;
+      - **vídeo em `error`:** `errorCode` e `errorMessage`, com `hasThumbnail: false`;
+      - **vídeo sem sessão vigente:** `uploadSession: null` e a duração nula preservada;
+      - **`VIDEO_NOT_FOUND`** para vídeo de outro canal, `publicId` bem formado sem vídeo e `publicId` malformado;
+    - `test/videos-get.e2e-spec.ts`: os 4 cenários do spec (1.1 a 1.4), com Postgres, storage e Redis reais. O 1.2 também confere que a mensagem do `publicId` malformado é a mesma do vídeo de outro canal, sem revelar a regra de formato. O 1.3 usa o `seedErrorVideo`.
+  - **Acrescentados no mesmo E2E, fora do spec, num `describe` próprio:** o vídeo `ready` do `seedReadyVideo`, com os metadados, a duração como número no JSON, a thumbnail, a sessão `completed` e só os campos do contrato; e o rascunho sem sessão vigente do `seedDraftVideo`, com `uploadSession: null`.
+  - **Atualizado:** `src/videos/videos.module.spec.ts` resolve também o `VideosService`.
+- **Observations:**
+  - **Arquivos novos em `src/videos/`:**
+    - **`videos.service.ts` (`VideosService.getOwnVideo`):** o acesso de dono pelo `getOwnedVideo` da SI-03.18 (`VIDEO_NOT_FOUND` para `publicId` malformado, vídeo inexistente ou de outro canal) e a leitura da sessão vigente pelo ponteiro do vídeo, as duas sem bloqueio. A resposta converte `duration_seconds` (`numeric`, que o driver devolve como texto) para número, preservando `null`, e calcula `hasThumbnail` por `thumbnail_key`;
+    - **`dto/video-response.dto.ts`:** `VideoResponseDto`, com os 16 campos de "API Contracts → GET /videos/:publicId" e os anuláveis marcados, e `VideoCurrentUploadSessionDto` (`id`, `status` e `expiresAt`).
+  - **Arquivos alterados:**
+    - **`videos.controller.ts`:** `GET :publicId`, com `@Throttle(VIDEOS_THROTTLE.GET_VIDEO)` (60 por 60 s), `@ApiBearerAuth('access-token')`, `@ApiParam` de `publicId` e respostas 200 (com o DTO) e 401 e 404 (com o `ApiErrorEnvelope`);
+    - **`videos.module.ts`:** provider `VideosService`.
+  - **Escolhas de implementação, para a revisão:**
+    - **Sem melhorias arquiteturais:** o acesso reutiliza o `UploadSessionAccessService`, e a sessão vem do repositório TypeORM de `UploadSession`, já registrado no módulo.
+    - **Duas leituras:** o vídeo e a sessão são lidos em duas consultas. Um reinício entre elas faz a resposta trazer a sessão do ponteiro lido primeiro; o polling seguinte traz a nova.
+    - **`errorCode`:** documentado no OpenAPI com os códigos persistidos de `VIDEO_ERROR_CODES` e tipado como texto, como a coluna.
+  - **Verificações em vermelho, com os arquivos restaurados depois de cada uma e conferidos com `cmp`:**
+    - **rota sem o `@Throttle`:** código 1 no E2E 1.4, porque o limite global de 10 por 60 s barrou o polling;
+    - **duração sem conversão:** código 1 no teste de integração do vídeo `ready`;
+    - **campo interno exposto** (`originalKey`): código 1, com 2 testes de integração falhando na lista de campos.
+  - **Limitações:**
+    - os estados produzidos pelo processamento vêm de fixtures; o processamento real até `ready` e `error` fica para as SIs 03.22 e 03.28;
+    - o `429` da 61ª requisição não é testado, porque o spec só pede que 30 requisições passem.
+  - **Filas e dados no E2E:** o `prepareScenario` pausa as filas e espera os jobs ativos antes de cada cenário. O `afterAll` remove o storage dos vídeos e as tabelas, e o `restore()` limpa os jobs e retoma as duas filas. A suíte não usa configuração temporária.
+  - **Verificações executadas, todas no container `nestjs-api`:**
+    - testes da SI (`npx jest --runInBand src/videos/videos src/videos/upload-session-access`): 3 suítes e 16 testes, código 0;
+    - `npx jest --config ./test/jest-e2e.json --runInBand --verbose test/videos-get.e2e-spec.ts`: 6 testes, código 0;
+    - `npm test -- --runInBand`: 59 suítes e 611 testes, código 0. Antes eram 58 e 604;
+    - `npm run test:e2e -- --runInBand`: 11 suítes e 117 testes, código 0. Antes eram 10 e 111;
+    - `npx tsc --noEmit`: código 0;
+    - `npm run build`: código 0, sem specs no `dist/`;
+    - **inicialização a partir do `dist/`, sem servidor:** código 0, com o `VideosController` resolvido e o `app.close()` concluído;
+    - **documento OpenAPI gerado do `dist/`:** a rota tem tag `videos`, `security` `access-token`, parâmetro de path `publicId` e respostas 200 (`$ref` ao `VideoResponseDto`) e 401 e 404 (`$ref` ao `ApiErrorEnvelope`). O `VideoResponseDto` tem os 16 campos do contrato, todos obrigatórios. São anuláveis `durationSeconds` (número), `width`, `height`, `videoCodec`, `audioCodec`, `errorCode`, `errorMessage` e `uploadSession` (`VideoCurrentUploadSessionDto`). O `openapi.json` commitado não mudou; a regeneração fica na SI-03.29;
+    - `npx eslint`, sem `--fix`, nos 7 arquivos de código da SI e em `"{src,apps,libs,test}/**/*.ts"` mais `proofs/phase-03/**/*.ts`: código 0;
+    - `prettier --check` nos 7 arquivos: código 0. O `prettier --write` foi aplicado só aos arquivos novos e aos trechos novos;
+    - `npm run lint` não foi executado, porque aplica `--fix`.
+  - **Estado do ambiente depois das execuções:** storage com 0 objetos e 0 multiparts, banco sem vídeos, sessões, partes, usuários ou canais, as duas filas sem `paused`, nenhum job na `video-processing` e nenhuma chave dos prefixos de teste.
+  - **Documentos:** o plano, o documento de decisões e o spec `specs/videos-get.plan.md` não mudaram, então os `sources_mtime` e os `Last sync` não precisaram de sincronização. O E2E segue os passos e os nomes dos cenários do spec.
+
+### SI-03.20 — Worker: entrypoint, módulo e serviço video-worker
+- **Status:** completed (2026-11-23). A revisão de 2026-11-23 aprovou a SI, incluindo o `docker/worker-dev.sh`, o `.gitignore` e as escolhas documentadas.
+- **Tests:**
+  - **Previsto pela SI:** `src/worker/worker.module.spec.ts`, compilação do `WorkerModule` real, com a própria configuração, o TypeORM e o BullMQ, 2 testes:
+    - o `WorkerLifecycleService`, o `StorageService`, o `VideoJobDispatcherService` e as filas `video-processing` e `video-maintenance` resolvidos;
+    - o `DataSource` inicializado, com a metadata de `Video`, `UploadSession`, `UploadPart`, `Channel` e `User`.
+  - **Verificação em vermelho:** sem o `UsersModule`, a suíte falhou com os 2 testes acusando `Entity metadata for Channel#user was not found`, depois das 9 tentativas do `TypeOrmModule` (25 s). O arquivo foi restaurado e conferido com `cmp`. **Limitação:** quando a compilação falha, o Jest não sai sozinho ("did not exit one second after the test run"), porque as conexões do Redis das filas criadas antes da falha ficam abertas; a execução foi interrompida (código 143).
+  - **Verificações no Compose:** descritas abaixo; não são testes automatizados.
+- **Observations:**
+  - **Arquivos novos:**
+    - **`src/worker.ts`:** `NestFactory.createApplicationContext(WorkerModule)` e `enableShutdownHooks()`. O SIGTERM e o SIGINT viram `app.close()`, que roda os hooks de todos os módulos: os workers do BullMQ registrados por `@Processor` (SI-03.22 e SI-03.23) são fechados ali com `worker.close()`, e as conexões vêm depois.
+    - **`src/worker/worker.module.ts`:** `ConfigModule` global só com os namespaces do worker (`database`, `storage`, `queue` e `video`), validado pelo mesmo `envValidationSchema` da API; `TypeOrmModule.forRootAsync`; `BullModule.forRootAsync`; `StorageModule`; `VideosModule`; `UsersModule`; e `BullModule.registerQueue('video-maintenance')`. Nenhum `@Processor`, nenhum agendamento e nenhum consumidor provisório: o worker ainda não retira jobs das filas.
+    - **`src/worker/worker-lifecycle.service.ts`:** registra no log a parada com o sinal recebido pelo processo Nest (`video-worker stopping (SIGTERM)` e `stopped (SIGTERM)`). É a evidência de que o sinal chegou ao Nest, usada nas verificações abaixo.
+    - **`src/config/root-connections.ts`:** `typeOrmRootOptions` e `bullRootOptions`, as opções de conexão compartilhadas pelo `AppModule` e pelo `WorkerModule`, para os dois processos não divergirem. O `AppModule` passou a usá-las, sem mudança de comportamento.
+    - **`tsconfig.worker.json`:** estende o `tsconfig.build.json`, com `outDir` `./dist-worker`.
+    - **`docker/worker-dev.sh`:** o modo watch do worker (ver "Achado").
+  - **Arquivos alterados:**
+    - **`package.json`:** `build:worker` (`nest build -p tsconfig.worker.json`), `start:worker` (`exec node dist-worker/worker`) e `start:worker:dev` (`exec sh docker/worker-dev.sh`);
+    - **`compose.yaml`:**
+      - âncora `x-nestjs-image`, com o build do `Dockerfile.dev` e o nome `streamtube-nestjs-dev`, usada pelo `nestjs-api` e pelo `video-worker`, que rodam a mesma imagem;
+      - serviço `video-worker`, com `init: true`, `command: npm run start:worker:dev`, `stop_grace_period: 200s`, o mesmo bind mount do código e dependências de `db`, `storage` e `redis` saudáveis e do `storage-init` concluído;
+    - **`tsconfig.build.json`:** exclui `dist-worker`;
+    - **`.gitignore`:** `/dist-worker`;
+    - **`src/app.module.ts`:** usa as fábricas de `root-connections.ts`.
+  - **Achado: em watch, o CLI do Nest não repassa o SIGTERM ao processo Nest.**
+    - **No código instalado:** o `@nestjs/cli` 11.0.16 não tem handler de SIGTERM; ele só faz o `tree-kill` do filho no evento `exit`, que o Node não emite quando o processo morre por um sinal sem handler. O `npm` 11 repassa o SIGTERM ao filho e espera por ele. O `dash` do `sh -c` não faz `exec` do comando.
+    - **Experimento 1, com o script direto** (`nest start --watch`): no `docker compose stop`, o container parou em 0,56 s, com código 143, e o processo Nest não registrou o sinal. O sinal morreu no `sh -c` e no CLI, o `npm` saiu, o `tini` saiu, e o kernel matou o processo Nest sem a parada graciosa. Nos reinícios do watch, o `tree-kill` do CLI entrega o SIGTERM e a parada é graciosa.
+    - **Correção:** o `docker/worker-dev.sh` é o filho direto do `npm`, porque o script npm começa com `exec`. Ele roda `nest start --watch --no-shell -p tsconfig.worker.json --entryFile worker`, em que o processo Nest é filho direto do CLI. No SIGTERM ou SIGINT, o script repassa o sinal ao processo Nest, espera que ele termine e só então encerra o CLI. A árvore fica `tini → npm → worker-dev.sh → nest CLI → node dist-worker/worker`.
+    - **O mesmo vale para o `start:worker`:** pelo `npm`, `node dist-worker/worker` ficava atrás de um `sh -c` e morria sem a parada graciosa (código 143, sem o log). Com `exec node dist-worker/worker`, o processo Nest é o filho direto do `npm` e registra o SIGTERM.
+  - **Verificações no Compose, efetivamente comprovadas:**
+    - **inicialização:** `docker compose up -d` subiu o `video-worker` junto com a infraestrutura, e o `docker compose ps` o mostra `running`, com `video-worker started` no log;
+    - **mesma imagem:** o `nestjs-api` foi recriado pelo `up` por causa do nome da imagem, e os dois rodam `streamtube-nestjs-dev` com o mesmo ID (`6b5db062366a`). A imagem anterior da API (`4bd757d60887`) tem as mesmas 7 camadas; o ID difere só pelo rótulo `com.docker.compose.service`. O FFmpeg é o mesmo `5.1.9-0+deb12u1` da V-04, com Node 25.6.0 e Debian 12.13, então a regra DG-1 de repetir a V-04 quando a imagem muda não foi disparada;
+    - **SIGTERM até o processo Nest em watch:** `docker compose stop` em 0,6 s, com `stopping (SIGTERM)` e `stopped (SIGTERM)` no log e código 0. O `docker compose restart` e os reinícios do watch também registram a parada graciosa;
+    - **espera por uma parada lenta:** com um atraso temporário de 8 s no `beforeApplicationShutdown`, restaurado e conferido com `cmp`, o `docker compose stop` levou 8,55 s, com `stopping` às 02:36:23, `stopped` às 02:36:31 e código 0. O `start:worker` com `exec` também esperou os 8 s, porque o `dist-worker/` ainda tinha o build do atraso; o `dist-worker/` foi recompilado depois;
+    - **API e worker juntos em watch:** com `npm run start:dev` no `nestjs-api`, iniciado para esta verificação, o `GET /` respondeu `200 Hello World!`, e o worker seguiu rodando;
+    - **saídas independentes:**
+      - o reinício do watch da API reescreveu o `dist/` sem tocar o `dist-worker/` (mesmo inode e mtime do `worker.js`) nem reiniciar o worker;
+      - o reinício do `video-worker` reescreveu o `dist-worker/` sem tocar o `dist/main.js` nem reiniciar a API;
+      - uma mudança real e temporária em `src/videos/videos.constants.ts`, revertida e conferida com `cmp`, recompilou cada saída no próprio diretório e reiniciou os dois. O `touch` sozinho não dispara o watch, porque o conteúdo não muda;
+      - os builds sem watch também ficam separados: `npm run build` não tocou o `dist-worker/`, e `npm run build:worker` não tocou o `dist/`;
+    - **sem processos órfãos:** depois dos reinícios do watch, o container do worker tem um único processo `dist-worker/worker` e nenhum zumbi, porque o `tini` os recolhe;
+    - **parada com FFmpeg no container:** com um `ffmpeg -re` rodando no container (iniciado por `docker compose exec`), o `docker compose stop` levou 0,62 s, bem abaixo dos 200 s. A parada foi graciosa, e nenhum FFmpeg sobrou, porque o fim do PID 1 encerra o namespace do container.
+  - **Depende das SIs 03.21 e 03.22, não comprovado aqui:**
+    - o FFmpeg como filho de um job: a espera do `worker.close()` pelo job ativo e o fim do FFmpeg pelo timeout por chamada antes da parada. O FFmpeg do teste acima não era filho do worker;
+    - uma parada com job ativo dentro do `stop_grace_period`, que só existe com o processor (SI-03.22);
+    - os valores de lock, stall e concorrência no `@Processor` (SIs 03.22 e 03.23).
+  - **Escolhas de implementação, para a revisão:**
+    - **`stop_grace_period: 200s`:** o plano não fixa o "timeout de um job". O valor cobre até 3 chamadas do FFmpeg de `VIDEO_PROCESSING_TIMEOUT_MS` (60 s cada), a mesma conta da espera do helper de filas da SI-03.11 (180 s), com folga;
+    - **`UsersModule` no worker:** o `Channel` se relaciona com o `User`, e sem a entidade a inicialização falhava (achado na primeira subida do serviço);
+    - **dependência do `storage-init`:** como no `nestjs-api`, para o bucket existir antes do worker;
+    - **`compose.yaml` fora do estilo do Prettier:** o arquivo original já estava fora (aspas duplas, por exemplo), e as linhas novas seguem o estilo do arquivo. O `format` do projeto só cobre `.ts`.
+  - **Fora do escopo, só registrado:**
+    - **`start:prod` da API:** tem o mesmo problema do `start:worker` sem `exec` (`sh -c` intermediário pelo `npm`);
+    - **container `nestjs-api`:** sem `init`, acumula processos `<defunct>` depois de reinícios do watch, porque o PID 1 é o `tail`;
+    - **imagem antiga:** a `nestjs-project-nestjs-api:latest` continua no Docker, sem uso.
+  - **Verificações executadas, todas no container `nestjs-api`:**
+    - `npx jest --runInBand --verbose src/worker`: 1 suíte e 2 testes, código 0;
+    - `npm test -- --runInBand`: 60 suítes e 613 testes, código 0. Antes eram 59 e 611;
+    - `npm run test:e2e -- --runInBand`: 11 suítes e 117 testes, código 0, com o `video-worker` rodando;
+    - `npx tsc --noEmit`: código 0, também com o `dist-worker/` presente;
+    - `npm run build`: código 0, sem specs no `dist/`;
+    - `npm run build:worker`: código 0, com `dist-worker/worker.js` e sem specs no `dist-worker/`;
+    - `npx eslint`, sem `--fix`, nos 6 arquivos `.ts` da SI e em `"{src,apps,libs,test}/**/*.ts"` mais `proofs/phase-03/**/*.ts`: código 0;
+    - `prettier --check` nos arquivos `.ts` da SI, no `tsconfig.worker.json`, no `tsconfig.build.json` e no `package.json`: código 0. O `compose.yaml` não passa, como o original;
+    - `sh -n docker/worker-dev.sh` e `docker compose config --quiet`: código 0;
+    - `npm run lint` não foi executado, porque aplica `--fix`.
+  - **Estado do ambiente depois das execuções:**
+    - o servidor de desenvolvimento da API iniciado para a verificação foi encerrado; o `nestjs-api` voltou ao `tail -f /dev/null`, e a porta 3000 fechou;
+    - o `video-worker` está rodando em watch, como o `docker compose up -d` passa a deixar o ambiente;
+    - os containers avulsos do `docker compose run --rm` foram removidos;
+    - storage com 0 objetos e 0 multiparts, banco sem vídeos, sessões, partes, usuários ou canais, as duas filas sem `paused`, nenhum job e nenhuma chave dos prefixos de teste.
+  - **Documentos:** o plano e o documento de decisões não mudaram.
+
+### SI-03.21 — MediaProbeService: sondagem, validação de mídia e frame
+- **Status:** completed (2026-11-23). A revisão de 2026-11-23 aprovou a SI, incluindo as verificações, a execução E2E com `--runInBand` e as limitações documentadas.
+- **Tests:**
+  - `src/worker/media/media-probe.service.spec.ts` (unitário): 38 testes;
+  - `src/worker/media/media-probe.service.integration-spec.ts` (integração, FFmpeg 5.1.9 da imagem e storage real): 12 testes;
+  - `src/worker/worker.module.spec.ts`: 2 testes, agora conferindo o `MediaProbeService`.
+- **Observations:**
+  - **Arquivos criados, em `src/worker/media/`:**
+    - `media.constants.ts`: `FFMPEG_NETWORK_ARGS` (`-rw_timeout 10000000 -reconnect 1 -reconnect_on_network_error 1 -reconnect_delay_max 4`, os valores da V-04), `MEDIA_URL_TTL_MARGIN_SECONDS`, `ACCEPTED_MEDIA` (MP4: `h264` e `aac`; WebM: `vp8`, `vp9` ou `av1` e `vorbis` ou `opus`; áudio opcional) e `MOV_MAJOR_BRAND` (`qt  `);
+    - `media.errors.ts`: `MediaRejectedError`, com `code` restrito a `MEDIA_INVALID`, `MEDIA_CONTAINER_MISMATCH` e `MEDIA_UNSUPPORTED_CODEC` (permanentes), e `MediaTransientError` (rede, storage, timeout ou falha sem causa de mídia), para a SI-03.22 mapear em `UnrecoverableError` ou retentativa;
+    - `media-process.runner.ts`: `MediaProcessRunner.run(command, args, timeoutMs)` com `spawn`. No timeout envia SIGKILL e só resolve no `close`, depois do fim do processo e do fechamento das saídas;
+    - `media-probe.rules.ts`: funções puras `classifyFailure`, `parseFfprobeOutput`, `evaluateMedia`, `isJpeg`, `redactSignedUrls` e `describeStderr`;
+    - `media-probe.service.ts`: `probe(key, contentType)` devolve `MediaMetadata` (`durationSeconds`, `width`, `height`, `mediaFormat`, `videoCodec`, `audioCodec`). `extractFrame(key, atSeconds)` devolve o JPEG como `Buffer`. As duas leem por URL pré-assinada interna (`presignGet`, `audience` `internal`), válida pelo timeout por chamada mais 60 s;
+    - `media-probe.service.spec.ts` e `media-probe.service.integration-spec.ts`.
+  - **Arquivos alterados:** `src/worker/worker.module.ts` (providers `MediaProcessRunner` e `MediaProbeService`) e `src/worker/worker.module.spec.ts`.
+  - **Regras aplicadas:**
+    - **Classificação das falhas (V-04):**
+      - processo morto pelo timeout → transitório;
+      - qualquer evidência de transporte → transitório, mesmo com "moov atom not found" ou "Invalid data found" depois;
+      - mensagem do demuxer sem evidência de transporte → `MEDIA_INVALID`;
+      - qualquer outra falha, inclusive saída 0 sem JSON → transitório, nunca validação da mídia.
+    - **Mídia legível:**
+      - sem stream de vídeo, ou stream sem dimensões → `MEDIA_INVALID`;
+      - `content_type` fora de MP4 e WebM, `format_name` sem `mp4` ou `webm`, ou MP4 com `major_brand` `qt  ` → `MEDIA_CONTAINER_MISMATCH`;
+      - qualquer stream de vídeo ou áudio fora da lista → `MEDIA_UNSUPPORTED_CODEC`;
+      - duração ausente ou `N/A` → `null`.
+    - **Frame:** `-ss` antes de `-i`, `-frames:v 1 -f image2pipe -c:v mjpeg pipe:1`. Uma saída 0 sem marcadores SOI e EOI → `MEDIA_INVALID`; posição negativa → `RangeError`, sem executar o ffmpeg.
+    - **Mensagens:** a query de toda URL é removida antes de compor os motivos e o `Logger.warn`. Ela termina em espaço, aspas ou no `:` que o FFmpeg escreve depois da URL; os valores da query pré-assinada vêm codificados (`%3A`).
+  - **Resultados da integração:**
+    - `h264-aac-faststart.mp4`, `h264-aac-moov-end.mp4`, `h264-no-audio.mp4` e `vp9-opus.webm` são aceitos com 320×240, codecs corretos e duração de 2 s (2,008 s no WebM);
+    - o frame de `h264-aac-moov-end.mp4` e o de `vp9-opus.webm` decodificam como `mjpeg` 320×240;
+    - `qt-brand.mov` como `video/mp4` → `MEDIA_CONTAINER_MISMATCH`;
+    - `invalid.mp4` → `MEDIA_INVALID` ("Invalid data found when processing input");
+    - `truncated.mp4` → `MEDIA_INVALID` ("moov atom not found");
+    - objeto inexistente → transitório ("Server returned 404"), nunca `MEDIA_INVALID`;
+    - **servidor que aceita a conexão e não envia bytes:** ffprobe e ffmpeg em paralelo terminaram sozinhos com "Connection timed out" em cerca de 44,6 s, de 40 a 50 s, com 8 conexões (4 por processo), abaixo do timeout de 60 s, como na V-04;
+    - **timeout por chamada de 3 s** (override do `queueConfig` só nesse teste): ffprobe e ffmpeg mortos entre 3 e 5 s, com motivo transitório;
+    - **processos restantes:** nenhum ffprobe ou ffmpeg depois de cada chamada. O controle positivo confirma que o `pgrep -x` enxerga o processo a 1 s do início da chamada;
+    - **assinaturas:** nenhum motivo e nenhum aviso real do serviço contém `X-Amz-`.
+  - **Verificações em vermelho** (backup → mutação → execução → restauração → `cmp`; as fontes finais são idênticas ao backup):
+    - **M1, sem `-reconnect_delay_max 4`:** 2 unitários falham, e o teste do servidor parado falha porque o ffprobe é morto pelo timeout por chamada a 60.004 ms;
+    - **M2, sem remover a query:** 1 unitário falha, e 3 de integração falham (`invalid.mp4`, `truncated.mp4` e 404);
+    - **M3, parsing prevalecendo sobre o transporte:** 9 unitários falham;
+    - **M4, sem a regra `qt  `:** 1 unitário e 1 de integração falham. Sem a regra, o MOV com `h264` e `aac` seria aceito;
+    - **M5, sem o SIGKILL:** o teste do timeout por chamada estoura os 30 s do Jest. Os processos terminaram sozinhos depois, e nenhum ficou para trás nem zumbi;
+    - **M6, `-ss` depois de `-i`:** 1 unitário falha.
+  - **Verificações executadas, todas no container `nestjs-api`:**
+    - `npm test -- --runInBand`: 62 suítes e 663 testes, código 0. Antes eram 60 e 613;
+    - `npm run test:e2e -- --runInBand`: 11 suítes e 117 testes, código 0, em 37,8 s, com o `video-worker` rodando e sem aviso de handles abertos. Antes da execução, foi conferido que não havia Jest no `nestjs-api`, no `video-worker` nem no host, e que o ambiente estava limpo;
+    - **primeira tentativa da E2E, descartada:** rodei `npm run test:e2e` sem `-- --runInBand`, e o script `test:e2e` não inclui a opção. As suítes concorreram pelo banco (violações de FK em `channels` e `refresh_tokens`, respostas 500), e o Claude Code encerrou o comando por falta de memória no sistema. Essas falhas vieram da execução paralela e não contam como resultado da suíte. A suíte principal da mesma tentativa já tinha terminado em série e vale;
+    - `npx tsc --noEmit`: código 0;
+    - `npm run build`: código 0, sem specs no `dist/`;
+    - `npm run build:worker`: código 0, com `dist-worker/worker/media/media-probe.service.js` e sem specs no `dist-worker/`;
+    - `npx eslint`, sem `--fix`, em `"{src,apps,libs,test}/**/*.ts"` e `proofs/phase-03/**/*.ts`: código 0, depois de trocar `Object.prototype.hasOwnProperty.call` por `Object.hasOwn` (`no-unsafe-return`);
+    - `prettier --check` nos arquivos da SI: código 0;
+    - `npm run lint` não foi executado, porque aplica `--fix`.
+  - **OpenAPI gerado do `dist/`:** as mesmas 18 operações e 27 schemas, sem rota nova. As únicas menções a mídia são os códigos `MEDIA_*` de `VIDEO_ERROR_CODES`, já documentados na SI-03.19. O `openapi.json` commitado não mudou; a regeneração fica na SI-03.29.
+  - **Estado do ambiente depois das execuções:**
+    - a E2E interrompida deixou 4 multipart uploads em `originals/`, iniciados entre 04:36:51 e 04:36:53 UTC e sem registro no banco. Foram abortados pela chave e pelo `uploadId` exatos, com a ausência confirmada por `ListParts` → `NoSuchUpload`;
+    - storage com 0 objetos e 0 multiparts, banco sem vídeos, sessões, partes, usuários ou canais, as duas filas sem `paused`, nenhum job e nenhuma chave dos prefixos de teste;
+    - nenhum processo ffprobe, ffmpeg ou Jest no `nestjs-api` nem no `video-worker`; o `video-worker` continua em watch;
+    - depois da E2E com `--runInBand`, o estado se repetiu: storage com 0 objetos e 0 multiparts, banco vazio, filas sem `paused` e sem jobs, só o `tail -f /dev/null` no `nestjs-api` e a cadeia do watch no `video-worker`. O `openapi.json` e o `.env` não mudaram.
+  - **Limitações:**
+    - `test:e2e` no `package.json` não tem `--runInBand`, embora o `nestjs-project/CLAUDE.md` diga que já tem. Fica anotado como tarefa separada, sem correção aqui;
+    - o teste do servidor parado leva cerca de 45 s e a suíte de integração da SI, cerca de 52 s;
+    - `pgrep -x` olha só o container dos testes. No `video-worker`, a ausência de processos foi conferida à parte, e não há consumidor;
+    - sem o processor (SI-03.22), o worker ainda não chama o `MediaProbeService`.
+  - **Documentos:** o plano e o documento de decisões não mudaram.
+
+### SI-03.22 — Processor de vídeo com tentativa vigente (P3)
+- **Status:** completed (2026-11-23). A revisão de 2026-11-23 aprovou a SI, incluindo a correção da ordem de encerramento, a prova do SIGTERM no Compose e as limitações documentadas.
+- **Tests:**
+  - `src/worker/processing/processing-attempt.spec.ts` (unitário): 19 testes;
+  - `src/worker/processing/processing-state.service.spec.ts` (unitário, predicados de assunção e de publicação): 9 testes;
+  - `src/config/load-env-file.spec.ts` (unitário): 2 testes;
+  - `src/worker/processing/processing-state.service.integration-spec.ts` (integração, Postgres real, tabela verdade da cerca e da guarda de P3): 20 testes;
+  - `src/worker/processing/video-processing.processor.integration-spec.ts` (integração, worker BullMQ real numa fila com prefixo próprio, FFmpeg da imagem e storage real; T-10, T-14 e parada): 12 testes;
+  - `src/worker/processing/video-processing.concurrency.integration-spec.ts` (integração, T-11): 7 testes;
+  - `src/worker/worker.module.spec.ts`: 2 testes, agora conferindo o `ProcessingStateService` e o `VideoProcessingProcessor`.
+- **Observations:**
+  - **Arquivos criados:**
+    - `src/worker/processing/processing-attempt.ts`: `processingAttemptOf(job)` lê `dispatch` do `jobId`, usa `seq = job.attemptsStarted`, confere `videoId` e `run` com o payload e gera o `attemptId`. Um `jobId` incompatível com o payload, ou sem tentativa iniciada, lança `UnrecoverableError`, sem efeitos. Também tem `isLastAttempt(job)` (`attemptsMade + 1 >= attempts`) e `thumbnailFrameSeconds(duration)`;
+    - `src/worker/processing/processing-state.service.ts`:
+      - `assume(attempt)`: o `UPDATE` condicional de P3, com `status = 'processing'`, `processing_run`, `processing_dispatch` e a cerca lexicográfica, e `RETURNING original_key, content_type`; zero linhas → `null`;
+      - `publishReady(attempt, metadata, thumbnailKey)`: `ready`, metadados e `thumbnail_key` num único `UPDATE`;
+      - `recordError(attempt, code, message)`;
+      - os dois últimos usam a guarda de publicação (`status`, `run`, `dispatch` e `current_attempt_id`);
+    - `src/worker/processing/video-processing.processor.ts`: `@Processor('video-processing', videoProcessingWorkerOptions(queueConfig()))`, que estende `WorkerHost`:
+      - assume a tentativa ou termina com `skipped`, sem FFmpeg e sem gravação;
+      - sonda e extrai o frame pela SI-03.21;
+      - grava `thumbnails/{videoId}/{attemptId}.jpg` (`image/jpeg`) e publica;
+      - erros permanentes gravam `error` e lançam `UnrecoverableError`;
+      - erros transitórios são relançados; na última tentativa, grava antes `PROCESSING_FAILED`;
+      - registra `@OnWorkerEvent('stalled')` e `@OnWorkerEvent('failed')` com log estruturado, este último sem a query das URLs;
+      - drena o worker no `onModuleDestroy` (ver Achado);
+    - `src/worker/processing/video-processing.worker-options.ts`: `concurrency`, `lockDuration`, `stalledInterval` e `maxStalledCount` a partir do `queueConfig`;
+    - `src/config/load-env-file.ts` e `src/config/load-env-file.side-effect.ts`: carregam o `.env` antes dos imports do worker (ver Escolhas);
+    - `src/test/processing-fixtures.ts`: helpers das suítes de processamento (original de fixture, vídeo em `processing`, entrega controlada, leitura e decodificação da thumbnail, limpeza);
+    - as 6 suítes de teste listadas acima.
+  - **Arquivos alterados:**
+    - `src/worker/worker.module.ts`: `TypeOrmModule.forFeature([Video])`, `ProcessingStateService` e `VideoProcessingProcessor`;
+    - `src/worker.ts`: primeiro import `./config/load-env-file.side-effect`;
+    - `src/videos/storage-keys.ts`: `thumbnailObjectKey(videoId, attemptId)`;
+    - `src/worker/worker.module.spec.ts`.
+  - **Escolhas de implementação, para a revisão:**
+    - **Configuração do worker no decorator:** o `@nestjs/bullmq` 11.0.5 só recebe as opções do worker pelo `@Processor`, avaliado no import do módulo, antes de o `ConfigModule.forRoot` carregar o `.env`. Não há caminho público por DI, e mudar `worker.opts` depois não serve, porque o `LockManager` copia `lockDuration` no construtor do `Worker`. Por isso, o `worker.ts` carrega o `.env` como primeiro import, com o `parseEnv` do Node, sem sobrescrever variáveis já definidas. Antes de adotar, conferi no contêiner que o `parseEnv` lê o `.env` (28 chaves) e o `.env.example` (51 chaves) exatamente como o `dotenv` do `ConfigModule`, e que o `process.loadEnvFile` preserva as variáveis do ambiente. O `.env` local não define essas chaves, então valem os padrões aprovados na V-11: concorrência 1, `lockDuration` 30.000 ms, `stalledInterval` 30.000 ms e `maxStalledCount` 1. O worker registra os valores efetivos ao iniciar (`video-processing.worker-started`);
+    - **Frame da thumbnail:** posição determinística (G-07) de 1 s, ou a metade da duração quando o vídeo é mais curto; 0 sem duração;
+    - **`error_message`:** recebe o motivo já sem a query das URLs (SI-03.21). No `PROCESSING_FAILED`, a mensagem do erro transitório passa por `redactSignedUrls` antes de ser gravada e registrada;
+    - **Retorno do job:** `{ outcome: 'ready' | 'superseded' | 'skipped', attemptId }`, guardado pelo BullMQ;
+    - **Falha ao gravar `PROCESSING_FAILED`:** o erro de escrita é registrado (`video-processing.error-not-recorded`), e o job falha com a causa original; a reconciliação (P5) fecha o vídeo.
+  - **Achado e correção: ordem do encerramento com job ativo (pendência da SI-03.20).**
+    - **Primeira prova no Compose, antes da correção:**
+      - o job terminou e o vídeo ficou `ready`;
+      - mas "stopped (SIGTERM)" foi registrado às 13:35:14, antes de o job terminar às 13:35:25;
+      - o `StorageModule.onModuleDestroy` destruiu os clientes S3 antes do PUT da thumbnail. O PUT funcionou só porque o SDK aceita novas requisições depois do `destroy()`.
+    - **Ordem do Nest 11 no `close()`:**
+      1. todos os `onModuleDestroy`, do módulo raiz para os importados;
+      2. `beforeApplicationShutdown`;
+      3. `onApplicationShutdown`, fase em que o `@nestjs/bullmq` chama `worker.close()` e o TypeORM fecha o `DataSource`.
+    - **Correção, só no processor:** `onModuleDestroy` chama `await this.worker.close()`. Como o processor está no módulo raiz, a drenagem é a primeira etapa da parada, e storage e banco só são liberados depois do job ativo. O segundo `close()` do `@nestjs/bullmq` devolve a mesma promise. Sem worker registrado (módulo só compilado), o hook não faz nada.
+    - **Teste:** a suíte do processor prende a sondagem, chama `close()` no módulo e verifica:
+      - em 500 ms, nenhum `S3Client.destroy` e nenhum `DataSource.destroy`;
+      - publicação com 0 recursos liberados;
+      - liberação depois;
+      - job `completed` e vídeo `ready`.
+  - **Pendência da SI-03.20 fechada no Compose, após a correção** (`video-worker` em watch, cadeia `docker-init → npm → worker-dev.sh → nest CLI → node dist-worker/worker`):
+    - **Montagem:**
+      - um proxy temporário no `nestjs-api` atrasava em 4 s cada requisição ao `storage:9000`, preservando o `Host` assinado;
+      - o `video-worker` foi recriado com `S3_ENDPOINT=http://nestjs-api:9999` por um override no scratchpad;
+      - um job real `video-{videoId}-1-1` foi adicionado à fila `video-processing` com as opções do dispatcher;
+    - **FFmpeg filho do worker:** no SIGTERM, o `ffprobe` (PID 44) era filho direto do processo do worker (PID 32);
+    - **Encerramento:** `docker compose stop` às 13:43:39.47; `worker-closing` às 13:43:39; GET por Range, extração do frame, PUT da thumbnail e `ready` às 13:43:51.47; depois `worker-closed`, "stopping (SIGTERM)" e "stopped (SIGTERM)";
+    - **Prazo:** 12,46 s, dentro do `stop_grace_period` de 200 s, com código 0;
+    - **Sem órfãos:** o vídeo ficou `ready`, com a thumbnail existente e o job `completed`. Nenhum processo restou, porque o fim do PID 1 encerra o namespace;
+    - **`start:worker` (`node dist-worker/worker`):** num contêiner avulso, subiu com as opções configuradas e, no `docker stop`, registrou `worker-closing`, `worker-closed`, "stopping" e "stopped" em 0,39 s. O código 143 vem do Nest, que reenvia o sinal ao próprio processo depois dos hooks (`process.kill(process.pid, signal)`), como já ocorria na SI-03.20;
+    - **Restauração:** depois da prova, os dados foram removidos, o proxy foi encerrado e o `video-worker` foi recriado sem o override (`S3_ENDPOINT` ausente do ambiente do contêiner, `StopTimeout` 200, `Init` true).
+  - **Resultados da integração:**
+    - **T-10:** `h264-aac-moov-end.mp4` e `vp9-opus.webm` terminam em `ready`, com:
+      - duração `2.000` ou `2.008`, 320×240 e codecs;
+      - cerca (1, 1);
+      - `thumbnail_key = thumbnails/{videoId}/{attemptId}.jpg` igual ao `current_attempt_id`, com o objeto `image/jpeg` decodificando como `mjpeg` 320×240, e nenhuma outra chave.
+    - **Vídeo terminal:** vídeo `ready` ou `error` → job `completed` com `skipped`, sem sondagem, frame ou `putObject`, linha idêntica e nenhuma thumbnail.
+    - **Job com `jobId` incompatível com o payload:** `failed` em 1 tentativa, sem efeitos.
+    - **T-14, permanentes:** `invalid.mp4` e `truncated.mp4` → `MEDIA_INVALID`; `qt-brand.mov` como MP4 → `MEDIA_CONTAINER_MISMATCH`. Os três com `attemptsMade` 1 de 3 tentativas, uma sondagem, `error_message` sem query e nenhuma thumbnail.
+    - **T-14, transitório seguido de sucesso:** `attemptsStarted` 2, cerca (1, 2), `ready` pela segunda tentativa e `recordError` nunca chamado.
+    - **Transitório em todas as tentativas:** o vídeo continua `processing` no início de cada uma; `recordError` chamado uma vez, na última, com `PROCESSING_FAILED`; a mensagem gravada e o log `failed` não têm `X-Amz-` nem a assinatura.
+    - **Opções do worker:** `concurrency`, `lockDuration`, `stalledInterval` e `maxStalledCount` iguais ao `queueConfig`, com listeners de `stalled` e `failed`.
+    - **T-11:**
+      - entrega antiga terminando depois da nova: `superseded`; a nova publica, e as duas chaves existem, mas só a da nova é referenciada;
+      - entrega antiga terminando primeiro, depois de a nova assumir: não publica, e o vídeo continua `processing` até a nova publicar;
+      - duas entregas com o mesmo token ao mesmo tempo: uma assume e a outra termina `skipped`, com uma sondagem e uma gravação;
+      - entrega antiga com erro permanente depois do `ready` da nova: `UnrecoverableError`, linha intacta;
+      - entrega antiga na última tentativa: o `PROCESSING_FAILED` afeta 0 linhas, e a nova publica;
+      - entrega de geração superada (`dispatch` 1 com `processing_dispatch` 2): não assume, não sonda e não grava;
+      - tentativa da geração 1 em curso quando R1 reserva a geração 2 e revoga a vigência: `superseded`, linha intacta, e a entrega (2, 1) assume e publica, com a cerca em (2, 1).
+    - **Estabilidade:** as suítes do processor e de concorrência passaram 3 vezes seguidas cada.
+  - **Verificações em vermelho** (backup → mutação → execução → restauração → `cmp`; cada mutação conferida como aplicada antes da execução; as fontes finais são idênticas ao backup):
+    - **R1, cerca aceitando `seq` igual:** 3 testes da tabela verdade e o teste de mesmo token da concorrência falham;
+    - **R2, assunção com `processing_dispatch >=`:** a geração superada assume; 1 teste de estado e 1 de concorrência falham;
+    - **R3, guarda sem `current_attempt_id`:** 2 de estado e 2 de concorrência falham (entrega antiga terminando com o vídeo ainda em `processing`);
+    - **R4, permanente sem `UnrecoverableError`:** os 3 testes de mídia inválida falham por retentativa;
+    - **R5, última tentativa nunca detectada:** 3 unitários e o teste de `PROCESSING_FAILED` falham;
+    - **R6, mensagem gravada sem remover a query:** o teste de `PROCESSING_FAILED` falha na `error_message`;
+    - **R7, log `failed` sem remover a query:** o mesmo teste falha no log;
+    - **R8, assunção sem exigir `processing`:** 2 de estado e os 2 de vídeo terminal do processor falham;
+    - **R9, sem drenagem no `onModuleDestroy`:** o teste de parada falha porque os 2 clientes S3 são destruídos com o job ativo.
+    - **Correções durante as verificações:**
+      - uma primeira rodada de R1 a R3 e R8 não aplicou mutação nenhuma, porque eu tinha quebrado a sintaxe do driver; foi descartada e repetida com a conferência de aplicação;
+      - a primeira R9 deixou o Jest preso, porque a barreira não era liberada quando a asserção falhava. O teste passou a liberar a barreira e aguardar o `close()` num `finally`, e a R9 foi repetida com falha limpa;
+      - o Jest derrubado pelo `timeout` deixou um zumbi no `nestjs-api`, cujo PID 1 é o `tail`. O contêiner foi reiniciado antes das suítes completas.
+  - **Achado de teste (sem efeito no produto):** o primeiro helper de espera lia o job (`getJob`) e depois o estado (`getState`). Entre as duas leituras, o script do BullMQ concluía o job, e o objeto lido antes ainda tinha `attemptsMade` 0. Um experimento com `ioredis` mostrou o hash já com `atm` 1 no momento do `failed`. O helper passou a ler o estado antes do job.
+  - **Verificações executadas, todas no container `nestjs-api`:**
+    - `npm test -- --runInBand`: 68 suítes e 732 testes, código 0, em 94 s. Antes eram 62 e 663;
+    - `npm run test:e2e -- --runInBand`: 11 suítes e 117 testes, código 0, com o `video-worker` consumindo a fila real. Os E2E de vídeo pausam e restauram as filas, e o worker não registrou evento de job durante a execução;
+    - `npx tsc --noEmit`: código 0;
+    - `npm run build`: código 0, sem specs no `dist/`;
+    - `npm run build:worker`: código 0, com `dist-worker/worker/processing/video-processing.processor.js` e sem specs. No `dist-worker/worker.js`, o carregamento do `.env` é o primeiro `require`;
+    - `npx eslint`, sem `--fix`, em `"{src,apps,libs,test}/**/*.ts"` e `proofs/phase-03/**/*.ts`: código 0. Antes, corrigi `no-unsafe-*` nos dublês de teste e `unbound-method` no teste de parada;
+    - `prettier --check` nos arquivos da SI: código 0;
+    - `npm run lint` não foi executado, porque aplica `--fix`.
+  - **OpenAPI gerado do `dist/`:** as mesmas 18 operações e 27 schemas, sem nada do worker. O `openapi.json` commitado não mudou; a regeneração fica na SI-03.29.
+  - **Estado do ambiente depois das execuções:**
+    - containers `db`, `mailpit`, `nestjs-api` (só o `tail -f /dev/null`, depois do reinício que removeu os zumbis), `redis`, `storage` e `video-worker` em watch, com a configuração original;
+    - nenhum contêiner avulso da SI;
+    - storage com 0 objetos e 0 multiparts, banco sem vídeos, sessões, partes, usuários ou canais;
+    - filas sem `paused`, nenhum job e nenhuma chave de prefixo de teste ou de experimento. As 5 chaves do experimento interrompido foram removidas pelos nomes exatos;
+    - `.env` e `openapi.json` sem alteração.
+  - **Limitações:**
+    - o evento `stalled` não é provocado nos testes desta SI: o listener está registrado e conferido, e a reentrega após stall é tema da reconciliação (SI-03.25, T-12). Na T-11, as entregas concorrentes são produzidas chamando `process` com os tokens que o stall e a nova geração geram;
+    - o worker do `video-worker` passa a consumir a fila real do ambiente. Fora dos E2E, que pausam as filas, um job publicado pela API é processado de fato;
+    - na parada com o job além do `stop_grace_period`, o Docker encerra o contêiner, e o job vira stall (F-12). Isso não foi exercitado aqui;
+    - o "stopping (SIGTERM)" do `WorkerLifecycleService` (SI-03.20) agora aparece depois da drenagem, porque o `beforeApplicationShutdown` vem depois do `onModuleDestroy`. O início da parada fica marcado pelo `video-processing.worker-closing`.
+  - **Fora do escopo, só registrado:**
+    - `src/videos/public-id.integration-spec.ts` (SI anterior) limpa o banco no `beforeEach`, mas não no `afterAll`, e deixa 2 rascunhos, 1 usuário e 1 canal depois da suíte principal; a E2E seguinte os remove. Fica como tarefa separada;
+    - o script `test:e2e` continua sem `--runInBand` (registrado na SI-03.21).
+  - **Documentos:** o plano e o documento de decisões não mudaram.
+
+### SI-03.23 — Manutenção: fila e Job Schedulers
+- **Status:** completed (2026-11-23). A revisão de 2026-11-23 aprovou a SI, incluindo as escolhas de `attempts: 1` nos jobs de manutenção, a retenção dos 100 últimos concluídos e dos 100 últimos falhos (`removeOnComplete`/`removeOnFail` com `count: 100`) e o uso de `lockDuration`, `stalledInterval` e `maxStalledCount` da configuração no worker de manutenção. A varredura, a reconciliação e a limpeza seguem pendentes para as SIs 03.24 a 03.26.
+- **Tests:**
+  - `src/worker/maintenance/maintenance.processor.spec.ts` (unitário, previsto no plano): 11 testes (despacho por nome, nome desconhecido e tarefas pendentes);
+  - `src/worker/maintenance/maintenance-scheduler.registrar.integration-spec.ts` (integração, Redis real, previsto no plano): 4 testes;
+  - `src/worker/maintenance/maintenance.processor.integration-spec.ts` (integração com worker BullMQ real): 5 testes. Foi acrescentada para comprovar dois critérios de aceite na fila real: concorrência 1 na `video-maintenance` e nome desconhecido registrado como erro. Cobre também a tarefa pendente terminando em `failed` e a drenagem na parada;
+  - `src/worker/worker.module.spec.ts`: 2 testes, agora conferindo o registrar, o processor e as três entradas de `MAINTENANCE_TASKS`.
+- **Observations:**
+  - **Arquivos criados, em `src/worker/maintenance/`:**
+    - `maintenance.constants.ts`: nomes dos jobs (`sweep-upload-sessions`, `reconcile-processing` e `cleanup-storage`), ids estáveis dos schedulers (`upload-session-sweep`, `processing-reconciliation` e `storage-cleanup`), `MAINTENANCE_CONCURRENCY = 1` e `MAINTENANCE_JOB_OPTIONS`;
+    - `maintenance-task.ts`: o payload `{ batchSize }`, o contrato `MaintenanceTask.run(data)`, o token `MAINTENANCE_TASKS` (uma tarefa por nome de job), `MaintenanceTaskPendingError` e `pendingMaintenanceTasks()`;
+    - `maintenance.worker-options.ts`: concorrência 1 e `lockDuration`, `stalledInterval` e `maxStalledCount` do `queueConfig` (TD-10);
+    - `maintenance-scheduler.registrar.ts`: `maintenanceSchedules(videoConfig)` com intervalos e lote da configuração, e `MaintenanceSchedulerRegistrar`, que faz `upsertJobScheduler` dos três ids no `onApplicationBootstrap`;
+    - `maintenance.processor.ts`: `@Processor('video-maintenance', maintenanceWorkerOptions(queueConfig()))`. Despacha por `job.name` para a tarefa correspondente. Um nome desconhecido é registrado com `logger.error` (`video-maintenance.unknown-job`) e falha com `UnrecoverableError`, sem executar nenhuma tarefa. Registra o evento `failed` com log estruturado e drena o worker no `onModuleDestroy`, como o processor de vídeos (SI-03.22);
+    - os três arquivos de teste listados acima.
+  - **Arquivos alterados:** `src/worker/worker.module.ts` (registrar, processor e `{ provide: MAINTENANCE_TASKS, useValue: pendingMaintenanceTasks() }`) e `src/worker/worker.module.spec.ts`.
+  - **Integração mínima com as SIs 03.24 a 03.26:** o processor só conhece o contrato `MAINTENANCE_TASKS`. Até cada serviço existir, sua entrada é uma tarefa pendente que rejeita com `MaintenanceTaskPendingError`, cuja mensagem diz `maintenance "<job>" is not implemented yet (SI-03.2x); nothing was done`. O job termina em `failed`, nunca em `completed`. Cada SI seguinte substitui a própria entrada do provider pelo serviço real.
+  - **Escolhas de implementação, para a revisão:**
+    - **Opções dos jobs dos schedulers (`MAINTENANCE_JOB_OPTIONS`):** `attempts: 1`, porque a próxima execução repete o lote; e `removeOnComplete`/`removeOnFail` com `count: 100`, para as execuções periódicas não crescerem sem limite no Redis. O plano não fixa a retenção da manutenção; a retenção sem limite (`false`) vale para os jobs `process-video`, que são evidência de P5;
+    - **Lock e stall do worker de manutenção:** vêm da configuração, como no worker de vídeos (TD-10, "Configuração explícita"). A concorrência é 1 fixa, como no plano;
+    - **Um lote para os três jobs:** a configuração tem uma única chave `MAINTENANCE_BATCH_SIZE`, aplicada aos três templates;
+    - **Drenagem na parada:** a mesma da SI-03.22, para que os serviços das SIs seguintes, que usam banco e storage, terminem o job ativo antes da liberação dos recursos.
+  - **Comportamento do BullMQ 6.7.7, verificado em prefixo próprio antes das asserções:**
+    - dois `upsertJobScheduler` concorrentes do mesmo id deixam um scheduler;
+    - o primeiro `upsert` cria um job imediato, em `waiting` com `delay` 0;
+    - repetir o `upsert` com as mesmas opções preserva o `next` e o mesmo job, sem execução extra;
+    - outro `every` atualiza `every` e `next`.
+  - **Resultados da integração:**
+    - **Duas instâncias inicializadas ao mesmo tempo:** exatamente 3 schedulers, com os ids estáveis, o `every` de cada intervalo configurado e o template com `{ batchSize }` e as opções; um job por scheduler, com o nome do despacho;
+    - **Reinício:** a nova instância mantém os 3 schedulers com o mesmo `every` e `next` e os mesmos jobs pendentes;
+    - **Configuração alterada:** intervalo e lote novos atualizam o scheduler, ainda com 3 ids;
+    - **Separação das filas:** nada é registrado na `video-processing`;
+    - **Worker:** consome `video-maintenance` com concorrência 1 e o lock e stall do `queueConfig`. Com o primeiro job preso, o segundo não começa (1 ativo) e só roda depois;
+    - **Nome desconhecido:** `failed` em 1 de 3 tentativas, com `failedReason` `unknown maintenance job "purge-everything"`, `logger.error` e nenhuma tarefa executada. O processor não tem acesso ao banco, então não há efeito nele;
+    - **Tarefa pendente:** o job termina `failed` com a mensagem da SI responsável;
+    - **Parada:** com um job de manutenção ativo, `close()` não termina e nenhum cliente S3 é destruído enquanto ele roda; os clientes só são liberados depois.
+    - **Estabilidade:** a integração do processor passou 3 vezes seguidas.
+  - **Verificações em vermelho** (backup → mutação → execução → restauração → `cmp`; cada mutação conferida como aplicada; as fontes finais são idênticas ao backup):
+    - **M1, ids instáveis:** 3 testes do registrar falham;
+    - **M2, intervalo fixo em 60 s:** 2 testes do registrar falham;
+    - **M3, qualquer nome aceito:** 4 unitários de nome desconhecido e o de integração falham;
+    - **M4, concorrência 2:** os testes de opções e de um job por vez falham;
+    - **M5, sem drenagem no `onModuleDestroy`:** o teste de parada falha porque o storage é liberado com o job ativo;
+    - **M6, despacho para a tarefa errada:** 3 unitários e 2 de integração falham;
+    - **M7, tarefa pendente resolvendo com sucesso:** 3 unitários e o de integração falham.
+    - **Correção durante as verificações:** a primeira M4 deixou o Jest preso (código 124), porque o teste de concorrência falhava antes de liberar a barreira. O teste passou a liberá-la num `finally`, e a M4 foi repetida com falha limpa. Restaram um zumbi no `nestjs-api` (removido com o reinício do container) e 7 chaves de um prefixo de teste, removidas pelos nomes exatos.
+    - **Efeito colateral no ambiente real, corrigido:** o `video-worker` em watch recompilou o código mutado da M1 e registrou, na fila real, 3 schedulers com ids aleatórios. Eles foram removidos pelas chaves exatas com `removeJobScheduler`, que também removeu os jobs agendados, e os 11 jobs terminados desses schedulers foram removidos pelos ids. A M2 também foi registrada pelo watch, mas a restauração devolveu o `every` configurado (confirmado: `storage-cleanup` com 3.600.000). **Procedimento para as próximas SIs:** parar o `video-worker` antes de mutações no código do worker e religá-lo depois. Na SI-03.22, as mutações também foram recompiladas pelo watch, sem efeito persistente: as filas reais não tinham jobs, e o código mutado não registrava nada.
+  - **Verificações no Compose, com o `video-worker` em watch:**
+    - **Registro:** o worker registrou os 3 schedulers da configuração (60 s, 60 s e 1 h, lote 100) e registra as opções do worker de manutenção ao iniciar;
+    - **Jobs pendentes:** os jobs imediatos e os periódicos falham com a mensagem da SI responsável, registrada como `video-maintenance.failed`;
+    - **Reinício (`docker compose restart video-worker`):** parada graciosa dos dois workers (`video-processing.worker-closing/closed`, `video-maintenance.worker-closing/closed`, "stopping" e "stopped"). Depois do novo `scheduler-registered`, os 3 schedulers mantêm `every`, `next` e os mesmos jobs agendados, sem execução extra (23 `failed` antes e depois);
+    - **Duas instâncias:** uma segunda instância (`start:worker`, contêiner avulso) registrou os mesmos ids e a fila continuou com 3 schedulers. O tick seguinte rodou uma vez por scheduler (`failed` de 23 para 25). A instância parou de forma graciosa em 0,43 s (código 143 do Nest, como na SI-03.22) e foi removida.
+  - **Verificações executadas, todas no container `nestjs-api`:**
+    - `npm test -- --runInBand`: 71 suítes e 752 testes, código 0. Antes eram 68 e 732;
+    - `npm run test:e2e -- --runInBand`: 11 suítes e 117 testes, código 0, com o `video-worker` e os schedulers ativos. Os E2E pausam as duas filas e as restauram;
+    - `npx tsc --noEmit`: código 0;
+    - `npm run build`: código 0, sem specs no `dist/`;
+    - `npm run build:worker`: código 0, com os 5 arquivos de `dist-worker/worker/maintenance/` e sem specs. O `video-worker` seguiu no ar;
+    - `npx eslint`, sem `--fix`, em `"{src,apps,libs,test}/**/*.ts"` e `proofs/phase-03/**/*.ts`: código 0;
+    - `prettier --check` nos arquivos da SI: código 0;
+    - `npm run lint` não foi executado, porque aplica `--fix`.
+  - **OpenAPI gerado do `dist/`:** as mesmas 18 operações e 27 schemas, sem nada da manutenção. O `openapi.json` commitado não mudou; a regeneração fica na SI-03.29.
+  - **Estado do ambiente depois das execuções:**
+    - containers `db`, `mailpit`, `nestjs-api` (só o `tail -f /dev/null`), `redis`, `storage` e `video-worker` em watch; nenhum contêiner avulso;
+    - storage com 0 objetos e 0 multiparts, banco sem vídeos, sessões, partes, usuários ou canais;
+    - `video-processing` sem jobs e sem pausa; nenhuma chave de prefixo de teste ou experimento;
+    - **novo estado normal da `video-maintenance`:** os 3 schedulers do projeto, 3 jobs agendados e os jobs pendentes que falharam (31 no fim), retidos até 100 por `removeOnFail`; sem pausa;
+    - `.env` e `openapi.json` sem alteração.
+  - **Limitações e pendências:**
+    - **Serviços ausentes:** varredura (SI-03.24), reconciliação (SI-03.25) e limpeza (SI-03.26). No ambiente, `sweep-upload-sessions` e `reconcile-processing` falham a cada 60 s e `cleanup-storage` a cada hora, com um aviso `video-maintenance.failed` por execução, até cada SI substituir sua entrada de `MAINTENANCE_TASKS`;
+    - **Evento `stalled` da manutenção:** não é registrado; só o `failed`. O plano pede log de `stalled` apenas para o processor de vídeos;
+    - **Retenção dos jobs:** a remoção por `count` é preguiçosa: acontece quando outro job da fila termina;
+    - **Duas instâncias:** registram e consomem a mesma fila, e cada execução vai a um único worker (BullMQ). A segurança de rodar a mesma manutenção em instâncias diferentes depende das guardas dos serviços das SIs seguintes (G-01, P4, P5).
+  - **Documentos:** o plano e o documento de decisões não mudaram.
+
+### SI-03.24 — Varredura de sessões de upload
+- **Status:** completed (2026-11-23). A revisão de 2026-11-23 aprovou a SI, incluindo o isolamento das suítes pela pausa global das filas reais, a correção da estrutura dos builds e as limitações documentadas. A reconciliação (SI-03.25) e a limpeza (SI-03.26) seguem pendentes.
+- **Tests:**
+  - `src/worker/maintenance/upload-session-sweeper.integration-spec.ts` (integração, Postgres, Silo e Redis reais, previsto no plano): 22 testes;
+  - `src/videos/upload-sessions.sweep.spec.ts` (unitário): 16 testes (tabela de `decideSweep` e `sweepAbort`);
+  - `src/worker/worker.module.spec.ts`: 3 testes. O novo confere que `sweep-upload-sessions` é o serviço real e que reconciliação e limpeza continuam pendentes.
+- **Observations:**
+  - **Arquivos criados:**
+    - `src/worker/maintenance/upload-session-sweeper.service.ts`: `UploadSessionSweeperService`, que implementa `MaintenanceTask`. Lê os candidatos em lote e trata cada sessão isoladamente: `completing` vai para a retomada de P2; as demais, para o abort da varredura. Devolve as contagens (`examined`, `aborted`, `abortUnconfirmed`, `completed`, `completionDecided`, `skipped` e `failed`);
+    - `src/worker/maintenance/upload-session-sweeper.integration-spec.ts` e `src/videos/upload-sessions.sweep.spec.ts`;
+    - `test/jest-global-setup.ts` e `test/jest-global-teardown.ts` (isolamento; ver abaixo).
+  - **Arquivos alterados:**
+    - **`src/videos/upload-sessions.repository.ts`:**
+      - **novos tipos:** `SweepClaim` e `SweepCandidate`;
+      - **`claimForSweep`:** sob o bloqueio do vídeo, `active` com `expires_at <= now()` repetido no `UPDATE` (F-08), e `initiating`/`aborting` com claim vencido, pelo token anterior;
+      - **`findSweepCandidates(batchSize)`:** leitura sem bloqueio, do prazo mais antigo para o mais novo;
+      - **`decideSweep`:** exportada;
+      - **reuso:** o `readSessionClaim` passou a ler também `expires_at <= now()`, e o `claimForAbortUnderLock` repassa esse valor ao `decide` e aceita `activeOnlyWhenExpired`. DELETE e reinício não mudaram de comportamento;
+    - **`src/videos/upload-sessions.service.ts`:** `sweepAbort(videoId, sessionId)`, com o claim da varredura e o mesmo `abortInStorage` do DELETE: `AbortMultipartUpload` repetido até o `ListParts` responder `NoSuchUpload`, fora da transação. Depois, `markAborted` pelo token. Desfechos: `aborted`, `abort-unconfirmed`, `taken-over` e `nothing-to-do`;
+    - **`src/videos/upload-completion.repository.ts`:** `resumeOnly` no `CompletionClaimInput`. Com ele, o claim só assume `completing` com claim vencido e recusa (`not-completing`) uma sessão `active`;
+    - **`src/videos/upload-completion.service.ts`:** os passos 2 a 5 de `completeUpload` foram movidos, sem mudança, para o privado `completeClaimed`, usado pela rota e pelo novo `resumeExpiredCompletion(videoId, publicId, sessionId)`. Desfechos: `finalized`, `completed-elsewhere`, `not-resumed` e `decided` (com o código de domínio que a rota responderia);
+    - **`src/videos/videos.module.ts`:** exporta `UploadSessionsRepository`, `UploadSessionsService` e `UploadCompletionService` para o worker;
+    - **`src/worker/worker.module.ts`:** provider `UploadSessionSweeperService`. `MAINTENANCE_TASKS` passou a vir de `useFactory`, substituindo só a entrada `sweep-upload-sessions`;
+    - **`test/helpers/queues.ts`:** `resumeAll()` e `close()` no `VideoQueuesControl`;
+    - **`package.json`:** `globalSetup` e `globalTeardown` do Jest da suíte principal;
+    - `src/worker/worker.module.spec.ts`.
+  - **Protocolos preservados:**
+    - **Claims:** feitos sob o `VideoLockService`, com transições condicionadas ao estado e ao token. O storage é chamado fora de transação e de bloqueio;
+    - **Abort:** `aborted` só depois de `NoSuchUpload`. Sem confirmação, a sessão fica `aborting` com o claim da varredura, para a próxima execução depois do prazo;
+    - **`completing`:** nunca é abortada pela varredura, mesmo com `expires_at` vencido. A retomada vai do passo 2 de P2 em diante, com a releitura do passo 5;
+    - **Lotes:** repetir o lote não tem efeito adicional.
+  - **Escolhas de implementação, para a revisão:**
+    - **Reuso pelos serviços existentes:** o abort e a conclusão continuam nos serviços de vídeos, com métodos públicos novos para a varredura, sem duplicar a lógica no worker;
+    - **Isolamento por sessão:** uma falha inesperada numa sessão é registrada (`video-maintenance.sweep-session-failed`), e o lote continua. Ao final, se houve falha, o job falha com `sweep of upload sessions: N of M sessions failed`, e a próxima execução tenta de novo. O abort não confirmado não conta como falha (F-09);
+    - **Log:** um resumo `video-maintenance.sweep` por execução, só quando alguma sessão foi examinada;
+    - **`batchSize` inválido** (não inteiro positivo): a execução é recusada sem tocar em nada.
+  - **Isolamento das suítes contra o worker do ambiente:**
+    - **Setup:** a suíte principal (unitária e de integração) agora pausa as filas reais `video-processing` e `video-maintenance` no `globalSetup` e espera os jobs ativos terminarem, com o mesmo `pauseAll` dos E2E. Os schedulers e seus jobs ficam preservados;
+    - **Teardown:** o `globalTeardown` retoma as filas sem remover jobs. Os E2E continuam pausando e restaurando por suíte, como antes;
+    - **Comprovação:** a `video-maintenance` real ficou `paused` durante a suíte e voltou sem pausa ao final.
+    - **Achado e correção:** na primeira versão, os arquivos do setup ficaram em `src/test/` e importavam `test/helpers/queues.ts`, fora de `src/`. Isso levou o `tsc` dos builds a mudar a raiz da saída: `dist/src/...`, `dist/test/...` e o mesmo no `dist-worker/`. Com isso, `dist/main.js` e `dist-worker/worker.js` deixaram de existir nos caminhos dos scripts. Os arquivos foram movidos para `test/`, que os builds excluem, e as duas saídas foram recompiladas com a estrutura original. O `video-worker`, que seguia rodando com o código em memória, foi reiniciado e subiu de `dist-worker/worker`. A suíte principal, o `tsc`, o ESLint e o Prettier foram repetidos depois da mudança.
+  - **Resultados da integração:**
+    - **Abort por vencimento:**
+      - **`active` vencida:** termina `aborted`, sem claim, com `ListParts` → `NoSuchUpload`. O vídeo continua `draft` com a sessão, e uma sessão vigente não é tocada;
+      - **`initiating` órfã (P1)**, sem `upload_id`, com multipart criado e claim vencido: termina `aborted`, sem upload na chave. O upload de outra sessão continua;
+      - **`initiating`/`aborting` dentro do prazo do claim:** não são candidatas.
+    - **T-05:**
+      - o DELETE abortou, mas a listagem ainda mostrava o upload, e a sessão ficou `aborting`;
+      - a parte enviada depois recebeu 404 `NoSuchUpload`;
+      - dentro do prazo do DELETE, a varredura não tocou a sessão;
+      - vencido o claim, assumiu, confirmou `NoSuchUpload` pela listagem real e marcou `aborted`;
+      - com a listagem mantendo o upload, a sessão fica `aborting` com o token da varredura (`abortUnconfirmed`, sem falha).
+    - **T-04:**
+      - **retomada do claim vencido gravado pelo teste:** termina com a sessão `completed`, o vídeo em `processing` (`run` 1, `dispatch` 1, sem ação pendente), o objeto com o tamanho declarado e o job `video-{id}-1-1` na fila de prefixo próprio;
+      - **sessão com `expires_at` vencido:** é retomada e concluída, nunca abortada;
+      - **`Complete` já feito, com o upload removido:** confirmado por `HeadObject` e finalizado;
+      - **conferência reprovada:** a sessão volta a `active` e o multipart continua, sem abort;
+      - **token perdido entre o `Complete` e o T2:** a releitura do passo 5 não finaliza nada, e a sessão fica com o token do outro processo;
+      - **listada como `completing` e revertida para `active` antes do claim:** a varredura não a conclui (`resumeOnly`);
+      - **`completing` dentro do prazo do claim:** não é candidata.
+    - **T-03, com o bloqueio do vídeo preso pelo teste para fixar a ordem:**
+      - **conclusão primeiro:** ela começou dentro do prazo e esperou o bloqueio; a varredura listou a sessão depois do vencimento e esperou o mesmo bloqueio. Liberado, a conclusão vence (`completed`, vídeo em `processing`) e a varredura termina com `skipped`;
+      - **varredura primeiro, com a sessão vencida:** a varredura vence (`aborted`, upload removido, vídeo em `draft`), e a conclusão recebe `UPLOAD_SESSION_NOT_ACTIVE`.
+    - **Lotes:**
+      - **repetição:** depois de abortar 2 sessões e concluir 1, a segunda execução examina 0, e banco e fila ficam idênticos;
+      - **duas varreduras simultâneas:** 2 abortos, 1 conclusão, 0 falhas e 2 `markAborted` no total;
+      - **`batchSize` 2:** 2 sessões, as de prazo mais antigo, e depois 1;
+      - **falha numa sessão:** a outra é abortada e o job falha com a contagem;
+      - **`batchSize` inválido (0, -1, 1,5 e NaN):** recusado.
+    - **Estabilidade:** a suíte passou 3 vezes seguidas antes do último teste acrescentado.
+  - **Verificações em vermelho** (`video-worker` parado antes da primeira mutação e religado só depois da restauração; backup → mutação → execução → restauração → `cmp`; cada mutação conferida como aplicada):
+    - **S1, `decideSweep` tomando `active` não vencida:** 1 unitário falha;
+    - **S2, candidatos sem o filtro de vencimento:** 2 testes de integração falham pelas contagens;
+    - **S3, `completing` reivindicada para abort:** o T-03 com a conclusão primeiro e 2 unitários falham;
+    - **S4, `resumeOnly` ignorado:** o teste da sessão revertida antes do claim falha;
+    - **S5, `aborted` sem a confirmação:** 2 unitários e 1 de integração (F-09) falham;
+    - **S6, `completing` encaminhada ao abort:** 8 testes de retomada e de lote falham;
+    - **S7, lote ignorado:** o teste de `batchSize` falha;
+    - **S8, falha de uma sessão interrompendo o lote:** o teste correspondente falha.
+    - As fontes finais são idênticas ao backup, e nenhum schedule ou dado do ambiente foi afetado.
+  - **Verificação no Compose, com o `video-worker` em watch:**
+    - **Cenário:** uma sessão `active` vencida, com multipart real, e uma `initiating` órfã, com claim vencido e multipart sem `upload_id`, gravadas no banco do ambiente;
+    - **Resultado:** o tick seguinte da varredura (15:24:11) registrou `examined: 2, aborted: 2, failed: 0`. As duas sessões ficaram `aborted`, sem claim e sem upload na chave. Os dados foram removidos depois;
+    - **Fila real:** os jobs `sweep-upload-sessions` passaram a terminar `completed`, com as contagens no `returnvalue`. Reconciliação e limpeza seguem falhando como pendentes.
+  - **Verificações executadas, todas no container `nestjs-api`:**
+    - `npm test -- --runInBand`: 73 suítes e 791 testes, código 0, executada de novo depois da mudança do setup global. Antes eram 71 e 752;
+    - `npm run test:e2e -- --runInBand`: 11 suítes e 117 testes, código 0, com o worker e a varredura ativos. A E2E não usa os arquivos movidos, e o código da aplicação não mudou depois dela;
+    - `npx tsc --noEmit`: código 0;
+    - `npm run build` e `npm run build:worker`: código 0, com a estrutura plana (`dist/main.js`, `dist-worker/worker.js` e `dist-worker/worker/maintenance/upload-session-sweeper.service.js`) e sem specs;
+    - `npx eslint`, sem `--fix`, em `"{src,apps,libs,test}/**/*.ts"` e `proofs/phase-03/**/*.ts`: código 0;
+    - `prettier --check` nos arquivos da SI e no `package.json`: código 0;
+    - `npm run lint` não foi executado, porque aplica `--fix`.
+  - **OpenAPI gerado do `dist/`:** as mesmas 18 operações e 27 schemas. O `openapi.json` commitado não mudou.
+  - **Estado do ambiente depois das execuções:**
+    - os seis containers rodando: `video-worker` em watch, `nestjs-api` só com o `tail`;
+    - storage com 0 objetos e 0 multiparts;
+    - banco vazio, depois da remoção dos 2 rascunhos, do usuário e do canal deixados pela `public-id.integration-spec.ts` na suíte principal (achado já registrado na SI-03.22);
+    - filas sem pausa e sem chaves de teste;
+    - `video-maintenance` com os 3 schedulers e jobs retidos (`failed` no teto de 100, quase todos de reconciliação pendente);
+    - `.env` e `openapi.json` sem alteração.
+  - **Limitações:**
+    - **Pendências:** reconciliação (SI-03.25) e limpeza (SI-03.26). Seus jobs falham a cada execução e ocupam a retenção de 100 `failed`;
+    - **Ordem nos testes de T-03:** a ordem das operações que esperam o bloqueio segue a fila do Postgres. Ela foi estável nas execuções, mas é comportamento do banco, não da aplicação;
+    - **Predicado `expires_at <= now()` no `UPDATE` da `active`:** é defesa adicional. Sob o bloqueio, a decisão usa o mesmo `now()` da transação, então os testes não conseguem isolá-lo;
+    - **Suíte interrompida:** uma suíte principal interrompida antes do teardown deixa as filas reais pausadas até outra execução terminar ou até um `resume` manual, como o helper dos E2E;
+    - **Espera do setup:** com um job de manutenção ativo, o `globalSetup` espera até 3 vezes `VIDEO_PROCESSING_TIMEOUT_MS`.
+  - **Documentos:** o plano e o documento de decisões não mudaram.
+
+### SI-03.25 — Reconciliação do processamento e coleta de jobs (P5)
+- **Status:** completed (2026-11-23). A revisão de 2026-11-23 aprovou a SI com a rodada de ajustes do mesmo dia (avanço dos lotes, limites de espera na fila e verificação da indisponibilidade do Redis com o processor da aplicação) e as limitações documentadas. A limpeza de objetos (SI-03.26) segue pendente.
+- **Tests:**
+  - `src/worker/maintenance/processing-reconciler.service.spec.ts` (unitário, previsto no plano): 37 testes. Cobre:
+    - a decisão por estado do job;
+    - a decisão por evidência de retomada;
+    - as confirmações da coleta;
+    - a ordem de P5 com dublês;
+    - `batchSize` inválido.
+  - `src/worker/maintenance/processing-reconciler.states.integration-spec.ts` (T-08 e T-09, cenário 1): 16 testes, 2 deles da rodada de ajustes;
+  - `src/worker/maintenance/processing-reconciler.recovery.integration-spec.ts` (T-09, cenários 2 a 7, mais retomadas concorrentes): 13 testes, 2 deles da rodada de ajustes;
+  - `src/worker/maintenance/processing-reconciler.collect.integration-spec.ts` (T-09, cenário 8, e T-12): 4 testes, 1 deles da rodada de ajustes;
+  - da rodada de ajustes, também `src/videos/jobs/with-timeout.spec.ts` (3 testes) e `src/worker/processing/video-processing.redis-outage.integration-spec.ts` (1 teste);
+  - `src/worker/worker.module.spec.ts`: 3 testes. Confere que a varredura e a reconciliação são os serviços reais e que a limpeza segue pendente.
+- **Observations:**
+  - **Arquivos criados, em `src/worker/maintenance/`:**
+    - `processing-reconciliation.decisions.ts`:
+      - `ProcessingSnapshot` (o retrato `R`), `JobObservation` e `STALL_FAILED_REASON`, a mensagem exata do BullMQ 6.7.7 medida na V-11;
+      - `decideWithoutPendingAction`:
+        - job ausente ou `completed` → R1 até o limite; no limite, `PROCESSING_INCONSISTENT`;
+        - `failed` → `PROCESSING_STALLED` ou `PROCESSING_FAILED`;
+        - `waiting`, `delayed` ou `prioritized` → espera, com alerta acima de `PROCESSING_STUCK_ALERT_MS`;
+        - `active` → nada.
+      - `decideResumption`, pela tabela de evidências:
+        - job existe → `confirm`;
+        - job ausente com a cerca sem `g` → `publish-and-confirm`;
+        - job ausente com `attempt_fence_dispatch = g` → `close-lost-job`.
+    - `processing-reconciliation.repository.ts`:
+      - **`findSnapshots`:** lê o retrato completo, com a ação pendente vencida avaliada pelo relógio do banco, dos vídeos em `processing` além de `PROCESSING_RECONCILE_GRACE_MS` ou com ação vencida;
+      - **`reserveGeneration` (R1):** uma única escrita com G_R mais `processing_recoveries < max`, que reserva `processing_dispatch + 1`, conta a recuperação, revoga `current_attempt_id`, registra `republish` com token e prazo e devolve `RETURNING pending_job_dispatch`;
+      - **`closeInError`:** G_R, mais a guarda de cerca para job `failed`, com `RETURNING status, processing_run`;
+      - **`takeOverAction`:** G_P com o token antigo, mais `pending_job_expires_at < now()`;
+      - **`collectionFacts`:** os fatos do banco usados pela coleta.
+    - `processing-reconciler.service.ts`:
+      - **`ProcessingReconcilerService`:** segue a ordem de P5 em lotes: retrato, identidade do job, fila (estado lido antes do job), escrita com a guarda do mesmo retrato;
+      - **zero linhas:** descarta o retrato e a observação juntos (`discarded`), sem reaproveitá-los;
+      - **R2 e R3:** passam pelo `VideoJobDispatcherService`, com a geração reservada pela própria ação; não há `job.retry()`;
+      - **coleta:** depois das decisões;
+      - **`isCollectable`:** exportada.
+    - os quatro arquivos de teste e `src/test/reconciliation-fixtures.ts` (módulo da reconciliação com fila de prefixo próprio, `driveJob` e `waitForJobState`).
+  - **Arquivos alterados:**
+    - `src/worker/worker.module.ts`: `BullModule.registerQueue` da `video-processing`, para injeção na reconciliação, os dois providers novos e `MAINTENANCE_TASKS` com `reconcile-processing` real;
+    - `src/worker/worker.module.spec.ts`.
+  - **Protocolo P5, como aplicado:**
+    - **Guardas completas:** G_R exige `id`, `status = 'processing'`, `run`, `dispatch`, `recoveries`, `pending_job_action IS NULL` e `IS NOT DISTINCT FROM` para tentativa e cerca. G_P exige `id`, `status`, `run`, `pending_job_token`, `pending_job_dispatch` e a cerca;
+    - **Zero linhas:** em R1, no encerramento ou na tomada de posse, a reconciliação descarta a observação, e o próximo ciclo recomeça do passo 1;
+    - **Limite de recuperações:** verificado na decisão e na própria escrita de R1;
+    - **Retomada:** observa a fila para a geração reservada, toma a posse com G_P e decide pela evidência, sem nova reserva e sem contar recuperação;
+    - **Job perdido depois de entrega aceita:** a retomada só fecha a ação (log `video-maintenance.reconcile-lost-job`), e o ciclo seguinte faz R1;
+    - **Coleta:** remove só jobs `completed` e `failed` (`getJobs` só lista esses estados) com execução terminal (`ready`/`error` no mesmo `run`) ou geração superada (`dispatch` menor no mesmo `run`, ou `run` anterior), confirmadas no banco. O `RETURNING` do encerramento também confirma e remove o job na hora. O job da geração vigente de um vídeo em `processing` nunca é removido.
+  - **Escolhas de implementação, para a revisão:**
+    - **Isolamento por vídeo:** como na varredura, uma falha inesperada num vídeo é registrada e o lote continua; ao final, o job falha com a contagem;
+    - **Falha entre o banco e a fila:** uma falha no R2 ou no R3 conta como falha da execução, e a ação pendente fica para a retomada depois do prazo;
+    - **Logs estruturados:** `video-maintenance.reconcile-recovery`, `-resumption`, `-closed`, `-discarded`, `-lost-job` e `-confirmation-lost`, mais `video-processing.stuck` e um resumo `video-maintenance.reconcile` quando há vídeo examinado ou job coletado;
+    - **Idade do job para o alerta:** medida pelo `timestamp` do job, o momento do `add`;
+    - **Coleta por execução:** até `batchSize` jobs `completed`/`failed`, do mais antigo para o mais novo;
+    - **Fila no `WorkerModule`:** registrar a `video-processing` também ali segue o padrão já usado para a `video-maintenance`. O `VideosModule` não exporta a fila.
+  - **Resultados da integração:**
+    - **T-08:**
+      - **job removido pelo teste:** geração 2, `processing_recoveries` 1, `current_attempt_id` nulo, ação confirmada e o job `video-{id}-1-2` em `waiting`, com `{ videoId, run }` e retenção desligada;
+      - **job nunca adicionado, cerca vazia:** o mesmo resultado;
+      - **no limite:** `PROCESSING_INCONSISTENT`, sem novo job.
+    - **T-09, cenário 1:**
+      - **`waiting`, `delayed`, `prioritized` e `active`:** nada muda no banco, e o job continua no mesmo estado;
+      - **alerta acima do limiar:** sem tocar o banco;
+      - **`failed`:** `PROCESSING_FAILED` com o motivo, e o job é coletado;
+      - **`failed` com a cerca à frente do job:** recusado pela guarda de cerca, job retido;
+      - **`completed` sem transição:** R1, e o job antigo é coletado;
+      - **ação pendente no prazo:** intocada;
+      - **vídeo dentro da carência, ou fora de `processing`:** não examinado.
+    - **Cenário 2 (duas reconciliações sobre o mesmo retrato, com barreira):**
+      - uma reserva, um descarte e um único `add`;
+      - com `processing_recoveries` em `max - 1`, o contador para em `max`;
+      - no limite, `PROCESSING_INCONSISTENT`, sem novo job.
+    - **Cenário 3:**
+      - A observa `completed` e é retida; B reserva a geração 2 e uma tentativa dela assume; o R1 de A descarta, sem `add`;
+      - no limite, o encerramento de A também descarta depois do avanço da cerca, e o vídeo segue em `processing`.
+    - **Cenário 4:**
+      - **falha entre R1 e o `add`:** a ação fica `republish` 2; no prazo, nada; vencida, a retomada adiciona a mesma geração 2, sem nova contagem;
+      - **falha entre o `add` e R3:** a retomada só confirma, sem novo `add`.
+    - **Cenário 5:** depois do `add`, o job roda e volta `completed` sem transição. A retomada só confirma, e o ciclo seguinte conta uma recuperação nova (geração 3) e coleta o job 2.
+    - **Cenário 6:**
+      - o `add` tardio da geração vigente é ignorado (mesmos dados e contadores), e o R3 com o token perdido é recusado, sem mudar o banco;
+      - depois de a geração ser superada, o `add` tardio cria um job de geração antiga sem efeito no banco, e a coleta o remove depois de terminado.
+    - **Cenário 7:** com `attempt_fence_dispatch = g` e o job removido de fora, a retomada não refaz o `add`, fecha a ação e registra a anomalia. O ciclo seguinte reserva a geração 3, com recuperação contada.
+    - **Retomadas concorrentes da mesma ação vencida:** uma toma a posse, a outra descarta, e há um único `add`.
+    - **Cenário 8:**
+      - um job `failed` cujo encerramento afetou zero linhas fica retido, e só sai depois do encerramento seguinte;
+      - a coleta removeu 5 jobs: gerações superadas, execução anterior, execução `ready` e execução `error`;
+      - ficaram o job da geração vigente de vídeo em `processing`, jobs `waiting` e `delayed` (mesmo de vídeo terminal) e um job com id fora do formato.
+    - **T-12, com workers reais do BullMQ em processos filhos** (`lockDuration` 1.000 ms, `stalledInterval` 500 ms, `maxStalledCount` 1):
+      - cada filho assume a tentativa no banco, como P3, e trava;
+      - o primeiro, morto por SIGKILL, gera a reentrega (`attemptsStarted` 2) para o segundo;
+      - o segundo, também morto, deixa a cerca em (1, 2);
+      - acima do limite, um worker move o job para `failed` com `job stalled more than allowable limit`, sem chamar o processor;
+      - o job fica retido até a reconciliação encerrar o vídeo em `error` `PROCESSING_STALLED` e então removê-lo;
+      - nenhum processo filho sobrou.
+    - **Estabilidade:** as quatro suítes passaram duas vezes seguidas, com 65 testes.
+  - **Verificações em vermelho** (`video-worker` parado antes da primeira mutação e religado depois da restauração; backup → mutação → execução das quatro suítes → restauração → `cmp`; cada mutação conferida como aplicada):
+    - **Q1, G_R sem as guardas de tentativa e cerca:** 2 falham (descarte do encerramento e job retido no cenário 8);
+    - **Q2, decisão ignorando o limite:** 6 falham;
+    - **Q3, G_P sem token antigo e sem vencimento:** o teste de retomadas concorrentes falha;
+    - **Q4, retomada ignorando a cerca:** 2 falham (unitário e cenário 7);
+    - **Q5, retomada fazendo `add` com o job existente:** 7 falham;
+    - **Q6, stall não distinguido:** o unitário e a T-12 falham;
+    - **Q7, sem a guarda de cerca do `failed`:** o teste da cerca à frente falha;
+    - **Q8, coleta do job da geração vigente:** 6 falham;
+    - **Q9, remoção antes da confirmação:** 7 falham;
+    - **Q10, retomada com `processing_dispatch` relido:** o unitário da geração reservada falha.
+    - As fontes finais são idênticas ao backup.
+  - **Verificação no Compose, com o `video-worker` em watch:**
+    - **Jobs da fila:** os jobs `reconcile-processing` passaram a terminar `completed`, com as contagens no `returnvalue`;
+    - **Cenário:** um vídeo em `processing` havia 10 minutos, com o original real no storage e o job da geração 1 ausente (F-02);
+    - **Tick 1 (16:04:11):** `examined: 1, recovered: 1`, geração 2 publicada;
+    - **Processamento:** o processor real levou o vídeo a `ready` às 16:04:14, com thumbnail e cerca (2, 1);
+    - **Tick 2:** `collected: 1`. O job `completed` da geração 2 saiu depois de o banco mostrar a execução terminal;
+    - **Limpeza:** os dados e os objetos da verificação foram removidos.
+  - **Verificações executadas, todas no container `nestjs-api`:**
+    - `npm test -- --runInBand`: 77 suítes e 856 testes, código 0. Antes eram 73 e 791. As filas reais ficaram pausadas durante a execução e voltaram sem pausa ao final;
+    - `npm run test:e2e -- --runInBand`: 11 suítes e 117 testes, código 0;
+    - `npx tsc --noEmit`: código 0;
+    - `npm run build` e `npm run build:worker`: código 0;
+      - **caminhos de entrada:** `dist/main.js` (o `require.resolve('./dist/main')` do `start:prod` resolve para ele) e `dist-worker/worker.js`, sem `src/` aninhado e sem specs;
+      - **boot do worker:** o `start:worker` subiu num contêiner avulso a partir de `dist-worker/worker`, registrou os schedulers e parou de forma graciosa; o contêiner foi removido.
+    - `npx eslint`, sem `--fix`, em `"{src,apps,libs,test}/**/*.ts"` e `proofs/phase-03/**/*.ts`: código 0;
+    - `prettier --check` nos arquivos da SI: código 0;
+    - `npm run lint` não foi executado, porque aplica `--fix`.
+  - **OpenAPI gerado do `dist/`:** as mesmas 18 operações e 27 schemas. O `openapi.json` commitado não mudou.
+  - **Estado do ambiente depois das execuções:**
+    - os seis containers rodando: `video-worker` em watch, `nestjs-api` só com o `tail`; nenhum contêiner avulso;
+    - storage com 0 objetos e 0 multiparts, banco vazio;
+    - `video-processing` sem jobs;
+    - `video-maintenance` com os 3 schedulers e jobs retidos; os `failed` no teto de 100 vêm das execuções pendentes anteriores e do `cleanup-storage`;
+    - filas sem pausa e sem chaves de teste;
+    - `.env` e `openapi.json` sem alteração.
+  - **Limitações:**
+    - **Limpeza:** `cleanup-storage` (SI-03.26) continua pendente, e seus jobs falham a cada hora;
+    - **Guardas redundantes:** dentro de G_R, as guardas de `processing_recoveries` e `pending_job_action IS NULL` mudam junto com `processing_dispatch` em todas as transições do protocolo. Por isso, os testes não conseguem isolá-las sozinhas; a mutação Q1 removeu as de tentativa e cerca, que os testes isolam;
+    - **T-12:** o processor dos filhos é um substituto mínimo (assume a cerca como P3 e trava), não o `VideoProcessingProcessor` completo. A verificação manual com `docker compose kill video-worker`, citada na TD, não foi feita: com o lock e o stall reais de 30 s, ela levaria minutos por parada;
+    - **Cenário 6:** o teste mostra que o job tardio de geração antiga não muda o banco e é coletado. A recusa da assunção por P3 já está coberta pela T-11 (SI-03.22);
+    - **Coleta em lote (corrigido na rodada de ajustes):** a versão revisada afirmava que a coleta avançava um lote por execução, o que estava errado. Ela recomeçava sempre do início dos conjuntos `completed` e `failed`, então jobs retidos no começo impediam para sempre a coleta dos seguintes. O mesmo valia para o lote de vídeos. A rodada de ajustes corrigiu os dois casos.
+  - **Rodada de ajustes (2026-11-23), pedida na revisão:**
+    - **1. Avanço dos lotes.**
+      - **Defeito:**
+        - `findSnapshots` sempre devolvia os mesmos vídeos mais antigos;
+        - a coleta sempre consultava `getJobs` a partir de 0.
+        Vídeos que precisam ficar intocados (job em espera ou ativo, ação pendente no prazo) e jobs terminados que precisam ficar (geração vigente, id fora do formato) prendiam os seguintes para sempre.
+      - **Correção dos vídeos:**
+        - **ordem e cursor:** `findSnapshots(batchSize, graceMs, after)` ordena por `COALESCE(processing_started_at, created_at)` e `id`, devolve a posição do último vídeo (`SnapshotPage.last`, com a chave lida como texto do banco, para preservar os microssegundos) e lê só depois dessa posição;
+        - **posição:** o serviço guarda a posição em memória (`snapshotCursor`);
+        - **fim do ciclo:** uma página curta termina o ciclo, e a execução seguinte recomeça do mais antigo; uma página vazia depois de uma posição recomeça na mesma execução.
+      - **Correção da coleta:**
+        - cada conjunto (`completed` e `failed`) tem um deslocamento próprio (`collectOffsets`), que avança só pelos jobs que ficaram (`offset + lidos - removidos`) e volta a 0 no fim do conjunto;
+        - cada execução lê no máximo `batchSize` jobs de cada conjunto.
+      - **Preservado:** o trabalho por execução continua limitado por `batchSize`, e as guardas G_R e G_P e as condições de retenção não mudaram.
+      - **Limitação:** as posições ficam na memória de cada processo. Um reinício recomeça do início, e cada instância percorre a lista por conta própria, o que só repete trabalho idempotente.
+    - **2. Regressões com mais itens que o `batchSize` (1, em vários ciclos), escritas antes da correção:**
+      - **vídeo seguinte a um intocado:** o primeiro vídeo tem o job em espera, o seguinte não tem job, e o seguinte precisa ser recuperado;
+      - **três vídeos sem job:** todos precisam receber uma recuperação, uma vez cada;
+      - **coleta depois de jobs retidos:** nos dois conjuntos, os primeiros jobs ficam retidos (um com id fora do formato em `completed` e um da geração vigente em `failed`), e os coletáveis seguintes precisam ser removidos.
+      - **Antes da correção:** as 3 falharam. A coleta removeu 0, em vez de 2. O vídeo sem job nunca foi recuperado. Dos três vídeos, só o primeiro foi atendido em todos os ciclos.
+      - **Depois:** as 3 passam.
+    - **3. Limite de espera da publicação pendente (SI-03.16) e das demais esperas na fila.**
+      - **Extração:** o `withTimeout` da conclusão foi extraído para `src/videos/jobs/with-timeout.ts`, com `OperationTimeoutError`, e a conclusão passou a usá-lo sem mudar de comportamento.
+      - **R2 da reconciliação:** tem o limite `VIDEO_JOB_PUBLISH_TIMEOUT_MS` (5 s). Vencido, a ação continua pendente para a retomada de P5 (log `video-maintenance.reconcile-publication-timed-out`).
+      - **Demais chamadas à fila** (estado, job, `getJobs` e `remove`): têm o limite `MAINTENANCE_QUEUE_TIMEOUT_MS` (5 s, em `maintenance.constants.ts`). Quando um limite vence, a fila é tratada como indisponível: o lote para e a coleta não roda. A execução falha com `reconciliation of the processing: queue unavailable (...)`, e a manutenção não fica presa.
+      - **Testes, escritos antes da implementação; antes dela, os dois estouraram os 20 s do Jest:**
+        - **`add` lento:**
+          - a execução termina perto de 5 s, com a ação `republish` da geração 2 preservada e nenhum job;
+          - o `add` conclui depois, e o job da geração 2 passa a existir;
+          - vencida a ação, a retomada só confirma, sem novo `add`, com 1 recuperação e um único job;
+        - **fila que nunca responde:** a execução termina dentro do limite e não muda nenhum vídeo.
+    - **4. Indisponibilidade real e controlada do Redis com job ativo (TD-10, F-12), com o `VideoProcessingProcessor` da aplicação.** O teste é `src/worker/processing/video-processing.redis-outage.integration-spec.ts`.
+      - **Prazos curtos:** `lockDuration` 2.000 ms, `stalledInterval` 1.000 ms e `maxStalledCount` 1, aplicados ao decorator pelo ambiente antes de carregar o processor (`jest.requireActual`).
+      - **Worker A:**
+        - liga-se ao Redis por um proxy TCP que o teste corta (fecha as conexões abertas e recusa as novas) e restaura;
+        - lê o storage por um proxy HTTP que atrasa cada requisição em 3 s, para o job seguir ativo.
+      - **Worker B:** outra instância do mesmo processor, com o Redis direto.
+      - **Sequência:**
+        1. A assume a tentativa (cerca 1, 1), e o ffprobe dela roda como processo filho do processo de teste;
+        2. o Redis de A é cortado, e B encontra o lock de A vencido (log `video-processing.stalled` do job);
+        3. B recebe o job de novo e assume (1, 2). A publicação de B fica retida;
+        4. durante o corte, A segue processando, com processos filhos FFmpeg ativos;
+        5. o Redis de A é restaurado depois de mais de 2 s de corte, e A termina com o vídeo ainda em `processing`;
+        6. o `publishReady` de A afeta 0 linhas (log `video-processing.attempt-lost` com a tentativa de A), e o vídeo continua `processing`, com `current_attempt_id` de B e sem thumbnail;
+        7. liberado, B publica `ready` com a própria thumbnail;
+        8. o job termina `completed` com `attemptsStarted` 2 e o `attemptId` de B.
+      - **Resultado:**
+        - as duas chaves de thumbnail existem, mas só a de B é referenciada; a de A fica para a limpeza (P4);
+        - nenhum ffprobe ou ffmpeg filho sobrou;
+        - houve conexões recusadas e erros registrados no worker de A durante o corte;
+        - depois da restauração, A, sozinho, processou um job novo até `ready`.
+      - **Execução:** cerca de 19 s, passando 4 vezes.
+      - **Mutação de controle**, com o `video-worker` parado: a guarda de publicação de P3 sem `current_attempt_id`.
+        - **Primeira tentativa, não detectada:** na sequência original, B publicava antes de A terminar, e a guarda de `status` sozinha barrava A. A sequência foi reorganizada para reter B.
+        - **Com a sequência nova, detectada:** a tentativa obsoleta de A publica `ready` com a própria thumbnail.
+        - **Correção do teste:** uma rodada com a mutação travou, porque B não era liberado quando a asserção falhava. O teste passou a liberar B num `finally`, e a repetição falhou de forma limpa.
+        - **Restos daquela rodada, removidos:** 5 chaves do prefixo de teste, um vídeo com usuário e canal, 3 objetos e um zumbi no `nestjs-api` (reinício do container).
+        - As fontes foram restauradas e conferidas com `cmp`.
+    - **Arquivos desta rodada:**
+      - **criados:** `src/videos/jobs/with-timeout.ts`, `src/videos/jobs/with-timeout.spec.ts` e `src/worker/processing/video-processing.redis-outage.integration-spec.ts`;
+      - **alterados:**
+        - `src/worker/maintenance/processing-reconciliation.repository.ts` (cursor e `SnapshotPage`);
+        - `src/worker/maintenance/processing-reconciler.service.ts` (posições, limites de espera e parada do lote);
+        - `src/worker/maintenance/maintenance.constants.ts` (`MAINTENANCE_QUEUE_TIMEOUT_MS`);
+        - `src/videos/upload-completion.service.ts` (usa o `withTimeout` extraído);
+        - `processing-reconciler.service.spec.ts`;
+        - `processing-reconciler.states.integration-spec.ts`;
+        - `processing-reconciler.recovery.integration-spec.ts`;
+        - `processing-reconciler.collect.integration-spec.ts`.
+    - **Verificações executadas na rodada, todas no container `nestjs-api`:**
+      - as quatro suítes da reconciliação passaram 2 vezes, com 70 testes;
+      - `npm test -- --runInBand`: 79 suítes e 865 testes, código 0, com as filas reais pausadas durante a execução e sem pausa ao final;
+      - `npm run test:e2e -- --runInBand`: 11 suítes e 117 testes, código 0;
+      - `npx tsc --noEmit`: código 0;
+      - `npm run build` e `npm run build:worker`: código 0, com `dist/main.js` (resolvido por `require.resolve`) e `dist-worker/worker.js`, sem `src/` aninhado e sem specs. O `start:worker` subiu e parou de forma graciosa num contêiner avulso, removido depois;
+      - `npx eslint`, sem `--fix`, no projeto inteiro: código 0;
+      - `prettier --check` nos arquivos da rodada: código 0;
+      - **ambiente real:** um `reconcile-processing` do `video-worker` em watch terminou `completed` com o código novo;
+      - **OpenAPI gerado do `dist/`:** as mesmas 18 operações e 27 schemas.
+    - **Estado do ambiente depois da rodada:**
+      - os seis containers rodando: `video-worker` em watch, `nestjs-api` só com o `tail`; nenhum contêiner avulso;
+      - banco vazio, storage com 0 objetos e 0 multiparts;
+      - filas sem pausa e sem chaves de teste, e a `video-maintenance` com os 3 schedulers;
+      - `.env` e `openapi.json` sem alteração.
+  - **Documentos:** o plano e o documento de decisões não mudaram.
+
+### SI-03.26 — Limpeza de objetos abandonados (P4)
+- **Status:** completed (2026-11-23). A revisão de 2026-11-23 aprovou a SI, incluindo as escolhas de implementação e as limitações documentadas.
+- **Tests:**
+  - `src/worker/maintenance/storage-cleaner.service.spec.ts` (unitário, previsto no plano): 35 testes. Cobre:
+    - a tabela de originais e multiparts;
+    - a tabela de derivados;
+    - a leitura das chaves e a carência;
+    - passadas com dublês: releitura, carência, posse via varredura, avanço das listagens, isolamento das passadas e `batchSize` inválido.
+  - `src/worker/maintenance/storage-cleaner.integration-spec.ts` (integração com Postgres e Silo reais, prevista no plano): 12 testes;
+  - `src/worker/worker.module.spec.ts`: 3 testes, agora conferindo as três tarefas reais de `MAINTENANCE_TASKS`.
+- **Observations:**
+  - **Arquivos criados, em `src/worker/maintenance/`:**
+    - `storage-cleaner.decisions.ts`:
+      - **`decideOriginalKey`:** referenciada por `original_key` → `keep`; sem linha de sessão → `remove`; sessão `aborted` → `remove`; `initiating`/`aborting` com claim vencido → `claim-and-abort`; `active`, `completing`, `completed` ou claim no prazo → `keep`;
+      - **`decideThumbnail`:** `ready` → as chaves diferentes de `thumbnail_key`; `error` → todas; `processing` com tentativa vigente → as de outras tentativas; `processing` sem tentativa vigente, `draft` ou sem linha de vídeo → nenhuma;
+      - **`pastGrace`:** a carência.
+    - `storage-cleanup.repository.ts`: os fatos do banco por chave (sessão dona da `object_key`, com o claim vencido avaliado pelo `now()` do banco, e se algum vídeo a referencia como `original_key`) e por vídeo (status, `thumbnail_key` e `current_attempt_id`). Só lê;
+    - `storage-cleaner.service.ts`: `StorageCleanerService`, com três passadas isoladas:
+      - objetos de `originals/`;
+      - multiparts de `originals/`;
+      - objetos de `thumbnails/`.
+      Cada passada aplica a carência, decide pela tabela e relê os fatos imediatamente antes de remover ou abortar. A posse das sessões `initiating`/`aborting` vencidas vai pelo `UploadSessionsService.sweepAbort` da SI-03.24 (claim por token sob o bloqueio do vídeo, abort até `NoSuchUpload` e `aborted` pelo token). O abort de um multipart elegível é confirmado por `ListParts` → `NoSuchUpload`;
+    - os dois arquivos de teste.
+  - **Arquivos alterados:**
+    - `src/videos/storage-keys.ts`: `ORIGINALS_PREFIX`, `THUMBNAILS_PREFIX`, `parseOriginalObjectKey` e `parseThumbnailObjectKey`, inversas das funções existentes;
+    - `src/worker/worker.module.ts`: providers `StorageCleanupRepository` e `StorageCleanerService`, e `MAINTENANCE_TASKS` com as três tarefas reais;
+    - `src/worker/worker.module.spec.ts`.
+  - **Protocolo P4, como aplicado:**
+    - **Proteção estável:** uma chave só sai quando um fato do banco que nunca regride a torna elegível:
+      - sessão `aborted`;
+      - chave sem linha de sessão;
+      - vídeo terminal;
+      - tentativa superada pela cerca.
+    - **Carência e releitura, como margem adicional:** a carência (`STORAGE_CLEANUP_GRACE_MS`) usa o `LastModified` dos objetos e o `Initiated` dos multiparts, e um item sem data fica. A releitura acontece imediatamente antes de cada remoção ou abort.
+    - **Sessões vencidas:** a limpeza assume a posse por token antes de atuar em `initiating`/`aborting` com claim vencido; nunca aborta direto.
+    - **Vídeo em `processing` sem tentativa vigente:** nenhuma thumbnail sai.
+    - **Fora do layout:** chaves fora do formato `originals/{videoId}/{sessionId}` e `thumbnails/{videoId}/{attemptId}.jpg` nunca são tocadas.
+  - **Lotes e avanço das listagens:**
+    - **Objetos:** o `ListObjectsV2` de cada prefixo lê no máximo `batchSize` chaves por execução (`MaxKeys`) e continua da posição anterior pelo token de continuação. No fim, recomeça do início. Um token recusado pelo storage também recomeça do início.
+    - **Multiparts:** o Silo ignora `MaxUploads` e o `Prefix` de diretório do `ListMultipartUploads`. Verificado num prefixo de teste: com `MaxUploads` 1, ele devolveu os 3 uploads sem truncar; com `Prefix` de diretório, devolveu 0. Por isso, a listagem é lida inteira, ordenada por chave e `uploadId`, e a execução trata no máximo `batchSize` uploads depois do último tratado, voltando ao início no fim.
+    - **Limitação:** as posições ficam na memória de cada processo, como na reconciliação.
+  - **Escolhas de implementação, para a revisão:**
+    - **Thumbnail sem linha de vídeo, ou de vídeo em `draft`:** fica. A tabela de P4 não a cobre, e não há exclusão de vídeos nesta fase;
+    - **Sessão `completed` sem nenhum vídeo que a referencie:** fica, como na tabela (`completed` → nunca);
+    - **Passadas isoladas:** uma falha numa passada é registrada (`video-maintenance.cleanup-pass-failed`), e as outras continuam. Ao final, o job falha com `cleanup of the storage: N of 3 passes failed`;
+    - **Abort não confirmado:** quando o abort de um multipart elegível não é confirmado, a execução conta `abortUnconfirmed` e o ciclo seguinte tenta de novo;
+    - **Logs:** `video-maintenance.cleanup-removed`, `-aborted`, `-claimed-session` e `-kept-at-reread`, mais um resumo `video-maintenance.cleanup` quando algo foi examinado;
+    - **`pendingMaintenanceTasks`:** deixou de ser usado pelo `WorkerModule`. Continua em `maintenance-task.ts`, coberto pelos testes da SI-03.23.
+  - **Resultados da integração** (Postgres e Silo reais, carência 0 salvo onde indicado):
+    - **Objetos que ficam:**
+      - o original e a thumbnail referenciados por um vídeo `ready`;
+      - a chave de uma sessão `aborted` que um vídeo ainda referencia como `original_key`;
+      - o multipart de uma sessão `active` e o de uma `initiating` no prazo do claim, que continua `initiating`;
+      - as thumbnails de um vídeo em `processing` sem tentativa vigente e a da tentativa vigente (a de outra tentativa sai);
+      - com carência de 1 h, um objeto órfão, um multipart sem registro e uma thumbnail de vídeo em `error` (`withinGrace: 3`);
+      - uma chave que ganha linha de sessão entre a listagem e a remoção, mantida pela releitura.
+    - **Objetos que saem:**
+      - o original de uma sessão `aborted` e o de uma chave sem linha (`removed: 2`);
+      - o multipart sem linha de sessão e o de uma sessão `aborted`, com `NoSuchUpload` confirmado (`aborted: 2`);
+      - o multipart de uma sessão `initiating` com claim vencido: a sessão termina `aborted`, sem claim e sem upload;
+      - as thumbnails obsoletas de um vídeo `ready` e todas as de um vídeo em `error`, inclusive a da tentativa residual. O original e a thumbnail publicada ficam.
+    - **Repetição:** a segunda execução seguida remove, aborta e assume 0, e as chaves restantes ficam idênticas.
+    - **Avanço com `batchSize` 1:** as chaves que ficam vêm primeiro na ordem do storage nas três listagens. Em 4 execuções, o objeto órfão, o multipart sem registro e a thumbnail do vídeo em `error`, listados depois, foram removidos. As protegidas ficaram, com no máximo um item de cada listagem por execução.
+  - **Verificações em vermelho** (`video-worker` parado antes da primeira mutação e religado depois da restauração; backup → mutação → execução das duas suítes da limpeza → restauração → `cmp`; cada mutação conferida como aplicada):
+    - **C1, chave referenciada sem proteção:** 3 testes falham (2 unitários e 1 de integração);
+    - **C2, `completed` removível:** 1 unitário falha. Na integração, uma sessão `completed` sempre é referenciada;
+    - **C3, `active` removível:** 5 falham;
+    - **C4, `initiating`/`aborting` vencida removida sem a posse por token:** 4 falham;
+    - **C5, thumbnail removida sem tentativa vigente:** 2 falham;
+    - **C6, carência ignorada:** 5 falham;
+    - **C7, sem releitura:** 2 falham;
+    - **C8, listagens sem avanço:** 3 falham (2 unitários e o teste de integração com `batchSize` 1);
+    - **C9, thumbnail publicada removível:** 5 falham.
+    - As fontes finais são idênticas ao backup, e as execuções mutadas não deixaram restos.
+  - **Verificação no Compose, com o `video-worker` em watch:**
+    - **Cenário:** um objeto órfão em `originals/`, um multipart sem registro e uma thumbnail sem vídeo, criados no storage do ambiente;
+    - **Execução:** um job avulso `cleanup-storage` (`batchSize` 100) na fila real terminou `completed`, com `examined: 3` e `withinGrace: 3`, sem nada removido. Os três itens eram recentes, e a carência real é de 1 h;
+    - **Limpeza:** os itens foram removidos depois, pelas chaves exatas.
+    - **Limitação:** o storage não permite antedatar o `LastModified`, então a remoção real com carência de 1 h não foi observada nesta sessão; ela está coberta pela integração com carência 0. O scheduler `storage-cleanup` roda de hora em hora.
+  - **Verificações executadas, todas no container `nestjs-api`:**
+    - `npm test -- --runInBand`: 81 suítes e 912 testes, código 0. Antes eram 79 e 865. As filas reais ficaram pausadas durante a execução e voltaram sem pausa ao final;
+    - `npm run test:e2e -- --runInBand`: 11 suítes e 117 testes, código 0;
+    - `npx tsc --noEmit`: código 0;
+    - `npm run build` e `npm run build:worker`: código 0;
+      - **caminhos de entrada:** `dist/main.js` (resolvido por `require.resolve`) e `dist-worker/worker.js`, sem `src/` aninhado e sem specs;
+      - **boot do worker:** o `start:worker` subiu e parou de forma graciosa num contêiner avulso, removido depois.
+    - `npx eslint`, sem `--fix`, em `"{src,apps,libs,test}/**/*.ts"` e `proofs/phase-03/**/*.ts`: código 0;
+    - `prettier --check` nos arquivos da SI: código 0;
+    - `npm run lint` não foi executado, porque aplica `--fix`.
+  - **OpenAPI gerado do `dist/`:** as mesmas 18 operações e 27 schemas. O `openapi.json` commitado não mudou.
+  - **Estado do ambiente depois das execuções:**
+    - os seis containers rodando: `video-worker` em watch, `nestjs-api` só com o `tail`; nenhum contêiner avulso;
+    - storage com 0 objetos e 0 multiparts, banco vazio;
+    - filas sem pausa e sem chaves de teste;
+    - `video-maintenance` com os 3 schedulers, e `video-processing` sem jobs;
+    - `.env` e `openapi.json` sem alteração.
+  - **Limitações:**
+    - **Escopo da limpeza:** ela percorre os prefixos inteiros `originals/` e `thumbnails/` do bucket, como em produção. Os testes de integração fazem o mesmo no storage compartilhado do ambiente, com carência 0, e por isso pressupõem que esses prefixos estejam vazios fora dos testes. Os outros testes já tratam o ambiente assim;
+    - **Multiparts:** cada execução lê a listagem inteira, porque o Silo não pagina essa listagem. O trabalho de decisão e de abort continua limitado por `batchSize`;
+    - **Thumbnails sem linha de vídeo:** ficam até uma fase que defina a exclusão de vídeos.
+  - **Documentos:** o plano e o documento de decisões não mudaram.
+
+### SI-03.27 — Endpoint GET playback-url (streaming)
+- **Status:** completed (2026-11-23). A revisão de 2026-11-23 aprovou a SI, incluindo o cenário fora do spec para o limite da rota e as limitações documentadas.
+- **Tests:**
+  - `src/videos/videos.playback.integration-spec.ts` (integração com Postgres e storage reais, prevista no plano): 8 testes;
+  - `test/videos-playback-url.e2e-spec.ts` (E2E do spec `specs/videos-playback-url.plan.md`): 6 testes, os cenários 1.1 a 1.4 e 2.1 do spec e um cenário fora do spec para o limite da rota;
+  - `src/videos/videos.service.integration-spec.ts`: só o módulo de teste mudou, com `ConfigModule` (storage e video) e `StorageModule`, porque o `VideosService` passou a depender deles. Os testes do `getOwnVideo` não mudaram.
+- **Observations:**
+  - **Arquivos criados:**
+    - `src/videos/dto/playback-url-response.dto.ts`: `PlaybackUrlResponseDto`, com `url`, `contentType` e `expiresAt`, todos com `@ApiProperty`;
+    - os dois arquivos de teste.
+  - **Arquivos alterados:**
+    - `src/videos/videos.service.ts`: `getPlaybackUrl(userId, publicId)`. Injeta o `StorageService` e o `videoConfig`;
+    - `src/videos/videos.controller.ts`: a rota `GET /videos/:publicId/playback-url`, com `@Throttle(VIDEOS_THROTTLE.GET_PLAYBACK_URL)` (30 a cada 60 s, já definido em `videos-throttle.ts`) e OpenAPI para 200, 401, 404 e 409;
+    - `src/videos/videos.service.integration-spec.ts`, só o módulo de teste.
+  - **Comportamento do `getPlaybackUrl` (TD-13, TD-14):**
+    - **Autorização:** o vídeo vem do `UploadSessionAccessService.getOwnedVideo`, o mesmo caminho do `GET /videos/:publicId`. Um `publicId` malformado, um vídeo inexistente e um vídeo de outro canal recebem `404 VIDEO_NOT_FOUND`, sem distinção;
+    - **Estado:** só `ready`. `draft`, `processing` e `error` recebem `409 VIDEO_NOT_READY`, antes de qualquer assinatura;
+    - **Assinatura:** o `StorageService.presignGet` existente (SI-03.7), com `audience: 'browser'` (cliente do `S3_PUBLIC_ENDPOINT`), a chave `original_key`, `ResponseContentType` igual ao `content_type` do vídeo e `expiresInSeconds` igual a `PLAYBACK_URL_TTL_SECONDS`. O `StorageService` não mudou;
+    - **Resposta:** `url`, `contentType` (o `content_type` do vídeo) e `expiresAt` (o instante de assinatura, em segundo inteiro, mais o TTL);
+    - **Bytes:** os bytes e o Range ficam com o storage. A API só autoriza e assina;
+    - **Invariante:** um vídeo `ready` sem `original_key` lança um erro interno (500). P2 grava a chave antes do processamento, então esse estado indica dados corrompidos, não uma resposta de domínio.
+  - **Documentação:** context7 consultado para `@aws-sdk/s3-request-presigner` (versão instalada 3.1170.0). O `getSignedUrl` com `GetObjectCommand`, `ResponseContentType` e `expiresIn` confere com o uso já existente em `presignGet`.
+  - **Resultados da integração** (Postgres e storage reais, fixtures da SI-03.6):
+    - **URL e prazo:** host do `S3_PUBLIC_ENDPOINT`, caminho `/{bucket}/{original_key}`, `response-content-type=video/mp4`, `X-Amz-Expires` igual a `PLAYBACK_URL_TTL_SECONDS`, `expiresAt` dentro do TTL;
+    - **Range:** `Range: bytes=0-1023` na URL respondeu `206`, `Content-Range: bytes 0-1023/34363`, `Content-Type: video/mp4` e exatamente os primeiros 1024 bytes de `h264-aac-faststart.mp4`;
+    - **Tipo:** um vídeo WebM (`vp9-opus.webm`), gravado sem `ContentType`, recebe `contentType: video/webm`, e o storage responde `Content-Type: video/webm`. O tipo da resposta vem da assinatura;
+    - **Expiração:** com o TTL sobrescrito para 1 s no módulo de teste, a URL é recusada com `403` depois do `expiresAt`;
+    - **Recusas:** outro usuário e um `publicId` malformado recebem `VideoNotFoundException`; `draft`, `processing` e `error` recebem `VideoNotReadyException`. Em todos os casos, o `presignGet` não é chamado.
+  - **Resultados do E2E:**
+    - **Setup do spec:**
+      - `AppModule` com o `ValidationPipe` e os filtros globais de `main.ts`, e `UPLOAD_PART_SIZE_BYTES=5242880`, restaurado no `afterAll`;
+      - filas controladas pelo `VideoQueuesControl`: `pauseAll` no `beforeAll`, `prepareScenario` no `beforeEach`, `resumeProcessing` só no 2.1 e `restore` no `afterAll`;
+      - as requisições às URLs assinadas saem do container pelo `requestPresignedUrl`, conectando ao serviço `storage` e mantendo o `Host` assinado do `S3_PUBLIC_ENDPOINT`, sem refazer a assinatura.
+    - **1.1:** `200` com exatamente `url`, `contentType: video/mp4` e `expiresAt` a até 3 s de "requisição + TTL"; a URL usa o host público e referencia a `original_key`;
+    - **1.2:** a URL responde `206`, `Content-Range: bytes 0-1023/34363`, `Content-Type: video/mp4` e os 1024 bytes exatos da fixture;
+    - **1.3:** um vídeo em `processing` (`processing_run = 1`, `original_key` igual à `object_key` da sessão `completed`, original gravado) recebe `409 VIDEO_NOT_READY`;
+    - **1.4:** o segundo usuário recebe `404 VIDEO_NOT_FOUND`, e a requisição sem token recebe `401`;
+    - **2.1:**
+      - **Upload real pelas rotas da fase:** `POST /videos`, `part-urls` com o checksum, `PUT` na URL assinada, registro do ETag e `completion` → `202`;
+      - **Com a `video-processing` pausada:** o vídeo está em `processing`, o job `video-{videoId}-1-1` existe sem ter sido consumido, e a playback-url responde `409 VIDEO_NOT_READY`;
+      - **Depois de retomar a fila:** o `video-worker` real do Compose levou o vídeo a `ready` (polling de 1 s, timeout de 60 s), com `durationSeconds`, `width`, `height`, `videoCodec: h264` e `hasThumbnail: true`. O teste inteiro levou cerca de 1,5 s;
+      - **URL funcional:** a playback-url responde `200` com `contentType: video/mp4`, e a URL responde `206` com os primeiros 1024 bytes da fixture enviada.
+    - **Fora do spec, limite da rota:** 30 requisições em sequência respondem `200`, e a 31ª recebe `429`.
+  - **Verificações em vermelho** (`video-worker` parado antes da primeira mutação e religado depois da restauração; backup → mutação → integração e E2E → restauração → `cmp`; cada mutação conferida como aplicada; no E2E, só os cenários do grupo 1 e o limite da rota, porque o 2.1 precisa do worker):
+    - **R1, qualquer estado assinado:** 3 testes da integração e o E2E 1.3 falham;
+    - **R2, dono ignorado (busca só pelo `publicId`):** 1 da integração e o E2E 1.4 falham;
+    - **R3, endpoint interno no lugar do público:** 1 da integração e o E2E 1.1 falham;
+    - **R4, TTL fixo de 900 s:** 2 da integração (prazo e expiração com 403) e o E2E 1.1 falham;
+    - **R5, sem `ResponseContentType`:** 3 da integração falham. O E2E passa, porque o original do E2E é gravado por multipart com `ContentType: video/mp4`;
+    - **R6, `contentType` fixo em `video/mp4`:** o teste WebM da integração falha. O E2E passa, porque só usa MP4;
+    - **R7, `expiresAt` errado:** 1 da integração e o E2E 1.1 falham;
+    - **R8, sem o `@Throttle` da rota (vale o global de 10):** o teste do limite no E2E falha;
+    - as fontes finais são idênticas ao backup, e as execuções mutadas não deixaram restos no banco, no storage ou nas filas.
+  - **Verificações executadas, todas no container `nestjs-api`:**
+    - `npm test -- --runInBand`: 82 suítes e 920 testes, código 0. Antes eram 81 e 912. As filas reais ficaram pausadas durante a execução e voltaram sem pausa ao final;
+    - `npm run test:e2e -- --runInBand`: 12 suítes e 123 testes, código 0. Antes eram 11 e 117;
+    - `npx tsc --noEmit`: código 0;
+    - `npm run build` e `npm run build:worker`: código 0;
+      - **caminhos de entrada:** `dist/main.js` (resolvido por `require.resolve`) e `dist-worker/worker.js`, sem `src/` aninhado e sem specs;
+      - **`dist/test` e `dist-worker/test`:** são a compilação dos helpers de `src/test/`, não da pasta `test/`. Isso é anterior a esta SI;
+      - **boot do worker:** o `start:worker` subiu e parou de forma graciosa num contêiner avulso, removido depois. O `VideosModule`, importado pelo worker, ganhou as dependências do storage e do `videoConfig`.
+    - `npx eslint`, sem `--fix`, em `"{src,apps,libs,test}/**/*.ts"` e `proofs/phase-03/**/*.ts`: código 0;
+    - `prettier --check` em `src/videos` e no E2E novo: código 0;
+    - `npm run lint` não foi executado, porque aplica `--fix`.
+  - **OpenAPI gerado do `dist/`:**
+    - 19 operações e 28 schemas, antes 18 e 27;
+    - a operação nova é `VideosController_getPlaybackUrl`, com `security: access-token`, respostas 200 (`PlaybackUrlResponseDto`), 401, 404 e 409 (`VIDEO_NOT_READY`) e o envelope de erro;
+    - o schema `PlaybackUrlResponseDto` tem `url` (`format: uri`), `contentType` e `expiresAt` (`format: date-time`), todos obrigatórios;
+    - o `openapi.json` commitado não mudou; a regeneração fica na SI-03.29.
+  - **Estado do ambiente depois das execuções:**
+    - os seis containers rodando: `video-worker` em watch, `nestjs-api` só com o `tail`; nenhum contêiner avulso;
+    - storage com 0 objetos e 0 multiparts, banco vazio;
+    - filas sem pausa e sem chaves de teste;
+    - `video-maintenance` com os 3 schedulers, e `video-processing` sem jobs;
+    - `.env` e `openapi.json` sem alteração.
+  - **Limitações:**
+    - **Reprodução e seek em navegador (V-05):** continuam para a Fase 05, como na TD-14. Aqui o streaming foi provado por requisição `Range` direta à URL;
+    - **Host assinado:** os testes conectam ao serviço `storage` mantendo o `Host` do `S3_PUBLIC_ENDPOINT`. O acesso pelo navegador, pela porta publicada no host, não foi exercitado nesta SI;
+    - **Processamento real:** o 2.1 usa a fixture pequena de 34.363 bytes, numa única parte. O arquivo grande fica nas provas da TD-15;
+    - **Logs do worker:** o worker não registra sucessos, só falhas e stalls. A prova de que o `video-worker` processou o job é o vídeo em `ready` com os metadados do ffprobe e a thumbnail.
+  - **Documentos:** o plano, o spec e o documento de decisões não mudaram.
+
+### SI-03.28 — Endpoint GET download-url
+- **Status:** completed (2026-11-23). A revisão de 2026-11-23 aprovou a SI, incluindo a refatoração para `getOwnedReadyOriginal`, o header montado sem dependência nova, os cenários fora do spec e as limitações documentadas.
+- **Tests:**
+  - `src/videos/videos.download.integration-spec.ts` (integração com Postgres e storage reais, prevista no plano): 9 testes;
+  - `src/videos/content-disposition.spec.ts` (unitário, do header `Content-Disposition`): 11 testes;
+  - `test/videos-download-url.e2e-spec.ts` (E2E do spec `specs/videos-download-url.plan.md`): 8 testes, os cenários 1.1 a 1.4, 2.1 e 2.2 do spec e dois cenários fora do spec, de autorização e do limite da rota.
+- **Observations:**
+  - **Arquivos criados:**
+    - `src/videos/content-disposition.ts`: `attachmentDisposition(filename)`;
+    - `src/videos/dto/download-url-response.dto.ts`: `DownloadUrlResponseDto`, com `url` e `expiresAt`, ambos com `@ApiProperty`;
+    - `src/test/content-disposition.ts`: `parseContentDisposition`, helper de teste que lê `filename` e `filename*` (decodificado), usado pelo unitário, pela integração e pelo E2E;
+    - os três arquivos de teste.
+  - **Arquivos alterados:**
+    - `src/videos/videos.service.ts`:
+      - `getDownloadUrl(userId, publicId)`;
+      - a regra comum de dono, estado `ready` e `original_key` saiu do `getPlaybackUrl` para o método privado `getOwnedReadyOriginal`, usado pelas duas rotas. O comportamento da playback não mudou: as suítes da SI-03.27 passam sem alteração;
+    - `src/videos/videos.controller.ts`: a rota `GET /videos/:publicId/download-url`, com `@Throttle(VIDEOS_THROTTLE.GET_DOWNLOAD_URL)` (30 a cada 60 s, já definido em `videos-throttle.ts`) e OpenAPI para 200, 401, 404 e 409.
+  - **Comportamento do `getDownloadUrl` (TD-14):**
+    - **Autorização e estado:** as mesmas regras da playback-url. Só o dono recebe a URL, e os demais recebem `404 VIDEO_NOT_FOUND`, sem distinção; só `ready`, e os outros estados recebem `409 VIDEO_NOT_READY` antes de qualquer assinatura;
+    - **Assinatura:** o `StorageService.presignGet` existente, com `audience: 'browser'` (cliente do `S3_PUBLIC_ENDPOINT`), a chave `original_key`, `expiresInSeconds` igual a `DOWNLOAD_URL_TTL_SECONDS` e `ResponseContentDisposition` gerado por `attachmentDisposition(original_filename)`. O `StorageService` não mudou;
+    - **Resposta:** `url` e `expiresAt` (instante de assinatura, em segundo inteiro, mais o TTL).
+  - **`Content-Disposition` (RFC 6266):**
+    - **Formato:** `attachment; filename="<fallback ASCII>"; filename*=UTF-8''<nome em percent-encoding>`;
+    - **`filename*`:** leva o `original_filename` exato, em UTF-8 com percent-encoding (RFC 8187). `'`, `(`, `)` e `*` também são codificados, porque não são `attr-char`;
+    - **`filename`:** vem antes, como recomenda a RFC 6266 §4.3. É um fallback para clientes sem RFC 8187: sem diacríticos (NFKD), e com `_` no lugar de qualquer outro caractere fora do ASCII imprimível e de `"`, `\` e `%`. Por exemplo, `vídeo de ação.mp4` vira `video de acao.mp4`;
+    - **Header:** fica inteiramente em ASCII, e o storage o devolve exatamente como foi assinado.
+  - **Sem dependência nova:** o pacote `content-disposition` só existe como dependência transitiva do Express, e o TD-14 lista apenas o presigner. Por isso o header é montado por uma função pequena, coberta por teste unitário.
+  - **Resultados da integração** (Postgres e storage reais, fixture `h264-aac-faststart.mp4` da SI-03.6):
+    - **URL e prazo:** host do `S3_PUBLIC_ENDPOINT`, caminho `/{bucket}/{original_key}`, `response-content-disposition` igual ao header gerado, `X-Amz-Expires` igual a `DOWNLOAD_URL_TTL_SECONDS`, `expiresAt` dentro do TTL e resposta só com `url` e `expiresAt`;
+    - **Download completo, sem `Range`:** `200`, `Content-Length` de 34.363, SHA-256 igual ao da fixture e `Content-Disposition` `attachment`;
+    - **Nome acentuado:** `vídeo de ação.mp4` chega como `filename*=UTF-8''v%C3%ADdeo%20de%20a%C3%A7%C3%A3o.mp4`, que decodifica exatamente para o nome, com `filename="video de acao.mp4"`;
+    - **Caracteres especiais:** para `clip "final" 100%; v2's (copy).mp4`, o storage devolve exatamente o header assinado, e `filename*` decodifica para o nome;
+    - **Expiração:** com o TTL sobrescrito para 1 s no módulo de teste, a URL é recusada com `403` depois do `expiresAt`;
+    - **Recusas:** outro usuário e um `publicId` malformado recebem `VideoNotFoundException`; `draft`, `processing` e `error` recebem `VideoNotReadyException`. Em todos os casos, o `presignGet` não é chamado.
+  - **Resultados do E2E:**
+    - **Setup do spec:**
+      - `AppModule` com o `ValidationPipe` e os filtros globais de `main.ts`, e `UPLOAD_PART_SIZE_BYTES=5242880`, restaurado no `afterAll`;
+      - filas controladas pelo `VideoQueuesControl`: `pauseAll` no `beforeAll`, `prepareScenario` no `beforeEach`, `resumeProcessing` só no grupo 2 e `restore` no `afterAll`;
+      - as requisições às URLs assinadas saem do container pelo `requestPresignedUrl`, conectando ao serviço `storage` e mantendo o `Host` assinado do `S3_PUBLIC_ENDPOINT`.
+    - **1.1:** `200` com exatamente `url` e `expiresAt`, este a até 3 s de "requisição + TTL";
+    - **1.2:** o GET sem `Range` responde `200`, com `Content-Disposition` começando por `attachment` e o SHA-256 da fixture;
+    - **1.3:** o header contém `filename*=UTF-8''v%C3%ADdeo%20de%20a%C3%A7%C3%A3o.mp4`, que decodifica exatamente para `vídeo de ação.mp4`;
+    - **1.4:** um vídeo em `draft`, criado por `POST /videos`, e um vídeo em `error` (`MEDIA_INVALID`, original gravado) recebem `409 VIDEO_NOT_READY`;
+    - **2.1:**
+      - **Upload real:** `vídeo de ação.mp4` (a fixture MP4) foi enviado pelas rotas da fase, com `completion` → `202`;
+      - **Com a fila pausada:** o vídeo fica em `processing`, e o job `video-{videoId}-1-1` espera;
+      - **Depois de retomar a fila:** o `video-worker` real levou o vídeo a `ready`;
+      - **Download:** a download-url responde `200` com `url` e `expiresAt`. O download tem o SHA-256 do arquivo enviado e `Content-Disposition` `attachment`, com `filename*` decodificando para `vídeo de ação.mp4`. O teste levou cerca de 1,3 s;
+    - **2.2:**
+      - **Upload real:** `invalid.mp4`, declarado como `video/mp4`, com `completion` → `202` e o vídeo em `processing` com a fila pausada;
+      - **Depois de retomar a fila:** o worker real levou o vídeo a `error`, com `errorCode: MEDIA_INVALID`, `errorMessage` preenchida e `hasThumbnail: false`;
+      - **Recusa:** a download-url responde `409 VIDEO_NOT_READY`;
+      - **Log do worker:** `video-processing.failed` com o `jobId` da geração 1 e `reason` `MEDIA_INVALID: …: Invalid data found when processing input`. A URL do `reason` aparece sem a query assinada: nenhuma linha do log contém `X-Amz-`;
+    - **Fora do spec, autorização:** o segundo usuário recebe `404 VIDEO_NOT_FOUND`, e a requisição sem token recebe `401`;
+    - **Fora do spec, limite da rota:** 30 requisições em sequência respondem `200`, e a 31ª recebe `429`.
+  - **Verificações em vermelho** (`video-worker` parado antes da primeira mutação e religado depois da restauração; backup → mutação → unitário, integração e E2E → restauração → `cmp`; cada mutação conferida como aplicada; no E2E, só o grupo 1 e os cenários fora do spec, porque o grupo 2 precisa do worker):
+    - **D1, qualquer estado assinado:** 3 testes da integração e o E2E 1.4 falham;
+    - **D2, dono ignorado:** 1 da integração e o E2E de autorização falham;
+    - **D3, endpoint interno no lugar do público:** 1 da integração falha. O E2E passa, porque o spec não confere o host do download;
+    - **D4, TTL da playback no lugar do de download:** 2 da integração (prazo e expiração com 403) e o E2E 1.1 falham;
+    - **D5, sem `ResponseContentDisposition`:** 4 da integração e os E2E 1.2 e 1.3 falham;
+    - **D6, `inline` no lugar de `attachment`:** 9 do unitário e da integração e o E2E 1.2 falham;
+    - **D7, `filename*` sem a codificação UTF-8:** 8 do unitário e da integração e o E2E 1.3 falham;
+    - **D8, fallback sem escapar `"`, `\` e `%`:** 1 unitário falha;
+    - **D9, `'`, `(`, `)` e `*` sem codificação em `filename*`:** 1 unitário falha;
+    - **D10, sem o `@Throttle` da rota:** o teste do limite no E2E falha;
+    - **D11, `expiresAt` errado:** 1 da integração e o E2E 1.1 falham;
+    - as fontes finais são idênticas ao backup, e as execuções mutadas não deixaram restos no banco, no storage ou nas filas.
+  - **Verificações executadas, todas no container `nestjs-api`:**
+    - `npm test -- --runInBand`: 84 suítes e 940 testes, código 0. Antes eram 82 e 920. As filas reais ficaram pausadas durante a execução e voltaram sem pausa ao final;
+    - `npm run test:e2e -- --runInBand`: 13 suítes e 131 testes, código 0. Antes eram 12 e 123;
+    - `npx tsc --noEmit`: código 0;
+    - `npm run build` e `npm run build:worker`: código 0;
+      - **caminhos de entrada:** `dist/main.js` (resolvido por `require.resolve`) e `dist-worker/worker.js`, sem `src/` aninhado e sem specs;
+      - **boot do worker:** o `start:worker` subiu e parou de forma graciosa num contêiner avulso, removido depois.
+    - `npx eslint`, sem `--fix`, em `"{src,apps,libs,test}/**/*.ts"` e `proofs/phase-03/**/*.ts`: código 0;
+    - `prettier --check` em `src/videos`, no helper e no E2E novo: código 0;
+    - `npm run lint` não foi executado, porque aplica `--fix`.
+  - **OpenAPI gerado do `dist/`:**
+    - 20 operações e 29 schemas, antes 19 e 28;
+    - a operação nova é `VideosController_getDownloadUrl`, com `security: access-token`, respostas 200 (`DownloadUrlResponseDto`), 401, 404 e 409 (`VIDEO_NOT_READY`) e o envelope de erro;
+    - o schema `DownloadUrlResponseDto` tem `url` (`format: uri`) e `expiresAt` (`format: date-time`), ambos obrigatórios;
+    - a operação da playback-url continua com 200, 401, 404 e 409;
+    - o `openapi.json` commitado não mudou; a regeneração fica na SI-03.29.
+  - **Estado do ambiente depois das execuções:**
+    - os seis containers rodando: `video-worker` em watch, `nestjs-api` só com o `tail`; nenhum contêiner avulso;
+    - storage com 0 objetos e 0 multiparts, banco vazio;
+    - filas sem pausa e sem chaves de teste;
+    - `video-maintenance` com os 3 schedulers, e `video-processing` sem jobs;
+    - `.env` e `openapi.json` sem alteração.
+  - **Limitações:**
+    - **Navegador:** o comportamento de cada navegador com `filename*` e com o fallback não foi exercitado. A prova é o header devolvido pelo storage e a decodificação pela RFC 8187;
+    - **Nomes não latinos:** o fallback ASCII perde os caracteres sem decomposição, que viram `_` (por exemplo, `動画.mp4` vira `__.mp4`). O nome exato segue em `filename*`;
+    - **Host assinado:** os testes conectam ao serviço `storage` mantendo o `Host` do `S3_PUBLIC_ENDPOINT`. O acesso pela porta publicada no host não foi exercitado;
+    - **Arquivo grande:** os downloads usam as fixtures pequenas, numa única parte. O arquivo grande fica nas provas da TD-15;
+    - **`Content-Type` do download:** não é assinado, como no contrato (só `ResponseContentDisposition`). O storage responde com o tipo gravado no objeto, que o upload multipart registra como `video/mp4` ou `video/webm`.
+  - **Documentos:** o plano, o spec e o documento de decisões não mudaram.
+
+### SI-03.29 — Contrato OpenAPI e sincronização com o next-frontend
+- **Status:** completed (2026-11-24). A primeira revisão de 2026-11-24 confirmou que os contratos e os tipos estão coerentes e pediu duas correções de versionamento e CI (ver "Ajuste da revisão"). A revisão do ajuste, também em 2026-11-24, aprovou a SI. O workflow foi validado só localmente: ele ainda não rodou no GitHub Actions, porque não há commit nem push.
+- **Tests:**
+  - `src/openapi-export.integration-spec.ts` (integração prevista no plano): 43 testes;
+    - 34 novos, num bloco que gera o contrato pelo build;
+    - os 9 testes anteriores, do export em processo, continuam sem mudança.
+- **Observations:**
+  - **Correção necessária à SI, autorizada na execução (2026-11-23):**
+    - **Causa:**
+      - o `npm run openapi:export` rodava `ts-node -r tsconfig-paths/register src/openapi-export.ts`;
+      - o `ts-node` não aplica o plugin da CLI do `@nestjs/swagger` (`nest-cli.json` → `plugins`, com `classValidatorShim` e `introspectComments`), fixado pela openapi-docs-nestjs/TD-01. Só o `nest build` aplica esse plugin;
+      - **efeito:** todos os DTOs de requisição saíam como `{"type":"object","properties":{}}`. Isso inclui os do upload (`UploadDeclarationDto`, `PartUrlsRequestDto`, `FileVerificationsRequestDto`) e os de auth (`RegisterDto`, `LoginDto`, `RefreshTokenDto`, `ResendConfirmationDto`, `ForgotPasswordDto`, `ResetPasswordDto`);
+      - os schemas aninhados `PartToSignDto`, `CompletedPartDto` e `RecalculatedPartChecksumDto` não apareciam;
+      - o `GET /` ficava sem o corpo `string`, e o `GET /auth/confirm-email` sem o parâmetro de query `token`;
+      - **o defeito era anterior:** o `openapi.json` versionado da Fase 02 já tinha os DTOs de auth vazios, e o `types.gen.ts` os tipava como `Record<string, never>`;
+      - respostas, status e esquemas de erro saíam iguais nos dois caminhos, porque são decorados explicitamente.
+    - **Solução:**
+      - em `nestjs-project/package.json`, `"openapi:export": "nest build && node dist/openapi-export.js"`;
+      - o comando do plano continua `docker compose exec nestjs-api npm run openapi:export`;
+      - o artefato passa a ser igual ao documento da Swagger UI em runtime, como pede a openapi-docs-nestjs/TD-02;
+      - o export leva cerca de 9 s, incluindo o build.
+  - **Arquivos alterados:**
+    - `nestjs-project/package.json`: só o script `openapi:export`;
+    - `nestjs-project/openapi.json`: regenerado pelo build;
+    - `nestjs-project/src/openapi-export.integration-spec.ts`;
+    - `next-frontend/lib/api/types.gen.ts`: regenerado;
+    - `next-frontend/openapi.json`: criado pelo `scripts/sync-openapi.sh`. O git o ignorava até o ajuste da revisão, que removeu a regra;
+    - nenhum outro arquivo do frontend mudou.
+  - **Contrato regenerado:**
+    - 20 operações e 29 schemas. O artefato da Fase 02 tinha 10 e 7;
+    - **dez operações de vídeo**, todas com `security: access-token`, `operationId`, resumo e uma resposta por status:
+      - `POST /videos`: 201, 400, 401, 404, 413, 415 e 503;
+      - `GET /videos/{publicId}`: 200, 401 e 404;
+      - `GET …/playback-url` e `GET …/download-url`: 200, 401, 404 e 409;
+      - `POST …/upload-sessions`: 201, 400, 401, 404, 409, 413, 415 e 503;
+      - `GET …/upload-sessions/{sessionId}`: 200, 401, 404, 410 e 503;
+      - `DELETE …/upload-sessions/{sessionId}`: 204 sem corpo, 401, 404 e 409;
+      - `POST …/part-urls`: 200, 400, 401, 404, 409 e 410;
+      - `POST …/file-verifications`: 200, 400, 401, 404, 409, 410 e 503;
+      - `POST …/completion`: 200 e 202, 401, 404, 409, 410 e 503;
+    - **erros:** todo status 4xx e 5xx, de todas as rotas, referencia o `ApiErrorEnvelope`;
+    - **referências:** todas as 29 referências `$ref` resolvem para schemas existentes, e todo schema é referenciado;
+    - **limite do plugin:** os `pattern` de `@Matches` não entram no contrato. O `IsInt` sai como `type: number`. Ambos são comportamento do plugin, e a validação continua no `ValidationPipe`.
+  - **Testes do contrato gerado pelo build:**
+    - **Como o contrato é gerado:** o `beforeAll` executa os mesmos passos do script (`nest build` e `dist/openapi-export.js`), gravando num arquivo temporário em vez do artefato. O export em processo, compilado pelo ts-jest, também não aplica o plugin, por isso não serve para esses testes;
+    - **igualdade:** o contrato gerado é byte a byte o `nestjs-project/openapi.json` versionado;
+    - **rotas de vídeo:**
+      - o documento tem exatamente as dez operações da fase sob `/videos`;
+      - para cada uma: `operationId`, resumo, bearer, parâmetros de caminho obrigatórios, corpo de requisição obrigatório com `$ref` (ou nenhum corpo), o conjunto exato de status e o `$ref` de cada resposta;
+      - os oito DTOs de resposta de vídeo têm exatamente os campos do contrato, todos obrigatórios;
+    - **DTOs do upload:**
+      - `UploadDeclarationDto`: `fileName` (`string`, 1 a 255), `sizeBytes` (`number`, 1 a `Number.MAX_SAFE_INTEGER`) e `contentType` (`string`, até 100), os três obrigatórios;
+      - `PartUrlsRequestDto`: `parts`, arrays de `$ref PartToSignDto`, e `completedParts`, arrays de `$ref CompletedPartDto`, ambos opcionais. A exigência de um array não vazio é regra da validação;
+      - `PartToSignDto` (`partNumber` ≥ 1, `checksumSha256`) e `CompletedPartDto` (`partNumber` ≥ 1, `etag` de 1 a 255): campos obrigatórios;
+      - `FileVerificationsRequestDto`: `parts` obrigatório, com `uniqueItems` e itens `$ref RecalculatedPartChecksumDto`, cujos `partNumber` e `checksumSha256` são obrigatórios;
+    - **DTOs de auth:**
+      - cada `POST` de auth referencia o seu DTO, com corpo obrigatório;
+      - `RegisterDto`: `email` (`format: email`) e `password` (8 a 128);
+      - `LoginDto`: `email` e `password`;
+      - `RefreshTokenDto`: `refresh_token`;
+      - `ResendConfirmationDto` e `ForgotPasswordDto`: `email`;
+      - `ResetPasswordDto`: `token` e `new_password` (8 a 128);
+      - todos os campos obrigatórios. O `GET /auth/confirm-email` tem o `token` de query obrigatório;
+    - **esquemas de erro:**
+      - `ApiErrorEnvelope`: `statusCode`, `error` e `message` (`string` ou array de `string`) obrigatórios, e `code` anulável;
+      - todo status 4xx e 5xx referencia o envelope;
+      - nenhuma referência quebrada.
+  - **Verificações em vermelho** (`video-worker` parado antes das mutações e religado depois da restauração; backup → mutação → spec → restauração → `cmp`):
+    - **O1, artefato regenerado pelo comando anterior (`ts-node`):** o teste de igualdade byte a byte falha;
+    - **O2, `@Length(1, 254)` em `fileName` sem regenerar o artefato:** os testes de igualdade e do `UploadDeclarationDto` falham;
+    - **O3, `@ApiPropertyOptional()` em `PartToSignDto.checksumSha256`:** os testes de igualdade e dos DTOs aninhados falham;
+    - **O4, `completedParts` com tipo inline no lugar de `CompletedPartDto`:** os testes de igualdade, do `PartUrlsRequestDto` e dos DTOs aninhados falham;
+    - **O5, sem o `@ApiResponse` 409 da playback-url:** os testes de igualdade e da operação falham;
+    - **O6, `@MinLength(6)` no `RegisterDto`:** os testes de igualdade e do `RegisterDto` falham;
+    - **tentativas descartadas, sem valor como verificação:**
+      - O3 e O4 tornando os campos opcionais por `?`, e por um array de `object`, quebravam a compilação. O build do `beforeAll` falhava, e todos os testes caíam juntos;
+      - O3 com `@IsOptional()` foi equivalente para o contrato: o plugin decide a obrigatoriedade pelo `?` do TypeScript, e o próprio teste de igualdade passou;
+    - as fontes e o artefato finais são idênticos ao backup.
+  - **Sincronização e tipos do frontend:**
+    - **Sincronização:** `bash scripts/sync-openapi.sh` no host. Depois dela, `nestjs-project/openapi.json` e `next-frontend/openapi.json` são idênticos (SHA-256 `6af4f422…cafd0`);
+    - **Container:** o `next-frontend` não tinha container, imagem nem `node_modules`. A imagem foi construída por `docker compose up -d --build`; o container só roda `tail -f /dev/null`, e o servidor do Next não foi iniciado;
+    - **Dependências:** instaladas com `docker compose exec next-frontend npm ci`, que segue o lock sem reescrevê-lo. `package.json` e `package-lock.json` conferidos pelo SHA-256;
+    - **Tipos:** `docker compose exec next-frontend npm run openapi:types` (openapi-typescript 7.13.0);
+      - o `types.gen.ts` contém `/videos`, `/videos/{publicId}/upload-sessions/{sessionId}/part-urls` e os outros oito caminhos de vídeo;
+      - os corpos do upload têm campos concretos, por exemplo `UploadDeclarationDto { fileName; sizeBytes; contentType }` e `parts?: components["schemas"]["PartToSignDto"][]`;
+      - **diff:** 1.116 linhas adicionadas e 8 removidas. As 8 removidas são os seis DTOs de auth antes `Record<string, never>`, o `content?: never` do `GET /` e o `query?: never` do `confirm-email`;
+    - **Verificações do frontend:** `npx tsc --noEmit`: código 0. `npm run lint`: código 0, com 1 aviso anterior do React Compiler sobre o `watch()` do React Hook Form em `components/auth/signup-form.tsx:71`, que não depende dos tipos;
+    - **Arquivos do frontend:** só `lib/api/types.gen.ts` aparece modificado no git. O `openapi.json`, o `node_modules` e o `tsconfig.tsbuildinfo` foram criados nesta SI e eram ignorados. Depois do ajuste da revisão, o `openapi.json` aparece como não rastreado e precisa entrar no commit.
+  - **Verificação de atualização do contrato do CI:**
+    - **Workflow ausente na execução da SI:** o `.github/workflows/openapi-freshness.yml` não existia no repositório nem no histórico do git, embora `docs/tasks/task-next-frontend-openapi-typing/progress.md` o registrasse como criado. Ele foi criado no ajuste da revisão, e o registro da tarefa foi corrigido;
+    - **Reprodução local:** os três passos especificados na TD-03 da tipagem foram executados:
+      1. `bash scripts/sync-openapi.sh`;
+      2. `npm run openapi:types`, no container;
+      3. comparação dos dois arquivos com a linha de base;
+    - **Linha de base:** sem commit, é o working tree depois da primeira geração (os três arquivos copiados para o scratchpad);
+    - **Segunda geração da cadeia inteira:** export do backend, sincronização e tipos. Os três arquivos saíram idênticos à linha de base, sem drift;
+    - **`git diff --exit-code`:** como o workflow o executa, sai com 1 agora, só porque a mudança do `types.gen.ts` ainda não foi commitada;
+    - **segunda geração do backend, sozinha:** mesmo SHA-256 (`6af4f422…cafd0`).
+  - **Verificações executadas no container `nestjs-api`:**
+    - `npm test -- --runInBand`: 84 suítes e 974 testes, código 0. Antes eram 84 e 940; o spec do export reconstrói o `dist/`;
+    - `npm run test:e2e -- --runInBand`: 13 suítes e 131 testes, código 0;
+    - `npx tsc --noEmit`: código 0;
+    - `npm run build` e `npm run build:worker`: código 0;
+      - **caminhos de entrada:** `dist/main.js` e `dist-worker/worker.js`, sem `src/` aninhado e sem specs;
+      - **boot do worker:** o `start:worker` subiu e parou de forma graciosa num contêiner avulso, removido depois;
+    - `npx eslint`, sem `--fix`, em `"{src,apps,libs,test}/**/*.ts"` e `proofs/phase-03/**/*.ts`: código 0;
+    - `prettier --check` no spec e no `package.json`: código 0;
+    - `npm run lint` do backend não foi executado, porque aplica `--fix`;
+    - **artefato:** o `openapi.json` versionado continuou idêntico depois das suítes e dos builds, e as duas cópias continuaram iguais.
+  - **Estado do ambiente depois das execuções:**
+    - **Backend:** os seis containers rodando (`video-worker` em watch, `nestjs-api` só com o `tail`); storage com 0 objetos e 0 multiparts; banco vazio; filas sem pausa e sem chaves de teste; `video-maintenance` com os 3 schedulers e `video-processing` sem jobs; `.env` sem alteração;
+    - **Frontend:** o container do `next-frontend` foi removido por `docker compose down`, como estava antes da SI. A imagem construída e o `node_modules` permanecem.
+  - **Limitações e tarefas separadas:**
+    - **Workflow do CI (resolvida no ajuste da revisão):** o `.github/workflows/openapi-freshness.yml` faltava, e o registro da tarefa de tipagem o dava como criado;
+    - **Cópia do frontend ignorada (resolvida no ajuste da revisão):** `next-frontend/.gitignore` (linha 42) ignorava `openapi.json`, embora as decisões (next-frontend-openapi-typing/TD-02 e TD-03) e `.claude/rules/next-frontend-bff-api.md` digam que a cópia é versionada. Com isso, o `git diff --exit-code` do workflow nunca acusaria drift dessa cópia;
+    - **Comentário desatualizado:** `components/auth/signup-form.tsx:74` ainda diz que o `RegisterDto` não tem propriedades no contrato. O código compila com os tipos novos e não foi alterado;
+    - **Custo do teste:** o spec do export depende do build. Ele reconstrói o `dist/` e acrescenta cerca de 8 s à suíte principal;
+    - **Plugin:** os `pattern` de `@Matches` não chegam ao contrato, e o `IsInt` sai como `number`.
+  - **Ajuste da revisão (2026-11-24):**
+    - **Pedido:** corrigir só as duas pendências de versionamento e CI. Os DTOs, os contratos e os tipos não mudaram, e nenhuma funcionalidade de frontend foi tocada.
+    - **Cópia do frontend versionável:**
+      - a regra `openapi.json` foi removida de `next-frontend/.gitignore`. É a exceção autorizada à restrição de alterar só os dois artefatos do frontend;
+      - `git check-ignore -v next-frontend/openapi.json` sai com 1, ou seja, o arquivo não é mais ignorado;
+      - o arquivo aparece como não rastreado (`??`) e precisa entrar no commit com `git add`.
+    - **Workflow `.github/workflows/openapi-freshness.yml`** (next-frontend-openapi-typing/TD-03, opção C):
+      - **configuração:**
+        - gatilhos `pull_request`, `push` em `main` e `dev`, e `workflow_dispatch`;
+        - `permissions: contents: read`, `shell: bash` e `timeout-minutes: 10`;
+      - **passos:**
+        1. `actions/checkout@v7`, com `persist-credentials: false`;
+        2. **checagem de versionamento:** `git ls-files --error-unmatch` em `nestjs-project/openapi.json`, `next-frontend/openapi.json` e `next-frontend/lib/api/types.gen.ts`. Falha com `::error file=…` e mostra os comandos para versionar. O passo existe porque o `git diff` ignora arquivos não rastreados: sem ele, um artefato fora do commit seria recriado pelos passos seguintes, e o job passaria;
+        3. `actions/setup-node@v7`, com Node `22.16.0` (o mesmo do `next-frontend/Dockerfile.dev`) e cache do npm pelo `next-frontend/package-lock.json`;
+        4. `npm ci` em `next-frontend`, pelo lockfile;
+        5. `bash scripts/sync-openapi.sh`, na raiz;
+        6. `npm run openapi:types`, em `next-frontend`;
+        7. `git diff --exit-code next-frontend/openapi.json next-frontend/lib/api/types.gen.ts`. Na divergência, o passo falha com `::error title=OpenAPI drift::` e mostra os comandos de atualização:
+           - `bash scripts/sync-openapi.sh && (cd next-frontend && npm run openapi:types)`;
+           - a mesma linha com `docker compose exec next-frontend`, para o ambiente Docker;
+      - **origem dos passos:** os nomes e os comandos dos passos 5 a 7 seguem o snippet da TD-03;
+      - **contrato do backend:** o workflow consome o contrato versionado do backend como está, sem regenerá-lo. A atualização desse contrato em relação aos DTOs continua garantida pelo teste de igualdade byte a byte do `openapi-export.integration-spec.ts`;
+      - **versões das actions:** conferidas na documentação atual pelo context7 (`actions/checkout` v7.0.1 e `actions/setup-node` v7.1.0).
+    - **Validação estática:**
+      - o YAML foi lido pelo `js-yaml` 4.1.1, num container da imagem do frontend, e tem os 7 passos na ordem esperada;
+      - o `actionlint` não foi executado: o ambiente negou a permissão para baixar a imagem dele.
+    - **Validação local dos comandos (não é uma execução no GitHub Actions):**
+      - **área temporária:**
+        - cada cenário é um repositório novo (`git init`) no scratchpad da sessão;
+        - o repositório recebe cópias dos arquivos que o workflow usa: o próprio workflow, o `scripts/sync-openapi.sh`, os dois `openapi.json`, o `types.gen.ts`, e o `.gitignore`, o `package.json` e o `package-lock.json` do frontend;
+        - as versões da Fase 02 vieram de `git show HEAD:…`, só leitura;
+        - os commits foram feitos nesses repositórios temporários, não no projeto;
+      - **execução:** um executor lê os passos do YAML e roda o texto de cada `run` sem alteração, com `bash --noprofile --norc -eo pipefail` (o `shell: bash` do GitHub). Ele para no primeiro passo que falha;
+        - o checkout é um `git clone --depth 1` do repositório temporário, então só chegam os arquivos commitados;
+        - o setup-node é a imagem do frontend (`node:22.16.0-slim`), conferida pela versão do Node e pela existência do lockfile;
+        - os passos com `working-directory: next-frontend` rodam num container dessa imagem; o sync e o git rodam no host;
+      - **resultados, todos como esperado:**
+        - **P1, linha de base** (os três artefatos atuais commitados): sucesso. Os 7 passos saíram com código 0, e a mensagem final foi `No drift`;
+        - **P2, cópia desatualizada** (cópia da Fase 02 com os tipos atuais): falha no passo 7, com diff só no `openapi.json` (1.629 linhas adicionadas e 42 removidas);
+        - **P3, tipos desatualizados** (cópia atual com os tipos da Fase 02): falha no passo 7, com diff só no `types.gen.ts` (1.116 linhas adicionadas e 8 removidas);
+        - **P4, contrato alterado sem sincronizar:** um segundo commit muda só o contrato do backend, com um campo `fileName` no `DownloadUrlResponseDto`. Falha no passo 7, com diff nos dois arquivos: 3 linhas no `openapi.json` e `fileName?: string;` no `types.gen.ts`. A mensagem de remediação aparece;
+        - **P5, cópia não versionada** (`.gitignore` antigo e `git add -A`): falha no passo 2, com `::error file=next-frontend/openapi.json::…`. Os passos 3 a 7 foram pulados;
+        - **P5c, controle do P5 sem a checagem:** **sucesso indevido**, com `No drift` no passo 7;
+        - **P6, tipos não versionados** (`types.gen.ts` fora do commit): falha no passo 2;
+        - **P6c, controle do P6 sem a checagem:** **sucesso indevido**. O `types.gen.ts` recriado fica não rastreado, e o diff passa;
+        - **P7, contrato do backend não versionado:** falha no passo 2;
+      - **repositório preservado:**
+        - os SHA-256 de `.git/index`, de `git ls-files -s` e dos arquivos envolvidos são iguais antes e depois das provas;
+        - o `git status` foi lido com `--no-optional-locks`, para não reescrever o índice. A única entrada nova é a correção do registro da tarefa, editada durante as provas.
+    - **Verificações no repositório real** (container do `next-frontend` subido e removido de novo):
+      - `npx tsc --noEmit`: código 0;
+      - `npm run lint`: código 0, com o mesmo aviso anterior em `signup-form.tsx:71`. O ESLint e o `tsc` não leem o `.gitignore`;
+      - `npm run openapi:types` gerou o mesmo `types.gen.ts` (SHA-256 `aa6bdc0b…0cf0c`), e as duas cópias do `openapi.json` são idênticas (`6af4f422…cafd0`).
+    - **Correção do registro da tarefa:** `docs/tasks/task-next-frontend-openapi-typing/progress.md` (SI-5) afirmava que o workflow tinha sido criado e verificado. O registro agora:
+      - diz o que estava errado;
+      - aponta para este ajuste;
+      - separa a validação local da execução no GitHub.
+    - **Execução no GitHub Actions:** não houve execução remota observada, porque não há commit nem push. Depois do commit e do push do workflow, ele só roda em três casos:
+      - um pull request aberto, atualizado com novos commits (`synchronize`) ou reaberto. O GitHub não o roda enquanto o pull request tem conflito de merge;
+      - um push em `main` ou `dev`. Um push em outra branch, como `feature/*`, não o dispara;
+      - uma execução manual (`workflow_dispatch`), disponível só com o arquivo na branch padrão.
+
+      Se o commit não incluir o `next-frontend/openapi.json`, hoje não rastreado, o workflow falha de propósito no passo 2.
+    - **Para o commit, que não foi feito:** entram juntos `.github/workflows/openapi-freshness.yml`, `next-frontend/.gitignore`, `next-frontend/openapi.json` (novo, com `git add`), `next-frontend/lib/api/types.gen.ts` e `nestjs-project/openapi.json`.
+    - **Arquivos alterados no ajuste:**
+      - `next-frontend/.gitignore`;
+      - `.github/workflows/openapi-freshness.yml`, novo;
+      - `docs/tasks/task-next-frontend-openapi-typing/progress.md`;
+      - este `progress.md`.
+  - **Documentos:** o plano e os documentos de decisões não mudaram.
+
+### SI-03.30 — Documentação da fase
+- **Status:** completed (2026-11-24). Aprovada na revisão de 2026-11-24, depois dos quatro ajustes documentais (ver "Ajustes da revisão").
+- **Tests:** no tests (documentação, como prevê o plano). Nenhum código, configuração ou teste mudou, por isso as suítes não foram executadas de novo.
+- **Observations:**
+  - **Arquivos alterados:**
+    - `docs/diagrams/software-arch.mermaid`;
+    - `CLAUDE.md` (raiz);
+    - `nestjs-project/CLAUDE.md`;
+    - `nestjs-project/README.md`;
+    - este `progress.md`, que também registra a aprovação da SI-03.29.
+  - **Diagrama C4 (D-09, TD-09):** são três mudanças, e o resto do diagrama não mudou.
+    - a fila passa de `TBD` para `BullMQ + Redis`, com a descrição "Video processing and maintenance jobs";
+    - `frontend → storage` passa de "Streams" para "Uploads parts / streams", por `HTTPS, presigned URLs`. Os bytes vão do frontend direto ao storage;
+    - `api → storage` passa de "Uploads" para "Orchestrates and signs", por `S3 API`.
+  - **`CLAUDE.md` da raiz:**
+    - **D-01:** o `next-frontend/` deixa de constar como não inicializado. Agora traz Next 16.2.6, as telas de auth, o BFF, o Vitest e o Playwright;
+    - **D-02:** os módulos reais são `auth`, `users`, `channels`, `mail`, `videos`, `storage` e `worker`. Comentários, likes e inscrições ainda não existem;
+    - **D-03:** os containers passam a refletir a fase:
+      - frontend e storage por URLs assinadas, e a API orquestrando e assinando;
+      - o worker com Nest e FFmpeg, inclusive os jobs de manutenção;
+      - o storage Silo, a fila BullMQ + Redis e o Mailpit em desenvolvimento;
+    - **serviços:** lista os serviços do Compose e aponta para o `nestjs-project/CLAUDE.md` a prontidão e a exceção do worker;
+    - **estrutura do repositório:** `scripts/sync-openapi.sh` e `.github/workflows/` entraram na lista;
+    - **seção "CI", nova:**
+      - **gatilhos:** `pull_request` (tipos padrão `opened`, `synchronize` e `reopened`, para qualquer branch de destino), `push` em `main` e `dev`, e `workflow_dispatch`;
+      - **escopo:** o workflow não regenera o contrato do backend e não roda testes nem provas;
+      - **situação:** validado só localmente, sem execução no GitHub Actions.
+  - **`nestjs-project/CLAUDE.md` (D-04, Q-07, D-11):**
+    - **serviços:** `video-worker`, `mailpit` (D-04), `storage`, `storage-init`, `redis` e `proof-browser`, este só no perfil `proofs`, com portas e volumes;
+    - **exceção do `video-worker`:** ele sobe com `docker compose up` e roda código da aplicação em watch. A justificativa é a TD-10, o R-10 e a TD-15. Também registra:
+      - o recompilar a cada mudança;
+      - o `docker compose stop video-worker` antes de mutar fontes;
+      - a proibição de um segundo worker manual;
+      - que o container `nestjs-api` só roda `tail`;
+    - **prontidão:**
+      - storage: `curl` do `/minio/health/ready` dentro do `storage`, com `200`;
+      - `storage-init`: `Exited (0)`;
+      - Redis: `PONG` e `maxmemory-policy` `noeviction`;
+      - worker: `video-worker started` no log;
+    - **comandos do worker:** `build:worker`, `start:worker`, `stop`, `start` e `kill`;
+    - **proxy:** o `curl` do host para `localhost` usa `--noproxy '*'`.
+  - **`nestjs-project/README.md`:** o texto padrão do starter do Nest, com comandos `npm` no host, foi substituído pelo README do projeto:
+    - **ambiente:**
+      - serviços;
+      - como subir: `.env` a partir do `.env.example`, `npm install` e `migration:run`, porque nenhuma configuração usa `migrationsRun`;
+      - o caso do `video-worker` sem `node_modules`;
+      - prontidão, API sob demanda e testes, que precisam do worker no ar;
+    - **provas existentes:** as nove execuções aprovadas em 2026-11-18, com o comando de cada roteiro, a posição do diretório de saída e o relatório. Os roteiros gravam o log; o relatório é preenchido a partir dele em `docs/phases/phase-03-videos/proofs/`. Inclui os cuidados de V-04, V-08/V-09, V-11 e V-01 e a V-05 adiada para a Fase 05;
+    - **provas previstas (V-07, fluxo completo e P-10GB):** o README diz que nem os scripts nem os relatórios existem e não traz comandos de execução para elas. A orientação da TD-15 entra assim:
+      - fora da suíte e do CI;
+      - ordem;
+      - medição e projeção da V-07, janela e disco;
+      - parâmetros da P-10GB e critérios fixados antes;
+      - `MEDIA_INVALID` esperado;
+      - critérios do fluxo completo;
+    - **verificação manual do T-12:** marcada como **procedimento documentado e não executado**, com a cobertura automática citada. Tem:
+      - pré-requisitos: API, usuário e upload pelas rotas do contrato até o registro dos ETags, sem concluir; ainda não há cliente de linha de comando, que fica para a SI-03.31;
+      - os sete passos, depois do ajuste da revisão, com os valores de configuração envolvidos;
+      - consultas de observação, com os marcadores explicados, e o estado final;
+      - um aviso: o passo de pausar o storage, para pegar o job ativo, também não foi testado;
+    - **versões validadas (DG-1):** Node `v25.6.0` e FFmpeg e ffprobe `5.1.9-0+deb12u1`, validados na V-04 e conferidos em 2026-11-24. Também registra:
+      - **regra de reverificação:** repetir a V-04 e a prova do fluxo completo quando a imagem mudar;
+      - **pacote sem versão fixa:** o `ffmpeg` do apt não é fixado, então um rebuild pode mudá-lo;
+      - **Node 25:** está em fim de vida, e a atualização é a tarefa separada D-07;
+    - **contrato OpenAPI e CI:** export, sincronização, gatilhos do workflow e a situação "validado só localmente".
+  - **Conferência contra os arquivos reais:**
+    - **caminhos:** todos os citados existem (helpers de fila, `api.http`, specs, fixtures, roteiros, READMEs das provas, script de sincronização e workflow). Os comandos dos roteiros conferem com as linhas de uso deles;
+    - **comandos executados**, todos só leitura:
+      - os quatro comandos de prontidão, no ambiente em execução: `200`, `PONG` e `noeviction`, `Exited (0)` e `accepting connections`;
+      - a linha `video-worker started` no log;
+      - `docker compose --profile proofs config --services`, que lista o `proof-browser`;
+      - `migration:show`: as três migrations aplicadas;
+      - as consultas de observação do T-12 (`LRANGE`, `ZRANGE`, `HMGET` e o `SELECT` com as colunas citadas, que existem);
+      - `storage-proof-roteiro.sh` e `bullmq-proof-roteiro.sh` sem argumento, que respondem com a linha de uso e o código 64, sem executar nada;
+    - **versões:** `node -v`, `ffmpeg -version`, `ffprobe -version` e `dpkg-query -W ffmpeg` nos dois containers. Os dois rodam a imagem `sha256:6b5db062366a…`, construída em 2026-11-18T02:06Z, antes da execução final da V-04;
+    - **valores citados:** conferidos no `.env.example`, no `config.constants.ts`, no `media.constants.ts`, no `compose.yaml` e nos relatórios. Os nomes de evento de log vêm do código do worker.
+  - **Não executado nesta SI:**
+    - as provas grandes, conforme o pedido;
+    - as provas de viabilidade e a verificação manual do T-12;
+    - o `generate.sh`, porque regeneraria fixtures versionadas;
+    - o `migration:run` e o `npm install`.
+  - **Não alterado:**
+    - o guia `testing-guide-nestjs-project` (IC-3; `git status` sem mudanças em `.claude/skills/testing-guide-nestjs-project`);
+    - código, configurações e decisões.
+  - **Limitações e tarefas separadas:**
+    - **Diagrama:** não foi renderizado, porque não há parser do Mermaid instalado. A sintaxe das linhas alteradas é a mesma das originais;
+    - **README da raiz:** ainda marca worker, storage e fila como planejados e a Fase 03 como "Planejada" (linhas 48 a 50 e 198). Não está na lista desta SI;
+    - **`next-frontend/CLAUDE.md`:** diz que o workflow "blocks merging stale spec/types pairs". Isso só vale com o workflow commitado e exigido por proteção de branch, e ele ainda não rodou no GitHub. Não está na lista desta SI;
+    - **T-12 manual:** continua não executado. O procedimento depende da API no ar e de um upload feito à mão até o cliente de prova da SI-03.31.
+  - **Ajustes da revisão (2026-11-24):** são quatro ajustes documentais. Nenhum código, configuração ou decisão mudou, e as suítes não foram repetidas, como permitido.
+    1. **Comando E2E no `nestjs-project/CLAUDE.md`:** a seção "Test execution" passa a trazer `docker compose exec nestjs-api npm run test:e2e -- --runInBand`, e a afirmação "already configured" foi removida.
+    2. **Ordem do T-12 no `nestjs-project/README.md`:**
+       - **pré-requisitos:** preparam o upload só até o registro dos ETags:
+         1. `POST /videos` (`201`);
+         2. `POST …/part-urls` com `parts`, que devolve `url`, `method`, `expectedSize` e `headers`;
+         3. `PUT` de cada parte;
+         4. captura do header `ETag` de cada resposta `200`;
+         5. `POST …/part-urls` com `completedParts` (`200`).
+
+         O README diz explicitamente que o `completion` não deve ser antecipado;
+       - **procedimento:** passou de seis para sete passos:
+         1. parar o `video-worker`;
+         2. só então o `POST …/completion`, conferindo o `202` com `status` `processing`;
+         3. a pausa do storage;
+         4. a primeira morte;
+         5. a reentrega;
+         6. o limite;
+         7. a reconciliação;
+       - **conferência com o e2e:** a sequência foi conferida com `test/videos-upload-completion.e2e-spec.ts` (`createVideo`, `sendParts`, `registerEtags` e `postCompletion`). Os nomes de campo foram conferidos com o `openapi.json`: `VideoUploadSessionResponseDto`, `SignedPartDto`, `PartUploadHeadersDto` e `UploadCompletionResponseDto`.
+    3. **Chave do `HMGET`:** agora vai entre aspas simples, em linhas com continuação. Uma explicação nova diz que os marcadores `<publicId>`, `<videoId>`, `<run>` e `<dispatch>` devem ser trocados pelos valores reais (`publicId` do `POST /videos`; `id`, `processing_run` e `processing_dispatch` da consulta, ou o id do job do `LRANGE`), e que as aspas evitam que o shell trate `<` e `>` como redirecionamento. Conferência: o comando, rodado como está no README, saiu com código 0 e não criou nenhum arquivo por redirecionamento.
+    4. **Gatilhos do workflow:** a frase "primeiro push ou pull request" foi trocada pelos eventos exatos no `CLAUDE.md` da raiz, no `nestjs-project/README.md`, no bloco "Ajuste da revisão" da SI-03.29 e no `progress.md` da tarefa de tipagem:
+       - pull request aberto, atualizado com novos commits (`synchronize`) ou reaberto, sem rodar enquanto houver conflito de merge;
+       - push em `main` ou `dev`, mas não em outras branches, como `feature/*`;
+       - execução manual (`workflow_dispatch`), disponível só com o arquivo na branch padrão.
+
+       Os quatro textos dizem que ainda não houve execução remota observada. A semântica foi conferida na documentação do GitHub Actions pelo context7 (eventos `pull_request` e `workflow_dispatch`).
+    - **Não executado:** o T-12, as provas grandes e as suítes.
+
+### SI-03.31 — Prova V-07: tempo e disco das provas grandes, com cliente e sonda de prova
+- **Status:** completed (2026-11-24). Aprovada na revisão de 2026-11-24, que confirmou os critérios da prova, com dois ajustes pontuais no `V-07.md` (ver "Ajustes da revisão"). V-07 `aprovada` na execução final `20261124194653-e13c5a` (ver `proofs/V-07.md`).
+- **Tests:** no tests (prova de viabilidade, como prevê o plano; o relatório é o entregável). Nenhum arquivo de `src/` ou `test/` mudou, e por isso as suítes não foram executadas. O `npx tsc --noEmit` do projeto, que cobre `proofs/`, saiu com 0. O ESLint dos quatro scripts novos, sem `--fix`, também saiu com 0, e o `prettier --check` passou.
+- **Observations:**
+  - **Arquivos criados:**
+    - `nestjs-project/proofs/phase-03/upload-client.ts`: o cliente de prova;
+    - `nestjs-project/proofs/phase-03/responsiveness-probe.ts`: a sonda;
+    - `nestjs-project/proofs/phase-03/proof-api.ts`: o apoio HTTP e de token dos dois;
+    - `nestjs-project/proofs/phase-03/upload-proof-support.ts`: contas, vídeo de controle, retratos, vigia, resumo e limpeza;
+    - `nestjs-project/proofs/phase-03/v07-roteiro.sh`;
+    - `docs/phases/phase-03-videos/proofs/V-07.md`;
+    - `docs/phases/phase-03-videos/proofs/V-07-evidencias/`: evidências sem segredos, com o caminho local e o usuário trocados por marcadores.
+  - **Arquivos alterados:**
+    - `nestjs-project/proofs/phase-03/README.md`;
+    - `nestjs-project/README.md`: V-07 entre as provas existentes, os comandos do cliente, da sonda e do apoio, a nota do T-12 e os valores da V-07 na orientação das provas grandes;
+    - este `progress.md`, que também registra a aprovação da SI-03.30.
+  - **Cliente (`upload-client.ts`), contrato da TD-01 e da TD-02:**
+    - **subcomandos:** `generate`, `start`, `resume` e `complete`;
+    - **partes:** fatias de exatamente `expectedSize` bytes, com o SHA-256 lido em blocos de 1 MiB e calculado à frente da assinatura;
+    - **envio:** `part-urls` em lotes de até 10 partes, 4 PUTs simultâneos e retentativas;
+    - **ETags:** registrados a cada 4 PUTs concluídos, com prioridade sobre a próxima assinatura, e com no mínimo 1,1 s entre dois `part-urls` (até 54 por minuto; a rota permite 60);
+    - **interrupção:** SIGINT ou SIGTERM abortam os PUTs em andamento, e o cliente sai com 130 ou 143;
+    - **retomada:** pelo GET do vídeo e da sessão e por `file-verifications` das partes `confirmed` e `unregistered`, reenviando só as `missing`, `divergent` e `unregistered`;
+    - **conclusão:** completion e polling;
+    - **token:** renovação por `POST /auth/refresh` com 120 s de antecedência, antes de cada chamada e a cada 15 s, com o par novo persistido em 0600.
+    - **Storage:** as URLs assinadas usam `localhost:9000`. No container, `--storage-connect localhost:9000=storage:9000` mantém o `Host` assinado.
+  - **Sonda (`responsiveness-probe.ts`), contrato da SI-03.33:**
+    - `GET /videos/:publicId` do vídeo de controle, como o dono, a cada 2 s em grade fixa, com timeout de 5 s;
+    - o CSV `instance,seq,instant,epoch_ms,status,latency_ms,outcome` em stdout;
+    - login próprio, com credenciais lidas da entrada padrão, e renovação depois da amostra, fora da medição;
+    - roda num container próprio, com `docker compose run` e `node -r ts-node/register`, para ser o PID 1. A prova de 10 GB não foi executada, como pedido.
+  - **Execução real (V-07):**
+    - **o upload:** 1.000.000.000 bytes, 15 partes, SIGINT a 53,7% e retomada até `202`;
+    - **a retomada:** 6 partes `confirmed`, preservadas, como mostram os eventos do cliente, o `ListParts` e o registro da API; 2 `unregistered`, conferidas e reenviadas; 7 `missing`;
+    - **o desfecho:** `error` `MEDIA_INVALID`.
+    - **Medidas da execução final:**
+      - upload ativo de 26,98 s e throughput de 45,7 MiB/s dos PUTs concluídos (1.134.217.728 bytes dos PUTs concluídos com sucesso ÷ tempo com pelo menos um PUT ativo; os bytes parciais dos 4 PUTs abortados não entram na soma);
+      - checksums de 128,5 MiB/s com PUTs em paralelo e de 405 MiB/s sem eles;
+      - Complete em 185 ms;
+      - pico de 1,27 GB no volume do storage. O Complete não acrescenta pico: o `df` de 6 ms dentro dele variou 8 KiB;
+      - 40,1 GB livres em C: antes da prova.
+    - **Projeção para 10 GB:**
+      - fase de carga `D` de 270 s (351 s com margem) e `N` = 4 sondas;
+      - pico de 22,68 GB no disco do Docker, o que exige 29,5 GB livres em C: com a margem;
+      - janela recomendada de 40 min;
+      - conclusão: o ambiente comporta a prova grande.
+    - **CI:** o `V-07.md` registra que o CI só verifica o contrato OpenAPI.
+  - **Execuções anteriores, registradas no relatório:**
+    - `20261124192610-3ca449`, **reprovada**: nenhum ETag estava registrado no sinal, porque o registro esperava os checksums do lote seguinte. O cliente foi corrigido com o cálculo à parte, o registro primeiro e o ritmo mínimo;
+    - `20261124193642-0936b6`: passou nos itens, mas a medida de disco saiu inválida pela purga da lixeira do Silo no meio do upload. O roteiro passou a esperar a lixeira vazia, medir por componente e medir a liberação.
+    - **Ensaios:** quatro, com 300 e 600 MB. O primeiro levou ao vigia `interrupt-when`.
+  - **Verificações dos scripts:** em `verificacoes-dos-scripts.txt`, 17 de 17 aprovadas:
+    - uso inválido com código 64;
+    - SIGTERM com 143;
+    - renovação forçada do token no cliente, em dois processos, com o refresh token persistido;
+    - nenhum 401 ou 429;
+    - eventos sem segredos;
+    - a sonda: ritmo de 2 s (1.998 a 2.002 ms), renovação fora das amostras e timeout.
+
+    A sonda foi corrigida nessas verificações: antes, a renovação no disparo atrasava a amostra em até 57 ms.
+  - **Recursos de prova e limpeza:**
+    - **identificação:** usuários `v07-<runId>-*` e `v07chk-<runId>-*` `@proofs.streamtube.test` e o container `v07-<runId>-probe`;
+    - **o que a limpeza remove:** só esses recursos (multiparts, linhas, jobs, objetos, e-mails do Mailpit e o `/tmp` do container), e ela recusa outros e-mails;
+    - **retratos:** antes e depois são iguais em todas as execuções. O Mailpit tem 8 mensagens alheias à prova, preservadas.
+  - **API:** subi o `npm run start:dev` no `nestjs-api`, porque a prova exige a API real, e o desliguei ao final. O container ficou de novo só com o `tail`, com alguns processos `<defunct>` que o `tail` (PID 1, sem init) não recolhe; eles somem num reinício do container.
+  - **Não alterado:** código da aplicação, configurações, `.env`, decisões e o guia `testing-guide-nestjs-project`.
+  - **Limitações e pontos para a SI-03.33:**
+    - **resíduo no storage:** 5 temporários de 64 MiB (320 MiB) ficaram em `.minio.sys/tmp` do volume `storage-data`, deixados por PUTs abortados nas interrupções desta SI. O abort, o `DeleteObject` e a purga não os removem, e não foram apagados, porque exigiria mexer nos arquivos internos do storage ou reiniciá-lo;
+    - **`docker_data.vhdx`:** cresceu de 20,89 GB para 24,88 GB nesta sessão e não encolhe sozinho. A compactação não foi testada;
+    - **latência informativa:** a sonda registrou p95 de 237 ms a 2,48 s com upload ativo, com 9 a 14 amostras, contra 6,9 ms na base. É um risco para os critérios (a) e (b) da SI-03.33, sem veredito aqui. A API rodou em modo watch no mesmo container do cliente;
+    - **leitura do arquivo de 10 GB:** ele não cabe na memória da VM, então a leitura vai ao disco. No pior ritmo de checksum medido (56,8 MiB/s), `D` chegaria a cerca de 347 s, ainda dentro da margem;
+    - **caminho medido:** container a container. A porta publicada do storage, o caminho de um navegador no Windows, não foi medida;
+    - **roteiro depois da execução final:** duas mudanças, só de log (a leitura das versões, que falhava para o `typeorm` por causa do `exports`, e a listagem de evidências sem o dono dos arquivos). Foram conferidas isoladamente, sem novo upload, para não deixar mais temporários no storage;
+    - **sem commit:** nenhum commit nem push.
+  - **Ajustes da revisão (2026-11-24):** dois ajustes pontuais no `V-07.md`, sem repetir o upload de 1 GB. Os logs e o `summary.json` originais foram preservados.
+    1. **publicId:** o vídeo enviado é o `_oLntoLU6fw`. O `UVmsgdzKkT0`, antes citado no item do upload, é o vídeo de controle da sonda, e o relatório agora diz isso no item do upload e na seção da sonda.
+    2. **Bytes e throughput:** os 1.134.217.728 bytes são os dos PUTs concluídos com sucesso; os bytes parcialmente enviados pelos 4 PUTs abortados não foram contados. O throughput passou a ser identificado como o dos PUTs concluídos: esses bytes ÷ tempo com pelo menos um PUT ativo, abortados inclusive, o que o deixa abaixo do ritmo real na rede. O relatório registra que o log e o `summary.json` chamam essa soma de "bytes pela rede" (chave `wire`).
+    - **Script:** no `summarize` do `upload-proof-support.ts`, o rótulo dessa medida passou a ser "bytes dos PUTs concluídos (abortados fora da soma)", e um comentário registra a definição. O valor e a chave `wire` do JSON não mudaram.
+
+### SI-03.32 — Prova documentada do fluxo completo com vídeo válido até ready
+- **Status:** completed (2026-11-24). Aprovada na revisão de 2026-11-24. P-fluxo-completo `aprovada` na execução `20261124212322-3c8d00` (ver `proofs/P-fluxo-completo.md`).
+- **Tests:** no tests (prova documentada, como prevê o plano; o relatório é o entregável). Nenhum arquivo de `src/` ou `test/` mudou, e por isso as suítes não foram executadas. O `npx tsc --noEmit` do projeto, que cobre `proofs/`, saiu com 0; o ESLint do `upload-proof-support.ts`, sem `--fix`, saiu com 0, e o `prettier --check` passou.
+- **Observations:**
+  - **Arquivos:**
+    - **novos:** `nestjs-project/proofs/phase-03/fluxo-completo-roteiro.sh`, `docs/phases/phase-03-videos/proofs/P-fluxo-completo.md` e `docs/phases/phase-03-videos/proofs/P-fluxo-completo-evidencias/`;
+    - **alterados:** `nestjs-project/proofs/phase-03/upload-proof-support.ts` (subcomando `flow-check`), `nestjs-project/proofs/phase-03/README.md`, `nestjs-project/README.md` e este `progress.md`.
+  - **Reuso dos scripts da SI-03.31:** o upload usa o `upload-client.ts start` sem mudança, com o completion e o polling até o estado final. A conta de prova, os retratos e a limpeza usam o `upload-proof-support.ts`. O único acréscimo é o `flow-check`, que confere depois do `ready`:
+    - o arquivo enviado: ffprobe, caixas de topo do MP4 e SHA-256;
+    - o `202` e o `ready`, pelos eventos do cliente;
+    - os metadados da API contra o ffprobe;
+    - o `thumbnail_key` e o objeto da thumbnail;
+    - três requisições `Range` na `playback-url`;
+    - o SHA-256 do download.
+
+    As URLs assinadas ficam só na memória.
+  - **Vídeo:** MP4 de 180 s, gerado com o FFmpeg 5.1.9 da imagem a partir do `testsrc2` e do `sine`, sem preenchimento artificial.
+    - **Codificação:** H.264 High 1280x720 a 30 fps e cerca de 4 Mb/s; AAC LC 48 kHz estéreo a 128 kb/s;
+    - **arquivo:** 93.092.031 bytes, gerado em 31,6 s, com o SHA-256 `bf8c0033…57bcd4`;
+    - **caixas de topo:** `ftyp`, `moov`, `free` de 8 bytes e `mdat`, com 99,79% do arquivo.
+  - **Execução:**
+    - **upload:** 2 partes, `202` em 111,7 ms e `ready` até 2,02 s depois, na resolução do polling;
+    - **metadados:** duração de 180 s, 1280x720, `h264` e `aac`, iguais aos do ffprobe do arquivo;
+    - **thumbnail:** JPEG de 1280x720 em `thumbnails/<videoId>/<attemptId>.jpg`, com o quadro de 1 s;
+    - **Range:** `206` com o `Content-Range` exato e bytes iguais aos do arquivo, no início, no meio e no fim;
+    - **download:** 93.092.031 bytes com o mesmo SHA-256, `Content-Disposition: attachment` com o nome original.
+
+    Foram 21 de 21 itens do `flow-check`, e o roteiro saiu com 0.
+  - **Recursos e limpeza:**
+    - **identificação:** o usuário `fluxo-<runId>-uploader@proofs.streamtube.test` e o diretório `/tmp/fluxo-<runId>/` do `nestjs-api`;
+    - **limpeza:** removeu só esses recursos, em 5 de 5 itens. A purga da lixeira do Silo veio 214 s depois;
+    - **retratos:** antes e depois são iguais. O Mailpit tem 8 mensagens alheias à prova, preservadas.
+  - **Resíduos anteriores do storage:** os 5 temporários de 64 MiB (327.720 KiB) da SI-03.31 em `.minio.sys/tmp` foram listados antes e depois, com listas iguais, e não foram removidos. Esta execução não deixou temporário novo.
+  - **API:** subi o `npm run start:dev` no `nestjs-api`, porque a prova exige a API real, e o desliguei ao final. O container ficou de novo só com o `tail`.
+  - **Primeira chamada do roteiro:** não chegou a iniciar, porque o diretório do redirecionamento da saída, no scratchpad, não existia. Nenhum recurso foi criado, o que foi conferido no `/tmp` do `nestjs-api`, e a execução registrada é a seguinte.
+  - **Não alterado:** código da aplicação, configurações, `.env`, decisões e o guia `testing-guide-nestjs-project`.
+  - **Limitações e pendências:**
+    - **tamanho:** o vídeo tem 93 MB, e a leitura por Range de um vídeo válido perto de 10 GB não foi provada. A revisão AMB-2 da TD-15 não exige isso;
+    - **conteúdo:** sintético, das fontes do FFmpeg, não uma gravação real;
+    - **caminho:** container a container, com `--storage-connect`. O caminho do navegador no Windows não foi medido aqui, e a reprodução em player real é a V-05, adiada para a Fase 05;
+    - **tempo de processamento:** só na resolução do polling, de 2 s, porque o worker não registra o fim de um processamento bem-sucedido;
+    - **contagem do abort na limpeza:** o Silo aceita o `AbortMultipartUpload` de um upload já concluído, e por isso a limpeza registra "multiparts abortados: 1". O objeto foi removido no passo seguinte, como na V-07;
+    - **resíduos da SI-03.31:** os 320 MiB continuam no volume `storage-data`;
+    - **sem commit:** nenhum commit nem push. A SI-03.33 e o upload de 10 GB não foram executados.
+
+### SI-03.33 — Prova documentada de 10 GB com medição de responsividade da API
+- **Status:** completed (2026-11-25). Aprovada na revisão de 2026-11-25, pela repetição formal da P-10GB (ver `proofs/P-10GB-repeticao.md` e "Aprovação e encerramento da Fase 03", abaixo).
+  - **P-10GB original:** `reprovada` (execução `20261124215534-349fa9`, 2026-11-24; ver `proofs/P-10GB.md`).
+  - **Repetição formal pelo registro prévio r3:** executada uma vez (`20261125142232-bc4b5d`) e `aprovada` pela regra fixada antes (ver `proofs/P-10GB-repeticao.md`).
+  - **Antes:** executada, com a prova reprovada (2026-11-24). A revisão confirmou os resultados da P-10GB na execução `20261124215534-349fa9`: o upload, a retomada e a limpeza passaram, e os critérios de latência (a) e (b) reprovaram. A pendência do R-02 está em diagnóstico (ver `proofs/P-10GB.md` e `proofs/R-02-diagnostico.md`). A SI não conta como aprovada.
+- **Tests:** no tests (prova documentada, como prevê o plano; o relatório é o entregável). Nenhum arquivo de `src/` ou `test/` mudou, e por isso as suítes não foram executadas. O `npx tsc --noEmit` do projeto, que cobre `proofs/`, saiu com 0; o ESLint do `upload-proof-support.ts`, sem `--fix`, saiu com 0, e o `prettier --check` passou.
+- **Observations:**
+  - **Arquivos:**
+    - **novos:** `nestjs-project/proofs/phase-03/p10gb-roteiro.sh`, `docs/phases/phase-03-videos/proofs/P-10GB.md` e `docs/phases/phase-03-videos/proofs/P-10GB-evidencias/`;
+    - **alterados:** `nestjs-project/proofs/phase-03/upload-proof-support.ts` (subcomando `latency-verdict` e a instância da sonda na leitura do CSV), `nestjs-project/proofs/phase-03/README.md`, `nestjs-project/README.md` e este `progress.md`, que também registra a aprovação da SI-03.32.
+  - **Reuso:** o cliente (`upload-client.ts`) e a sonda (`responsiveness-probe.ts`) foram usados sem mudança. O roteiro repete o arranjo da V-07 com 10.000.000.000 bytes e 4 instâncias da sonda. O único acréscimo de código é o `latency-verdict`, que aplica as fases e os critérios do registro prévio. Ele foi testado antes da execução sobre as evidências da V-07, sem novo upload.
+  - **Antes da execução:**
+    - **serviços:** saudáveis;
+    - **espaço:** 39,69 GB livres em C:, acima dos 29,5 GB exigidos;
+    - **registro prévio:** o `P-10GB.md` registrou o cenário, as versões, o dimensionamento das sondas e os critérios às 21:55Z, antes da coleta. A cópia em `P-10GB-evidencias/registro-previo.md` tem o SHA-256 `44e39e2acb2e790a84bfea59bc1ec48454d506b97a733500aa319355b40d71df`, e a seção não mudou depois.
+    - **Dimensionamento:** `N` = 4, pela referência conservadora da V-07, `D` ≈ 168 s (2ª execução × 10), já que `ceil(600 / 168) = 4`. Ela é distinta da projeção central de cerca de 270 s, que daria `ceil(600 / 270) = 3`.
+  - **Execução** (21:55:34Z a 22:13:18Z, 17 min 44 s, dentro da janela de 40 min):
+    - **base:** 600,4 s, 1.200 amostras, 300 por instância; p95 de 5,11 ms;
+    - **upload:** 10.000.000.000 bytes em 150 partes, a última com 779.264, até 4 PUTs simultâneos;
+    - **interrupção:** SIGINT com 76 de 150 partes com PUT concluído (51%);
+    - **retomada:** 74 partes `confirmed` preservadas, provadas pelo cliente, pelo `ListParts` e pelo registro; 2 `unregistered` e 74 `missing` reenviadas; `file-verifications` das 76 partes recebidas com `200` `match`;
+    - **conclusão:** `202` em 188 ms e `error` `MEDIA_INVALID` 2,0 s depois;
+    - **carga:** `D` = 217,6 s, 437 amostras, entre 109 e 110 por instância; p50 de 10,45 ms, p95 de 802,26 ms, p99 de 3.404,37 ms e máximo de 3.775 ms.
+  - **Vereditos:**
+    - **(a) reprovado:** p95 de carga de 802 ms, contra o limite de 55,11 ms;
+    - **(b) reprovado:** p95 de 802 ms, acima de 250 ms, e p99 de 3.404 ms, acima de 500 ms;
+    - **(c) aprovado:** 0 falhas em 1.716 amostras;
+    - **amostras:** suficientes, então não há inconclusivo nem repetição. Nenhuma execução foi descartada, e nenhum critério foi ajustado.
+  - **Medidas:**
+    - **throughput dos PUTs concluídos:** 60,9 MiB/s;
+    - **checksums:** 58,7 MiB/s na assinatura e 104,4 MiB/s na conferência;
+    - **pico no volume do storage:** 10,14 GB, sem pico extra no Complete;
+    - **disco do Docker:** pico de cerca de 20,1 GB, contra os 22,68 GB projetados pela V-07.
+  - **Limpeza:**
+    - **recursos:** só os da prova, em 5 de 5 itens, com retratos iguais;
+    - **purga da lixeira:** 42 s depois da limpeza, com o volume de volta a 327.988 KiB;
+    - **temporários do Silo:** 5 de 5 anteriores preservados e **nenhum novo**, então a liberação do volume foi completa.
+  - **API:** subi o `npm run start:dev` no `nestjs-api` para a prova e o desliguei ao final.
+  - **Não alterado:** código da aplicação, configurações, `.env`, decisões e o guia `testing-guide-nestjs-project`.
+  - **Pendências explícitas:**
+    - **decisão sobre o R-02 e a TD-01:** pela regra das provas, a TD-01 é reaberta, sem fallback. A decisão inclui se o cenário fixado representa o ambiente que o requisito pede. Nenhuma melhoria de arquitetura foi iniciada, e nenhuma nova execução foi feita;
+    - **entrega da fase:** continua bloqueada, porque a TD-15 exige as duas provas grandes aprovadas;
+    - **espaço em C::** o `docker_data.vhdx` cresceu de 24,88 GB para 40,85 GB e não encolhe sem compactação, que não foi testada. Restam 23,63 GB livres em C:, abaixo dos 29,5 GB que a V-07 exige para uma nova prova de 10 GB. Dentro do VHDX, há cerca de 21,8 GB livres que o Docker reaproveita;
+    - **resíduos da SI-03.31:** os 5 temporários de 64 MiB continuam no volume `storage-data`;
+    - **observação informativa:** as respostas lentas aparecem também na conferência da retomada, quando o cliente só lê o arquivo e calcula SHA-256, sem PUT e sem chamadas à API. A API rodou em modo watch no mesmo container do cliente. A causa não foi investigada;
+    - **sem commit:** nenhum commit nem push.
+  - **Diagnóstico do R-02 (2026-11-24, depois da revisão):** registrado em `proofs/R-02-diagnostico.md`, com evidências em `proofs/R-02-diagnostico-evidencias/`. A P-10GB, o registro prévio e os critérios não mudaram, nem a arquitetura.
+    - **Análise da P-10GB:** as respostas lentas das 4 sondas terminam juntas (68 de 89 amostras em grupos de instâncias distintas), e as 4 instâncias disparam sincronizadas.
+    - **Ensaios:** curtos, com arquivos de 1 GB e uma variável por fase (runId `20261124234623-4a6b9e`):
+      - a instrumentação temporária ficou fora do repositório: um preload na API (tempo no servidor, event loop, faltas de página, `pg`), um amostrador da VM e dos processos, e uma sonda do PostgreSQL;
+      - as fases foram repouso, SHA-256 em cache, SHA-256 frio no mesmo container e em outro container, e upload de 1 GB, com e sem watch.
+    - **Hipótese principal, sustentada pelas medições:** disputa por disco e memória no ambiente. A latência coincide com travamentos curtos da VM do Docker Desktop inteira, de 0,3 a 1,5 s nos ensaios, sob pressão de disco e de memória. A API, o banco e a rede não foram excluídos definitivamente, e o mecanismo não foi isolado.
+      - **API:** fica fora da CPU, com 2 a 3 ms de CPU no segundo travado.
+      - **Outros processos:** um amostrador do mesmo container e o PostgreSQL de outro container param junto.
+      - **Pressão:** o PSI de I/O chegou a 100% do intervalo, e houve swap.
+      - **Não sustentados como origem, sem exclusão definitiva:** o código da API, que usou de 1 a 4% de CPU; o PostgreSQL, que também atrasa nos episódios, com o tempo para obter conexão do pool (`Pool.connect`) aumentando a espera; e o modo watch, já que houve um travamento de 1,5 s sem ele.
+    - **Menor ajuste indicado (não implementado nem testado):** isolar o I/O pesado da prova (o storage e o cliente com o arquivo grande) da API e do banco, ou liberar a memória da VM, cujo swap estava 75% ocupado em repouso. O ajuste é de ambiente e depende da decisão sobre o R-02 e a TD-01. Nenhuma mudança de código ou arquitetura é indicada.
+    - **Limitações:** episódios poucos e curtos; o arquivo de 1 GB cabe na RAM, então a pressão de memória foi menor que na P-10GB; o mecanismo exato dentro da VM não foi isolado.
+    - **Recursos:** só os dos ensaios, todos removidos, com retratos iguais e nenhum temporário novo no storage. Não houve upload de 10 GB, compactação do VHDX nem remoção de volumes ou de arquivos internos do storage. Nenhum commit nem push.
+  - **Comparação A×B do R-02 (2026-11-25, runId `20261125002224-94186e`):** upload de 1 GB com o cliente no container (A) e no Node nativo do Windows (B).
+    - **Desenho:** o mesmo cliente compilado uma vez para JS e os mesmos parâmetros (4 PUTs simultâneos); a mesma API, banco, storage, worker e sondas; os arquivos preparados antes; as rodadas A1, B1, A2 e B2. A sonda do PostgreSQL foi corrigida: o `\timing` passou a ser ativado com `printf`.
+    - **Resultado:**
+      - **A:** um episódio em 2 rodadas (A2: event loop de 921 ms e amostrador parado 2,5 s). O A1 ficou limpo em todos os sinais.
+      - **B:** episódios nas 2 de 2 rodadas, mais longos: event loop de 1,4 a 2,8 s, `GET` no servidor até 4,6 s e amostrador e sonda do db parados de 3,8 a 6,2 s. Houve pressão de memória na VM (PSI de 21%) e swap.
+    - **Leitura:** a leitura do arquivo e a CPU do cliente dentro da VM não são necessárias para os episódios. Tirar o cliente da VM não bastou neste host. A disputa por disco e memória segue como hipótese principal, mas as cargas restantes não foram separadas: as escritas do storage no VHDX, a entrada pela porta publicada e o arquivo do Windows no mesmo disco físico C:.
+    - **Diferenças inevitáveis:** a rede (porta publicada em B, com PUTs a cerca de metade da vazão e uploads 43 a 94% mais longos), o disco do arquivo (NTFS em C:, o mesmo disco físico do VHDX), o Node (v22.17.0 contra v25.6.0) e o Windows sem instrumentação.
+    - **Limitações:** só 2 rodadas por cenário, curtas e com poucas amostras; a diferença de frequência entre A e B não foi medida.
+    - **Recursos:** só os da comparação (usuários, vídeos, diretórios no container e no Windows, containers e arquivos da sonda do db), todos removidos, com retratos iguais e nenhum temporário novo. Sem mudança na aplicação, no pool ou nos limites de I/O; sem upload de 10 GB; sem commit nem push.
+    - **Situação:** a SI-03.33 continua com a prova reprovada e o R-02 pendente. Continuam 32 SIs aprovadas.
+  - **CPU da API e perfil de CPU do R-02 (2026-11-25, runId `20261125010724-84efe2`):**
+    - **Conferência dos registros da comparação:** nos dois episódios do cenário B, o processo da API registrou CPU quase igual à duração real do intervalo: 2.772 ms em 3.036 ms e 1.407 ms em 1.515 ms, com o event loop atrasado 2,78 s e 1,38 s. O amostrador confirma a ordem de grandeza (cerca de 2,9 s; 2.060 ms de usuário e 830 ms de sistema), mas o carimbo dele não serve para localizar o consumo, porque o amostrador também parou.
+      - **Diagnóstico corrigido:** a conclusão de que a API quase não usa CPU nos atrasos vale só para os episódios dos primeiros ensaios. O consumo da comparação não foi atribuído a uma função, ao banco nem exclusivamente ao ambiente.
+    - **Ensaio com perfil:** cenário B (cliente no Windows), arquivo de 1 GB preparado antes e os mesmos parâmetros (4 PUTs simultâneos). Instrumentação temporária, fora do repositório:
+      - perfil de CPU do V8 só no processo da API (`inspector`);
+      - pausas de GC;
+      - CPU de usuário e de sistema com a duração real entre coletas;
+      - monitor do Windows com ferramentas nativas: memória disponível e comprometida, paginação, disco e `vmmemWSL`.
+    - **Resultado:**
+      - **episódio:** nenhum nas 2 execuções permitidas, com o critério de event loop ≥ 500 ms fixado antes;
+      - **API:** ociosa em 92 a 96% do tempo, sem ponto quente no código da aplicação, com GC de no máximo 27 ms por pausa;
+      - **artefato:** o arranque do perfil bloqueou o event loop (562 ms e 165 ms) e ficou fora das conclusões.
+    - **Windows:** o host tinha cerca de 2 GB livres (commit em 86 a 92% do limite). A memória disponível caiu a 332 MB durante um upload de 1 GB, e o `vmmemWSL` cresceu cerca de 1,25 GB por upload. É um fato novo, sem correlação medida com um episódio.
+    - **Conclusão:** **não há conclusão suficiente** para indicar um ajuste sustentado pelas evidências. O próximo passo diagnóstico é capturar um episódio com o perfil já ligado antes do upload e o monitor do Windows ativo.
+    - **Correção:** o `r02-comparacao.sh` arquivado passou a usar o `dbprobe-corrigido.sh`.
+    - **Recursos e escopo:** só os do ensaio, todos removidos, com retratos iguais e nenhum temporário novo, incluindo a pasta no Windows. Sem mudança na aplicação, na arquitetura, no pool, na RAM ou nos limites de I/O; sem 10 GB; sem commit nem push.
+    - **Situação:** continuam 32 SIs aprovadas, e a SI-03.33 continua com a P-10GB reprovada e o R-02 pendente.
+  - **Preparação de uma repetição da P-10GB (2026-11-25, runId `20261125013921-d3ea41`):**
+    - **Perfis:** os perfis de CPU **não capturaram os episódios investigados**. As duas execuções com perfil não tiveram episódio.
+    - **Instrumentação corrigida** (temporária, fora do repositório):
+      - **tipos de GC:** passaram a vir das constantes de `node:perf_hooks` (minor 1, major 4, incremental 8, weakcb 16). O mapeamento antigo rotulava as coletas major como `incremental` e as incrementais como `weakcb`. Nos dados atuais, a análise converte os rótulos sem alterar os brutos: na B1 do ensaio com perfil, houve uma major de 17,1 ms;
+      - **alinhamento do perfil:** os carimbos do V8 usam o relógio do `process.hrtime`, como um teste confirmou. Os perfis atuais foram realinhados pelo fim, corrigindo os 523 ms e 136 ms de deslocamento do alinhamento pelo callback do `start`. A incerteza restante é a latência do callback do `stop`, não medida nesses perfis (1,7 ms no teste);
+      - **versão nova:** o `preload-v3.js` grava as âncoras de `hrtime`;
+      - **dados preservados:** os brutos e a análise original foram mantidos.
+    - **Checagem do Windows** (meta operacional de 4 GiB disponíveis, não critério do R-02): com a API, as 4 sondas e os monitores em execução, a memória disponível ficou entre 1.522 e 1.841 MB (mínimo de 1.600 MB na janela da folga). O commit ficou em 23,75 de 33,05 GB, o arquivo de paginação em 13%, e havia 42,2 GB livres em C:. **Folga insuficiente.**
+      - **Maiores consumidores** (registrados por nome): `vmmemWSL` 4,6 GB, `brave` 1,5 GB, `svchost` 1,1 GB, `Code` 0,7 GB, `msedgewebview2` 0,4 GB e `com.docker.backend` 0,3 GB.
+    - **Decisão, pela regra fixada antes:** parado. Nada foi encerrado, e RAM, paginação, limites de I/O e serviços não foram alterados. A verificação de 1 GB e o registro prévio de uma nova execução de 10 GB **não** foram feitos.
+    - **Pendência:** para prosseguir, é preciso liberar memória no Windows ou decidir outra meta. Depois, repetir a checagem com o `r02-verificacao.sh` arquivado.
+    - **Recursos:** só os da checagem, todos removidos, com retratos iguais e nenhum temporário novo. Sem mudança na aplicação ou na arquitetura; sem 10 GB; sem commit nem push.
+    - **Situação:** continuam 32 SIs aprovadas, e a SI-03.33 continua com a P-10GB reprovada e o R-02 pendente.
+  - **Ensaio de 1 GB com a API e as sondas compiladas (2026-11-25, runId `20261125015519-9477cd`):**
+    - **Revisão registrada antes do ensaio (01:54Z):** os 4 GiB disponíveis no Windows passaram a ser referência informativa, não bloqueio desta verificação. A revisão não muda nenhum critério do R-02 nem da P-10GB.
+    - **Mudança de modo:**
+      - **API:** sem watch, pelo build do projeto (`npm run build` e `npm run start:prod`, isto é, `node dist/main`), com os monitores corrigidos e sem perfil de CPU;
+      - **sondas:** as 4 compiladas uma vez com `tsc` e executadas com `node` (sem `ts-node`), com o mesmo comportamento e os mesmos parâmetros, cada uma num container próprio, com o JS montado só para leitura (`-v` do `run`, sem mudar o Compose);
+      - **inalterados:** o worker, os demais serviços e o cliente (no Windows, 4 PUTs simultâneos);
+      - **versões:** Node v25.6.0 no container e v22.17.0 no Windows; `tsc` 5.9.3; Nest CLI 11.0.16. O build regenerou só o `dist/`, fora do Git, e o `openapi.json` e o `git status` não mudaram.
+    - **Memória antes do upload, com tudo em execução:** o Windows tinha 2.410 MB disponíveis no mínimo, abaixo da referência de 4 GiB, com o commit em 22,11 de 33,05 GB e o `vmmemWSL` com 3,50 GB. A VM tinha 4.536 MiB disponíveis. A API compilada ocupava 291 MiB, e **cada sonda compilada, cerca de 14 MiB** (com `ts-node`, eram cerca de 184 MiB).
+    - **Resultado da V1:** **sem atraso** pelo critério (event loop ≥ 500 ms ou sonda > 250 ms) e sem parada do ambiente:
+      - sonda até 90,5 ms e `GET` no servidor até 70,8 ms;
+      - event loop até 134 ms, num segundo com só 36 ms de CPU;
+      - GC: 1 pausa minor de 5,8 ms;
+      - amostrador e sonda do db sem lacunas; nenhuma falha;
+      - VM (Linux): 0 páginas de swap e pressão de memória em 0%;
+      - Windows, ao contrário, **com paginação intensa**: no intervalo estrito do servidor (7,161 s, 5 amostras do Windows), houve leituras de página de até 10.052 páginas/s, escritas de página de até 87.794 páginas/s, escrita em disco de até 438 MiB/s e de 1.636 a 2.243 MB disponíveis. Na janela ampla (marcas do roteiro ± 3 s, 12 amostras), o disponível foi de 1.636 a 2.416 MB, e o `vmmemWSL` foi de 3,59 para 4,67 GB.
+    - **Ajuste da revisão:** a afirmação "sem swap" valia só para a VM e foi corrigida. Cada métrica do `R-02-diagnostico.md` (seção 12.2) agora identifica a janela usada.
+    - **Comparação:** com o cliente no Windows, houve atrasos em 2 de 4 execuções anteriores (as do modo watch com `ts-node` e sem perfil) e em nenhuma desta, que é **uma** execução no modo compilado. Com um fenômeno intermitente, a ausência de atraso **não é atribuída** à mudança de modo. O ensaio não aprova o R-02 nem comprova a causa.
+    - **Recursos:** só os do ensaio (usuários, vídeos, diretórios no container e no Windows, JS compilado no scratchpad, containers e arquivos da sonda do db), todos removidos, com retratos iguais e nenhum temporário novo. Sem mudança na aplicação, na arquitetura, nas dependências, no Compose ou nos critérios; nenhum aplicativo do Windows foi encerrado; sem 10 GB; sem commit nem push.
+    - **Situação:** continuam 32 SIs aprovadas, e a SI-03.33 continua com a P-10GB reprovada e o R-02 pendente. Nenhuma nova prova de 10 GB foi preparada.
+  - **Preparação da repetição formal da P-10GB (2026-11-25, das 02:24Z às 05:11Z):**
+    - **Ajuste do ensaio compilado:** no `R-02-diagnostico.md` (seção 12.2), "sem swap" virou a distinção entre a VM (0 páginas de swap) e as leituras, escritas e paginação do Windows. Cada métrica identifica a janela:
+      - **intervalo estrito do servidor:** 7,161 s, com 5 amostras do Windows;
+      - **janela ampla:** as marcas do roteiro ± 3 s, com 12 amostras.
+    - **Registro prévio e roteiro separados:** [`proofs/P-10GB-repeticao.md`](proofs/P-10GB-repeticao.md) e `nestjs-project/proofs/phase-03/p10gb-repeticao-roteiro.sh`, com os auxiliares em `p10gb-repeticao/`.
+      - **Fixação:** o registro foi fixado às 05:11Z. A cópia está em `proofs/P-10GB-repeticao-evidencias/registro-previo.md`, com SHA-256 `6b8cd786baea39243d0412d312ce50e9c4f1c37f13ef3c851617d4f7f464b208`.
+      - **P-10GB original:** a `P-10GB.md`, o registro prévio dela (SHA-256 `44e39e2a…d71df`) e as evidências não mudaram.
+    - **Mantido da P-10GB:**
+      - 10.000.000.000 bytes, 4 PUTs simultâneos e a interrupção em `ceil(150 × 0,5) = 75` partes;
+      - a conferência das partes recebidas, nenhum reenvio de `confirmed`, o `202`, o `MEDIA_INVALID` e a limpeza;
+      - a base de pelo menos 600 s com as mesmas instâncias da carga, uma requisição a cada 2 s, pelo menos 300 amostras por fase e os critérios (a), (b) e (c) sem alteração.
+    - **Modo de execução:** a API pelo build (`start:prod`), as sondas compiladas executadas com `node` e o cliente compilado no Node do Windows. Os demais serviços seguem como no ensaio compilado.
+    - **Sondas:** N = 12, calculado com a execução de 1 GB mais rápida (6,993 s, projetada para D ≈ 69,9 s) e uma margem de 30% (D_mín = 53,8 s), com 167 ms entre as partidas. A carga esperada é de cerca de 419 amostras, e de pelo menos 319 no pior caso com a margem e o ajuste de relógio.
+    - **Relógios:** a diferença entre o Windows e a VM é medida antes da base e depois da carga, com a incerteza de cada medida. Os eventos do cliente vão para o relógio da VM, e cada intervalo de carga é encolhido pela incerteza, dos dois lados. Um intervalo que fica vazio é descartado.
+    - **Fim da base:** ficou antes de armar o envio do Ctrl+C, para que a partida do PowerShell não eleve o p95 da base.
+    - **Impedimentos, registrados antes de prosseguir:**
+      - **`kill -INT` pelo WSL:** encerra o `node.exe` sem passar pelo handler;
+      - **Ctrl+C ignorado:** o atributo vinha herdado da interoperação do WSL. O iniciador passou a reativar o Ctrl+C;
+      - **`EPERM` na pré-checagem 1:** o vigia lia o progresso pelo `/mnt/c`. Ele passou a rodar no Windows;
+      - **interrupção tardia na pré-checagem 2:** o envio do Ctrl+C passou a ser armado antes do cliente.
+    - **Correção:** o ajuste de relógio deixava negativo o trecho da liberação ao `202`. Os vereditos das pré-checagens 2 e 3 foram recalculados, com as mesmas amostras e os mesmos percentis, e os originais foram preservados.
+    - **Pré-checagens de 1 GB:** quatro, com 12 sondas e base de 60 s.
+      - **Pré-checagens 3 e 4:**
+        - **interrupção:** pelo handler real de SIGINT, com 8 de 15 partes, registrada, e saída 130;
+        - **retomada:** 7 `confirmed`, 1 `unregistered` e 7 `missing`, com `200 match`;
+        - **comparação:** 5 de 5, sem PUT de `confirmed`;
+        - **desfecho:** `202` e `MEDIA_INVALID`;
+        - **limpeza:** completa, com retratos iguais e nenhum temporário novo.
+      - **Versões fixadas:** as da pré-checagem 4, por SHA-256.
+      - **Vereditos de latência:** `inconclusivos` por construção. O critério (c) ficou aprovado, com 1.000 amostras.
+      - **Evidências:** em `proofs/P-10GB-repeticao-evidencias/`.
+    - **Disco:** 40,0 GB livres em C:, contra os 29,5 GB exigidos. O `docker_data.vhdx` ficou com 40,85 GB, dos quais 19,04 GB usados, e não cresceu nas pré-checagens. O pico do storage é de 10,14 GB, ou 13,2 GB com margem.
+    - **Memória com as 12 sondas:** o Windows teve de 1.371 a 2.009 MB disponíveis no mínimo, abaixo da referência informativa de 4 GiB. A VM teve de 4.012 a 4.140 MiB disponíveis, com 1,4 a 1,5 GiB do swap da VM ocupados. Cada sonda ocupa cerca de 14 MiB.
+    - **Recursos:** só os das pré-checagens, todos removidos; fica só o `dist/` regenerado pelo build, fora do Git. Sem mudança na aplicação, na arquitetura, nas dependências, no Compose ou nos critérios. Nenhum aplicativo do Windows foi encerrado; o arquivo de 10 GB não foi gerado nem enviado; sem commit nem push.
+    - **Situação:** continuam 32 SIs aprovadas, e a SI-03.33 continua com a P-10GB reprovada e o R-02 pendente. A repetição está preparada e não foi executada.
+  - **Revisão r2 da repetição da P-10GB (2026-11-25, carimbo às 13:43Z):**
+    - **Origem:** a revisão confirmou na r1 a interrupção real por SIGINT no Windows, a retomada sem reenvio das 7 partes `confirmed`, a limpeza e os hashes, e pediu as correções abaixo.
+    - **Versão anterior preservada:**
+      - a r1 do registro (`proofs/P-10GB-repeticao-evidencias/registro-previo.md`, SHA-256 `6b8cd786…4b208`);
+      - as versões r1 do roteiro, dos auxiliares e dos scripts, em `proofs/P-10GB-repeticao-evidencias/r1/`;
+      - as evidências das pré-checagens, inalteradas.
+    - **Revisão vigente:** a r2, em [`proofs/P-10GB-repeticao.md`](proofs/P-10GB-repeticao.md), com cópia em `proofs/P-10GB-repeticao-evidencias/registro-previo-r2.md` (SHA-256 `f550471fd37496aabf5346cafd6edc2427197e6cfe8561651fb8b3befefef0e9`). As versões estão fixadas em `proofs/P-10GB-repeticao-evidencias/versoes-sha256-r2.txt`.
+    - **Relógios:**
+      - **Conversão:** o `eventos-relogio-vm.py` faz só a conversão nominal, sem encolher nem descartar intervalos; o da liberação ao `202` fica preservado.
+      - **Incerteza:** fica registrada à parte (`relogio.json`). O `latency-verdict --clock-uncertainty-ms` identifica as amostras de borda, a até `u` ms de um início ou de um fim.
+      - **Análise conservadora:** cada amostra de borda pode estar dentro ou fora da carga. Para cada quantidade k de amostras de borda na carga, a análise testa os extremos (as k mais rápidas e as k mais lentas), o que é exato para limites monótonos.
+      - **Regra:** um critério que a incerteza possa alterar, ou cuja suficiência de amostras ela possa alterar, fica `inconclusivo`, com o veredito nominal ao lado.
+      - **Mantidos:** os critérios (a), (b) e (c) e a exclusão das pausas ociosas.
+    - **Dimensionamento:** D_mín = 69,93 × 0,70 = 48,951 s, o que dá N = ceil(600 / 48,951) = **13**, com espaçamento de 154 ms.
+      - **Amostras esperadas:** cerca de 3.900 na base e de 318 a 455 na carga nominal, com cerca de 310 certas no pior caso.
+      - **Roteiro:** o padrão passou a 13, e a medição de memória confere as 13 sondas em execução.
+    - **Propagação de falhas:** o `build_and_compile` retorna explicitamente na falha do build, do `tsc` ou da cópia de cada artefato (inclusive cópia vazia). Ela roda em `step` ("$@" || rc=$?), onde o `set -e` não vale.
+      - **Controles isolados** (`controles.sh falhas`, com shims de `docker` e `cp` e a sentinela de `node.exe` na geração): build, `tsc`, cópia do container e cópia para o Windows saíram com código 2. A etapa do build registrou a falha, a geração não começou e os retratos ficaram iguais: **4 de 4 passaram**.
+      - **Controle negativo:** a r1, com a mesma falha no build, registrou a etapa com código 0 e alcançou a geração, bloqueada pela sentinela (99).
+    - **Validação sem upload:**
+      - **Casos sintéticos do veredito** (`controles.sh veredito`): intervalo menor que a incerteza, amostra lenta na borda que altera e que não altera, contagem perto de 300 que altera e que não altera, reprovação robusta, incerteza zero e base dentro da incerteza. **8 de 8 passaram**.
+      - **Reprocessamento das pré-checagens 3 e 4**, com os arquivos de origem inalterados (SHA-256 conferidos):
+        - os três intervalos nominais preservados (o terceiro com 91 e 89 ms);
+        - carga nominal de 57 e 58 amostras;
+        - 18 e 9 amostras de borda;
+        - carga possível de 49 a 67 e de 50 a 59;
+        - (a) e (b) `inconclusivo` por carga insuficiente em qualquer classificação, e (c) aprovado.
+    - **Explicação corrigida:** a base efetiva da pré-checagem 4 teve 122,01 s e 732 amostras (121,93 s e 732 na 2; 80,84 s e 485 na 3), todas acima do mínimo. A insuficiência ocorreu na carga, com cerca de 9 s de upload de 1 GB.
+    - **Pendência anotada à parte, fora do escopo desta revisão:** outras funções chamadas por `step` também deixam o `set -e` sem efeito em comandos intermediários:
+      - `prepare`: criação das pastas e cópia dos auxiliares;
+      - `accounts`: cópia das credenciais e leitura do `CONTROL_ID`;
+      - `start_monitors`: cópia da sonda do db.
+    - **Verificações:** `tsc --noEmit`, o ESLint (sem `--fix`) e o Prettier passaram no `upload-proof-support.ts`; `bash -n` passou no roteiro e no `controles.sh`.
+    - **Restrições cumpridas:** sem upload, sem arquivo de 10 GB e sem mudança na aplicação, na arquitetura, nas dependências ou no Compose; sem commit nem push.
+    - **Situação:** continuam 32 SIs aprovadas, e a SI-03.33 continua com a P-10GB reprovada e o R-02 pendente. A repetição está preparada na r2 e não foi executada.
+  - **Revisão r3 da repetição da P-10GB (2026-11-25, carimbo às 14:21Z, antes da execução de 10 GB):**
+    - **Origem:** a revisão da r2 confirmou os cálculos, as 13 sondas, os hashes e a propagação das falhas em `build_and_compile`, e pediu a mesma correção nas demais etapas obrigatórias.
+    - **Versão anterior preservada:** a r2 (`proofs/P-10GB-repeticao-evidencias/registro-previo-r2.md`, SHA-256 `f550471f…f0e9`), com as versões dos arquivos em `proofs/P-10GB-repeticao-evidencias/r2/`.
+    - **Revisão vigente:** a r3, com cópia em `proofs/P-10GB-repeticao-evidencias/registro-previo-r3.md` (SHA-256 `87714e9f7e20a7a5628f6749c54f295508c4b1c87dd2af1aaea85e4b6ab28f29`). As versões estão fixadas em `proofs/P-10GB-repeticao-evidencias/versoes-sha256-r3.txt`; só o roteiro e o `controles.sh` mudaram em relação à r2.
+    - **Propagação de falhas:** cada comando obrigatório verifica o próprio código, com o auxiliar `falha`.
+      - **Funções pedidas:**
+        - `prepare`: pastas e auxiliares;
+        - `accounts`: credenciais e `CONTROL_ID`;
+        - `start_monitors`: preparação e cópia da sonda do banco, conferida no `db`, e os monitores conferidos vivos.
+      - **Demais etapas obrigatórias, conferidas para o mesmo defeito:**
+        - antes do upload: `api_stopped`, `versions`, `host_disk`, `check_free_space`, `wait_trash_empty`, `residue_into`, `clock`, `memory_snapshot` e os instantes da base;
+        - depois do upload: a cópia dos eventos do cliente (antes, `return 0`), a cópia das sondas (antes, uma sonda podia sumir do veredito), `collect_evidence`, o resumo e a cópia do veredito (antes, `|| true`).
+      - **Efeito:** antes do upload, a falha interrompe o roteiro, que segue para a limpeza. Depois do upload, ela fica registrada e a coleta continua, como antes.
+    - **Controles, sem upload, com os anteriores preservados e repetidos** (evidências em `proofs/P-10GB-repeticao-evidencias/controles-r3/`):
+      - **Roteiro inteiro, 10 de 10:** os 4 modos da r2 e 6 novos (`prepare-pasta`, `prepare-auxiliar-container`, `prepare-auxiliar-windows`, `accounts-credenciais`, `accounts-control-id` e `monitores-sonda-db`). Em todos, a etapa registra a falha, a etapa seguinte não começa, nenhuma sentinela de geração ou de upload é acionada e a limpeza fica completa, com retratos iguais;
+      - **funções isoladas, 20 de 20:** o resumo e o veredito do roteiro sobre a pré-checagem 4 reproduzem o reprocessamento da r2;
+      - **casos sintéticos do veredito, 8 de 8;**
+      - **controle negativo com a r2:** a falha nas credenciais passou como "código 0" e chegou ao início do upload, bloqueado pela sentinela. Não passou, como esperado.
+    - **Sem mudança:** os critérios, a análise de incerteza dos relógios, o cenário e as 13 sondas.
+  - **Execução formal da repetição (r3), 2026-11-25, das 14:22:32Z às 14:38:26Z, runId `20261125142232-bc4b5d`:**
+    - **Pré-requisitos:**
+      - os hashes da r3 sem divergência;
+      - o ambiente saudável, com o `video-worker` no ar e a API parada;
+      - 39,79 GB livres em C:, contra 29,5 GB exigidos;
+      - o Windows com `node.exe`, PowerShell e `docker.exe`;
+      - `tsc --noEmit` e ESLint com 0.
+    - **Resultado pela regra do registro prévio:** **`aprovada`**, com código final 0 nas 38 etapas.
+      - **Arquivo e interrupção:**
+        - 10.000.000.000 bytes, com 4 PUTs simultâneos;
+        - interrupção real em 75 de 150 partes: Ctrl+C gerado 169 ms depois do gatilho, handler de SIGINT e saída 130.
+      - **Retomada e conclusão:**
+        - 73 `confirmed`, 2 `unregistered` e 75 `missing`;
+        - 75 partes conferidas com `200 match`;
+        - comparação 5 de 5, sem reenvio de `confirmed`;
+        - `202` e `MEDIA_INVALID`.
+      - **Limpeza:** completa, com retratos iguais, purga em 51 s e nenhum temporário novo.
+    - **Latência:**
+      - **base:** 618,3 s e 4.019 amostras, com p95 de 3,89 ms;
+      - **carga nominal:** 85,8 s em três intervalos, inclusive o da liberação ao `202`, com 554 amostras, p95 de 17,51 ms e p99 de 144,45 ms;
+      - **critérios:** (a) aprovado (≤ 53,89 ms), (b) aprovado e (c) aprovado (0 falhas em 4.812);
+      - **incerteza do relógio:** ± 145 ms e 8 amostras de borda. A carga possível vai de 550 a 558 e o p95 de 17,51 a 17,81 ms, sem alterar nenhum veredito.
+    - **Episódio registrado:** às 14:35:27Z, três amostras de carga passaram de 500 ms (640, 531 e 520 ms). No mesmo instante, a API registrou `GET` de 519 a 633 ms e o PostgreSQL, consultas de 503 a 591 ms, com fila de disco alta no Windows logo antes. Não altera os vereditos, que são por percentis.
+    - **Medidas:**
+      - **disco:** pico de 10,14 GB no disco de dados do Docker; o VHDX não cresceu (40.853.569.536 bytes); C: voltou a 39,80 GB livres;
+      - **memória com as 13 sondas:** o Windows com 2.138 MB disponíveis no mínimo, abaixo da referência informativa de 4 GiB.
+    - **Evidências:** o pacote está em `proofs/P-10GB-repeticao-evidencias/prova/`, com índice em `LEIAME.md`. Ele traz o log, as evidências, os pré-requisitos e os scripts exatos da r3. O registro prévio está em `registro-previo-r3.md`.
+    - **Restrições cumpridas:** sem mudança na aplicação, na arquitetura, nas dependências ou no Compose; sem repetição do upload; sem commit nem push.
+    - **Situação:** continuam 32 SIs aprovadas. A SI-03.33 aguarda a revisão dos resultados; a P-10GB original continua `reprovada` e preservada. Como as duas execuções serão consideradas para o R-02 cabe à revisão.
+  - **Aprovação e encerramento da Fase 03 (2026-11-25):**
+    - **SI-03.33:** aprovada na revisão da repetição formal da P-10GB. A fase passa a **33/33 SIs aprovadas** e é encerrada só com registro documental: sem upload, sem prova grande e sem mudança na aplicação ou na arquitetura.
+    - **R-02 encerrado para o cenário efetivamente validado:**
+      - a API compilada (`npm run build` e `npm run start:prod`, sem watch);
+      - 13 sondas compiladas, executadas com `node`, sem `ts-node`;
+      - o cliente de upload no Node nativo do Windows;
+      - o worker, o banco, o storage, o Redis e o Mailpit do Compose, neste host (Docker Desktop com WSL2 no Windows).
+      - **Fora da validação:** outros cenários, como o da P-10GB original (API em watch, sondas com `ts-node` e cliente dentro do container), não foram validados.
+    - **TD-01 mantida:** a decisão A (S3 Multipart com URLs pré-assinadas por parte, orquestrado pela API) segue sem alteração.
+      - **Reabertura encerrada:** a reabertura registrada em 2026-11-24, pela P-10GB original, fica encerrada pela repetição aprovada.
+      - **Sem alternativa:** nenhum fallback foi adotado e nenhuma melhoria de arquitetura foi aberta.
+    - **TD-15, condição das provas grandes atendida:** as três provas rodaram fora da suíte regular, na janela e com o disco definidos pela V-07:
+      - a V-07 (tempo e disco, 2026-11-24);
+      - o fluxo completo com vídeo válido até `ready` (SI-03.32, `aprovada`);
+      - a prova documentada de 10 GB (repetição da P-10GB, `aprovada`).
+      - **Efeito:** a entrega da fase, que estava bloqueada por essa condição, fica liberada.
+    - **Histórico preservado:**
+      - a P-10GB original continua `reprovada` (`20261124215534-349fa9`), e a repetição foi aprovada (`20261125142232-bc4b5d`);
+      - os registros prévios (o da P-10GB e as revisões r1, r2 e r3 da repetição), os critérios e as evidências brutas não foram alterados.
+    - **Observações mantidas:**
+      - **Episódio na execução aprovada:** às 14:35:27Z, três respostas passaram de 500 ms (640, 531 e 520 ms), com a API e o PostgreSQL lentos no mesmo instante. Não alteraram os critérios, que são por percentis.
+      - **Atrasos anteriores** (P-10GB original e ensaios do diagnóstico): a causa **não foi comprovada de forma definitiva**. A hipótese principal, de disputa de disco e de memória no ambiente, é sustentada pelas medições, sem atribuição definitiva (ver `proofs/R-02-diagnostico.md`).
+    - **Situação:** 33/33 SIs aprovadas e Fase 03 concluída. Nenhuma outra fase foi iniciada; sem commit nem push.

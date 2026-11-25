@@ -1,0 +1,822 @@
+{"t":1795571741840,"kind":"connect","ms":89.601,"err":false}
+{"t":1795571741930,"kind":"connect","ms":0.13,"err":false}
+{"t":1795571741930,"kind":"query","sql":"SELECT version()","ms":1.821,"err":false}
+{"t":1795571741933,"kind":"query","sql":"SELECT * FROM current_schema()","ms":0.827,"err":false}
+{"t":1795571741950,"kind":"connect","ms":0.207,"err":false}
+{"t":1795571745818,"kind":"connect","ms":0.169,"err":false}
+{"t":1795571745818,"kind":"query","sql":"SELECT \"user\".\"id\" AS \"user_id\", \"user\".\"email\" AS \"user_ema","ms":3.411,"err":false}
+{"t":1795571745910,"kind":"connect","ms":0.097,"err":false}
+{"t":1795571745910,"kind":"query","sql":"START TRANSACTION","ms":0.388,"err":false}
+{"t":1795571745914,"kind":"query","sql":"INSERT INTO \"users\"(\"id\", \"email\", \"password\", \"is_confirmed","ms":7.776,"err":false}
+{"t":1795571745923,"kind":"query","sql":"COMMIT","ms":2.028,"err":false}
+{"t":1795571745925,"kind":"connect","ms":0.071,"err":false}
+{"t":1795571745926,"kind":"query","sql":"START TRANSACTION","ms":0.355,"err":false}
+{"t":1795571745928,"kind":"query","sql":"SELECT \"Channel\".\"id\" AS \"Channel_id\", \"Channel\".\"name\" AS \"","ms":1.068,"err":false}
+{"t":1795571745930,"kind":"query","sql":"INSERT INTO \"channels\"(\"id\", \"name\", \"nickname\", \"descriptio","ms":2.062,"err":false}
+{"t":1795571745933,"kind":"query","sql":"COMMIT","ms":2.961,"err":false}
+{"t":1795571745936,"kind":"connect","ms":0.071,"err":false}
+{"t":1795571745936,"kind":"query","sql":"START TRANSACTION","ms":0.285,"err":false}
+{"t":1795571745937,"kind":"query","sql":"INSERT INTO \"verification_tokens\"(\"id\", \"token_hash\", \"type\"","ms":1.461,"err":false}
+{"t":1795571745939,"kind":"query","sql":"COMMIT","ms":1.613,"err":false}
+{"t":1795571746053,"kind":"connect","ms":0.056,"err":false}
+{"t":1795571746053,"kind":"query","sql":"SELECT DISTINCT \"distinctAlias\".\"VerificationToken_id\" AS \"i","ms":1.609,"err":false}
+{"t":1795571746055,"kind":"query","sql":"SELECT \"VerificationToken\".\"id\" AS \"VerificationToken_id\", \"","ms":0.699,"err":false}
+{"t":1795571746058,"kind":"connect","ms":0.329,"err":false}
+{"t":1795571746059,"kind":"query","sql":"SELECT \"VerificationToken\".\"id\" AS \"VerificationToken_id\", \"","ms":0.441,"err":false}
+{"t":1795571746060,"kind":"query","sql":"START TRANSACTION","ms":0.331,"err":false}
+{"t":1795571746062,"kind":"query","sql":"UPDATE \"verification_tokens\" SET \"used_at\" = $1 WHERE \"id\" I","ms":0.746,"err":false}
+{"t":1795571746063,"kind":"query","sql":"COMMIT","ms":4.195,"err":false}
+{"t":1795571746058,"kind":"connect","ms":11.55,"err":false}
+{"t":1795571746070,"kind":"query","sql":"SELECT \"User\".\"id\" AS \"User_id\", \"User\".\"email\" AS \"User_ema","ms":1.412,"err":false}
+{"t":1795571746072,"kind":"query","sql":"START TRANSACTION","ms":0.247,"err":false}
+{"t":1795571746073,"kind":"query","sql":"UPDATE \"users\" SET \"is_confirmed\" = $1, \"updated_at\" = CURRE","ms":0.629,"err":false}
+{"t":1795571746073,"kind":"query","sql":"COMMIT","ms":1.627,"err":false}
+{"t":1795571746078,"kind":"connect","ms":0.048,"err":false}
+{"t":1795571746078,"kind":"query","sql":"SELECT \"user\".\"id\" AS \"user_id\", \"user\".\"email\" AS \"user_ema","ms":0.741,"err":false}
+{"t":1795571746148,"kind":"connect","ms":0.105,"err":false}
+{"t":1795571746149,"kind":"query","sql":"START TRANSACTION","ms":0.588,"err":false}
+{"t":1795571746150,"kind":"query","sql":"INSERT INTO \"refresh_tokens\"(\"id\", \"token_hash\", \"family\", \"","ms":3.128,"err":false}
+{"t":1795571746153,"kind":"query","sql":"COMMIT","ms":2.259,"err":false}
+{"t":1795571749370,"kind":"connect","ms":0.043,"err":false}
+{"t":1795571749370,"kind":"query","sql":"SELECT \"user\".\"id\" AS \"user_id\", \"user\".\"email\" AS \"user_ema","ms":0.51,"err":false}
+{"t":1795571749472,"kind":"connect","ms":0.069,"err":false}
+{"t":1795571749472,"kind":"query","sql":"START TRANSACTION","ms":0.396,"err":false}
+{"t":1795571749472,"kind":"query","sql":"INSERT INTO \"users\"(\"id\", \"email\", \"password\", \"is_confirmed","ms":0.508,"err":false}
+{"t":1795571749473,"kind":"query","sql":"COMMIT","ms":3.02,"err":false}
+{"t":1795571749476,"kind":"connect","ms":0.027,"err":false}
+{"t":1795571749476,"kind":"query","sql":"START TRANSACTION","ms":0.2,"err":false}
+{"t":1795571749477,"kind":"query","sql":"SELECT \"Channel\".\"id\" AS \"Channel_id\", \"Channel\".\"name\" AS \"","ms":0.533,"err":false}
+{"t":1795571749478,"kind":"query","sql":"INSERT INTO \"channels\"(\"id\", \"name\", \"nickname\", \"descriptio","ms":0.487,"err":false}
+{"t":1795571749478,"kind":"query","sql":"COMMIT","ms":1.257,"err":false}
+{"t":1795571749480,"kind":"connect","ms":0.022,"err":false}
+{"t":1795571749480,"kind":"query","sql":"START TRANSACTION","ms":0.208,"err":false}
+{"t":1795571749480,"kind":"query","sql":"INSERT INTO \"verification_tokens\"(\"id\", \"token_hash\", \"type\"","ms":0.623,"err":false}
+{"t":1795571749481,"kind":"query","sql":"COMMIT","ms":1.198,"err":false}
+{"t":1795571749555,"kind":"connect","ms":0.033,"err":false}
+{"t":1795571749555,"kind":"query","sql":"SELECT DISTINCT \"distinctAlias\".\"VerificationToken_id\" AS \"i","ms":1.183,"err":false}
+{"t":1795571749556,"kind":"query","sql":"SELECT \"VerificationToken\".\"id\" AS \"VerificationToken_id\", \"","ms":0.846,"err":false}
+{"t":1795571749558,"kind":"connect","ms":0.28,"err":false}
+{"t":1795571749558,"kind":"connect","ms":0.045,"err":false}
+{"t":1795571749558,"kind":"query","sql":"SELECT \"VerificationToken\".\"id\" AS \"VerificationToken_id\", \"","ms":0.49,"err":false}
+{"t":1795571749558,"kind":"query","sql":"SELECT \"User\".\"id\" AS \"User_id\", \"User\".\"email\" AS \"User_ema","ms":0.922,"err":false}
+{"t":1795571749559,"kind":"query","sql":"START TRANSACTION","ms":0.581,"err":false}
+{"t":1795571749560,"kind":"query","sql":"START TRANSACTION","ms":0.631,"err":false}
+{"t":1795571749560,"kind":"query","sql":"UPDATE \"verification_tokens\" SET \"used_at\" = $1 WHERE \"id\" I","ms":0.591,"err":false}
+{"t":1795571749560,"kind":"query","sql":"UPDATE \"users\" SET \"is_confirmed\" = $1, \"updated_at\" = CURRE","ms":0.324,"err":false}
+{"t":1795571749561,"kind":"query","sql":"COMMIT","ms":1.622,"err":false}
+{"t":1795571749561,"kind":"query","sql":"COMMIT","ms":2.995,"err":false}
+{"t":1795571749569,"kind":"connect","ms":0.031,"err":false}
+{"t":1795571749569,"kind":"query","sql":"SELECT \"user\".\"id\" AS \"user_id\", \"user\".\"email\" AS \"user_ema","ms":0.593,"err":false}
+{"t":1795571749646,"kind":"connect","ms":0.056,"err":false}
+{"t":1795571749646,"kind":"query","sql":"START TRANSACTION","ms":0.467,"err":false}
+{"t":1795571749647,"kind":"query","sql":"INSERT INTO \"refresh_tokens\"(\"id\", \"token_hash\", \"family\", \"","ms":1.056,"err":false}
+{"t":1795571749648,"kind":"query","sql":"COMMIT","ms":2.109,"err":false}
+{"t":1795571752941,"kind":"connect","ms":0.055,"err":false}
+{"t":1795571752941,"kind":"query","sql":"SELECT \"Channel\".\"id\" AS \"Channel_id\", \"Channel\".\"name\" AS \"","ms":0.668,"err":false}
+{"t":1795571752942,"kind":"connect","ms":0.022,"err":false}
+{"t":1795571752942,"kind":"query","sql":"START TRANSACTION","ms":0.248,"err":false}
+{"t":1795571752943,"kind":"query","sql":"SAVEPOINT public_id_attempt_1","ms":0.233,"err":false}
+{"t":1795571752943,"kind":"query","sql":"INSERT INTO \"videos\"(\"id\", \"public_id\", \"channel_id\", \"statu","ms":1.296,"err":false}
+{"t":1795571752945,"kind":"query","sql":"RELEASE SAVEPOINT public_id_attempt_1","ms":0.224,"err":false}
+{"t":1795571752946,"kind":"query","sql":"INSERT INTO \"upload_sessions\"(\"id\", \"video_id\", \"object_key\"","ms":1.702,"err":false}
+{"t":1795571752948,"kind":"query","sql":"UPDATE \"videos\" SET \"current_upload_session_id\" = $1, \"updat","ms":0.55,"err":false}
+{"t":1795571752948,"kind":"query","sql":"COMMIT","ms":3.12,"err":false}
+{"t":1795571752977,"kind":"connect","ms":0.029,"err":false}
+{"t":1795571752977,"kind":"query","sql":"UPDATE \"upload_sessions\" SET \"status\" = $1, \"upload_id\" = $2","ms":2.065,"err":false}
+{"t":1795571755166,"kind":"connect","ms":0.071,"err":false}
+{"t":1795571755167,"kind":"query","sql":"SELECT \"user\".\"id\" AS \"user_id\", \"user\".\"email\" AS \"user_ema","ms":0.939,"err":false}
+{"t":1795571755186,"kind":"connect","ms":0.102,"err":false}
+{"t":1795571755186,"kind":"query","sql":"SELECT \"user\".\"id\" AS \"user_id\", \"user\".\"email\" AS \"user_ema","ms":1.165,"err":false}
+{"t":1795571755209,"kind":"connect","ms":0.119,"err":false}
+{"t":1795571755209,"kind":"query","sql":"SELECT \"user\".\"id\" AS \"user_id\", \"user\".\"email\" AS \"user_ema","ms":1.729,"err":false}
+{"t":1795571755314,"kind":"connect","ms":0.164,"err":false}
+{"t":1795571755314,"kind":"query","sql":"START TRANSACTION","ms":0.882,"err":false}
+{"t":1795571755316,"kind":"query","sql":"INSERT INTO \"refresh_tokens\"(\"id\", \"token_hash\", \"family\", \"","ms":2.128,"err":false}
+{"t":1795571755319,"kind":"query","sql":"COMMIT","ms":4.622,"err":false}
+{"t":1795571755329,"kind":"connect","ms":0.085,"err":false}
+{"t":1795571755330,"kind":"query","sql":"SELECT \"user\".\"id\" AS \"user_id\", \"user\".\"email\" AS \"user_ema","ms":1.601,"err":false}
+{"t":1795571755346,"kind":"connect","ms":0.439,"err":false}
+{"t":1795571755347,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":5.518,"err":false}
+{"t":1795571755355,"kind":"connect","ms":0.076,"err":false}
+{"t":1795571755355,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":1.052,"err":false}
+{"t":1795571755362,"kind":"connect","ms":0.151,"err":false}
+{"t":1795571755362,"kind":"query","sql":"START TRANSACTION","ms":0.902,"err":false}
+{"t":1795571755364,"kind":"query","sql":"INSERT INTO \"refresh_tokens\"(\"id\", \"token_hash\", \"family\", \"","ms":2.011,"err":false}
+{"t":1795571755366,"kind":"query","sql":"COMMIT","ms":2.956,"err":false}
+{"t":1795571755374,"kind":"connect","ms":0.095,"err":false}
+{"t":1795571755374,"kind":"query","sql":"START TRANSACTION","ms":0.764,"err":false}
+{"t":1795571755375,"kind":"query","sql":"INSERT INTO \"refresh_tokens\"(\"id\", \"token_hash\", \"family\", \"","ms":1.953,"err":false}
+{"t":1795571755378,"kind":"query","sql":"COMMIT","ms":2.122,"err":false}
+{"t":1795571755383,"kind":"connect","ms":0.054,"err":false}
+{"t":1795571755383,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":1.046,"err":false}
+{"t":1795571755384,"kind":"connect","ms":0.035,"err":false}
+{"t":1795571755384,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.818,"err":false}
+{"t":1795571755391,"kind":"connect","ms":0.07,"err":false}
+{"t":1795571755391,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":1.71,"err":false}
+{"t":1795571755393,"kind":"connect","ms":0.04,"err":false}
+{"t":1795571755393,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.967,"err":false}
+{"t":1795571755423,"kind":"connect","ms":0.048,"err":false}
+{"t":1795571755423,"kind":"query","sql":"START TRANSACTION","ms":0.497,"err":false}
+{"t":1795571755424,"kind":"query","sql":"INSERT INTO \"refresh_tokens\"(\"id\", \"token_hash\", \"family\", \"","ms":0.691,"err":false}
+{"t":1795571755425,"kind":"query","sql":"COMMIT","ms":1.837,"err":false}
+{"t":1795571755434,"kind":"connect","ms":0.03,"err":false}
+{"t":1795571755434,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.887,"err":false}
+{"t":1795571755435,"kind":"connect","ms":0.022,"err":false}
+{"t":1795571755435,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.399,"err":false}
+{"t":1795571757336,"kind":"connect","ms":0.034,"err":false}
+{"t":1795571757336,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.915,"err":false}
+{"t":1795571757337,"kind":"connect","ms":0.022,"err":false}
+{"t":1795571757337,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.357,"err":false}
+{"t":1795571757380,"kind":"connect","ms":0.076,"err":false}
+{"t":1795571757380,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":1.585,"err":false}
+{"t":1795571757383,"kind":"connect","ms":0.069,"err":false}
+{"t":1795571757383,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.919,"err":false}
+{"t":1795571757389,"kind":"connect","ms":0.031,"err":false}
+{"t":1795571757389,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.788,"err":false}
+{"t":1795571757390,"kind":"connect","ms":0.018,"err":false}
+{"t":1795571757390,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.483,"err":false}
+{"t":1795571757434,"kind":"connect","ms":0.04,"err":false}
+{"t":1795571757434,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.857,"err":false}
+{"t":1795571757435,"kind":"connect","ms":0.023,"err":false}
+{"t":1795571757435,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.627,"err":false}
+{"t":1795571759334,"kind":"connect","ms":0.035,"err":false}
+{"t":1795571759334,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.874,"err":false}
+{"t":1795571759336,"kind":"connect","ms":0.037,"err":false}
+{"t":1795571759336,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.635,"err":false}
+{"t":1795571759378,"kind":"connect","ms":0.033,"err":false}
+{"t":1795571759378,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":1.186,"err":false}
+{"t":1795571759381,"kind":"connect","ms":0.053,"err":false}
+{"t":1795571759381,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":1.01,"err":false}
+{"t":1795571759389,"kind":"connect","ms":0.029,"err":false}
+{"t":1795571759389,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.957,"err":false}
+{"t":1795571759390,"kind":"connect","ms":0.017,"err":false}
+{"t":1795571759390,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.523,"err":false}
+{"t":1795571759434,"kind":"connect","ms":0.098,"err":false}
+{"t":1795571759435,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.936,"err":false}
+{"t":1795571759436,"kind":"connect","ms":0.025,"err":false}
+{"t":1795571759436,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.37,"err":false}
+{"t":1795571761335,"kind":"connect","ms":0.036,"err":false}
+{"t":1795571761336,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":1.032,"err":false}
+{"t":1795571761337,"kind":"connect","ms":0.023,"err":false}
+{"t":1795571761337,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.372,"err":false}
+{"t":1795571761382,"kind":"connect","ms":0.082,"err":false}
+{"t":1795571761382,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":1.306,"err":false}
+{"t":1795571761384,"kind":"connect","ms":0.021,"err":false}
+{"t":1795571761384,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.698,"err":false}
+{"t":1795571761389,"kind":"connect","ms":0.03,"err":false}
+{"t":1795571761389,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.998,"err":false}
+{"t":1795571761390,"kind":"connect","ms":0.024,"err":false}
+{"t":1795571761390,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.647,"err":false}
+{"t":1795571761434,"kind":"connect","ms":0.034,"err":false}
+{"t":1795571761434,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.866,"err":false}
+{"t":1795571761435,"kind":"connect","ms":0.018,"err":false}
+{"t":1795571761435,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.473,"err":false}
+{"t":1795571763334,"kind":"connect","ms":0.031,"err":false}
+{"t":1795571763334,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.93,"err":false}
+{"t":1795571763335,"kind":"connect","ms":0.015,"err":false}
+{"t":1795571763336,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.405,"err":false}
+{"t":1795571763379,"kind":"connect","ms":0.031,"err":false}
+{"t":1795571763379,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.698,"err":false}
+{"t":1795571763380,"kind":"connect","ms":0.018,"err":false}
+{"t":1795571763380,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.389,"err":false}
+{"t":1795571763386,"kind":"connect","ms":0.026,"err":false}
+{"t":1795571763386,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.836,"err":false}
+{"t":1795571763387,"kind":"connect","ms":0.016,"err":false}
+{"t":1795571763387,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.474,"err":false}
+{"t":1795571763432,"kind":"connect","ms":0.026,"err":false}
+{"t":1795571763432,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.753,"err":false}
+{"t":1795571763433,"kind":"connect","ms":0.037,"err":false}
+{"t":1795571763433,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.352,"err":false}
+{"t":1795571765334,"kind":"connect","ms":0.028,"err":false}
+{"t":1795571765334,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.767,"err":false}
+{"t":1795571765335,"kind":"connect","ms":0.017,"err":false}
+{"t":1795571765335,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.433,"err":false}
+{"t":1795571765379,"kind":"connect","ms":0.023,"err":false}
+{"t":1795571765379,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.663,"err":false}
+{"t":1795571765380,"kind":"connect","ms":0.017,"err":false}
+{"t":1795571765380,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.326,"err":false}
+{"t":1795571765388,"kind":"connect","ms":0.018,"err":false}
+{"t":1795571765388,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.682,"err":false}
+{"t":1795571765389,"kind":"connect","ms":0.016,"err":false}
+{"t":1795571765389,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.407,"err":false}
+{"t":1795571765433,"kind":"connect","ms":0.023,"err":false}
+{"t":1795571765433,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.593,"err":false}
+{"t":1795571765434,"kind":"connect","ms":0.015,"err":false}
+{"t":1795571765434,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.363,"err":false}
+{"t":1795571767334,"kind":"connect","ms":0.049,"err":false}
+{"t":1795571767334,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.99,"err":false}
+{"t":1795571767335,"kind":"connect","ms":0.081,"err":false}
+{"t":1795571767335,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.48,"err":false}
+{"t":1795571767379,"kind":"connect","ms":0.028,"err":false}
+{"t":1795571767379,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.69,"err":false}
+{"t":1795571767380,"kind":"connect","ms":0.017,"err":false}
+{"t":1795571767380,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.349,"err":false}
+{"t":1795571767388,"kind":"connect","ms":0.019,"err":false}
+{"t":1795571767388,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.621,"err":false}
+{"t":1795571767389,"kind":"connect","ms":0.015,"err":false}
+{"t":1795571767389,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.325,"err":false}
+{"t":1795571767434,"kind":"connect","ms":0.027,"err":false}
+{"t":1795571767434,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.891,"err":false}
+{"t":1795571767435,"kind":"connect","ms":0.016,"err":false}
+{"t":1795571767435,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.335,"err":false}
+{"t":1795571769339,"kind":"connect","ms":0.043,"err":false}
+{"t":1795571769339,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":1.79,"err":false}
+{"t":1795571769341,"kind":"connect","ms":0.06,"err":false}
+{"t":1795571769341,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.669,"err":false}
+{"t":1795571769381,"kind":"connect","ms":0.063,"err":false}
+{"t":1795571769381,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.727,"err":false}
+{"t":1795571769382,"kind":"connect","ms":0.019,"err":false}
+{"t":1795571769382,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.545,"err":false}
+{"t":1795571769389,"kind":"connect","ms":0.019,"err":false}
+{"t":1795571769389,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.562,"err":false}
+{"t":1795571769389,"kind":"connect","ms":0.015,"err":false}
+{"t":1795571769389,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.319,"err":false}
+{"t":1795571769433,"kind":"connect","ms":0.046,"err":false}
+{"t":1795571769434,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":1.205,"err":false}
+{"t":1795571769435,"kind":"connect","ms":0.018,"err":false}
+{"t":1795571769435,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.351,"err":false}
+{"t":1795571771334,"kind":"connect","ms":0.031,"err":false}
+{"t":1795571771334,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.84,"err":false}
+{"t":1795571771336,"kind":"connect","ms":0.018,"err":false}
+{"t":1795571771336,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.385,"err":false}
+{"t":1795571771380,"kind":"connect","ms":0.03,"err":false}
+{"t":1795571771380,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.887,"err":false}
+{"t":1795571771381,"kind":"connect","ms":0.019,"err":false}
+{"t":1795571771381,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.484,"err":false}
+{"t":1795571771389,"kind":"connect","ms":0.031,"err":false}
+{"t":1795571771389,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.787,"err":false}
+{"t":1795571771390,"kind":"connect","ms":0.051,"err":false}
+{"t":1795571771390,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.425,"err":false}
+{"t":1795571771432,"kind":"connect","ms":0.03,"err":false}
+{"t":1795571771432,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.748,"err":false}
+{"t":1795571771433,"kind":"connect","ms":0.023,"err":false}
+{"t":1795571771434,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.433,"err":false}
+{"t":1795571773336,"kind":"connect","ms":0.068,"err":false}
+{"t":1795571773336,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.7,"err":false}
+{"t":1795571773337,"kind":"connect","ms":0.016,"err":false}
+{"t":1795571773337,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.338,"err":false}
+{"t":1795571773379,"kind":"connect","ms":0.03,"err":false}
+{"t":1795571773379,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.786,"err":false}
+{"t":1795571773380,"kind":"connect","ms":0.018,"err":false}
+{"t":1795571773380,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.522,"err":false}
+{"t":1795571773388,"kind":"connect","ms":0.025,"err":false}
+{"t":1795571773388,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.666,"err":false}
+{"t":1795571773389,"kind":"connect","ms":0.019,"err":false}
+{"t":1795571773389,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.368,"err":false}
+{"t":1795571773432,"kind":"connect","ms":0.046,"err":false}
+{"t":1795571773433,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.64,"err":false}
+{"t":1795571773433,"kind":"connect","ms":0.017,"err":false}
+{"t":1795571773434,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.398,"err":false}
+{"t":1795571775335,"kind":"connect","ms":0.03,"err":false}
+{"t":1795571775335,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.73,"err":false}
+{"t":1795571775336,"kind":"connect","ms":0.015,"err":false}
+{"t":1795571775336,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.338,"err":false}
+{"t":1795571775379,"kind":"connect","ms":0.026,"err":false}
+{"t":1795571775379,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.649,"err":false}
+{"t":1795571775380,"kind":"connect","ms":0.015,"err":false}
+{"t":1795571775380,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.33,"err":false}
+{"t":1795571775388,"kind":"connect","ms":0.016,"err":false}
+{"t":1795571775388,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.605,"err":false}
+{"t":1795571775389,"kind":"connect","ms":0.015,"err":false}
+{"t":1795571775389,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.312,"err":false}
+{"t":1795571775432,"kind":"connect","ms":0.027,"err":false}
+{"t":1795571775432,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.64,"err":false}
+{"t":1795571775433,"kind":"connect","ms":0.016,"err":false}
+{"t":1795571775433,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.341,"err":false}
+{"t":1795571777336,"kind":"connect","ms":0.031,"err":false}
+{"t":1795571777336,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.857,"err":false}
+{"t":1795571777337,"kind":"connect","ms":0.017,"err":false}
+{"t":1795571777337,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.344,"err":false}
+{"t":1795571777378,"kind":"connect","ms":0.03,"err":false}
+{"t":1795571777379,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":1.275,"err":false}
+{"t":1795571777380,"kind":"connect","ms":0.017,"err":false}
+{"t":1795571777380,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.347,"err":false}
+{"t":1795571777388,"kind":"connect","ms":0.026,"err":false}
+{"t":1795571777388,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.636,"err":false}
+{"t":1795571777389,"kind":"connect","ms":0.014,"err":false}
+{"t":1795571777389,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.319,"err":false}
+{"t":1795571777433,"kind":"connect","ms":0.026,"err":false}
+{"t":1795571777433,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.671,"err":false}
+{"t":1795571777434,"kind":"connect","ms":0.016,"err":false}
+{"t":1795571777434,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.45,"err":false}
+{"t":1795571779335,"kind":"connect","ms":0.028,"err":false}
+{"t":1795571779335,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.746,"err":false}
+{"t":1795571779336,"kind":"connect","ms":0.016,"err":false}
+{"t":1795571779336,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.333,"err":false}
+{"t":1795571779379,"kind":"connect","ms":0.023,"err":false}
+{"t":1795571779379,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.599,"err":false}
+{"t":1795571779380,"kind":"connect","ms":0.017,"err":false}
+{"t":1795571779380,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.335,"err":false}
+{"t":1795571779388,"kind":"connect","ms":0.018,"err":false}
+{"t":1795571779388,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.529,"err":false}
+{"t":1795571779389,"kind":"connect","ms":0.015,"err":false}
+{"t":1795571779389,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.362,"err":false}
+{"t":1795571779434,"kind":"connect","ms":0.061,"err":false}
+{"t":1795571779434,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.633,"err":false}
+{"t":1795571779434,"kind":"connect","ms":0.016,"err":false}
+{"t":1795571779435,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.48,"err":false}
+{"t":1795571781336,"kind":"connect","ms":0.027,"err":false}
+{"t":1795571781336,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.691,"err":false}
+{"t":1795571781337,"kind":"connect","ms":0.015,"err":false}
+{"t":1795571781337,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.322,"err":false}
+{"t":1795571781379,"kind":"connect","ms":0.019,"err":false}
+{"t":1795571781379,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.578,"err":false}
+{"t":1795571781380,"kind":"connect","ms":0.018,"err":false}
+{"t":1795571781380,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.329,"err":false}
+{"t":1795571781387,"kind":"connect","ms":0.018,"err":false}
+{"t":1795571781387,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.688,"err":false}
+{"t":1795571781388,"kind":"connect","ms":0.016,"err":false}
+{"t":1795571781388,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.544,"err":false}
+{"t":1795571781432,"kind":"connect","ms":0.026,"err":false}
+{"t":1795571781432,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.62,"err":false}
+{"t":1795571781433,"kind":"connect","ms":0.016,"err":false}
+{"t":1795571781433,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.248,"err":false}
+{"t":1795571783335,"kind":"connect","ms":0.029,"err":false}
+{"t":1795571783335,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.714,"err":false}
+{"t":1795571783336,"kind":"connect","ms":0.016,"err":false}
+{"t":1795571783336,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.349,"err":false}
+{"t":1795571783379,"kind":"connect","ms":0.029,"err":false}
+{"t":1795571783379,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.848,"err":false}
+{"t":1795571783381,"kind":"connect","ms":0.016,"err":false}
+{"t":1795571783381,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.334,"err":false}
+{"t":1795571783389,"kind":"connect","ms":0.024,"err":false}
+{"t":1795571783389,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.687,"err":false}
+{"t":1795571783390,"kind":"connect","ms":0.017,"err":false}
+{"t":1795571783390,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.339,"err":false}
+{"t":1795571783433,"kind":"connect","ms":0.026,"err":false}
+{"t":1795571783433,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.633,"err":false}
+{"t":1795571783434,"kind":"connect","ms":0.015,"err":false}
+{"t":1795571783434,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.32,"err":false}
+{"t":1795571785336,"kind":"connect","ms":0.037,"err":false}
+{"t":1795571785336,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":1.238,"err":false}
+{"t":1795571785338,"kind":"connect","ms":0.018,"err":false}
+{"t":1795571785338,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.407,"err":false}
+{"t":1795571785378,"kind":"connect","ms":0.03,"err":false}
+{"t":1795571785378,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.86,"err":false}
+{"t":1795571785379,"kind":"connect","ms":0.034,"err":false}
+{"t":1795571785379,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.454,"err":false}
+{"t":1795571785388,"kind":"connect","ms":0.032,"err":false}
+{"t":1795571785388,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.79,"err":false}
+{"t":1795571785389,"kind":"connect","ms":0.02,"err":false}
+{"t":1795571785390,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.321,"err":false}
+{"t":1795571785432,"kind":"connect","ms":0.027,"err":false}
+{"t":1795571785432,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.68,"err":false}
+{"t":1795571785433,"kind":"connect","ms":0.016,"err":false}
+{"t":1795571785433,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.529,"err":false}
+{"t":1795571787335,"kind":"connect","ms":0.027,"err":false}
+{"t":1795571787335,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.698,"err":false}
+{"t":1795571787336,"kind":"connect","ms":0.015,"err":false}
+{"t":1795571787336,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.323,"err":false}
+{"t":1795571787380,"kind":"connect","ms":0.022,"err":false}
+{"t":1795571787380,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.687,"err":false}
+{"t":1795571787380,"kind":"connect","ms":0.016,"err":false}
+{"t":1795571787381,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.356,"err":false}
+{"t":1795571787388,"kind":"connect","ms":0.017,"err":false}
+{"t":1795571787388,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.527,"err":false}
+{"t":1795571787389,"kind":"connect","ms":0.015,"err":false}
+{"t":1795571787389,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.303,"err":false}
+{"t":1795571787434,"kind":"connect","ms":0.057,"err":false}
+{"t":1795571787434,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.907,"err":false}
+{"t":1795571787435,"kind":"connect","ms":0.016,"err":false}
+{"t":1795571787435,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.598,"err":false}
+{"t":1795571789335,"kind":"connect","ms":0.029,"err":false}
+{"t":1795571789335,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.727,"err":false}
+{"t":1795571789336,"kind":"connect","ms":0.017,"err":false}
+{"t":1795571789336,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.32,"err":false}
+{"t":1795571789379,"kind":"connect","ms":0.031,"err":false}
+{"t":1795571789379,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.68,"err":false}
+{"t":1795571789380,"kind":"connect","ms":0.016,"err":false}
+{"t":1795571789380,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.37,"err":false}
+{"t":1795571789387,"kind":"connect","ms":0.019,"err":false}
+{"t":1795571789388,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.573,"err":false}
+{"t":1795571789388,"kind":"connect","ms":0.015,"err":false}
+{"t":1795571789388,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.318,"err":false}
+{"t":1795571789432,"kind":"connect","ms":0.02,"err":false}
+{"t":1795571789432,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.553,"err":false}
+{"t":1795571789433,"kind":"connect","ms":0.016,"err":false}
+{"t":1795571789433,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.533,"err":false}
+{"t":1795571791332,"kind":"connect","ms":0.029,"err":false}
+{"t":1795571791332,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.69,"err":false}
+{"t":1795571791333,"kind":"connect","ms":0.015,"err":false}
+{"t":1795571791333,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.325,"err":false}
+{"t":1795571791377,"kind":"connect","ms":0.032,"err":false}
+{"t":1795571791377,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.816,"err":false}
+{"t":1795571791378,"kind":"connect","ms":0.025,"err":false}
+{"t":1795571791378,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.422,"err":false}
+{"t":1795571791387,"kind":"connect","ms":0.032,"err":false}
+{"t":1795571791387,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.784,"err":false}
+{"t":1795571791388,"kind":"connect","ms":0.026,"err":false}
+{"t":1795571791388,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.426,"err":false}
+{"t":1795571791432,"kind":"connect","ms":0.032,"err":false}
+{"t":1795571791432,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":1.524,"err":false}
+{"t":1795571791434,"kind":"connect","ms":0.018,"err":false}
+{"t":1795571791434,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.336,"err":false}
+{"t":1795571793334,"kind":"connect","ms":0.032,"err":false}
+{"t":1795571793335,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.702,"err":false}
+{"t":1795571793335,"kind":"connect","ms":0.02,"err":false}
+{"t":1795571793336,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.334,"err":false}
+{"t":1795571793380,"kind":"connect","ms":0.026,"err":false}
+{"t":1795571793380,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.679,"err":false}
+{"t":1795571793381,"kind":"connect","ms":0.018,"err":false}
+{"t":1795571793381,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.499,"err":false}
+{"t":1795571793386,"kind":"connect","ms":0.019,"err":false}
+{"t":1795571793386,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.575,"err":false}
+{"t":1795571793387,"kind":"connect","ms":0.016,"err":false}
+{"t":1795571793387,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.324,"err":false}
+{"t":1795571793433,"kind":"connect","ms":0.025,"err":false}
+{"t":1795571793433,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.702,"err":false}
+{"t":1795571793433,"kind":"connect","ms":0.018,"err":false}
+{"t":1795571793434,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.333,"err":false}
+{"t":1795571795336,"kind":"connect","ms":0.03,"err":false}
+{"t":1795571795336,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.736,"err":false}
+{"t":1795571795337,"kind":"connect","ms":0.018,"err":false}
+{"t":1795571795337,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.351,"err":false}
+{"t":1795571795379,"kind":"connect","ms":0.027,"err":false}
+{"t":1795571795379,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.641,"err":false}
+{"t":1795571795380,"kind":"connect","ms":0.02,"err":false}
+{"t":1795571795380,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.367,"err":false}
+{"t":1795571795389,"kind":"connect","ms":0.019,"err":false}
+{"t":1795571795389,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.55,"err":false}
+{"t":1795571795390,"kind":"connect","ms":0.017,"err":false}
+{"t":1795571795390,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.308,"err":false}
+{"t":1795571795432,"kind":"connect","ms":0.042,"err":false}
+{"t":1795571795432,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.971,"err":false}
+{"t":1795571795433,"kind":"connect","ms":0.024,"err":false}
+{"t":1795571795433,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.435,"err":false}
+{"t":1795571797334,"kind":"connect","ms":0.03,"err":false}
+{"t":1795571797334,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.812,"err":false}
+{"t":1795571797335,"kind":"connect","ms":0.017,"err":false}
+{"t":1795571797335,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.365,"err":false}
+{"t":1795571797379,"kind":"connect","ms":0.026,"err":false}
+{"t":1795571797379,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.584,"err":false}
+{"t":1795571797380,"kind":"connect","ms":0.017,"err":false}
+{"t":1795571797380,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.351,"err":false}
+{"t":1795571797388,"kind":"connect","ms":0.019,"err":false}
+{"t":1795571797388,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.509,"err":false}
+{"t":1795571797388,"kind":"connect","ms":0.015,"err":false}
+{"t":1795571797388,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.306,"err":false}
+{"t":1795571797434,"kind":"connect","ms":0.029,"err":false}
+{"t":1795571797434,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.692,"err":false}
+{"t":1795571797435,"kind":"connect","ms":0.018,"err":false}
+{"t":1795571797435,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.392,"err":false}
+{"t":1795571799335,"kind":"connect","ms":0.029,"err":false}
+{"t":1795571799336,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.705,"err":false}
+{"t":1795571799337,"kind":"connect","ms":0.018,"err":false}
+{"t":1795571799337,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.454,"err":false}
+{"t":1795571799380,"kind":"connect","ms":0.024,"err":false}
+{"t":1795571799380,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.622,"err":false}
+{"t":1795571799381,"kind":"connect","ms":0.017,"err":false}
+{"t":1795571799381,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.366,"err":false}
+{"t":1795571799388,"kind":"connect","ms":0.019,"err":false}
+{"t":1795571799388,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.563,"err":false}
+{"t":1795571799389,"kind":"connect","ms":0.018,"err":false}
+{"t":1795571799389,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.312,"err":false}
+{"t":1795571799433,"kind":"connect","ms":0.03,"err":false}
+{"t":1795571799434,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.737,"err":false}
+{"t":1795571799434,"kind":"connect","ms":0.018,"err":false}
+{"t":1795571799435,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.331,"err":false}
+{"t":1795571801334,"kind":"connect","ms":0.033,"err":false}
+{"t":1795571801334,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.721,"err":false}
+{"t":1795571801335,"kind":"connect","ms":0.018,"err":false}
+{"t":1795571801335,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.312,"err":false}
+{"t":1795571801378,"kind":"connect","ms":0.049,"err":false}
+{"t":1795571801378,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.69,"err":false}
+{"t":1795571801379,"kind":"connect","ms":0.019,"err":false}
+{"t":1795571801379,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.273,"err":false}
+{"t":1795571801386,"kind":"connect","ms":0.019,"err":false}
+{"t":1795571801386,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.47,"err":false}
+{"t":1795571801386,"kind":"connect","ms":0.017,"err":false}
+{"t":1795571801386,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.245,"err":false}
+{"t":1795571801433,"kind":"connect","ms":0.02,"err":false}
+{"t":1795571801434,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.489,"err":false}
+{"t":1795571801434,"kind":"connect","ms":0.019,"err":false}
+{"t":1795571801434,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.441,"err":false}
+{"t":1795571803336,"kind":"connect","ms":0.029,"err":false}
+{"t":1795571803336,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.717,"err":false}
+{"t":1795571803337,"kind":"connect","ms":0.02,"err":false}
+{"t":1795571803337,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.523,"err":false}
+{"t":1795571803379,"kind":"connect","ms":0.074,"err":false}
+{"t":1795571803379,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":1.135,"err":false}
+{"t":1795571803381,"kind":"connect","ms":0.075,"err":false}
+{"t":1795571803381,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.899,"err":false}
+{"t":1795571803389,"kind":"connect","ms":0.035,"err":false}
+{"t":1795571803389,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":1.223,"err":false}
+{"t":1795571803391,"kind":"connect","ms":0.072,"err":false}
+{"t":1795571803391,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.86,"err":false}
+{"t":1795571803432,"kind":"connect","ms":0.03,"err":false}
+{"t":1795571803433,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.816,"err":false}
+{"t":1795571803434,"kind":"connect","ms":0.018,"err":false}
+{"t":1795571803434,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.295,"err":false}
+{"t":1795571805335,"kind":"connect","ms":0.032,"err":false}
+{"t":1795571805335,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.813,"err":false}
+{"t":1795571805337,"kind":"connect","ms":0.022,"err":false}
+{"t":1795571805337,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.8,"err":false}
+{"t":1795571805380,"kind":"connect","ms":0.027,"err":false}
+{"t":1795571805380,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.679,"err":false}
+{"t":1795571805381,"kind":"connect","ms":0.019,"err":false}
+{"t":1795571805381,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.364,"err":false}
+{"t":1795571805388,"kind":"connect","ms":0.019,"err":false}
+{"t":1795571805388,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.58,"err":false}
+{"t":1795571805389,"kind":"connect","ms":0.02,"err":false}
+{"t":1795571805389,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.361,"err":false}
+{"t":1795571805433,"kind":"connect","ms":0.031,"err":false}
+{"t":1795571805433,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.857,"err":false}
+{"t":1795571805434,"kind":"connect","ms":0.016,"err":false}
+{"t":1795571805434,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.367,"err":false}
+{"t":1795571807336,"kind":"connect","ms":0.031,"err":false}
+{"t":1795571807336,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.712,"err":false}
+{"t":1795571807337,"kind":"connect","ms":0.019,"err":false}
+{"t":1795571807337,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.4,"err":false}
+{"t":1795571807379,"kind":"connect","ms":0.026,"err":false}
+{"t":1795571807379,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.612,"err":false}
+{"t":1795571807380,"kind":"connect","ms":0.018,"err":false}
+{"t":1795571807380,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.38,"err":false}
+{"t":1795571807388,"kind":"connect","ms":0.021,"err":false}
+{"t":1795571807388,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.592,"err":false}
+{"t":1795571807389,"kind":"connect","ms":0.015,"err":false}
+{"t":1795571807389,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.445,"err":false}
+{"t":1795571807432,"kind":"connect","ms":0.024,"err":false}
+{"t":1795571807432,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.672,"err":false}
+{"t":1795571807433,"kind":"connect","ms":0.017,"err":false}
+{"t":1795571807433,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.323,"err":false}
+{"t":1795571809334,"kind":"connect","ms":0.034,"err":false}
+{"t":1795571809334,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.735,"err":false}
+{"t":1795571809335,"kind":"connect","ms":0.018,"err":false}
+{"t":1795571809335,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.379,"err":false}
+{"t":1795571809378,"kind":"connect","ms":0.029,"err":false}
+{"t":1795571809378,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.708,"err":false}
+{"t":1795571809379,"kind":"connect","ms":0.017,"err":false}
+{"t":1795571809379,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.333,"err":false}
+{"t":1795571809387,"kind":"connect","ms":0.02,"err":false}
+{"t":1795571809387,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.571,"err":false}
+{"t":1795571809388,"kind":"connect","ms":0.018,"err":false}
+{"t":1795571809388,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.315,"err":false}
+{"t":1795571809432,"kind":"connect","ms":0.02,"err":false}
+{"t":1795571809432,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.576,"err":false}
+{"t":1795571809432,"kind":"connect","ms":0.02,"err":false}
+{"t":1795571809432,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.318,"err":false}
+{"t":1795571811334,"kind":"connect","ms":0.034,"err":false}
+{"t":1795571811334,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.734,"err":false}
+{"t":1795571811335,"kind":"connect","ms":0.02,"err":false}
+{"t":1795571811335,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.363,"err":false}
+{"t":1795571811379,"kind":"connect","ms":0.032,"err":false}
+{"t":1795571811379,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.674,"err":false}
+{"t":1795571811380,"kind":"connect","ms":0.019,"err":false}
+{"t":1795571811380,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.366,"err":false}
+{"t":1795571811386,"kind":"connect","ms":0.03,"err":false}
+{"t":1795571811386,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.585,"err":false}
+{"t":1795571811387,"kind":"connect","ms":0.02,"err":false}
+{"t":1795571811387,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.3,"err":false}
+{"t":1795571811433,"kind":"connect","ms":0.026,"err":false}
+{"t":1795571811433,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.723,"err":false}
+{"t":1795571811434,"kind":"connect","ms":0.025,"err":false}
+{"t":1795571811434,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.306,"err":false}
+{"t":1795571813334,"kind":"connect","ms":0.029,"err":false}
+{"t":1795571813334,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.743,"err":false}
+{"t":1795571813335,"kind":"connect","ms":0.018,"err":false}
+{"t":1795571813335,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.377,"err":false}
+{"t":1795571813380,"kind":"connect","ms":0.051,"err":false}
+{"t":1795571813380,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":2.203,"err":false}
+{"t":1795571813383,"kind":"connect","ms":0.088,"err":false}
+{"t":1795571813384,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":1.21,"err":false}
+{"t":1795571813389,"kind":"connect","ms":0.036,"err":false}
+{"t":1795571813389,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.761,"err":false}
+{"t":1795571813390,"kind":"connect","ms":0.021,"err":false}
+{"t":1795571813390,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.439,"err":false}
+{"t":1795571813434,"kind":"connect","ms":0.036,"err":false}
+{"t":1795571813434,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":1.05,"err":false}
+{"t":1795571813435,"kind":"connect","ms":0.043,"err":false}
+{"t":1795571813436,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.671,"err":false}
+{"t":1795571813732,"kind":"connect","ms":0.044,"err":false}
+{"t":1795571813732,"kind":"query","sql":"SELECT \"Channel\".\"id\" AS \"Channel_id\", \"Channel\".\"name\" AS \"","ms":0.602,"err":false}
+{"t":1795571813733,"kind":"connect","ms":0.021,"err":false}
+{"t":1795571813733,"kind":"query","sql":"START TRANSACTION","ms":0.237,"err":false}
+{"t":1795571813733,"kind":"query","sql":"SAVEPOINT public_id_attempt_1","ms":0.192,"err":false}
+{"t":1795571813734,"kind":"query","sql":"INSERT INTO \"videos\"(\"id\", \"public_id\", \"channel_id\", \"statu","ms":0.786,"err":false}
+{"t":1795571813735,"kind":"query","sql":"RELEASE SAVEPOINT public_id_attempt_1","ms":0.248,"err":false}
+{"t":1795571813735,"kind":"query","sql":"INSERT INTO \"upload_sessions\"(\"id\", \"video_id\", \"object_key\"","ms":0.577,"err":false}
+{"t":1795571813736,"kind":"query","sql":"UPDATE \"videos\" SET \"current_upload_session_id\" = $1, \"updat","ms":0.415,"err":false}
+{"t":1795571813736,"kind":"query","sql":"COMMIT","ms":1.727,"err":false}
+{"t":1795571813750,"kind":"connect","ms":0.031,"err":false}
+{"t":1795571813750,"kind":"query","sql":"UPDATE \"upload_sessions\" SET \"status\" = $1, \"upload_id\" = $2","ms":3.519,"err":false}
+{"t":1795571813978,"kind":"connect","ms":0.071,"err":false}
+{"t":1795571813978,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":1.239,"err":false}
+{"t":1795571813980,"kind":"connect","ms":0.032,"err":false}
+{"t":1795571813980,"kind":"query","sql":"SELECT \"session\".\"id\" AS \"session_id\", \"session\".\"video_id\" ","ms":2.24,"err":false}
+{"t":1795571813984,"kind":"connect","ms":0.026,"err":false}
+{"t":1795571813984,"kind":"query","sql":"INSERT INTO \"upload_parts\"(\"id\", \"upload_session_id\", \"part_","ms":6.22,"err":false}
+{"t":1795571813991,"kind":"connect","ms":0.03,"err":false}
+{"t":1795571813991,"kind":"query","sql":"SELECT \"UploadPart\".\"part_number\" AS \"UploadPart_part_number","ms":0.89,"err":false}
+{"t":1795571815076,"kind":"connect","ms":0.053,"err":false}
+{"t":1795571815076,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":1.234,"err":false}
+{"t":1795571815077,"kind":"connect","ms":0.02,"err":false}
+{"t":1795571815077,"kind":"query","sql":"SELECT \"session\".\"id\" AS \"session_id\", \"session\".\"video_id\" ","ms":0.843,"err":false}
+{"t":1795571815079,"kind":"connect","ms":0.112,"err":false}
+{"t":1795571815080,"kind":"query","sql":"INSERT INTO \"upload_parts\"(\"id\", \"upload_session_id\", \"part_","ms":40.115,"err":false}
+{"t":1795571815120,"kind":"connect","ms":0.03,"err":false}
+{"t":1795571815120,"kind":"query","sql":"SELECT \"UploadPart\".\"part_number\" AS \"UploadPart_part_number","ms":1.135,"err":false}
+{"t":1795571815344,"kind":"connect","ms":0.15,"err":false}
+{"t":1795571815345,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":3.292,"err":false}
+{"t":1795571815349,"kind":"connect","ms":0.173,"err":false}
+{"t":1795571815349,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":1.292,"err":false}
+{"t":1795571815411,"kind":"connect","ms":0.327,"err":false}
+{"t":1795571815411,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":7.765,"err":false}
+{"t":1795571815427,"kind":"connect","ms":0.138,"err":false}
+{"t":1795571815428,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":1.907,"err":false}
+{"t":1795571815437,"kind":"connect","ms":0.125,"err":false}
+{"t":1795571815437,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":8.786,"err":false}
+{"t":1795571815447,"kind":"connect","ms":0.115,"err":false}
+{"t":1795571815448,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":1.799,"err":false}
+{"t":1795571815416,"kind":"connect","ms":45.801,"err":false}
+{"t":1795571815462,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":11.376,"err":false}
+{"t":1795571815476,"kind":"connect","ms":0.383,"err":false}
+{"t":1795571815476,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":3.309,"err":false}
+{"t":1795571816420,"kind":"connect","ms":0.032,"err":false}
+{"t":1795571816420,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":1.473,"err":false}
+{"t":1795571816422,"kind":"connect","ms":0.045,"err":false}
+{"t":1795571816422,"kind":"query","sql":"SELECT \"session\".\"id\" AS \"session_id\", \"session\".\"video_id\" ","ms":0.675,"err":false}
+{"t":1795571816424,"kind":"connect","ms":0.029,"err":false}
+{"t":1795571816424,"kind":"query","sql":"SELECT COUNT(1) AS \"cnt\" FROM \"upload_parts\" \"UploadPart\" WH","ms":1.199,"err":false}
+{"t":1795571816426,"kind":"connect","ms":0.03,"err":false}
+{"t":1795571816426,"kind":"query","sql":"UPDATE upload_parts AS part SET etag = reported.etag, etag_r","ms":5.405,"err":false}
+{"t":1795571816432,"kind":"connect","ms":0.084,"err":false}
+{"t":1795571816432,"kind":"query","sql":"INSERT INTO \"upload_parts\"(\"id\", \"upload_session_id\", \"part_","ms":4.717,"err":false}
+{"t":1795571816439,"kind":"connect","ms":0.142,"err":false}
+{"t":1795571816439,"kind":"query","sql":"SELECT \"UploadPart\".\"part_number\" AS \"UploadPart_part_number","ms":1.897,"err":false}
+{"t":1795571817336,"kind":"connect","ms":0.034,"err":false}
+{"t":1795571817336,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":1.696,"err":false}
+{"t":1795571817338,"kind":"connect","ms":0.021,"err":false}
+{"t":1795571817338,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.452,"err":false}
+{"t":1795571817380,"kind":"connect","ms":0.168,"err":false}
+{"t":1795571817380,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":1.476,"err":false}
+{"t":1795571817383,"kind":"connect","ms":0.057,"err":false}
+{"t":1795571817383,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.542,"err":false}
+{"t":1795571817389,"kind":"connect","ms":0.048,"err":false}
+{"t":1795571817389,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.826,"err":false}
+{"t":1795571817391,"kind":"connect","ms":0.062,"err":false}
+{"t":1795571817391,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.575,"err":false}
+{"t":1795571817434,"kind":"connect","ms":0.035,"err":false}
+{"t":1795571817434,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.653,"err":false}
+{"t":1795571817435,"kind":"connect","ms":0.018,"err":false}
+{"t":1795571817435,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.401,"err":false}
+{"t":1795571817541,"kind":"connect","ms":0.028,"err":false}
+{"t":1795571817541,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.708,"err":false}
+{"t":1795571817543,"kind":"connect","ms":0.02,"err":false}
+{"t":1795571817543,"kind":"query","sql":"SELECT \"session\".\"id\" AS \"session_id\", \"session\".\"video_id\" ","ms":0.449,"err":false}
+{"t":1795571817543,"kind":"connect","ms":0.016,"err":false}
+{"t":1795571817543,"kind":"query","sql":"SELECT COUNT(1) AS \"cnt\" FROM \"upload_parts\" \"UploadPart\" WH","ms":0.381,"err":false}
+{"t":1795571817544,"kind":"connect","ms":0.016,"err":false}
+{"t":1795571817544,"kind":"query","sql":"UPDATE upload_parts AS part SET etag = reported.etag, etag_r","ms":89.876,"err":false}
+{"t":1795571817634,"kind":"connect","ms":0.056,"err":false}
+{"t":1795571817634,"kind":"query","sql":"INSERT INTO \"upload_parts\"(\"id\", \"upload_session_id\", \"part_","ms":3.052,"err":false}
+{"t":1795571817638,"kind":"connect","ms":0.111,"err":false}
+{"t":1795571817638,"kind":"query","sql":"SELECT \"UploadPart\".\"part_number\" AS \"UploadPart_part_number","ms":0.738,"err":false}
+{"t":1795571818813,"kind":"connect","ms":0.094,"err":false}
+{"t":1795571818813,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":7.125,"err":false}
+{"t":1795571818821,"kind":"connect","ms":0.034,"err":false}
+{"t":1795571818821,"kind":"query","sql":"SELECT \"session\".\"id\" AS \"session_id\", \"session\".\"video_id\" ","ms":1.217,"err":false}
+{"t":1795571818823,"kind":"connect","ms":0.037,"err":false}
+{"t":1795571818823,"kind":"query","sql":"SELECT COUNT(1) AS \"cnt\" FROM \"upload_parts\" \"UploadPart\" WH","ms":0.704,"err":false}
+{"t":1795571818823,"kind":"connect","ms":0.02,"err":false}
+{"t":1795571818824,"kind":"query","sql":"UPDATE upload_parts AS part SET etag = reported.etag, etag_r","ms":4.409,"err":false}
+{"t":1795571819335,"kind":"connect","ms":0.022,"err":false}
+{"t":1795571819335,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.673,"err":false}
+{"t":1795571819335,"kind":"connect","ms":0.014,"err":false}
+{"t":1795571819335,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.352,"err":false}
+{"t":1795571819378,"kind":"connect","ms":0.023,"err":false}
+{"t":1795571819378,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.721,"err":false}
+{"t":1795571819379,"kind":"connect","ms":0.014,"err":false}
+{"t":1795571819379,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.313,"err":false}
+{"t":1795571819391,"kind":"connect","ms":0.082,"err":false}
+{"t":1795571819392,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":2.277,"err":false}
+{"t":1795571819395,"kind":"connect","ms":0.103,"err":false}
+{"t":1795571819395,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":1.571,"err":false}
+{"t":1795571819432,"kind":"connect","ms":0.036,"err":false}
+{"t":1795571819433,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":1.459,"err":false}
+{"t":1795571819434,"kind":"connect","ms":0.016,"err":false}
+{"t":1795571819434,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.419,"err":false}
+{"t":1795571819920,"kind":"connect","ms":0.029,"err":false}
+{"t":1795571819920,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.962,"err":false}
+{"t":1795571819921,"kind":"connect","ms":0.014,"err":false}
+{"t":1795571819922,"kind":"query","sql":"SELECT \"session\".\"id\" AS \"session_id\", \"session\".\"video_id\" ","ms":0.359,"err":false}
+{"t":1795571819922,"kind":"connect","ms":0.014,"err":false}
+{"t":1795571819922,"kind":"query","sql":"SELECT COUNT(1) AS \"cnt\" FROM \"upload_parts\" \"UploadPart\" WH","ms":0.368,"err":false}
+{"t":1795571819923,"kind":"connect","ms":0.013,"err":false}
+{"t":1795571819923,"kind":"query","sql":"UPDATE upload_parts AS part SET etag = reported.etag, etag_r","ms":3.664,"err":false}
+{"t":1795571821029,"kind":"connect","ms":0.026,"err":false}
+{"t":1795571821029,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.785,"err":false}
+{"t":1795571821030,"kind":"connect","ms":0.016,"err":false}
+{"t":1795571821030,"kind":"query","sql":"SELECT \"session\".\"id\" AS \"session_id\", \"session\".\"video_id\" ","ms":0.387,"err":false}
+{"t":1795571821031,"kind":"connect","ms":0.06,"err":false}
+{"t":1795571821031,"kind":"query","sql":"SELECT COUNT(1) AS \"cnt\" FROM \"upload_parts\" \"UploadPart\" WH","ms":0.39,"err":false}
+{"t":1795571821031,"kind":"connect","ms":0.015,"err":false}
+{"t":1795571821031,"kind":"query","sql":"UPDATE upload_parts AS part SET etag = reported.etag, etag_r","ms":2.38,"err":false}
+{"t":1795571821075,"kind":"connect","ms":0.024,"err":false}
+{"t":1795571821075,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.627,"err":false}
+{"t":1795571821076,"kind":"connect","ms":0.013,"err":false}
+{"t":1795571821076,"kind":"query","sql":"SELECT \"session\".\"id\" AS \"session_id\", \"session\".\"video_id\" ","ms":0.336,"err":false}
+{"t":1795571821077,"kind":"connect","ms":0.013,"err":false}
+{"t":1795571821077,"kind":"query","sql":"START TRANSACTION","ms":0.168,"err":false}
+{"t":1795571821077,"kind":"query","sql":"SELECT \"Video\".\"id\" AS \"Video_id\", \"Video\".\"public_id\" AS \"V","ms":0.479,"err":false}
+{"t":1795571821078,"kind":"query","sql":"SELECT \"session\".\"id\" AS \"session_id\", \"session\".\"video_id\" ","ms":0.339,"err":false}
+{"t":1795571821079,"kind":"query","sql":"UPDATE \"upload_sessions\" SET \"status\" = $1, \"claim_token\" = ","ms":0.733,"err":false}
+{"t":1795571821080,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.298,"err":false}
+{"t":1795571821080,"kind":"query","sql":"COMMIT","ms":3.5,"err":false}
+{"t":1795571821095,"kind":"connect","ms":0.022,"err":false}
+{"t":1795571821095,"kind":"query","sql":"SELECT \"UploadPart\".\"part_number\" AS \"UploadPart_part_number","ms":1.244,"err":false}
+{"t":1795571821119,"kind":"connect","ms":0.032,"err":false}
+{"t":1795571821119,"kind":"query","sql":"START TRANSACTION","ms":0.387,"err":false}
+{"t":1795571821120,"kind":"query","sql":"SELECT \"Video\".\"id\" AS \"Video_id\", \"Video\".\"public_id\" AS \"V","ms":0.577,"err":false}
+{"t":1795571821121,"kind":"query","sql":"UPDATE \"upload_sessions\" SET \"status\" = $1, \"claim_token\" = ","ms":0.449,"err":false}
+{"t":1795571821122,"kind":"query","sql":"UPDATE \"videos\" SET \"status\" = $1, \"original_key\" = $2, \"pro","ms":0.707,"err":false}
+{"t":1795571821123,"kind":"query","sql":"COMMIT","ms":3.839,"err":false}
+{"t":1795571821133,"kind":"connect","ms":0.026,"err":false}
+{"t":1795571821133,"kind":"query","sql":"UPDATE \"videos\" SET \"pending_job_action\" = $1, \"pending_job_","ms":1.964,"err":false}
+{"t":1795571821160,"kind":"connect","ms":0.106,"err":false}
+{"t":1795571821160,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.769,"err":false}
+{"t":1795571821162,"kind":"connect","ms":0.093,"err":false}
+{"t":1795571821162,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.43,"err":false}
+{"t":1795571821333,"kind":"connect","ms":0.025,"err":false}
+{"t":1795571821334,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.842,"err":false}
+{"t":1795571821335,"kind":"connect","ms":0.013,"err":false}
+{"t":1795571821335,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.383,"err":false}
+{"t":1795571821376,"kind":"connect","ms":0.024,"err":false}
+{"t":1795571821377,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.865,"err":false}
+{"t":1795571821378,"kind":"connect","ms":0.014,"err":false}
+{"t":1795571821378,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.336,"err":false}
+{"t":1795571821384,"kind":"connect","ms":0.021,"err":false}
+{"t":1795571821384,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.848,"err":false}
+{"t":1795571821386,"kind":"connect","ms":0.019,"err":false}
+{"t":1795571821386,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.435,"err":false}
+{"t":1795571821432,"kind":"connect","ms":0.028,"err":false}
+{"t":1795571821432,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.778,"err":false}
+{"t":1795571821433,"kind":"connect","ms":0.014,"err":false}
+{"t":1795571821433,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.315,"err":false}
+{"t":1795571823184,"kind":"connect","ms":0.066,"err":false}
+{"t":1795571823184,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.759,"err":false}
+{"t":1795571823185,"kind":"connect","ms":0.017,"err":false}
+{"t":1795571823185,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.404,"err":false}
+{"t":1795571823336,"kind":"connect","ms":0.044,"err":false}
+{"t":1795571823336,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":1.14,"err":false}
+{"t":1795571823338,"kind":"connect","ms":0.028,"err":false}
+{"t":1795571823338,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.576,"err":false}
+{"t":1795571823378,"kind":"connect","ms":0.029,"err":false}
+{"t":1795571823378,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.847,"err":false}
+{"t":1795571823379,"kind":"connect","ms":0.019,"err":false}
+{"t":1795571823379,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.357,"err":false}
+{"t":1795571823388,"kind":"connect","ms":0.033,"err":false}
+{"t":1795571823388,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.763,"err":false}
+{"t":1795571823389,"kind":"connect","ms":0.017,"err":false}
+{"t":1795571823390,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.314,"err":false}
+{"t":1795571823434,"kind":"connect","ms":0.052,"err":false}
+{"t":1795571823434,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.678,"err":false}
+{"t":1795571823435,"kind":"connect","ms":0.014,"err":false}
+{"t":1795571823435,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.265,"err":false}
+{"t":1795571825336,"kind":"connect","ms":0.041,"err":false}
+{"t":1795571825336,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":1.239,"err":false}
+{"t":1795571825338,"kind":"connect","ms":0.021,"err":false}
+{"t":1795571825338,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.597,"err":false}
+{"t":1795571825379,"kind":"connect","ms":0.026,"err":false}
+{"t":1795571825379,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.86,"err":false}
+{"t":1795571825380,"kind":"connect","ms":0.015,"err":false}
+{"t":1795571825380,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.34,"err":false}
+{"t":1795571825387,"kind":"connect","ms":0.016,"err":false}
+{"t":1795571825387,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.596,"err":false}
+{"t":1795571825387,"kind":"connect","ms":0.014,"err":false}
+{"t":1795571825387,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.297,"err":false}
+{"t":1795571825432,"kind":"connect","ms":0.024,"err":false}
+{"t":1795571825432,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.711,"err":false}
+{"t":1795571825433,"kind":"connect","ms":0.015,"err":false}
+{"t":1795571825433,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.384,"err":false}
+{"t":1795571827335,"kind":"connect","ms":0.026,"err":false}
+{"t":1795571827335,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.727,"err":false}
+{"t":1795571827336,"kind":"connect","ms":0.014,"err":false}
+{"t":1795571827336,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.339,"err":false}
+{"t":1795571827379,"kind":"connect","ms":0.03,"err":false}
+{"t":1795571827379,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.858,"err":false}
+{"t":1795571827380,"kind":"connect","ms":0.038,"err":false}
+{"t":1795571827380,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.439,"err":false}
+{"t":1795571827388,"kind":"connect","ms":0.025,"err":false}
+{"t":1795571827388,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.684,"err":false}
+{"t":1795571827389,"kind":"connect","ms":0.017,"err":false}
+{"t":1795571827389,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.354,"err":false}
+{"t":1795571827433,"kind":"connect","ms":0.031,"err":false}
+{"t":1795571827433,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.792,"err":false}
+{"t":1795571827434,"kind":"connect","ms":0.019,"err":false}
+{"t":1795571827434,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.354,"err":false}
+{"t":1795571829334,"kind":"connect","ms":0.068,"err":false}
+{"t":1795571829335,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.831,"err":false}
+{"t":1795571829336,"kind":"connect","ms":0.016,"err":false}
+{"t":1795571829336,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.333,"err":false}
+{"t":1795571829379,"kind":"connect","ms":0.02,"err":false}
+{"t":1795571829379,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.571,"err":false}
+{"t":1795571829380,"kind":"connect","ms":0.013,"err":false}
+{"t":1795571829380,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.311,"err":false}
+{"t":1795571829386,"kind":"connect","ms":0.017,"err":false}
+{"t":1795571829386,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.524,"err":false}
+{"t":1795571829387,"kind":"connect","ms":0.032,"err":false}
+{"t":1795571829387,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.282,"err":false}
+{"t":1795571829432,"kind":"connect","ms":0.018,"err":false}
+{"t":1795571829432,"kind":"query","sql":"SELECT \"video\".\"id\" AS \"video_id\", \"video\".\"public_id\" AS \"v","ms":0.572,"err":false}
+{"t":1795571829433,"kind":"connect","ms":0.014,"err":false}
+{"t":1795571829433,"kind":"query","sql":"SELECT \"UploadSession\".\"id\" AS \"UploadSession_id\", \"UploadSe","ms":0.32,"err":false}

@@ -1,8 +1,13 @@
+# Imagem de desenvolvimento do código NestJS, a mesma para a API e para o worker (phase-03-videos/TD-10)
+x-nestjs-image: &nestjs-image
+  build:
+    context: .
+    dockerfile: Dockerfile.dev
+  image: streamtube-nestjs-dev
+
 services:
   nestjs-api:
-    build: 
-      context: .
-      dockerfile: Dockerfile.dev
+    <<: *nestjs-image
     ports:
       - 3000:3000
     volumes:
@@ -12,6 +17,35 @@ services:
         condition: service_healthy
       mailpit:
         condition: service_started
+      storage:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      storage-init:
+        condition: service_completed_successfully
+
+  # Worker de vídeos (phase-03-videos/TD-10): mesmo código e mesma imagem da API, sem HTTP, com
+  # saída de compilação própria em dist-worker/. Sobe com `docker compose up`.
+  # - init: true põe o tini como PID 1, que repassa o SIGTERM do `docker compose stop` e recolhe
+  #   os processos órfãos;
+  # - stop_grace_period cobre um job inteiro: até 3 chamadas do FFmpeg de
+  #   VIDEO_PROCESSING_TIMEOUT_MS (60 s cada), com folga, antes do SIGKILL.
+  video-worker:
+    <<: *nestjs-image
+    init: true
+    command: ["npm", "run", "start:worker:dev"]
+    stop_grace_period: 200s
+    volumes:
+      - .:/home/node/app
+    depends_on:
+      db:
+        condition: service_healthy
+      storage:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      storage-init:
+        condition: service_completed_successfully
 
   db:
     image: postgres:17
@@ -32,5 +66,74 @@ services:
     ports:
       - "1025:1025"
       - "8025:8025"
+
+  # Storage S3 compatível: fork comunitário do MinIO, fixado por tag e digest (phase-03-videos/TD-07, TD-08)
+  storage:
+    image: pgsty/silo:RELEASE.2026-11-12T00-00-00Z@sha256:c20d112390b9a9ce8c11b8af95ad35bcaa62f4759663c09c936cd8d2b511f329
+    command: ["server", "/data", "--console-address", ":9001"]
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+      - MINIO_API_CORS_ALLOW_ORIGIN=${MINIO_API_CORS_ALLOW_ORIGIN}
+      - MINIO_API_STALE_UPLOADS_EXPIRY=48h
+    volumes:
+      - storage-data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:9000/minio/health/ready"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  # Execução única: bucket privado e credencial da aplicação restrita a ele (phase-03-videos/TD-06)
+  storage-init:
+    image: pgsty/mc@sha256:b532278b7a3747dbab6fe45eebb40a653efa704e6758e24e9d9ec54fc96c1800
+    entrypoint: ["/bin/sh", "/storage-init.sh"]
+    environment:
+      - MINIO_ROOT_USER=${MINIO_ROOT_USER}
+      - MINIO_ROOT_PASSWORD=${MINIO_ROOT_PASSWORD}
+      - S3_BUCKET=${S3_BUCKET}
+      - S3_ACCESS_KEY_ID=${S3_ACCESS_KEY_ID}
+      - S3_SECRET_ACCESS_KEY=${S3_SECRET_ACCESS_KEY}
+    volumes:
+      - ./docker/storage-init.sh:/storage-init.sh:ro
+    depends_on:
+      storage:
+        condition: service_healthy
+    restart: "no"
+
+  # Fila de jobs do BullMQ, que exige noeviction (phase-03-videos/TD-09)
+  redis:
+    image: redis:8.8.4
+    command: ["redis-server", "--maxmemory-policy", "noeviction"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Provas de navegador da Fase 03 (V-08 e V-09), só com `--profile proofs`; nunca sobe com o ambiente.
+  # Imagem oficial do Playwright na versão do @playwright/test resolvido em next-frontend/package-lock.json
+  # (1.60.0), fixada por digest. A página de prova é servida dentro do próprio container, em
+  # http://localhost:4173 (contexto seguro, exigido pelo Web Crypto), e acessa o storage por `storage:9000`.
+  proof-browser:
+    image: mcr.microsoft.com/playwright:v1.60.0-noble@sha256:9bd26ad900bb5e0f4dee75839e957a89ae89c2b7ab1e76050e559790e946b948
+    profiles: ["proofs"]
+    init: true
+    ipc: host
+    working_dir: /proof
+    volumes:
+      - ./proofs/phase-03/browser:/proof:ro
+    depends_on:
+      storage:
+        condition: service_healthy
+
+volumes:
+  storage-data:
+  redis-data:
 
 

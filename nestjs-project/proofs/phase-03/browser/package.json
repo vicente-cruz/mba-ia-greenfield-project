@@ -1,0 +1,8 @@
+{
+  "name": "phase-03-proof-browser",
+  "private": true,
+  "description": "Dependência do roteiro de navegador da Fase 03 (V-08 e V-09), instalada dentro do serviço proof-browser, fora do diretório montado. A versão é a da imagem oficial do Playwright e do @playwright/test resolvido em next-frontend/package-lock.json.",
+  "dependencies": {
+    "playwright-core": "1.60.0"
+  }
+}

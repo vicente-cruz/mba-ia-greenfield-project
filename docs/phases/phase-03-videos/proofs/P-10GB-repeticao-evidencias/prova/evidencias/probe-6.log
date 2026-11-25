@@ -1,0 +1,5 @@
+ Container p10gbr-20261125142232-bc4b5d-probe-6 Creating 
+ Container p10gbr-20261125142232-bc4b5d-probe-6 Created 
+SONDA | instância 6 | GET /videos/FsHXHpacMj0 | intervalo 2000 ms | timeout 5000 ms | renovação 120 s antes de expirar | duração até SIGINT/SIGTERM
+SONDA | fim (SIGTERM) | 370 amostras em 739.0 s | ok 370 | fora de 2xx 0 (429: 0) | timeout 0 | erro de rede 0 | corpo inesperado 0 | renovações 0
+SONDA | latência das respostas ok (ms): p50 2.8 | p95 5.7 | p99 15.2 | máx 20.8

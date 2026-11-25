@@ -1,0 +1,8 @@
+{"t":1795616090846,"method":"GET","path":"/","status":200,"ms":4.829}
+{"t":1795616091217,"method":"GET","path":"/","status":200,"ms":1.008}
+{"t":1795616094407,"method":"POST","path":"/auth/register","status":201,"ms":226.52}
+{"t":1795616094643,"method":"GET","path":"/auth/confirm-email","status":204,"ms":23.251}
+{"t":1795616094667,"method":"POST","path":"/auth/login","status":200,"ms":80.232}
+{"t":1795616097704,"method":"POST","path":"/auth/register","status":201,"ms":134.23}
+{"t":1795616097847,"method":"GET","path":"/auth/confirm-email","status":204,"ms":10.628}
+{"t":1795616097859,"method":"POST","path":"/auth/login","status":200,"ms":59.309}

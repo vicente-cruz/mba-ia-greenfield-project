@@ -1,0 +1,459 @@
+{
+  "at": "2026-11-24T21:24:27.519Z",
+  "publicId": "UaaveBejRrU",
+  "source": {
+    "sizeBytes": 93092031,
+    "sha256": "bf8c00339f1232e781020a1f49ff789dc4ef641458f59fdbabf89d604b57bcd4",
+    "sha256Ms": 258.4,
+    "boxes": [
+      {
+        "type": "ftyp",
+        "offset": 0,
+        "size": 32
+      },
+      {
+        "type": "moov",
+        "offset": 32,
+        "size": 194203
+      },
+      {
+        "type": "free",
+        "offset": 194235,
+        "size": 8
+      },
+      {
+        "type": "mdat",
+        "offset": 194243,
+        "size": 92897788
+      }
+    ],
+    "ffprobe": {
+      "streams": [
+        {
+          "index": 0,
+          "codec_name": "h264",
+          "codec_long_name": "H.264 / AVC / MPEG-4 AVC / MPEG-4 part 10",
+          "profile": "High",
+          "codec_type": "video",
+          "codec_tag_string": "avc1",
+          "codec_tag": "0x31637661",
+          "width": 1280,
+          "height": 720,
+          "coded_width": 1280,
+          "coded_height": 720,
+          "closed_captions": 0,
+          "film_grain": 0,
+          "has_b_frames": 2,
+          "sample_aspect_ratio": "1:1",
+          "display_aspect_ratio": "16:9",
+          "pix_fmt": "yuv420p",
+          "level": 31,
+          "chroma_location": "left",
+          "field_order": "progressive",
+          "refs": 1,
+          "is_avc": "true",
+          "nal_length_size": "4",
+          "id": "0x1",
+          "r_frame_rate": "30/1",
+          "avg_frame_rate": "30/1",
+          "time_base": "1/15360",
+          "start_pts": 0,
+          "start_time": "0.000000",
+          "duration_ts": 2764800,
+          "duration": "180.000000",
+          "bit_rate": "4001488",
+          "bits_per_raw_sample": "8",
+          "nb_frames": "5400",
+          "extradata_size": 45,
+          "disposition": {
+            "default": 1,
+            "dub": 0,
+            "original": 0,
+            "comment": 0,
+            "lyrics": 0,
+            "karaoke": 0,
+            "forced": 0,
+            "hearing_impaired": 0,
+            "visual_impaired": 0,
+            "clean_effects": 0,
+            "attached_pic": 0,
+            "timed_thumbnails": 0,
+            "captions": 0,
+            "descriptions": 0,
+            "metadata": 0,
+            "dependent": 0,
+            "still_image": 0
+          },
+          "tags": {
+            "language": "und",
+            "handler_name": "VideoHandler",
+            "vendor_id": "[0][0][0][0]",
+            "encoder": "Lavc59.37.100 libx264"
+          }
+        },
+        {
+          "index": 1,
+          "codec_name": "aac",
+          "codec_long_name": "AAC (Advanced Audio Coding)",
+          "profile": "LC",
+          "codec_type": "audio",
+          "codec_tag_string": "mp4a",
+          "codec_tag": "0x6134706d",
+          "sample_fmt": "fltp",
+          "sample_rate": "48000",
+          "channels": 2,
+          "channel_layout": "stereo",
+          "bits_per_sample": 0,
+          "id": "0x2",
+          "r_frame_rate": "0/0",
+          "avg_frame_rate": "0/0",
+          "time_base": "1/48000",
+          "start_pts": 0,
+          "start_time": "0.000000",
+          "duration_ts": 8640000,
+          "duration": "180.000000",
+          "bit_rate": "127286",
+          "nb_frames": "8439",
+          "extradata_size": 5,
+          "disposition": {
+            "default": 1,
+            "dub": 0,
+            "original": 0,
+            "comment": 0,
+            "lyrics": 0,
+            "karaoke": 0,
+            "forced": 0,
+            "hearing_impaired": 0,
+            "visual_impaired": 0,
+            "clean_effects": 0,
+            "attached_pic": 0,
+            "timed_thumbnails": 0,
+            "captions": 0,
+            "descriptions": 0,
+            "metadata": 0,
+            "dependent": 0,
+            "still_image": 0
+          },
+          "tags": {
+            "language": "und",
+            "handler_name": "SoundHandler",
+            "vendor_id": "[0][0][0][0]"
+          }
+        }
+      ],
+      "format": {
+        "filename": "/tmp/fluxo-20261124212322-3c8d00/fluxo.mp4",
+        "nb_streams": 2,
+        "nb_programs": 0,
+        "format_name": "mov,mp4,m4a,3gp,3g2,mj2",
+        "format_long_name": "QuickTime / MOV",
+        "start_time": "0.000000",
+        "duration": "180.000000",
+        "size": "93092031",
+        "bit_rate": "4137423",
+        "probe_score": 100,
+        "tags": {
+          "major_brand": "isom",
+          "minor_version": "512",
+          "compatible_brands": "isomiso2avc1mp41",
+          "encoder": "Lavf59.27.100"
+        }
+      }
+    }
+  },
+  "upload": {
+    "plan": {
+      "t": 1795555458319,
+      "seg": "start",
+      "ev": "plan",
+      "publicId": "UaaveBejRrU",
+      "sessionId": "5c2cee16-31c0-4c31-ab27-b663a4962a57",
+      "sizeBytes": 93092031,
+      "partSize": 67108864,
+      "partCount": 2,
+      "lastPartSize": 25983167,
+      "checksumAlgorithm": "SHA256",
+      "sessionExpiresAt": "2026-11-25T21:24:18.310Z"
+    },
+    "loadIntervals": [
+      {
+        "start": 1795555458484,
+        "end": 1795555460815
+      }
+    ],
+    "start": {
+      "puts": 2,
+      "putBytes": 93092031,
+      "putActiveMs": 908.8,
+      "putMiBps": 97.7,
+      "abortedPuts": 0,
+      "failedPuts": 0,
+      "checksumParts": 2,
+      "checksumBytes": 93092031,
+      "checksumMs": 236.1,
+      "checksumMiBps": 376
+    },
+    "completionStartedAt": "2026-11-24T21:24:20.703Z",
+    "completion": {
+      "t": 1795555460815,
+      "seg": "start",
+      "ev": "completion",
+      "status": 202,
+      "ms": 111.7,
+      "videoStatus": "processing"
+    },
+    "final": {
+      "t": 1795555462831,
+      "seg": "start",
+      "ev": "final",
+      "status": "ready",
+      "errorCode": null,
+      "errorMessage": null,
+      "polls": 2
+    },
+    "processingSeconds": 2.02
+  },
+  "video": {
+    "publicId": "UaaveBejRrU",
+    "status": "ready",
+    "originalFilename": "fluxo-20261124212322-3c8d00.mp4",
+    "contentType": "video/mp4",
+    "sizeBytes": 93092031,
+    "durationSeconds": 180,
+    "width": 1280,
+    "height": 720,
+    "videoCodec": "h264",
+    "audioCodec": "aac",
+    "hasThumbnail": true,
+    "errorCode": null,
+    "errorMessage": null,
+    "uploadSession": {
+      "id": "5c2cee16-31c0-4c31-ab27-b663a4962a57",
+      "status": "completed",
+      "expiresAt": "2026-11-25T21:24:18.310Z"
+    },
+    "createdAt": "2026-11-24T21:24:18.213Z",
+    "updatedAt": "2026-11-24T21:24:21.510Z"
+  },
+  "database": {
+    "thumbnailKey": "thumbnails/<videoId>/ffd058a2-c79e-48b9-8684-b12529f65671.jpg",
+    "mediaFormat": "mov,mp4,m4a,3gp,3g2,mj2"
+  },
+  "storage": {
+    "original": {
+      "contentLength": 93092031,
+      "contentType": "video/mp4"
+    },
+    "thumbnail": {
+      "key": "thumbnails/<videoId>/ffd058a2-c79e-48b9-8684-b12529f65671.jpg",
+      "contentType": "image/jpeg",
+      "contentLength": 43057,
+      "bytes": 43057,
+      "sha256": "125f557c6acc95ebd60acdc573aeec86ca046b9c214acd4ea8a46a770dbd5ccc",
+      "jpeg": true,
+      "codec": "mjpeg",
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "playback": {
+    "requestMs": 6.7,
+    "url": {
+      "host": "localhost:9000",
+      "path": "/streamtube/originals/e2ba2b54-f4d1-4c05-81d8-58f21b14b677/5c2cee16-31c0-4c31-ab27-b663a4962a57",
+      "signed": true
+    },
+    "contentType": "video/mp4",
+    "ttlSeconds": 3600,
+    "ranges": [
+      {
+        "name": "início",
+        "range": "bytes=0-1048575",
+        "status": 206,
+        "contentRange": "bytes 0-1048575/93092031",
+        "contentLength": "1048576",
+        "contentType": "video/mp4",
+        "acceptRanges": "bytes",
+        "bytes": 1048576,
+        "sha256": "07017214059d3fcb604002684ddd47b5fe267bc50a1fd38d142e0eacef5d01a2",
+        "fileSha256": "07017214059d3fcb604002684ddd47b5fe267bc50a1fd38d142e0eacef5d01a2",
+        "firstByteMs": 8,
+        "ms": 14.9
+      },
+      {
+        "name": "meio",
+        "range": "bytes=46546015-47594590",
+        "status": 206,
+        "contentRange": "bytes 46546015-47594590/93092031",
+        "contentLength": "1048576",
+        "contentType": "video/mp4",
+        "acceptRanges": "bytes",
+        "bytes": 1048576,
+        "sha256": "7e04ebfade6a4e0bcd4397b0dc34422276d2dc93c382d0cfac34f3b75fd90ef9",
+        "fileSha256": "7e04ebfade6a4e0bcd4397b0dc34422276d2dc93c382d0cfac34f3b75fd90ef9",
+        "firstByteMs": 4.8,
+        "ms": 8.6
+      },
+      {
+        "name": "fim",
+        "range": "bytes=-1048576",
+        "status": 206,
+        "contentRange": "bytes 92043455-93092030/93092031",
+        "contentLength": "1048576",
+        "contentType": "video/mp4",
+        "acceptRanges": "bytes",
+        "bytes": 1048576,
+        "sha256": "5e42dc3690c700aa8eddc5b53cc5c832d0737c74f1894c891e2b4b103371b2ee",
+        "fileSha256": "5e42dc3690c700aa8eddc5b53cc5c832d0737c74f1894c891e2b4b103371b2ee",
+        "firstByteMs": 5.6,
+        "ms": 12.3
+      }
+    ]
+  },
+  "download": {
+    "requestMs": 5.7,
+    "url": {
+      "host": "localhost:9000",
+      "path": "/streamtube/originals/e2ba2b54-f4d1-4c05-81d8-58f21b14b677/5c2cee16-31c0-4c31-ab27-b663a4962a57",
+      "signed": true
+    },
+    "ttlSeconds": 300,
+    "status": 200,
+    "contentLength": "93092031",
+    "contentType": "video/mp4",
+    "contentDisposition": "attachment; filename=\"fluxo-20261124212322-3c8d00.mp4\"; filename*=UTF-8''fluxo-20261124212322-3c8d00.mp4",
+    "bytes": 93092031,
+    "sha256": "bf8c00339f1232e781020a1f49ff789dc4ef641458f59fdbabf89d604b57bcd4",
+    "firstByteMs": 6.3,
+    "bodyMs": 401.1,
+    "mibps": 221.3
+  },
+  "checks": [
+    {
+      "item": "arquivo enviado: contêiner, codecs e duração (ffprobe)",
+      "expected": "mp4 com um fluxo h264 e um aac, ao menos 120 s",
+      "observed": "mov,mp4,m4a,3gp,3g2,mj2; 2 fluxos; vídeo h264 High 1280x720 yuv420p 30/1; áudio aac LC 48000 Hz 2 canais; 180 s; 4137423 bit/s",
+      "passed": true
+    },
+    {
+      "item": "sem preenchimento artificial (caixas de topo do MP4)",
+      "expected": "só ftyp, moov e mdat, e no máximo 1 KiB em free ou skip",
+      "observed": "ftyp 32, moov 194203, free 8, mdat 92897788; free/skip 8 bytes; mdat 99.79% do arquivo",
+      "passed": true
+    },
+    {
+      "item": "plano do upload",
+      "expected": "93092031 bytes em 2 partes de 67108864",
+      "observed": "93092031 bytes em 2 partes de 67108864, a última com 25983167",
+      "passed": true
+    },
+    {
+      "item": "completion",
+      "expected": "HTTP 202",
+      "observed": "HTTP 202 em 111.7 ms, vídeo processing",
+      "passed": true
+    },
+    {
+      "item": "polling até o estado final",
+      "expected": "ready",
+      "observed": "ready em 2 consultas, 2.02 s depois do 202",
+      "passed": true
+    },
+    {
+      "item": "estado, tamanho e tipo pela API",
+      "expected": "ready sem erro, 93092031 bytes, video/mp4",
+      "observed": "ready sem erro, 93092031 bytes, video/mp4",
+      "passed": true
+    },
+    {
+      "item": "duração",
+      "expected": "180 s (ffprobe do arquivo enviado, com 3 casas)",
+      "observed": "180 s",
+      "passed": true
+    },
+    {
+      "item": "dimensões",
+      "expected": "1280x720",
+      "observed": "1280x720",
+      "passed": true
+    },
+    {
+      "item": "codecs",
+      "expected": "h264 e aac",
+      "observed": "h264 e aac",
+      "passed": true
+    },
+    {
+      "item": "hasThumbnail",
+      "expected": "true",
+      "observed": "true",
+      "passed": true
+    },
+    {
+      "item": "thumbnail_key no banco",
+      "expected": "thumbnails/<videoId>/<attemptId>.jpg",
+      "observed": "thumbnails/<videoId>/ffd058a2-c79e-48b9-8684-b12529f65671.jpg",
+      "passed": true
+    },
+    {
+      "item": "media_format no banco",
+      "expected": "mov,mp4,m4a,3gp,3g2,mj2",
+      "observed": "mov,mp4,m4a,3gp,3g2,mj2",
+      "passed": true
+    },
+    {
+      "item": "objeto original no storage (HeadObject)",
+      "expected": "93092031 bytes",
+      "observed": "93092031 bytes, video/mp4",
+      "passed": true
+    },
+    {
+      "item": "objeto da thumbnail no storage",
+      "expected": "image/jpeg, JPEG com SOI e EOI, 1280x720",
+      "observed": "image/jpeg, 43057 bytes, JPEG com SOI e EOI, mjpeg 1280x720",
+      "passed": true
+    },
+    {
+      "item": "playback-url",
+      "expected": "200, URL assinada no endpoint público, video/mp4",
+      "observed": "200 em 6.7 ms; host localhost:9000; assinada sim; video/mp4; expira em 3600 s",
+      "passed": true
+    },
+    {
+      "item": "Range início (bytes=0-1048575)",
+      "expected": "206, Content-Range bytes 0-1048575/93092031, 1048576 bytes iguais aos do arquivo",
+      "observed": "206, Content-Range bytes 0-1048575/93092031, Content-Length 1048576, 1048576 bytes iguais, video/mp4, 14.9 ms",
+      "passed": true
+    },
+    {
+      "item": "Range meio (bytes=46546015-47594590)",
+      "expected": "206, Content-Range bytes 46546015-47594590/93092031, 1048576 bytes iguais aos do arquivo",
+      "observed": "206, Content-Range bytes 46546015-47594590/93092031, Content-Length 1048576, 1048576 bytes iguais, video/mp4, 8.6 ms",
+      "passed": true
+    },
+    {
+      "item": "Range fim (bytes=-1048576)",
+      "expected": "206, Content-Range bytes 92043455-93092030/93092031, 1048576 bytes iguais aos do arquivo",
+      "observed": "206, Content-Range bytes 92043455-93092030/93092031, Content-Length 1048576, 1048576 bytes iguais, video/mp4, 12.3 ms",
+      "passed": true
+    },
+    {
+      "item": "download-url",
+      "expected": "200, URL assinada no endpoint público",
+      "observed": "200 em 5.7 ms; host localhost:9000; assinada sim; expira em 300 s",
+      "passed": true
+    },
+    {
+      "item": "download completo",
+      "expected": "200, 93092031 bytes, SHA-256 igual ao do arquivo enviado (bf8c00339f1232e781020a1f49ff789dc4ef641458f59fdbabf89d604b57bcd4)",
+      "observed": "200, Content-Length 93092031, 93092031 bytes, SHA-256 bf8c00339f1232e781020a1f49ff789dc4ef641458f59fdbabf89d604b57bcd4, 401.1 ms (221.3 MiB/s)",
+      "passed": true
+    },
+    {
+      "item": "Content-Disposition do download",
+      "expected": "attachment com o nome original (fluxo-20261124212322-3c8d00.mp4)",
+      "observed": "attachment; filename=\"fluxo-20261124212322-3c8d00.mp4\"; filename*=UTF-8''fluxo-20261124212322-3c8d00.mp4",
+      "passed": true
+    }
+  ]
+}

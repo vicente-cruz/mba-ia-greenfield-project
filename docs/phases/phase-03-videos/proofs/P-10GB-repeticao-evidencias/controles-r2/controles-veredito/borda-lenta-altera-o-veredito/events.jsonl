@@ -1,0 +1,10 @@
+{"t": 1800000704700, "seg": "start", "ev": "segment_start"}
+{"t": 1800000705000, "seg": "start", "ev": "load_start"}
+{"t": 1800000905000, "seg": "start", "ev": "load_end"}
+{"t": 1800000905060, "seg": "start", "ev": "segment_end"}
+{"t": 1800000924700, "seg": "resume", "ev": "segment_start"}
+{"t": 1800000925000, "seg": "resume", "ev": "load_start"}
+{"t": 1800000935000, "seg": "resume", "ev": "load_end"}
+{"t": 1800000943000, "seg": "resume", "ev": "load_start"}
+{"t": 1800000943089, "seg": "resume", "ev": "load_end"}
+{"t": 1800000945089, "seg": "resume", "ev": "segment_end"}

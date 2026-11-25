@@ -1,0 +1,13 @@
+FASE | base (700 s) | 4550 amostras (instância 1: 350, instância 2: 350, instância 3: 350, instância 4: 350, instância 5: 350, instância 6: 350, instância 7: 350, instância 8: 350, instância 9: 350, instância 10: 350, instância 11: 350, instância 12: 350, instância 13: 350) | p50 5 ms | p95 5 ms | p99 5 ms | máx 5 ms | fora de 2xx 0 | 429 0 | timeout 0 | erro de rede 0 | corpo inesperado 0
+FASE | carga nominal (210.1 s de upload ativo, 3 intervalos) | 302 amostras (instância 1: 24, instância 2: 24, instância 3: 24, instância 4: 23, instância 5: 23, instância 6: 23, instância 7: 23, instância 8: 23, instância 9: 23, instância 10: 23, instância 11: 23, instância 12: 23, instância 13: 23) | p50 10 ms | p95 10 ms | p99 10 ms | máx 10 ms | fora de 2xx 0 | 429 0 | timeout 0 | erro de rede 0 | corpo inesperado 0
+FASE | aquecimento | 0 amostras () | p50 NaN ms | p95 NaN ms | p99 NaN ms | máx NaN ms | fora de 2xx 0 | 429 0 | timeout 0 | erro de rede 0 | corpo inesperado 0
+FASE | fora da base e da carga | 0 amostras () | p50 NaN ms | p95 NaN ms | p99 NaN ms | máx NaN ms | fora de 2xx 0 | 429 0 | timeout 0 | erro de rede 0 | corpo inesperado 0
+FASE | todas as amostras | 4852 amostras (instância 1: 374, instância 2: 374, instância 3: 374, instância 4: 373, instância 5: 373, instância 6: 373, instância 7: 373, instância 8: 373, instância 9: 373, instância 10: 373, instância 11: 373, instância 12: 373, instância 13: 373) | p50 5 ms | p95 10 ms | p99 10 ms | máx 10 ms | fora de 2xx 0 | 429 0 | timeout 0 | erro de rede 0 | corpo inesperado 0
+AMOSTRAS | mínimo de 300 por fase: atingido na carga nominal (base 4550, carga 302) | N recalculado pela D medida: 3
+INCERTEZA | relógio do cliente ± 157 ms, registrada à parte (intervalos nominais preservados) | amostras de borda: 6 (6 na carga nominal, 0 fora) | carga certa: 296 | carga possível: 296 a 302 | p95 de 10 a 10 ms | p99 de 10 a 10 ms
+INCERTEZA | possíveis: (a) inconclusivo, aprovado | (b) inconclusivo, aprovado | suficiência não atingida, atingida
+INCERTEZA | borda mais lenta: instância 1, 10 ms (ok), a 50 ms do início do intervalo 1, dentro da carga nominal
+VEREDITO | (a) p95 carga 10 ms ≤ 55 ms (max(1,5 × p95 base; p95 base + 50 ms)) | inconclusivo (nominal: aprovado; a incerteza do relógio pode alterar o veredito)
+VEREDITO | (b) p95 carga 10 ms ≤ 250 ms e p99 carga 10 ms ≤ 500 ms | inconclusivo (nominal: aprovado; a incerteza do relógio pode alterar o veredito)
+VEREDITO | (c) 0 amostras sem 2xx válido em 4852 (fora de 2xx 0, 429 0, timeout 0, erro de rede 0, corpo inesperado 0) | aprovado
+VEREDITO | latência | inconclusivo

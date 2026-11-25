@@ -1,0 +1,6 @@
+ Container p10gb-20261124215534-349fa9-probe-1 Creating 
+ Container p10gb-20261124215534-349fa9-probe-1 Created 
+SONDA | instância 1 | GET /videos/kM0J6kGmFtk | intervalo 2000 ms | timeout 5000 ms | renovação 120 s antes de expirar | duração até SIGINT/SIGTERM
+SONDA | access token renovado por POST /auth/refresh em 359.6 ms (fora das amostras); expira 2026-11-24T22:25:45.000Z
+SONDA | fim (SIGTERM) | 429 amostras em 856.9 s | ok 429 | fora de 2xx 0 (429: 0) | timeout 0 | erro de rede 0 | corpo inesperado 0 | renovações 1
+SONDA | latência das respostas ok (ms): p50 3.4 | p95 281.5 | p99 1334.7 | máx 3622.3

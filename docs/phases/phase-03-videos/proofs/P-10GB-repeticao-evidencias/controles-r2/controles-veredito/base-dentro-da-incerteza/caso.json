@@ -1,0 +1,10 @@
+{
+  "descricao": "a base termina a 100 ms do primeiro intervalo, menos que a incerteza: o veredito é recusado",
+  "baselineStart": 1800000000000,
+  "baselineEnd": 1800000704900,
+  "uncertaintyMs": 157,
+  "esperado": {
+    "codigo_diferente_de_zero": true,
+    "mensagem": "descontada a incerteza do relógio"
+  }
+}

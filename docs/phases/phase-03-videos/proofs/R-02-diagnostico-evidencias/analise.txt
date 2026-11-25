@@ -1,0 +1,135 @@
+# Diagnóstico R-02 — medidas por fase
+
+## A0-repouso (60.2 s)
+- sonda: 120 amostras | p50 3.8 | p95 9.6 | p99 11.7 | máx 12.3 ms | >250 ms: 0 | falhas: 0
+- API, GET /videos/:id no servidor: 120 | p50 3.00 | p95 7.38 | máx 11.37 ms
+- event loop da API (máx por segundo): mediana 10.4 | p95 11.2 | máx 83.2 ms | segundos > 100 ms: 0
+- processo da API: faltas de página maiores 0 | CPU média 2.0% | RSS máx 236 MiB
+- swap do processo da API (VmSwap): mín 0 | máx 0 kB
+- pg na API: consultas 240 | p95 1.94 | máx 3.65 ms | espera do pool máx 0.12 ms
+- sonda do PostgreSQL (no db): 0 | p50 n/a | p95 n/a | máx n/a ms
+- VM: swap in 12 pág (0/s) | swap out 0 pág (0/s) | faltas maiores 18 pág (0/s) | PSI cpu_some 0.3% | PSI io_some 0.0% | PSI io_full 0.0% | PSI memory_some 0.0% | PSI memory_full 0.0% | CPU ocupada 3.8% | iowait 0.0% | MemAvailable mín 3334 MiB | SwapFree mín 486 MiB
+- CPU dos containers: db mediana 0% máx 8% | nestjs-api mediana 7% máx 155% | sonda mediana 0% máx 31% | storage mediana 0% máx 3% | video-worker mediana 0% máx 3%
+
+## A1-sha256-cache (60.4 s)
+- sonda: 120 amostras | p50 3.2 | p95 4.3 | p99 11.3 | máx 13.7 ms | >250 ms: 0 | falhas: 0
+- API, GET /videos/:id no servidor: 120 | p50 2.51 | p95 3.38 | máx 12.57 ms
+- event loop da API (máx por segundo): mediana 10.4 | p95 10.9 | máx 11.4 ms | segundos > 100 ms: 0
+- processo da API: faltas de página maiores 0 | CPU média 0.9% | RSS máx 162 MiB
+- swap do processo da API (VmSwap): mín 0 | máx 0 kB
+- pg na API: consultas 240 | p95 0.93 | máx 2.25 ms | espera do pool máx 8.02 ms
+- sonda do PostgreSQL (no db): 0 | p50 n/a | p95 n/a | máx n/a ms
+- VM: swap in 8 pág (0/s) | swap out 0 pág (0/s) | faltas maiores 10 pág (0/s) | PSI cpu_some 0.2% | PSI io_some 0.0% | PSI io_full 0.0% | PSI memory_some 0.0% | PSI memory_full 0.0% | CPU ocupada 10.8% | iowait 0.0% | MemAvailable mín 3449 MiB | SwapFree mín 486 MiB
+- CPU dos containers: db mediana 0% máx 6% | nestjs-api mediana 122% máx 125% | sonda mediana 0% máx 0% | storage mediana 0% máx 4% | video-worker mediana 1% máx 1%
+
+## A2-sha256-frio (60.4 s)
+- sonda: 120 amostras | p50 3.4 | p95 8.6 | p99 1050.4 | máx 1067.5 ms | >250 ms: 4 | falhas: 0
+- API, GET /videos/:id no servidor: 120 | p50 2.68 | p95 6.84 | máx 892.17 ms
+- amostras lentas com a requisição achada no servidor: 4 de 4
+  - chegada ao handler (disparo → request): mediana 172.0 | máx 177.0 ms
+  - no servidor (request → finish): mediana 274.52 | máx 274.52 ms
+  - restante (finish → sonda): mediana 1.5 | máx 621.9 ms
+- event loop da API (máx por segundo): mediana 10.3 | p95 11.7 | máx 269.0 ms | segundos > 100 ms: 1
+- processo da API: faltas de página maiores 0 | CPU média 2.0% | RSS máx 162 MiB
+- swap do processo da API (VmSwap): mín 0 | máx 0 kB
+- pg na API: consultas 240 | p95 1.81 | máx 269.68 ms | espera do pool máx 887.54 ms
+- sonda do PostgreSQL (no db): 0 | p50 n/a | p95 n/a | máx n/a ms
+- VM: swap in 5 pág (0/s) | swap out 0 pág (0/s) | faltas maiores 8 pág (0/s) | PSI cpu_some 0.6% | PSI io_some 1.3% | PSI io_full 1.1% | PSI memory_some 0.0% | PSI memory_full 0.0% | CPU ocupada 12.0% | iowait 0.5% | MemAvailable mín 3442 MiB | SwapFree mín 486 MiB
+- CPU dos containers: db mediana 0% máx 7% | nestjs-api mediana 135% máx 240% | sonda mediana 0% máx 0% | storage mediana 0% máx 3% | video-worker mediana 0% máx 3%
+
+## A3-sha256-frio-outro-container (60.1 s)
+- sonda: 120 amostras | p50 3.6 | p95 6.4 | p99 10.0 | máx 24.0 ms | >250 ms: 0 | falhas: 0
+- API, GET /videos/:id no servidor: 120 | p50 2.73 | p95 4.71 | máx 22.26 ms
+- event loop da API (máx por segundo): mediana 10.4 | p95 11.2 | máx 14.8 ms | segundos > 100 ms: 0
+- processo da API: faltas de página maiores 0 | CPU média 1.0% | RSS máx 162 MiB
+- swap do processo da API (VmSwap): mín 0 | máx 0 kB
+- pg na API: consultas 240 | p95 1.27 | máx 3.89 ms | espera do pool máx 13.74 ms
+- sonda do PostgreSQL (no db): 0 | p50 n/a | p95 n/a | máx n/a ms
+- VM: swap in 20 pág (0/s) | swap out 0 pág (0/s) | faltas maiores 21 pág (0/s) | PSI cpu_some 0.3% | PSI io_some 0.3% | PSI io_full 0.3% | PSI memory_some 0.0% | PSI memory_full 0.0% | CPU ocupada 11.8% | iowait 0.1% | MemAvailable mín 3420 MiB | SwapFree mín 486 MiB
+- CPU dos containers: db mediana 1% máx 6% | nestjs-api mediana 7% máx 9% | sonda mediana 0% máx 0% | storage mediana 0% máx 8% | video-worker mediana 1% máx 17%
+
+## A4 (14.1 s)
+- sonda: 28 amostras | p50 7.5 | p95 250.4 | p99 1650.3 | máx 1650.3 ms | >250 ms: 2 | falhas: 0
+- API, GET /videos/:id no servidor: 30 | p50 5.18 | p95 125.86 | máx 179.94 ms
+- amostras lentas com a requisição achada no servidor: 2 de 2
+  - chegada ao handler (disparo → request): mediana 61.0 | máx 1466.0 ms
+  - no servidor (request → finish): mediana 125.86 | máx 125.86 ms
+  - restante (finish → sonda): mediana 58.5 | máx 63.6 ms
+- event loop da API (máx por segundo): mediana 11.1 | p95 1072.7 | máx 1072.7 ms | segundos > 100 ms: 2
+- processo da API: faltas de página maiores 3 | CPU média 4.2% | RSS máx 164 MiB
+- swap do processo da API (VmSwap): mín 0 | máx 0 kB
+- pg na API: consultas 120 | p95 10.40 | máx 92.91 ms | espera do pool máx 89.50 ms
+- sonda do PostgreSQL (no db): 0 | p50 n/a | p95 n/a | máx n/a ms
+- VM: swap in 21 pág (2/s) | swap out 1177 pág (88/s) | faltas maiores 542 pág (41/s) | PSI cpu_some 7.9% | PSI io_some 5.4% | PSI io_full 4.9% | PSI memory_some 8.0% | PSI memory_full 7.7% | CPU ocupada 26.0% | iowait 3.6% | MemAvailable mín 3032 MiB | SwapFree mín 479 MiB
+- CPU dos containers: db mediana 7% máx 11% | nestjs-api mediana 196% máx 258% | sonda mediana 0% máx 0% | storage mediana 21% máx 189% | video-worker mediana 1% máx 74%
+
+## A4-upload-ativo (9.1 s)
+- sonda: 20 amostras | p50 7.8 | p95 250.4 | p99 1650.3 | máx 1650.3 ms | >250 ms: 2 | falhas: 0
+- API, GET /videos/:id no servidor: 20 | p50 5.87 | p95 125.86 | máx 179.94 ms
+- amostras lentas com a requisição achada no servidor: 2 de 2
+  - chegada ao handler (disparo → request): mediana 61.0 | máx 1466.0 ms
+  - no servidor (request → finish): mediana 125.86 | máx 125.86 ms
+  - restante (finish → sonda): mediana 58.5 | máx 63.6 ms
+- event loop da API (máx por segundo): mediana 11.2 | p95 1072.7 | máx 1072.7 ms | segundos > 100 ms: 2
+- processo da API: faltas de página maiores 3 | CPU média 4.0% | RSS máx 163 MiB
+- swap do processo da API (VmSwap): mín 0 | máx 0 kB
+- pg na API: consultas 91 | p95 15.41 | máx 92.91 ms | espera do pool máx 89.50 ms
+- sonda do PostgreSQL (no db): 0 | p50 n/a | p95 n/a | máx n/a ms
+- VM: swap in 11 pág (1/s) | swap out 332 pág (40/s) | faltas maiores 51 pág (6/s) | PSI cpu_some 12.3% | PSI io_some 7.4% | PSI io_full 6.6% | PSI memory_some 5.6% | PSI memory_full 5.2% | CPU ocupada 32.7% | iowait 5.9% | MemAvailable mín 3032 MiB | SwapFree mín 482 MiB
+- CPU dos containers: db mediana 1% máx 11% | nestjs-api mediana 16% máx 258% | sonda mediana 0% máx 0% | storage mediana 21% máx 189% | video-worker mediana 1% máx 74%
+
+## troca-de-modo (26.1 s)
+- sonda: 52 amostras | p50 3.4 | p95 23.4 | p99 41.9 | máx 41.9 ms | >250 ms: 0 | falhas: 12
+- API, GET /videos/:id no servidor: 40 | p50 2.85 | p95 21.20 | máx 31.84 ms
+- event loop da API (máx por segundo): mediana 10.4 | p95 15.6 | máx 28.9 ms | segundos > 100 ms: 0
+- processo da API: faltas de página maiores -34 | CPU média 13.9% | RSS máx 211 MiB
+- swap do processo da API (VmSwap): mín 0 | máx 0 kB
+- pg na API: consultas 82 | p95 2.79 | máx 4.97 ms | espera do pool máx 61.89 ms
+- sonda do PostgreSQL (no db): 0 | p50 n/a | p95 n/a | máx n/a ms
+- VM: swap in 2 pág (0/s) | swap out 0 pág (0/s) | faltas maiores 67 pág (3/s) | PSI cpu_some 0.3% | PSI io_some 0.1% | PSI io_full 0.1% | PSI memory_some 0.0% | PSI memory_full 0.0% | CPU ocupada 7.2% | iowait 0.0% | MemAvailable mín 3885 MiB | SwapFree mín 479 MiB
+- CPU dos containers: db mediana 0% máx 7% | nestjs-api mediana 4% máx 22% | sonda mediana 0% máx 1% | storage mediana 0% máx 4% | video-worker mediana 1% máx 1%
+
+## B0-repouso (60.2 s)
+- sonda: 120 amostras | p50 2.8 | p95 5.9 | p99 17.8 | máx 24.4 ms | >250 ms: 0 | falhas: 0
+- API, GET /videos/:id no servidor: 120 | p50 2.18 | p95 4.06 | máx 16.37 ms
+- event loop da API (máx por segundo): mediana 10.4 | p95 11.1 | máx 12.8 ms | segundos > 100 ms: 0
+- processo da API: faltas de página maiores 0 | CPU média 1.0% | RSS máx 230 MiB
+- swap do processo da API (VmSwap): mín 0 | máx 0 kB
+- pg na API: consultas 240 | p95 1.03 | máx 9.87 ms | espera do pool máx 9.09 ms
+- sonda do PostgreSQL (no db): 0 | p50 n/a | p95 n/a | máx n/a ms
+- VM: swap in 6 pág (0/s) | swap out 0 pág (0/s) | faltas maiores 11 pág (0/s) | PSI cpu_some 0.2% | PSI io_some 0.1% | PSI io_full 0.1% | PSI memory_some 0.0% | PSI memory_full 0.0% | CPU ocupada 2.9% | iowait 0.0% | MemAvailable mín 3904 MiB | SwapFree mín 479 MiB
+- CPU dos containers: db mediana 0% máx 6% | nestjs-api mediana 5% máx 6% | sonda mediana 0% máx 0% | storage mediana 0% máx 3% | video-worker mediana 0% máx 1%
+
+## B2-sha256-frio (60.4 s)
+- sonda: 124 amostras | p50 3.4 | p95 7.1 | p99 16.6 | máx 34.0 ms | >250 ms: 0 | falhas: 0
+- API, GET /videos/:id no servidor: 124 | p50 2.62 | p95 5.88 | máx 31.83 ms
+- event loop da API (máx por segundo): mediana 10.3 | p95 11.2 | máx 14.2 ms | segundos > 100 ms: 0
+- processo da API: faltas de página maiores 0 | CPU média 1.1% | RSS máx 234 MiB
+- swap do processo da API (VmSwap): mín 0 | máx 0 kB
+- pg na API: consultas 248 | p95 1.49 | máx 4.96 ms | espera do pool máx 21.36 ms
+- sonda do PostgreSQL (no db): 0 | p50 n/a | p95 n/a | máx n/a ms
+- VM: swap in 4 pág (0/s) | swap out 0 pág (0/s) | faltas maiores 45 pág (1/s) | PSI cpu_some 0.3% | PSI io_some 0.1% | PSI io_full 0.1% | PSI memory_some 0.0% | PSI memory_full 0.0% | CPU ocupada 11.6% | iowait 0.1% | MemAvailable mín 3795 MiB | SwapFree mín 479 MiB
+- CPU dos containers: db mediana 0% máx 6% | nestjs-api mediana 135% máx 148% | sonda mediana 0% máx 1% | storage mediana 0% máx 4% | video-worker mediana 1% máx 1%
+
+## B4 (16.3 s)
+- sonda: 32 amostras | p50 5.0 | p95 91.9 | p99 92.4 | máx 92.4 ms | >250 ms: 0 | falhas: 0
+- API, GET /videos/:id no servidor: 34 | p50 3.79 | p95 69.34 | máx 69.95 ms
+- event loop da API (máx por segundo): mediana 12.3 | p95 1512.0 | máx 1512.0 ms | segundos > 100 ms: 3
+- processo da API: faltas de página maiores 17 | CPU média 4.4% | RSS máx 236 MiB
+- swap do processo da API (VmSwap): mín 0 | máx 0 kB
+- pg na API: consultas 136 | p95 3.46 | máx 18.26 ms | espera do pool máx 50.13 ms
+- sonda do PostgreSQL (no db): 0 | p50 n/a | p95 n/a | máx n/a ms
+- VM: swap in 9 pág (1/s) | swap out 636 pág (40/s) | faltas maiores 665 pág (42/s) | PSI cpu_some 4.3% | PSI io_some 19.2% | PSI io_full 14.5% | PSI memory_some 2.6% | PSI memory_full 2.6% | CPU ocupada 19.4% | iowait 10.2% | MemAvailable mín 3344 MiB | SwapFree mín 477 MiB
+- CPU dos containers: db mediana 1% máx 7% | nestjs-api mediana 35% máx 245% | sonda mediana 0% máx 0% | storage mediana 17% máx 178% | video-worker mediana 1% máx 5%
+
+## B4-upload-ativo (11.7 s)
+- sonda: 24 amostras | p50 4.4 | p95 91.9 | p99 92.4 | máx 92.4 ms | >250 ms: 0 | falhas: 0
+- API, GET /videos/:id no servidor: 24 | p50 3.02 | p95 69.34 | máx 69.95 ms
+- event loop da API (máx por segundo): mediana 17.5 | p95 1512.0 | máx 1512.0 ms | segundos > 100 ms: 3
+- processo da API: faltas de página maiores 16 | CPU média 5.3% | RSS máx 236 MiB
+- swap do processo da API (VmSwap): mín 0 | máx 0 kB
+- pg na API: consultas 107 | p95 3.29 | máx 18.26 ms | espera do pool máx 50.13 ms
+- sonda do PostgreSQL (no db): 0 | p50 n/a | p95 n/a | máx n/a ms
+- VM: swap in 6 pág (1/s) | swap out 633 pág (57/s) | faltas maiores 304 pág (27/s) | PSI cpu_some 5.9% | PSI io_some 27.4% | PSI io_full 20.7% | PSI memory_some 3.6% | PSI memory_full 3.6% | CPU ocupada 21.7% | iowait 15.1% | MemAvailable mín 3344 MiB | SwapFree mín 477 MiB
+- CPU dos containers: db mediana 1% máx 7% | nestjs-api mediana 65% máx 245% | sonda mediana 0% máx 0% | storage mediana 77% máx 178% | video-worker mediana 1% máx 5%
+

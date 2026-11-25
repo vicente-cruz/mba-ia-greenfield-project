@@ -18,14 +18,14 @@ Este é um projeto greenfield desenvolvido para demonstrar como construir uma ap
 
 ## Quadro Branco
 
-- [Quadro Branco](./whiteboard.png)
+- [Quadro Branco](./whiteboard.svg)
 
 ---
 
 ## 🎨 Design System (Figma)
 
 - [FC Tube.fig](./FC%20Tube.fig) — arquivo-fonte do **design system** do projeto no Figma.
-- [FC Tube sem padrão.fig](./FC%20Tube%20sem%20padrao.fig) — arquivo-fonte puro, sem tokens, cores, tipografia e espaçamento.
+- [FC Tube sem padrão.fig](./FC%20Tube%20sem%20padr%C3%A3o.fig) — arquivo-fonte puro, sem tokens, cores, tipografia e espaçamento.
 
 Contém os fundamentos visuais do StreamTube — tokens (cores, tipografia, espaçamento, raios), componentes e as telas da plataforma. É a referência de design para a implementação do frontend: os componentes em `next-frontend/components/ui` (shadcn) e os tokens em `next-frontend/app/globals.css` derivam deste arquivo. Abra-o no Figma (`Arquivo → Importar`) para consultar especificações e estados visuais.
 
@@ -42,12 +42,12 @@ Contém os fundamentos visuais do StreamTube — tokens (cores, tipografia, espa
 O projeto é um monorepo baseado em containers Docker. Cada subprojeto sobe sua própria stack via `docker compose`.
 
 - **Frontend** (Next.js 16, App Router + React Server Components) — interface da plataforma. Segue o **modelo BFF**: o navegador nunca chama a API NestJS diretamente; todo tráfego passa por Route Handlers same-origin em `app/api/**`, que fazem proxy server-side para a API.
-- **API** (NestJS 11) — regras de negócio, autenticação (JWT + refresh token rotation), envio de e-mails e acesso ao banco.
-- **Database** (PostgreSQL 17) — usuários, canais e tokens de autenticação.
+- **API** (NestJS 11) — regras de negócio, autenticação (JWT + refresh token rotation), envio de e-mails, acesso ao banco e orquestração do upload (multipart com URLs pré-assinadas, sem que os bytes passem pela API).
+- **Database** (PostgreSQL 17) — usuários, canais, tokens de autenticação, vídeos e sessões e partes de upload.
 - **Email Service** (Mailpit) — captura os e-mails transacionais (confirmação de conta e recuperação de senha) em uma UI local.
-- **Video Worker** (FFmpeg) — processamento de vídeos *(planejado — Fase 03)*.
-- **Object Storage** (S3/MinIO) — arquivos de vídeo e thumbnails *(planejado — Fase 03)*.
-- **Message Queue** — fila de processamento de vídeos *(planejado — Fase 03)*.
+- **Video Worker** (NestJS + FFmpeg) — valida o vídeo, extrai metadados e thumbnail e roda a manutenção do upload *(Fase 03)*.
+- **Object Storage** (S3-compatível: Silo, fork comunitário do MinIO) — originais e thumbnails, acessados por URLs pré-assinadas *(Fase 03)*.
+- **Message Queue** (BullMQ + Redis) — filas de processamento e de manutenção *(Fase 03)*.
 
 O diagrama de arquitetura completo (C4) está em `docs/diagrams/software-arch.mermaid`.
 
@@ -55,16 +55,22 @@ O diagrama de arquitetura completo (C4) está em `docs/diagrams/software-arch.me
 
 Os dois subprojetos têm stacks Docker **separadas**. Suba primeiro o backend, rode as migrations e depois o frontend.
 
-### 1. Backend (NestJS + PostgreSQL + Mailpit)
+### 1. Backend (NestJS, PostgreSQL, Mailpit, storage, Redis e video-worker)
 
 ```bash
 cd nestjs-project
 
-# Sobe API, banco e Mailpit
+# Cria o .env a partir do exemplo (apenas na primeira vez; revise as credenciais antes de subir)
+cp .env.example .env
+
+# Sobe API, banco, Mailpit, storage (Silo), Redis e o video-worker
 docker compose up -d
 
 # Instala dependências (apenas na primeira vez)
 docker compose exec nestjs-api npm install
+
+# Sobe de novo o video-worker: sem node_modules na primeira subida, ele termina ao iniciar
+docker compose up -d video-worker
 
 # Cria o schema do banco (obrigatório — synchronize está desabilitado)
 docker compose exec nestjs-api npm run migration:run
@@ -80,7 +86,11 @@ Serviços disponíveis:
 | API NestJS | http://localhost:3000 |
 | PostgreSQL | `localhost:5432` (db/user/senha: `streamtube`) |
 | Mailpit (UI de e-mails) | http://localhost:8025 |
+| Storage — API S3 (Silo) | http://localhost:9000 |
+| Storage — console | http://localhost:9001 |
 | Swagger (opcional) | http://localhost:3000/api/docs — habilite com `SWAGGER_ENABLED=true` |
+
+O Redis fica só na rede do Compose, e o `video-worker` sobe junto com o `docker compose up -d`. Verificações de prontidão, comandos do worker e provas da Fase 03: [`nestjs-project/README.md`](nestjs-project/README.md).
 
 ### 2. Frontend (Next.js)
 
@@ -126,6 +136,14 @@ Sufixos: `*.test.ts(x)` (unitário), `*.integration.test.ts(x)` (Route Handlers 
 
 **Fase 01 — Configuração base** e **Fase 02 — Autenticação** estão concluídas (backend + frontend).
 
+A **Fase 03 — Upload e processamento de vídeos** está concluída no backend (`nestjs-project`). O frontend não tem telas de vídeo nesta fase. Ela entrega:
+- upload direto e retomável de até 10 GB para o storage, por URLs pré-assinadas;
+- o vídeo criado como rascunho no canal do usuário;
+- fila e worker com FFmpeg para metadados e thumbnail;
+- URLs de reprodução e de download.
+
+Os endpoints, a operação e as provas, inclusive a de 10 GB, estão em [`nestjs-project/README.md`](nestjs-project/README.md) e em [`docs/phases/phase-03-videos/`](docs/phases/phase-03-videos/).
+
 ### Autenticação (Fase 02)
 
 Fluxo completo de **cadastro → confirmação por e-mail → login → recuperação de senha**, com canal criado automaticamente para cada usuário (a partir do prefixo do e-mail).
@@ -160,7 +178,8 @@ green-field-ia-project/
 │   ├── phases/                          # Planos e implementação por fase
 │   │   ├── phase-01-configuracao-base/
 │   │   ├── phase-02-auth/               # Auth (backend)
-│   │   └── phase-02-auth-frontend/      # Auth (frontend)
+│   │   ├── phase-02-auth-frontend/      # Auth (frontend)
+│   │   └── phase-03-videos/             # Vídeos (backend): progresso, validação e provas
 │   └── diagrams/
 │       └── software-arch.mermaid        # Diagrama de arquitetura (C4)
 ├── nestjs-project/                      # Backend API (NestJS 11)
@@ -169,11 +188,15 @@ green-field-ia-project/
 │   │   ├── users/                       # Entidade e serviço de usuários
 │   │   ├── channels/                    # Canal 1:1 por usuário (nickname do e-mail)
 │   │   ├── mail/                        # Envio de e-mails (templates Handlebars)
+│   │   ├── videos/                      # Vídeos e sessões de upload (Fase 03)
+│   │   ├── storage/                     # Cliente S3 e URLs pré-assinadas (Fase 03)
+│   │   ├── worker/                      # Processamento e manutenção (entry point src/worker.ts)
 │   │   ├── common/                      # Filtros, pipes e exceptions de domínio
 │   │   ├── config/                      # Configs namespaced (Joi)
 │   │   └── database/                    # data-source, migrations e seeds
 │   ├── test/                            # Testes e2e
-│   ├── compose.yaml                     # Docker Compose (API + PostgreSQL + Mailpit)
+│   ├── proofs/                          # Scripts das provas da Fase 03 (fora do build)
+│   ├── compose.yaml                     # Docker Compose (API, PostgreSQL, Mailpit, storage, Redis e video-worker)
 │   └── Dockerfile.dev
 ├── next-frontend/                       # Frontend (Next.js 16, App Router)
 │   ├── app/                             # Rotas, layouts, páginas e Route Handlers BFF
@@ -185,7 +208,7 @@ green-field-ia-project/
 │   └── Dockerfile.dev
 ├── CLAUDE.md                            # Instruções para IA
 ├── FC Tube.fig                          # Design system do projeto (Figma)
-├── whiteboard.png                       # Quadro branco do projeto
+├── whiteboard.svg                       # Quadro branco do projeto
 └── README.md
 ```
 
@@ -195,7 +218,7 @@ green-field-ia-project/
 |------|-----------|--------|
 | **01** | Configuração Base do Projeto | ✅ Concluída |
 | **02** | Cadastro, Login e Gerenciamento de Conta | ✅ Concluída |
-| **03** | Upload e Processamento de Vídeos | ⏳ Planejada |
+| **03** | Upload e Processamento de Vídeos | ✅ Concluída |
 | **04** | Gerenciamento de Vídeos e Canal | ⏳ Planejada |
 | **05** | Página de Visualização do Vídeo | ⏳ Planejada |
 | **06** | Interações Sociais (Likes, Comentários, Inscrições) | ⏳ Planejada |

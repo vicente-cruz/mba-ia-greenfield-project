@@ -238,6 +238,9 @@ _Subprojects in scope:_
 
 **Decision:** A (@nestjs/throttler)
 
+**Revisions:**
+- 2026-11-17 — Correção documental da justificativa: um `APP_GUARD` é global mesmo quando registrado dentro de um módulo, então o throttler com `{ ttl: 60000, limit: 10 }` protege todas as rotas, e as isenções usam `@SkipThrottle()` (por exemplo, no `AppController`). A escolha (Option A) não muda e a proteção global é preservada; cada fase define limites explícitos para as próprias rotas com `@Throttle()` ou `@SkipThrottle()`, sem desativar a proteção de forma indiscriminada. Rationale: divergência D-05 registrada na pesquisa da Fase 03 (`phase-03-videos`, IC-2).
+
 ---
 
 ## TD-09: Refresh Token Format

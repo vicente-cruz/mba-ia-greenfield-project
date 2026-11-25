@@ -1,0 +1,298 @@
+{
+  "plan": {
+    "sizeBytes": 1000000000,
+    "partSize": 67108864,
+    "partCount": 15,
+    "lastPartSize": 60475904
+  },
+  "generation": {
+    "bytes": 1000000000,
+    "ms": 9479.2
+  },
+  "loadIntervals": [
+    {
+      "start": "2026-11-24T19:48:48.130Z",
+      "end": "2026-11-24T19:48:58.482Z",
+      "seconds": 10.352
+    },
+    {
+      "start": "2026-11-24T19:49:17.680Z",
+      "end": "2026-11-24T19:49:34.118Z",
+      "seconds": 16.438
+    },
+    {
+      "start": "2026-11-24T19:49:44.749Z",
+      "end": "2026-11-24T19:49:44.936Z",
+      "seconds": 0.187
+    }
+  ],
+  "loadSeconds": 26.977,
+  "segments": {
+    "start": {
+      "puts": 8,
+      "putBytes": 536870912,
+      "putActiveMs": 10368.4,
+      "putMiBps": 49.4,
+      "abortedPuts": 4,
+      "failedPuts": 0,
+      "checksumParts": 15,
+      "checksumBytes": 1000000000,
+      "checksumMs": 6220.6,
+      "checksumMiBps": 153.3
+    },
+    "resume": {
+      "puts": 9,
+      "putBytes": 597346816,
+      "putActiveMs": 13321.1,
+      "putMiBps": 42.8,
+      "abortedPuts": 0,
+      "failedPuts": 0,
+      "checksumParts": 7,
+      "checksumBytes": 463129088,
+      "checksumMs": 4635.2,
+      "checksumMiBps": 95.3
+    },
+    "resumeVerify": {
+      "puts": 9,
+      "putBytes": 597346816,
+      "putActiveMs": 13321.1,
+      "putMiBps": 42.8,
+      "abortedPuts": 0,
+      "failedPuts": 0,
+      "checksumParts": 8,
+      "checksumBytes": 536870912,
+      "checksumMs": 1263.6,
+      "checksumMiBps": 405.2
+    }
+  },
+  "interruption": {
+    "signal": "SIGINT",
+    "putDone": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      9
+    ],
+    "registered": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "inFlight": [
+      8,
+      10,
+      11,
+      12
+    ],
+    "putDonePercent": 53.7
+  },
+  "gapSeconds": 19.198,
+  "resume": {
+    "confirmed": [
+      1,
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "unregistered": [
+      7,
+      9
+    ],
+    "missing": [
+      8,
+      10,
+      11,
+      12,
+      13,
+      14,
+      15
+    ],
+    "divergent": [],
+    "verification": {
+      "parts": 8,
+      "bytes": 536870912,
+      "checksumMs": 1266.5,
+      "requestMs": 1285.7
+    }
+  },
+  "wire": {
+    "bytes": 1134217728,
+    "resentFraction": 0.1342,
+    "putActiveMs": 23689.5,
+    "putMiBps": 45.7
+  },
+  "checksums": {
+    "signBytes": 1463129088,
+    "signMs": 10855.8,
+    "signMiBps": 128.5,
+    "verifyBytes": 536870912,
+    "verifyMs": 1263.6,
+    "verifyMiBps": 405.2
+  },
+  "completion": {
+    "status": 202,
+    "ms": 185.4,
+    "startedAt": "2026-11-24T19:49:44.749Z",
+    "endedAt": "2026-11-24T19:49:44.936Z"
+  },
+  "processing": {
+    "status": "error",
+    "errorCode": "MEDIA_INVALID",
+    "seconds": 2.201
+  },
+  "holds": [
+    {
+      "ev": "hold_start",
+      "at": "2026-11-24T19:49:34.118Z"
+    },
+    {
+      "ev": "hold_end",
+      "at": "2026-11-24T19:49:44.749Z"
+    }
+  ],
+  "apiCalls": 19,
+  "tokenRenewals": 0,
+  "disk": {
+    "samples": 477,
+    "medianIntervalMs": 269,
+    "baseline": {
+      "at": "2026-11-24T19:47:28.530Z",
+      "totalKiB": 197152,
+      "bucketKiB": 4,
+      "multipartKiB": 16,
+      "tmpKiB": 196936,
+      "trashKiB": 296
+    },
+    "peak": {
+      "at": "2026-11-24T19:49:44.971Z",
+      "totalKiB": 1435900,
+      "bucketKiB": 976656,
+      "multipartKiB": 16,
+      "tmpKiB": 459032,
+      "trashKiB": 131304
+    },
+    "peakGrowthBytes": 1268477952,
+    "uploadDataPeakBytes": 1000148992,
+    "tmpGrowthBytes": 134234112,
+    "trashMaxKiB": 131304,
+    "completionWindowSamples": 8,
+    "completionWindowPeakGrowthBytes": 1268477952,
+    "beforeCompletion": {
+      "at": "2026-11-24T19:49:44.703Z",
+      "totalKiB": 1435892,
+      "bucketKiB": 4,
+      "multipartKiB": 976724,
+      "tmpKiB": 458968,
+      "trashKiB": 131240
+    },
+    "afterCompletion": {
+      "at": "2026-11-24T19:49:44.971Z",
+      "totalKiB": 1435900,
+      "bucketKiB": 976656,
+      "multipartKiB": 16,
+      "tmpKiB": 459032,
+      "trashKiB": 131304
+    },
+    "final": {
+      "at": "2026-11-24T19:49:49.730Z",
+      "totalKiB": 1435900,
+      "bucketKiB": 976656,
+      "multipartKiB": 16,
+      "tmpKiB": 459032,
+      "trashKiB": 131304
+    },
+    "dockerDiskUsedBaselineKiB": 19438412,
+    "dockerDiskUsedPeakKiB": 20679828,
+    "dockerDiskAvailMinKiB": 981379568
+  },
+  "completionFastDisk": {
+    "samples": 533,
+    "samplesDuringCompletion": 27,
+    "medianIntervalMs": 6,
+    "usedBeforeKiB": 20679812,
+    "usedPeakDuringKiB": 20679820,
+    "usedPeakAfterKiB": 20679824,
+    "peakGrowthDuringBytes": 8192
+  },
+  "probe": {
+    "instances": 1,
+    "all": {
+      "samples": 63,
+      "ok": 63,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": 4.78,
+      "p95": 1106.13,
+      "p99": 2483.05,
+      "max": 2483.05
+    },
+    "baseline": {
+      "samples": 32,
+      "ok": 32,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": 3.65,
+      "p95": 6.89,
+      "p99": 7.9,
+      "max": 7.9
+    },
+    "load": {
+      "samples": 14,
+      "ok": 14,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": 47.55,
+      "p95": 2483.05,
+      "p99": 2483.05,
+      "max": 2483.05
+    },
+    "outside": {
+      "samples": 17,
+      "ok": 17,
+      "non2xx": 0,
+      "status429": 0,
+      "timeouts": 0,
+      "networkErrors": 0,
+      "unexpectedBody": 0,
+      "p50": 5.13,
+      "p95": 153.03,
+      "p99": 153.03,
+      "max": 153.03
+    }
+  },
+  "projection": {
+    "factor": 10,
+    "margin": 1.3,
+    "generationSeconds": 94.8,
+    "loadSeconds": 269.8,
+    "loadSecondsWithMargin": 350.7,
+    "putSeconds": 236.9,
+    "signChecksumSeconds": 108.6,
+    "verifyChecksumSeconds": 12.6,
+    "completionSeconds": 1.9,
+    "probeInstances": 3,
+    "storagePeakBytes": 12684779520,
+    "storagePeakBytesWithMargin": 16490213376,
+    "sourceFileBytes": 10000000000,
+    "requiredFreeBytesWithMargin": 29490213376,
+    "baselineSeconds": 600
+  }
+}
